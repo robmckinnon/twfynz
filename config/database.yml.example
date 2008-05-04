@@ -16,7 +16,7 @@ development:
   database: twfynz_development
   username: root
   password:
-  socket: /var/run/mysqld/mysqld.sock
+  socket: /var/run/mysqld/mysqld.sock  # /tmp/mysql.sock on mac
   encoding: utf8
 
 # Warning: The database defined as 'test' will be erased and
@@ -27,13 +27,13 @@ test:
   database: twfynz_test
   username: root
   password:
-  socket: /var/run/mysqld/mysqld.sock
+  socket: /var/run/mysqld/mysqld.sock  # /tmp/mysql.sock on mac
   encoding: utf8
 
 production:
   adapter: mysql
   database: twfynz_production
   username: root
-  password: 
-  socket: /var/run/mysqld/mysqld.sock
+  password:
+  socket: /var/run/mysqld/mysqld.sock  # /tmp/mysql.sock on mac
   encoding: utf8

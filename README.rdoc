@@ -1,0 +1,32 @@
+== TheyWorkForYou.co.nz (twfynz)
+
+Not ready for other developers just to pick up and run with, as the data
+is not committed with this repository.
+
+Email me if you're really interested. My email address is listed at
+the development blog: http://blog.theyworkforyou.co.nz/
+
+== Install steps
+
+If the message above didn't put you off here are the steps:
+
+* install git on your machine: http://git.or.cz/
+* git clone git://github.com/robmckinnon/twfynz.git
+* cd twfynz/
+* git submodule init
+* git submodule update   # pulls in rails, rspec and haml
+* cd config/
+* cp database.yml.example database.yml
+* vi database.yml        # edit database.yml as required
+* sudo mysql create twfynz_test
+* sudo mysql create twfynz_development
+* sudo mysql create twfynz_production
+* cd ..
+* rake gems:install      # repeat until all gems installed
+* rake gems              # should show all gems installed [I]
+* rake db:migrate        # creates tables in development environment
+* rake db:test:clone_structure    # creates tables in test environment
+* rake spec              # runs specs -> should be green!
+* ./script/server        # go to http://localhost:3000/ in browser
+
+You won't have any data, but should see a few pages render in browser.
