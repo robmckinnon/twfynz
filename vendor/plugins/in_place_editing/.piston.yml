@@ -1,0 +1,8 @@
+--- 
+format: 1
+handler: 
+  piston:remote-revision: 9250
+  piston:uuid: 5ecf4fe2-1ee6-0310-87b1-e25e094e27de
+lock: false
+repository_url: http://dev.rubyonrails.com/svn/rails/plugins/in_place_editing
+repository_class: Piston::Svn::Repository

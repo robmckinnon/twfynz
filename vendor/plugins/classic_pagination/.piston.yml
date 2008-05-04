@@ -1,0 +1,8 @@
+--- 
+format: 1
+handler: 
+  piston:remote-revision: 459
+  piston:uuid: 1eaa51fe-a21a-0410-9c2e-ae7a00a434c4
+lock: false
+repository_url: svn://errtheblog.com/svn/plugins/classic_pagination
+repository_class: Piston::Svn::Repository
