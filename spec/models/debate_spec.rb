@@ -4,20 +4,21 @@ def dummy_bill_params
   {:bill_name => 'Major Events Management Bill',
         :parliament_url => '2/5/c/25c94892184b4eb3b38f3d4c465e200d.htm',
         :introduction => '2006-12-12',
-        :mp_name => 'Rod Donald'}
+        :mp_name => 'Rod Donald',
+        :parliament_id => ''}
 end
 
 describe Debate, " destroy" do
 
   it 'should destroy child sub-debates, contributions, debate topics, votes, and vote casts' do
     date = Date.new(2007,8,29)
-    debate = ParentDebate.new :name => 'Dummy', :sub_name => 'Dummier', :debate_index => 1, :date => date
+    debate = ParentDebate.new :name => 'Dummy', :sub_name => 'Dummier', :debate_index => 1, :date => date, :publication_status => 'F', :css_class => 'debate'
     debate.valid?
     contribution = Procedural.new :text => 'Dumb'
 
     placeholder = VotePlaceholder.new :text => 'a vote'
     vote = Vote.new :vote_question => 'on nothing', :vote_result => 'nothing'
-    cast = VoteCast.new :cast => 'aye', :cast_count => 1
+    cast = VoteCast.new :cast => 'aye', :cast_count => 1, :vote_label => 'Party Name'
 
     vote.vote_casts << cast
     vote.contribution = placeholder
@@ -28,6 +29,7 @@ describe Debate, " destroy" do
     debate.save!
 
     bill = Bill.new dummy_bill_params
+    bill.type = 'Bill'
     Mp.should_receive(:from_name).and_return(mock_model(Mp))
     bill.save!
     topic = DebateTopic.new

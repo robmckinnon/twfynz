@@ -9,3 +9,7 @@ doc
 log/[^.]*
 tmp/**/*
 database.yml
+development_structure.sql
+schema.rb
+public/stylesheets/default.css
+public/stylesheets/print.css

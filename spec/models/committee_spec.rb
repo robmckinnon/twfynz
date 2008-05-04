@@ -4,7 +4,8 @@ def committee_bill_params
   {:bill_name => 'Major Events Management Bill',
         :parliament_url => '2/5/c/25c94892184b4eb3b38f3d4c465e200d.htm',
         :introduction => '2006-12-12',
-        :mp_name => 'Rod Donald'}
+        :mp_name => 'Rod Donald',
+        :parliament_id => ''}
 end
 
 describe Committee, "from_name" do
@@ -21,7 +22,7 @@ describe Committee, "from_name" do
     committee = mock Committee
     committee.should_receive(:committee_name).and_return 'Māori Affairs'
     Committee.should_receive(:find).with(:all).and_return [committee]
-    
+
     Committee.from_name("Māori Affairs Committee").should eql(committee)
   end
 
@@ -29,7 +30,7 @@ describe Committee, "from_name" do
     committee = mock Committee
     committee.should_receive(:committee_name).and_return 'Māori Affairs'
     Committee.should_receive(:find).with(:all).and_return [committee]
-    
+
     Committee.from_name("Maori Affairs Committee").should eql(committee)
   end
 
@@ -38,10 +39,11 @@ end
 describe Committee, 'in general' do
 
   it 'should have bills' do
-    committee = Committee.new :clerk_category_id=>"18"
+    committee = Committee.new :clerk_category_id=>"18", :committee_name => 'Finance', :url => 'url', :committee_type => 'type'
     committee.save!
     bill = Bill.new committee_bill_params.merge(:referred_to_committee_id => committee.id)
     Mp.should_receive(:from_name).and_return(mock_model(Mp))
+    bill.type = 'Bill'
     bill.save!
     committee.bills.size.should == 1
     committee.bills.first.id.should == bill.id

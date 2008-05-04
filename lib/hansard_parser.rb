@@ -6,8 +6,12 @@ class HansardParser
 
   def initialize file, url
     @parliament_url = url
-    @doc = Hpricot open(file)
+    @file = file
     @speaker_recalled = false
+  end
+
+  def self.load_doc file
+    Hpricot open(file)
   end
 
   def parse_oral_answer debate_index, oral_answers=nil
@@ -31,6 +35,7 @@ class HansardParser
   end
 
   def parse debate_index=1
+    @doc ? @doc : (@doc = HansardParser.load_doc(@file))
     type = @doc.at('.copy/.section[1]/div[1]').attributes['class']
 
     document_reference = @doc.at('.copy/.section[1]/p[1]').inner_html

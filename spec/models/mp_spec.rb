@@ -21,7 +21,8 @@ def mp_bill_params
   {:bill_name => 'Major Events Management Bill',
         :parliament_url => '2/5/c/25c94892184b4eb3b38f3d4c465e200d.htm',
         :introduction => '2006-12-12',
-        :mp_name => 'Rod Donald'}
+        :mp_name => 'Rod Donald',
+        :parliament_id => ''}
 end
 
 def mp_invalid_without param
@@ -148,7 +149,7 @@ describe Mp, 'if current' do
   it 'should have party' do
     mp = Mp.new(mp_params.merge(:member_of_id=>1))
     party = mock_model Party
-    Party.should_receive(:find).with(1, {:include=>nil, :conditions=>nil}).and_return party
+    Party.should_receive(:find).with(1, anything).and_return party
 
     mp.party.should eql(party)
   end
@@ -161,6 +162,7 @@ describe Mp, 'if member in charge of bills' do
     mp = Mp.new mp_params
     mp.save!
     bill = Bill.new mp_bill_params.merge(:member_in_charge_id=>mp.id)
+    bill.type = 'Bill'
     bill.save!
     mp.bills.size.should == 1
     mp.bills.first.id.should == bill.id

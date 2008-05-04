@@ -4,13 +4,15 @@ def bill_params
   {:bill_name => 'Major Events Management Bill',
         :parliament_url => '2/5/c/25c94892184b4eb3b38f3d4c465e200d.htm',
         :introduction => '2006-12-12',
-        :mp_name => 'Rod Donald'}
+        :mp_name => 'Rod Donald',
+        :parliament_id => ''}
 end
 
 def new_bill params=nil
   Mp.should_receive(:from_name).any_number_of_times.and_return(mock_model(Mp))
   bill = Bill.new(params ? bill_params.merge(params) : bill_params)
   bill.should be_valid
+  bill.type = 'Bill'
   bill
 end
 
@@ -149,7 +151,7 @@ describe Bill, "on creation" do
   it 'should have a member in charge' do
     bill = Bill.new(bill_params.merge(:member_in_charge_id=>1))
     mp = mock_model Mp
-    Mp.should_receive(:find).with(1, {:include=>nil, :conditions=>nil}).and_return mp
+    Mp.should_receive(:find).with(1, anything).and_return mp
 
     bill.member_in_charge.should eql(mp)
   end
@@ -196,7 +198,7 @@ describe Bill, 'when referred to committee' do
   it 'should have a referred to committee' do
     bill = Bill.new(bill_params.merge(:referred_to_committee_id=>1))
     committee = mock_model Committee
-    Committee.should_receive(:find).with(1, {:include=>nil, :conditions=>nil}).and_return committee
+    Committee.should_receive(:find).with(1, anything).and_return committee
 
     bill.referred_to_committee.should eql(committee)
   end
@@ -241,7 +243,7 @@ describe Bill, 'when formerly part of another bill' do
   it 'should have reference to former part of bill' do
     id = 123
     former_bill = Bill.new(bill_params.merge(:bill_name => 'Statutes Amendment Bill (No 2)'))
-    Bill.should_receive(:find).with(id, {:conditions=>nil, :include=>nil}).and_return former_bill
+    Bill.should_receive(:find).with(id, anything).and_return former_bill
 
     bill = new_bill :formerly_part_of_id => id
     bill.formerly_part_of.should == former_bill
@@ -254,8 +256,10 @@ describe Bill, 'when divided into other bills' do
     Mp.should_receive(:from_name).twice.and_return(mock_model(Mp))
 
     former_bill = Bill.new bill_params.merge(:bill_name => 'Statutes Amendment Bill (No 2)')
+    former_bill.type = 'Bill'
     former_bill.save!
     bill = Bill.new bill_params.merge(:formerly_part_of_id => former_bill.id)
+    bill.type = 'Bill'
     bill.save!
 
     former_bill.divided_into_bills.first.should eql(bill)
@@ -267,6 +271,7 @@ end
 describe Bill, "on update" do
   it 'should raise error if committee not found when referred_to is present' do
     bill = Bill.new(bill_params)
+    bill.type = 'Bill'
     Mp.should_receive(:from_name).and_return(mock_model(Mp))
     bill.save!
 

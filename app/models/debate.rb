@@ -121,13 +121,13 @@ class Debate < ActiveRecord::Base
 
   def Debate::remove_duplicates_using uncorrected, advance, final, exclude_bill_parents=true
 #    logger.info uncorrected.size.to_s + ' ' + advance.size.to_s + ' ' + final.size.to_s
-    final.each_key do |date|
+    final.keys.each do |date|
       advance.delete date
       uncorrected.delete date
     end
 
 #    logger.info uncorrected.size.to_s + ' ' + advance.size.to_s + ' ' + final.size.to_s
-    advance.each_key do |date|
+    advance.keys.each do |date|
       uncorrected.delete date
     end
 

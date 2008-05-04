@@ -212,7 +212,7 @@ class Bill < ActiveRecord::Base
   end
 
   def populate_plain_bill_name
-    self.plain_bill_name = bill_name.gsub('(','').gsub(')','').gsub('-','').gsub("'",'').gsub(':','').gsub('/','').gsub(',','')
+    self.plain_bill_name = bill_name.gsub('(','').gsub(')','').gsub('-','').gsub("'",'').gsub(':','').gsub('/','').gsub(',','') if bill_name
   end
 
   def expire_cached_pages
