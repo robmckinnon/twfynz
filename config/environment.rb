@@ -61,11 +61,18 @@ Rails::Initializer.run do |config|
     :password => "MyPassword",
     :authentication => :login
   }
+
+  config.gem 'ar_fixtures'
+  config.gem 'css_graphs'
+  config.gem 'haml'
+  config.gem 'hpricot', :source => 'http://code.whytheluckystiff.net'
+  config.gem 'has_many_polymorphs'
+  config.gem 'sparklines'
 end
 
-require 'htmlentities'
-require 'acts_as_slugged'
+#require 'htmlentities'
+#require 'acts_as_slugged'
 require 'string_extensions_for_maori'
 require 'date_extension'
 require 'in_groups_by'
-require 'sitemap'
+#require 'sitemap'
