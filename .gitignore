@@ -1,0 +1,11 @@
+pkg
+doc
+*.log
+*.db
+*.sqlite3
+.DS_Store
+*~
+.autotest
+log/[^.]*
+tmp/**/*
+database.yml
