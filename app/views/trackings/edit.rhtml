@@ -1,0 +1,42 @@
+<h1>Editing tracking</h1>
+
+<%= error_messages_for :tracking %>
+
+<% form_for(:tracking, :url => tracking_path(@tracking), :html => { :method => :put } ) do |f| %>
+  <p>
+    <b>User</b><br />
+    <%= f.text_field :user_id %>
+  </p>
+
+  <p>
+    <b>Created at</b><br />
+    <%= f.date_select :created_at %>
+  </p>
+
+  <p>
+    <b>Item type</b><br />
+    <%= f.text_field :item_type %>
+  </p>
+
+  <p>
+    <b>Item</b><br />
+    <%= f.text_field :item_id %>
+  </p>
+
+  <p>
+    <b>Email alert</b><br />
+    <%= f.check_box :email_alert %>
+  </p>
+
+  <p>
+    <b>Include in feed</b><br />
+    <%= f.check_box :include_in_feed %>
+  </p>
+
+  <p>
+    <%= submit_tag "Update" %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @tracking %> |
+<%= link_to 'Back', trackings_path %>

@@ -1,0 +1,3 @@
+class SupAnswer < Answer
+
+end

@@ -1,0 +1,5 @@
+%tr
+  %td= link_to organisation.name, show_organisation_url(organisation.id_hash)
+  %td.submission_count= organisation.submitted_on_count
+  %td.mentions_count= organisation.count_of_mentions
+  %td= organisation.category

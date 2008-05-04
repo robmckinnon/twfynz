@@ -1,0 +1,26 @@
+- @javascript = :defaults
+- @title = 'Listing submissions'
+%h1= @title
+%h2= result_summary @match_pages, @submissions, @count
+%p= pagination_links(@match_pages, :params => params)
+
+%table
+  %tr
+    %th
+      Business item
+    %th
+    %th
+      Submitter_name_for_evidence
+    %th
+      Org?
+    %th
+      Url?
+  - for submission in @submissions
+    - submission_id = "submission_#{submission.id}".to_sym
+    %tr{ :id => submission_id }
+      = render(:partial => 'submission', :object => submission)
+%br
+
+%p= pagination_links(@match_pages, :params => params)
+
+= link_to 'New submission', new_submission_path

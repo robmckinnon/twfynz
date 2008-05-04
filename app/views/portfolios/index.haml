@@ -1,0 +1,22 @@
+- @title = "Ministerial Portfolios: Aotearoa New Zealand's Parliament "
+- @javascript = 'portfolios_table'
+#normalcontent
+  %h1 Ministerial Portfolios
+  .divider3
+  .contentarea
+    %p Oral Questions (including supplementary questions) by portfolio, and chart of monthly activity since November 2005.
+    #portfolios
+      %table.portfolio-table
+        %thead
+          %tr
+            %th='Portfolio<br /> Name'
+            %th='Oral Question<br /> monthly activity<br /> since Nov 2005'
+            %th{ :style=>"text-align: right;" }='Oral Questions<br /> asked since<br /> Nov 2005'
+        %tbody
+          = render(:partial => 'portfolio_group', :collection => @letter_to_portfolios.keys.sort, :locals => {:letter_to_portfolios => @letter_to_portfolios, :portfolios => @portfolios_with_debates})
+  .divider2
+  %h1 Other Portfolios
+  .divider3
+  .contentarea
+    %table
+      = render(:partial => 'portfolio', :collection => @portfolios_without_debates.keys.sort, :locals => {:portfolios => @portfolios_without_debates})

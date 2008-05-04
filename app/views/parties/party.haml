@@ -1,0 +1,18 @@
+- @javascript = "prototype"
+- @title = %Q[#{@party.name}: Party in Aotearoa New Zealand's Parliament]
+#normalcontent
+  %h1= @name
+  .divider3
+  .post
+    %ul.linklist
+      -if @bills_in_charge_of.size > 0
+        %li
+          %a{ :href=>"#bills_in_charge_of" } Bills in charge of
+  .divider2
+  - if @bills_in_charge_of.size > 0
+    %div{ :class=>"post", :id=>"bills_in_charge_of" }
+      %h3 Bills in charge of
+      .contentarea
+        %ul.linklist
+          = render :partial => 'bill_link', :collection => @bills_in_charge_of
+    .divider2

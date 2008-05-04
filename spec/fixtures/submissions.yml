@@ -1,0 +1,27 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+one:
+  id: 1
+  submitter_name: MyString
+  submitter_url: MyString
+  business_item_name: MyString
+  committee_id: 1
+  date: 2007-09-29
+  evidence_url: MyString
+  business_item_type: MyString
+  business_item_id: 1
+  is_from_organisation: false
+  submitter_type: MyString
+  submitter_id: 1
+two:
+  id: 2
+  submitter_name: MyString
+  submitter_url: MyString
+  business_item_name: MyString
+  committee_id: 1
+  date: 2007-09-29
+  evidence_url: MyString
+  business_item_type: MyString
+  business_item_id: 1
+  is_from_organisation: false
+  submitter_type: MyString
+  submitter_id: 1

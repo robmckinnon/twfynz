@@ -1,0 +1,8 @@
+%td
+  - if vote_cast.is_a? String
+    = vote_cast
+  - elsif vote_cast
+    - name = vote_cast.vote_label
+    = link_to(name, mp_url(:name => vote_cast.mp.id_name))
+  - else
+    = ''

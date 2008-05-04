@@ -1,0 +1,57 @@
+communications_oral_answer:
+  about_index: "1"
+  name: "Information Technology\xE2\x80\x94Broadband Availability"
+  about_type: Portfolio
+  start_page: "2764"
+  debate_id: "6584"
+  answer_from_type: Minister
+  date: "2006-05-04"
+  type: OralAnswer
+  source_url: http://www.parliament.nz/en-NZ/PB/Debates/Debates/3/a/2/48HansD_20060504_00000058-Questions-for-Oral-Answer-Questions-to-Ministers.htm
+  debate_index: "5"
+  publication_status: F
+  id: "6585"
+  oral_answer_no: "1"
+  about_id: "13"
+  css_class: oralanswer
+  re_oral_answer_no:
+  answer_from_id: "18"
+  hansard_volume: "630"
+bill_reading:
+  about_index: "1"
+  name: Second Reading
+  about_type: Bill
+  start_page:
+  debate_id: "10444"
+  answer_from_type:
+  date: "2006-12-12"
+  type: SubDebate
+  source_url: http://www.parliament.nz/en-NZ/PB/Debates/Debates/8/c/6/48HansD_20061213_00000001-Telecommunications-Amendment-Bill-Second.htm
+  debate_index: "2"
+  publication_status: F
+  id: "10445"
+  oral_answer_no:
+  about_id: "22"
+  css_class: subdebate
+  re_oral_answer_no:
+  answer_from_id:
+  hansard_volume: "636"
+general_debate:
+  about_index:
+  name: General Debate
+  about_type:
+  start_page:
+  debate_id:
+  answer_from_type:
+  date: "2006-12-05"
+  type: DebateAlone
+  source_url: http://www.parliament.nz/en-NZ/PB/Debates/Debates/2/e/9/48HansD_20051207_00000860-General-Debate.htm
+  debate_index: "17"
+  publication_status: F
+  id: "5854"
+  oral_answer_no:
+  about_id:
+  css_class: debatealone
+  re_oral_answer_no:
+  answer_from_id:
+  hansard_volume: "628"

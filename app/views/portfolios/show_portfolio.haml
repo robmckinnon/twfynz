@@ -1,0 +1,17 @@
+- @title = @portfolio.full_name + ' Portfolio: Aotearoa New Zealand Parliament'
+.debates
+  - if not @debates_by_name
+    %p No oral questions found.
+  - elsif (@debates_by_name.size == 0 && @older_debates_by_name.size == 0)
+    %p= "No #{link_to 'debates', :action => 'index'} found #{'on' if @date.day} #{'in' unless @date.day} #{@date.year}#{'-'+@date.month if @date.month}#{'-'+@date.day if @date.day}."
+  - else
+    - if @debates_size > 10
+      - if @debates_by_name.size > 0
+        %h2 Oral questions - recent two months
+        = render :partial => 'oral_answers', :locals => { :names => @names, :debates_by_name => @debates_by_name }
+      - if @older_debates_by_name.size > 0
+        %h2 Older oral questions
+        = render :partial => 'oral_answers', :locals => { :names => @older_names, :debates_by_name => @older_debates_by_name }
+    - else
+      %h2 Oral questions
+      = render :partial => 'oral_answers', :locals => { :names => @names, :debates_by_name => @debates_by_name }

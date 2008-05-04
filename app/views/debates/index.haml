@@ -1,0 +1,58 @@
+- @title = "House of Representatives debates: Aotearoa New Zealand Parliament"
+- @no_heading = true
+#primarycontainer
+  #primarycontent
+    %h1 Recent Parliament Debates
+    %ul.linklist
+      %li
+        %a{ :href=>"#oral_answers" } Questions for Oral Answers
+      %li
+        %a{ :href=>"#bill_debates" } Bill debates
+      %li
+        %a{ :href=>"#non_bill_debates" } Other debates
+    #oral_answers
+      = render(:partial => 'recent_debates', :object => @recent_qoa, :locals => {:title => 'Questions for Oral Answer'})
+    %a{ :href=>"#primarycontainer" } Back to top of page
+    #non_bill_debates
+      = render(:partial => 'recent_debates', :object => @recent_debates, :locals => {:title => 'Non-bill debates'})
+    %a{ :href=>"#primarycontainer" } Back to top of page
+    #bill_debates
+      = render(:partial => 'recent_debates', :object => @recent_bill_debates, :locals => {:title => 'Bill debates'})
+    %a{ :href=>"#primarycontainer" } Back to top of page
+#calendarcontent
+  %div
+    = calendar_nav Date::today
+  %p= '&nbsp;'
+  %div
+    = calendar_nav(Date::today - 30)
+  %p= '&nbsp;'
+  %div
+    = calendar_nav(Date::today - 61)
+  %p= '&nbsp;'
+  %div
+    = calendar_nav(Date::today - 91)
+  %p= '&nbsp;'
+  %div
+    = calendar_nav(Date::today - 122)
+  %p= '&nbsp;'
+  %div
+    = calendar_nav(Date::today - 152)
+  %p= '&nbsp;'
+  %div
+    = calendar_nav(Date::today - 183)
+  %p= '&nbsp;'
+  %div
+    = calendar_nav(Date::today - 213)
+  %p= '&nbsp;'
+  %div
+    = calendar_nav(Date::today - 243)
+  %p= '&nbsp;'
+  %div
+    = calendar_nav(Date::today - 274)
+  %p= '&nbsp;'
+  %div
+    = calendar_nav(Date::today - 304)
+  %p= '&nbsp;'
+  %div
+    = calendar_nav(Date::today - 335)
+  %p= '&nbsp;'

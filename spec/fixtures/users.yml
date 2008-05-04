@@ -1,0 +1,32 @@
+the_bob:
+  id: 1000001
+  login: bob
+  salt: 1000
+  email: bob@mcbob.com
+  blog_url: blog.mcbob.com
+  hashed_password: 77a0d943cdbace52716a9ef9fae12e45e2788d39 # test
+  created_at: 2007-09-11 00:36:11
+existing_bob:
+  id: 1000002
+  salt: 1000
+  login: existingbob
+  email: exbob@mcbob.com
+  hashed_password: 77a0d943cdbace52716a9ef9fae12e45e2788d39 # test
+  created_at: 2007-09-11 00:36:11
+long_bob:
+  id: 1000003
+  login: longbob
+  email: lbob@mcbob.com
+  hashed_password: 00728d3362c26746ec25963f71be022b152237a9 # longtest
+  salt: 1000
+  created_at: 2007-09-11 00:36:11
+internet_nz:
+  type: Organisation
+  id: 1000004
+  login: internetnz_net_nz
+  email: netzed@internetnz.net.nz
+  email_confirmed: false
+  hashed_password: 77a0d943cdbace52716a9ef9fae12e45e2788d39 # test
+  salt: 1000
+  created_at: 2007-09-11 00:36:11
+  site_url: www.internetnz.net.nz

@@ -1,0 +1,16 @@
+- bill = bill_description
+#bill_description
+  - if bill.description.blank?
+    #bill_description_gap
+  - else
+    %p= bill.description
+  - if bill.formerly_part_of
+    %p
+      Formerly part of
+      %span.fomerly_part_of= link_to_bill(bill.formerly_part_of) + '.'
+  - if bill.divided_into_bills.size > 0
+    - bill_was = (bill.divided_into_bills.size == 1) ? 'Bill' : 'Bills';
+    %p
+      = %Q[#{bill_was} formerly part of this bill:]
+      %span.divided_into= bill.divided_into_bills.collect{|b| link_to_bill(b)}.join(', ') + '.'
+  %p= submission_alert bill

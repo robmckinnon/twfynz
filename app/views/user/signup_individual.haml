@@ -1,0 +1,56 @@
+- @title = 'User signup'
+- @script = "Event.observe(window, 'load', function() { if ($('user_login')) $('user_login').focus(); } );"
+%h1 Your details
+- if flash[:warning]
+  %p= flash[:warning]
+= error_messages_for('user').sub('<ul>', '<ul class="linklist">')
+- form_tag(:action=> "signup_individual") do
+  %table.signup
+    %tbody
+      %tr
+        %td
+          %label{ :for=>"user_login" } Username *
+        %td
+          = text_field("user", "login", :size => 20)
+        %td
+          %p We recommend you don't use your real name.
+          %p Use lower case letters, separated by '_'.
+          %p This will be your public user name.
+          %p Minium 3 characters long.
+      %tr
+        %td
+          %label{ :for=>"user_password" } Password *
+        %td
+          = password_field "user", "password", :size => 20
+        %td
+          %p Minium 6 characters long.
+      %tr
+        %td
+          %label{ :for=>"user_password_confirmation" } Confirm password *
+        %td
+          = password_field "user", "password_confirmation", :size => 20
+        %td
+      %tr
+        %td
+          %label{ :for=>"user_email" } Email *
+        %td
+          = text_field "user", "email",  :size => 20
+        %td
+          %p Used if you forget your password.
+          %p Won't be public.
+      %tr
+        %td
+          %label{ :for=>"user_blog_url" } Blog URL
+        %td
+          http://
+          = text_field "user", "blog_url", :size => 14
+        %td
+          %p Optional.
+          %p Will be public on the site.
+          %p Will be added to our blog search whitelist.
+      %tr
+        %td
+          %p * complusory
+        %td
+          %span#signup= submit_tag "Sign up as an individual"
+        %td

@@ -1,0 +1,3 @@
+class SupQuestion < Question
+
+end

@@ -1,0 +1,23 @@
+- form_tag(:controller => 'user', :action=> 'login') do
+  %table.login
+    %tbody
+      %tr
+        %td
+          %label{ :for => "user_login" } Username:
+        %td
+          = text_field "user", "login", :size => 14
+      %tr
+        %td
+          %label{ :for => "user_password" } Password:
+        %td
+          = password_field "user", "password", :size => 14
+      %tr
+        %td
+        %td
+          %span#login= submit_tag "Login"
+      %tr
+        %td
+        %td
+          %small= link_to 'Forgot password?', :controller => 'user', :action => 'forgot_password'
+          %br
+          %small= link_to('Sign up for free', :controller => 'user', :action => 'signup') + '.'

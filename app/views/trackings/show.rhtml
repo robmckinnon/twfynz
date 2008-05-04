@@ -1,0 +1,33 @@
+<p>
+  <b>User:</b>
+  <%=h @tracking.user_id %>
+</p>
+
+<p>
+  <b>Created at:</b>
+  <%=h @tracking.created_at %>
+</p>
+
+<p>
+  <b>Item type:</b>
+  <%=h @tracking.item_type %>
+</p>
+
+<p>
+  <b>Item:</b>
+  <%=h @tracking.item_id %>
+</p>
+
+<p>
+  <b>Email alert:</b>
+  <%=h @tracking.email_alert %>
+</p>
+
+<p>
+  <b>Include in feed:</b>
+  <%=h @tracking.include_in_feed %>
+</p>
+
+
+<%= link_to 'Edit', edit_tracking_path(@tracking) %> |
+<%= link_to 'Back', trackings_path %>

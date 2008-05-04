@@ -1,0 +1,3 @@
+class PartyVote < Vote
+
+end

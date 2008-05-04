@@ -1,0 +1,34 @@
+one:
+  title: one
+  about_type: Bill
+  about_id: 22
+  status: MyString
+  nzl_id: MyString
+  version_stage: MyString
+  version_date: 2008-02-02
+  version_committee: MyString
+  committee_id: 1
+  information_type: MyString
+  legislation_type: MyString
+  year: 1
+  "no": 1
+  current_as_at_date: 2008-02-02
+  link: MyString
+  publication_date: 2008-01-02 01:53:02
+two:
+  title: two
+  about_type: Bill
+  about_id: 22
+  status: MyString
+  nzl_id: MyString
+  version_stage: MyString
+  version_date: 2008-02-02
+  version_committee: MyString
+  committee_id: 1
+  information_type: MyString
+  legislation_type: MyString
+  year: 1
+  "no": 1
+  current_as_at_date: 2008-02-02
+  link: MyString
+  publication_date: 2008-02-02 01:53:02

@@ -1,0 +1,63 @@
+- @title = 'New submission'
+%h1
+  New submission
+= error_messages_for :submission
+- form_for(:submission, :url => submissions_path) do |f|
+  %p
+    %b
+      Submitter name
+    %br
+    = f.text_field :submitter_name
+  %p
+    %b
+      Submitter url
+    %br
+    = f.text_field :submitter_url
+  %p
+    %b
+      Business item name
+    %br
+    = f.text_field :business_item_name
+  %p
+    %b
+      Committee
+    %br
+    = f.text_field :committee_id
+  %p
+    %b
+      Date
+    %br
+    = f.date_select :date
+  %p
+    %b
+      Evidence url
+    %br
+    = f.text_field :evidence_url
+  %p
+    %b
+      Business item type
+    %br
+    = f.text_field :business_item_type
+  %p
+    %b
+      Business item
+    %br
+    = f.text_field :business_item_id
+  %p
+    %b
+      Is from organisation
+    %br
+    = f.check_box :is_from_organisation
+  %p
+    %b
+      Submitter type
+    %br
+    = f.text_field :submitter_type
+  %p
+    %b
+      Submitter
+    %br
+    = f.text_field :submitter_id
+  %p
+    = submit_tag 'Create'
+= link_to 'Back', submissions_path

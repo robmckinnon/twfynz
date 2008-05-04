@@ -1,0 +1,30 @@
+- @title = 'User login'
+- @login_on = true
+- @script = "Event.observe(window, 'load', function() { $('user_login').focus(); } );"
+- form_tag(:action=> "login") do
+  %h1 Welcome to TheyWorkForYou.co.nz
+  = error_messages_for 'user'
+  %table.login
+    %tbody
+      %tr
+        %td
+          %label{ :for=>"user_login" } Username:
+        %td
+          = text_field "user", "login", :size => 20
+        %td
+      %tr
+        %td
+          %label{ :for=>"user_password" } Password:
+        %td
+          = password_field "user", "password", :size => 20
+        %td
+      %tr
+        %td
+        %td
+          %span#login= submit_tag "Login"
+        %td
+          %span.shift-right= link_to 'Forgotten password?', :action => 'forgot_password'
+  %p
+    Login above or
+    =link_to('sign up now for free', :action => 'signup') + '.'
+

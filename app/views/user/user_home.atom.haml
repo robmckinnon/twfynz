@@ -1,0 +1,23 @@
+= '<?xml version="1.0" encoding="UTF-8"?>'
+%feed{ 'xml:lang'.to_sym => "en-NZ", :xmlns => "http://www.w3.org/2005/Atom" }
+  %id= 'tag:localhost:people'
+  %link{ :type=>"application/atom+xml", :rel=>"self", :href=>"http://example.com/people.atom" }
+  %title Items tracked
+  %updated
+  - @tracked_items.reverse.each do |tracked_item|
+    - events_by_date, debates_by_name, names, votes_by_name = tracked_item.events_by_date_debates_by_name_names_votes_by_name
+    - date_event = events_by_date.last
+    - date = date_event[0]
+    - name = date_event[1]
+    - debates = debates_by_name ? debates_by_name[name] : nil
+    - votes = debates_by_name ? votes_by_name[name] : nil
+    %entry
+      %id= "tag:twfy,2007-05-18T16:35:00-07:00:#{tracked_item.class.name}#{tracked_item.id.to_s}"
+      %updated= (debates) ? debates.first.date.xmlschema : tracked_item.last_event[0]
+      - link = (debates) ? get_url(debates.first) : show_bill_url(:bill_url => tracked_item.url)
+      %link{ :type => "text/html", :rel => "alternate", :href => link }
+      %title= tracked_item.bill_name
+      %content{ :type=>"html" }= debate_name name, debates
+      %author
+        %name TheyWorkForYou.co.nz
+        %email support@theyworkforyou.co.nz

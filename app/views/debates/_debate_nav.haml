@@ -1,0 +1,16 @@
+- debate = debate_nav
+.box
+  .contentarea
+    %ul.linklist
+      %li= 'All on ' + link_to("#{date_to_s debate.date}", show_debates_on_date_url(debate.date_hash))
+      - if debate.prev_debate_id_hash
+        %li= '&laquo; ' + link_to("Previous", get_url_from_hash(debate.prev_debate_id_hash)) + ' on day'
+      - if debate.next_debate_id_hash
+        %li= '&raquo; ' + link_to("Next", get_url_from_hash(debate.next_debate_id_hash)) + ' on day'
+- if @about and @about_type.to_s == 'Bill'
+  .box
+    .contentarea
+      %ul.linklist
+        %li= 'More about ' + link_to_about(@hash, @about, @about_type)
+- if debate
+  = calendar_nav debate.date

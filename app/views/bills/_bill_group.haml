@@ -1,0 +1,9 @@
+- key = bill_group
+%tr
+  %td
+    %a{ :name=> prefix+key }
+    - unless (prefix+key == prefix+first)
+      %span= '&nbsp;'
+  %td
+  %td
+= render :partial => 'bill', :collection => letter_to_bills[key].sort, :locals => {:bills => bills}

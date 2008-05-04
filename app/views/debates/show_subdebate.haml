@@ -1,0 +1,7 @@
+#primarycontainer
+  %div{ :class => @debate.parent.css_class }
+    %div{ :class => @debate.css_class }
+      = render :partial => 'debate'
+#secondarycontent
+  - unless @debate.parent.kind_of? SubDebate
+    = render :partial => 'debate_nav', :object => @debate

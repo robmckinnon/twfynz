@@ -1,0 +1,2 @@
+class ClauseDescription < ClauseModel
+end

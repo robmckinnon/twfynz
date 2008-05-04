@@ -1,0 +1,10 @@
+- name = business_item_submission
+- submissions = business_item_name_to_submissions[name]
+%tr
+  %td
+    - if submissions.first.business_item.is_a? Bill
+      = link_to_bill submissions.first.business_item
+    - else
+      = name
+  %td
+    = submissions.collect {|s| link_to_evidence s }.join('<br />')

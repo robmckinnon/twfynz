@@ -1,0 +1,24 @@
+#normalcontent
+  %h1 Political Parties
+  .contentarea
+    %p Parties in the 48th New Zealand Parliament.
+    %table
+      %thead
+        %th Party
+        %th MPs &nbsp;
+        %th % of MPs
+        %th Registered name
+      %tbody
+        =render(:partial => 'party_summary', :collection => @parties, :locals => {:total_mps => @total_mps})
+        %tr
+          %td &nbsp;
+          %td
+          %td
+        %tr
+          %td TOTAL MPS
+          %td.count= @total_mps
+          %td.percentage 100%
+    - @data_for_graph = [Party.mp_count]
+    %p
+    .chart
+      = multi_bar_graph (@data_for_graph,{:colors=> Party.colours, :color_by=>'index', :width => 640, :height => 480}) { |index,variable| variable }

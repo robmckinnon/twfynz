@@ -1,0 +1,9 @@
+- @mp = link_to_mp
+- unless link_to_mp.nil? || link_to_mp.is_former?
+  - mp = link_to_mp
+  - row = %Q[row-#{(link_to_mp_counter % 2) + 1}]
+  - mp_name = @by_last ? %Q[#{mp.last}, #{mp.first}] : %Q[#{mp.first} #{mp.last}]
+  %tr
+    %td{ :class=>row }= link_to(mp_name, mp_url(:name => mp.id_name) )
+    %td{ :class=>row }= mp.party.abbreviated if mp.party
+    %td{ :class=>row }= mp.electorate

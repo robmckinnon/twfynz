@@ -1,0 +1,10 @@
+- @javascript = 'trackings_table'
+#trackings
+  %table#items_tracked
+    %thead
+      %th.item_name Name
+      %th Recent event
+      %th.date Event date
+      %th Others tracking
+    %tbody
+      = render :partial => 'tracked_item', :collection => tracked_items

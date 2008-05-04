@@ -1,0 +1,37 @@
+- @title = @organisation.name
+%h1= @title
+%p
+  = @organisation.name
+  is an
+  = link_to 'organisation', {:controller => 'organisations'}
+  that has made one or more submissions to select committees of New Zealand's Parliament.
+#submissions
+  %h2 Submissions to Select Committees
+  %table
+    %thead
+      %th= 'Since September 2007'
+      %th Evidence submitted
+    %tbody
+      = render :partial => 'business_item_submission', :collection => @business_item_name_to_submissions.keys, :locals => {:business_item_name_to_submissions => @business_item_name_to_submissions}
+- count = @organisation.count_of_mentions
+- if count > 0
+  #mentions
+    %h2 Mentions in Parliament
+    %p
+      = "#{@organisation.name} has been "
+      = link_to("mentioned in #{count} parliamentary #{count == 1 ? 'debate' : 'debates'}", %Q[/organisations/#{@organisation.slug}/mentions]) + " since November 2005."
+- if @organisation.name == 'Corporate Taxpayers Group'
+  = render :partial => 'ctg', :object => @organisation
+- else
+  #external_links
+    %h2 External links
+    %ul.linklist
+      - unless @organisation.wikipedia_url.blank?
+        %li
+          = link_to('Wikipedia page on ' + @organisation.name, @organisation.wikipedia_url, :rel=>"nofollow")
+      - if @organisation.url
+        %li
+          = link_to('Website of ' + @organisation.name, 'http://'+@organisation.url+'/', :rel=>"nofollow")
+      - if @organisation.url && File.exist?(@organisation.thumbnail)
+        %li
+          = link_to(image_tag(@organisation.thumbnail_path), 'http://'+@organisation.url+'/', :rel=>"nofollow")

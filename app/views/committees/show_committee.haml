@@ -1,0 +1,58 @@
+- @title = @committee.full_name + ' Committee: Aotearoa New Zealand Parliament'
+#primarycontainer
+  - if (not @debates_by_name and (not @bills or @bills.size == 0) and (not @bills_before_committee or @bills_before_committee.size == 0))
+    .divider3
+    %p No debates or bills found related to this committee.
+  - if @debates_by_name
+    .divider3
+    .debates
+    %h2 Debates related to committee
+    %ul.linklist
+      - @names.each do |name|
+        - debates = @debates_by_name[name]
+        - debates = debates.reverse if (debates.size > 0 and (not debates.first.is_a? DebateAlone) and (not debates.first.about.is_a? Portfolio))
+        - many = debates.size > 1
+        - if many
+          - debates.each { |d| d.name = d.name.sub(d.name.split('—')[0]+'—', '') }
+          %li
+            %span= name
+            %ul.linklist
+              - if debates.first.is_a? SubDebate
+                - debates.each do |debate|
+                  %li= link_to_debate debate, show_status=false, show_date=true
+              - else
+                =render :partial => 'debate_link', :collection => debates, :locals => { :show_date => true }
+        - else
+          - if debates.first.is_a? SubDebate
+            - debates.each do |debate|
+              %li= link_to_debate debate, show_status=false, show_date=true
+          - else
+            =render :partial => 'debate_link', :collection => debates, :locals => { :show_date => true }
+  - if @bills_before_committee and @bills_before_committee.size > 0
+    .divider3
+    .bills
+      %h2 Current bills before committee
+      %ul.linklist
+        - @bills_before_committee.each do |bill|
+          %li= link_to (bill.bill_name, show_bill_url(:bill_url => bill.url))
+  - if @bills and @bills.size > 0
+    .divider3
+    .bills
+      %h2 Current bills reported on by committee
+      %ul.linklist
+        - @bills.each do |bill|
+          %li= link_to (bill.bill_name, show_bill_url(:bill_url => bill.url))
+  - if @negatived and @negatived.size > 0
+    .divider3
+    .bills
+      %h2 Negatived bills reported on by committee
+      %ul.linklist
+        - @negatived.each do |bill|
+          %li= link_to (bill.bill_name, show_bill_url(:bill_url => bill.url))
+  - if @assented and @assented.size > 0
+    .divider3
+    .bills
+      %h2 Assented bills reported on by committee
+      %ul.linklist
+        - @assented.each do |bill|
+          %li= link_to (bill.bill_name, show_bill_url(:bill_url => bill.url))

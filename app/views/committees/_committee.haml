@@ -1,0 +1,7 @@
+- key = committee
+- committee = committees[key].first
+%tr
+  - if committee
+    %td= link_to(committee.committee_name, show_committee_url(:committee_url => committee.url))
+  - else
+    %td= key

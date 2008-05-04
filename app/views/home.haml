@@ -1,0 +1,39 @@
+- @title = "TheyWorkForYou.co.nz: Is Aotearoa New Zealand's Parliament working for you?"
+- @home = true
+- @script = "Event.observe(window, 'load', function() { if ($('user_login')) $('user_login').focus(); } );"
+#normalcontent
+  %h1 Find out what your elected representatives are doing in Aotearoa New Zealand's Parliament.
+#primarycontainer
+  #primarycontent
+    #project_summary
+      %p
+        On this site you can browse parliamentary debates going back to November 2005, grouped by their relationship to
+        = link_to("Bills", {:controller=>'bills'}, :title=>'Bill debates and Questions about Bills') + ', '
+        = link_to("Ministerial Portfolios", {:controller=>'portfolios'}, :title=>'Questions to Ministers') + ', '
+        -# = link_to("Committees", {:controller=>'committees'}, :title=>'Questions about Committees') + ', and '
+        = link_to("MPs", {:controller=>'mps'}, :title=>'List of all MPs') + ' or '
+        = link_to("organisations", {:controller=>'organisations'}, :title=>'List of organisations') + '.'
+      %p
+        You can also view an
+        = link_to('index of recent debates', {:controller=>'debates'}, :title=>'List of recent debates') + '.'
+    %table.bill-table
+      %thead
+        %tr
+          %th You can make submissions on these bills
+          %th.date Deadline
+      %tbody
+        - SubmissionDate.find(:all, :include => :bill).select{|sd| sd.date >= Date::today}.sort {|a,b| ((a.date <=> b.date) == 0) ? a.title <=> b.title : a.date <=> b.date }.each do |date|
+          %tr
+            %td= link_to date.title, show_bill_url(:bill_url => date.bill.url)
+            %td.date= format_date date.date
+#calendarcontent
+  #login_form
+    = '' # render :partial => 'login_form'
+  %div
+    = calendar_nav Date::today, 'Debates in '
+  %p= '&nbsp;'
+  %div
+    = calendar_nav(Time.now.at_beginning_of_month.to_date - 1, 'Debates in ')
+  %p= '&nbsp;'
+  %div
+    = calendar_nav((Time.now.at_beginning_of_month.to_date - 1).at_beginning_of_month - 1, 'Debates in ')

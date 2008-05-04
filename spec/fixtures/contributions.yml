@@ -1,0 +1,45 @@
+communications_question:
+  text: "<p>I have received a large number of positive reports. A very recent one was from the OECD. It says: \xE2\x80\x9CThe decision by the New Zealand Government to unbundle the local loop opens the door to more competition in the New Zealand broadband market.\xE2\x80\x9D Another quote, from the president of InternetNZ, says: \xE2\x80\x9CThese decisions open the playing field for industry competitors to show their commitment to New Zealand consumers by investing in new infrastructure and services.\xE2\x80\x9D</p>"
+  time:
+  speaker: Hon DAVID CUNLIFFE
+  on_behalf_of:
+  type: SupAnswer
+  id: "95291"
+  spoken_in_id: "6585"
+  page: "2764"
+  vote_id:
+  spoken_by_id: "104"
+bill_continue_speech:
+  text: "<p>... As a result of that work, important players in the sector have warmly welcomed the amended bill. The Internet Society of New Zealand has congratulated the Finance and Expenditure Committee on its report back, and particularly on its recommendation of ...</p>"
+  time:
+  speaker: NANDOR TANCZOS
+  on_behalf_of:
+  type: ContinueSpeech
+  id: "150924"
+  spoken_in_id: "10445"
+  page: "7136"
+  vote_id:
+  spoken_by_id: "123"
+bill_speech:
+  text: "<p>... good process. The Finance and Expenditure Committee picked up very quickly, and I well remember the submission from InternetNZ, what we call the three-box model of operational separation—separation between the equal access network function with ...</p>"
+  time: "09:54:55"
+  speaker: GORDON COPELAND (United Future)
+  on_behalf_of:
+  type: Speech
+  id: "150928"
+  spoken_in_id: "10445"
+  page: "7140"
+  vote_id:
+  spoken_by_id: "139"
+speech:
+  text: "<p>... spam, but it was inappropriate to require that as a legal obligation. The Government supports that change. The Internet Society of New Zealand sought in its submission to have the enforcement agency, under the bill, take an expanded role in monitoring spam and ...</p>"
+  time: "15:38:05"
+  speaker: Hon PHIL GOFF (Minister of Defence)
+  on_behalf_of:
+  type: Speech
+  id: "83924"
+  spoken_in_id: "5854"
+  page: "623"
+  vote_id:
+  spoken_by_id: "10"
+

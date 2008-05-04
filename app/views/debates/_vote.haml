@@ -1,0 +1,29 @@
+%div{ :id=>anchor_in_debate, :class=> vote.type.to_s.downcase }
+  %p.votereason= vote.reason
+  %p.votequestion= format_vote_question vote
+  - if vote.ayes?
+    %p.voteayes= 'Ayes ' + vote.ayes_count.to_s
+    - if vote.is_a? PartyVote
+      - parties, ayes = vote.ayes_by_party
+      %ul.ayeslist= render :partial => 'vote_cast_by_party', :collection => parties, :locals => { :votes => ayes }
+    - else
+      %table.ayeslist
+        = render :partial => 'vote_row', :collection => vote.ayes_cast.in_groups_of(4)
+  - if vote.noes?
+    %p.votenoes= 'Noes ' + vote.noes_count.to_s
+    - if vote.is_a? PartyVote
+      - parties, noes = vote.noes_by_party
+      %ul.noeslist= render :partial => 'vote_cast_by_party', :collection => parties, :locals => { :votes => noes }
+    - else
+      %table.noeslist
+        = render :partial => 'vote_row', :collection => vote.noes_cast.in_groups_of(4)
+  - if vote.abstentions?
+    %p.voteabstentions= 'Abstentions ' + vote.abstentions_count.to_s
+    - if vote.is_a? PartyVote
+      - parties, abstentions = vote.abstentions_by_party
+      %ul.abstentionslist= render :partial => 'vote_cast_by_party', :collection => parties, :locals => { :votes => abstentions }
+    - else
+      %table.abstentionslist
+        = render :partial => 'vote_row', :collection => vote.abstentions.in_groups_of(4)
+  %p.voteresult= vote.vote_result
+.divider2

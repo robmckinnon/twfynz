@@ -1,0 +1,110 @@
+= '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'
+%html
+  %head
+    %meta{ 'http-equiv'.to_sym => "content-type", :content=>"text/html; charset=utf-8" }
+    %title= @title + (@home ? '' : ' | TheyWorkForYou.co.nz')
+    %link{ :rel=>"shortcut icon", :href=>"/twfy.ico" }
+    %meta{ :name=>"description", :content=>"TheyWorkForYou.co.nz, helping you track Aotearoa New Zealand's Parliament" }
+    - if @home
+      %meta{ :name=>"keywords", :content=>"NZ, New Zealand, Parliament, Hansard, MP, Member of Parliament, MPs, government, house of representatives, Aotearoa" }
+    - else
+      %meta{ :name=>"keywords", :content=> @title }
+    %link{ :rel=>"home", :title=>"Home", :href=>"http://www.theyworkforyou.co.nz/" }
+    = stylesheet_link_tag 'default', :media => 'screen'
+    = stylesheet_link_tag 'print', :media => 'print'
+    - if @javascript == 'feeds'
+      = javascript_include_tag('jquery')
+      = %Q[<script src='http://www.google.com/jsapi?key=ABQIAAAAqaIV0FrI66ZwKQCBvHVROhS4B9IOWGabz75EWBZk7jQ9CQA49BR5l_F12e50hYNKqoQbLx_HpSOnxg' type='text/javascript'></script>]
+    - if (@javascript and @javascript.to_s.ends_with? '_table')
+      = stylesheet_link_tag('datatable')
+      = javascript_include_tag('datatable-beta-min')
+    - if @javascript
+      = javascript_include_tag(@javascript)
+    - unless @javascript == :defaults
+      = javascript_include_tag 'prototype'
+    = javascript_include_tag 'cookie'
+    = javascript_include_tag 'json'
+    = javascript_include_tag 'flash'
+    - if @script
+      %script{ :type=>"text/javascript" }= @script
+    - if @ni_map
+      = GMap.header
+      = @ni_map.to_html.sub("map_div",'ni_map')
+      = @si_map.to_html.sub("map_div",'si_map')
+    - if @map
+      = GMap.header
+      = @map.to_html
+    %script{ :type=>"text/javascript" }
+      function update_logged_in() {
+      Flash.transferFromCookies();
+      Flash.writeDataTo('logged_in', $('sign_in'), false);
+      Flash.writeDataTo('login_form', $('login_form'), false);
+      }
+  %body{ :onload=>'update_logged_in();' }
+    #outer
+      - if @home
+        #header-home
+          #headercontent-home
+            %h1= link_to "TheyWorkForYou.co.nz", {:controller=>'application', :action=>'home'}
+            %p= link_to "Helping you track Aotearoa New Zealand's Parliament", {:controller=>'application', :action=>'home'}
+      - else
+        #header
+          #headercontent
+            %p= link_to "<span class='site-name'>TheyWorkForYou.co.nz</span>", {:controller=>'application', :action=>'home'}
+      #sign_in
+      - if @home
+        #search-home
+          - form_tag({:controller => 'debates', :action => :debate_search}, {:method=>"get"}) do
+            = text_field_tag(:search_term, '', :maxlength=>"100", :size=>"12")
+            = submit_tag "Search", :class => 'submit'
+        #headerpic
+      - else
+        #search
+          - form_tag({:controller => 'debates', :action => :debate_search}, {:method=>"get"}) do
+            = text_field_tag(:search_term, '', :maxlength=>"100", :size=>"12")
+            = submit_tag "Search", :class => 'submit'
+      #menu
+        %ul
+          - @hansard_on = false if @search_on
+          - something_else_on = (@hansard_on or @mps_on or @bills_on or @portfolios_on or @committees_on or @parties_on or @about_on or @contact_on or @organisations_on)
+          %li= link_to "Home", {:controller=>'application', :action=>'home'}, :title=>'The front page of the site', :class=>(something_else_on ? nil : 'active')
+          %li= link_to "Bills", {:controller=>'bills'}, :title=>'Bill debates and Questions about Bills', :class=>(@bills_on ? 'active' : nil)
+          %li= link_to "Portfolios", {:controller=>'portfolios'}, :title=>'Questions to Ministers', :class=>(@portfolios_on ? 'active' : nil)
+          -# %li= link_to "Committees", {:controller=>'committees'}, :title=>'Questions about Committees', :class=>(@committees_on ? 'active' : nil)
+          %li= link_to "Debates", {:controller=>'debates'}, :title=>'House of Representatives debates', :class=>(@hansard_on ? 'active' : nil)
+          %li= link_to "MPs", {:controller=>'mps'}, :title=>'List of all MPs', :class=>(@mps_on ? 'active' : nil)
+          %li= link_to "Parties", {:controller=>'parties'}, :title=>'List of all Parties', :class=>(@parties_on ? 'active' : nil)
+          %li= link_to "Organisations", {:controller=>'organisations'}, :title=>'Organisations making submissions', :class=>(@organisations_on ? 'active' : nil)
+          %li.shift-right
+            %a{ :href=>"http://blog.theyworkforyou.co.nz/", :title=>"TheyWorkForYou.co.nz developers' blog" } Blog
+          %li= link_to "About", {:controller=>'application', :action=>'about'}, :title=>'About TheyWorkForYou.co.nz', :class=>(@about_on ? 'active' : nil)
+      #menubottom
+      #content
+        = @content_for_layout
+      #footer
+        - if not @home
+          - spacer = ' <span class="spacer">|</span> '
+          .left
+            - links = link_to "Home", {:controller=>'application', :action=>'home'}, :title=>'The front page of the site', :class=>(something_else_on ? nil : 'active')
+            - links += spacer + link_to("Bills", {:controller=>'bills'}, :title=>'Bill debates and Questions about Bills', :class=>(@bills_on ? 'active' : nil) )
+            - links += spacer + link_to("Portfolios", {:controller=>'portfolios'}, :title=>'Questions to Ministers', :class=>(@portfolios_on ? 'active' : nil) )
+            -# links += spacer + link_to("Committees", {:controller=>'committees'}, :title=>'Questions about Committees', :class=>(@committees_on ? 'active' : nil) )
+            - links += spacer + link_to("Debates", {:controller=>'debates'}, :title=>'House of Representatives debates', :class=>(@hansard_on ? 'active' : nil) )
+            - links += spacer + link_to("MPs", {:controller=>'mps'}, :title=>'List of all MPs', :class=>(@mps_on ? 'active' : nil) )
+            - links += spacer + link_to("Parties", {:controller=>'parties'}, :title=>'List of all Parties', :class=>(@parties_on ? 'active' : nil) )
+            - links += spacer + link_to("Organisations", {:controller=>'organisations'}, :title=>'Organisations making submissions', :class=>(@organisations_on ? 'active' : nil) )
+            = links
+          .right
+            - rlinks = %Q[<a href="http://blog.theyworkforyou.co.nz/" title="TheyWorkForYou.co.nz developers' blog">Blog</a>]
+            - rlinks += spacer +  link_to("About", {:controller=>'application', :action=>'about'}, :title=>'About TheyWorkForYou.co.nz', :class=>(@about_on ? 'active' : nil) )
+            = rlinks
+    - if RAILS_ENV == 'production'
+      = %Q[<script type="text/javascript">]
+      = %Q[var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");]
+      = %Q[document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));]
+      = %Q[</script>]
+      = %Q[<script type="text/javascript">]
+      = %Q[var pageTracker = _gat._getTracker("UA-981751-1");]
+      = %Q[pageTracker._initData();]
+      = %Q[pageTracker._trackPageview();]
+      = %Q[</script>]

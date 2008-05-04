@@ -1,0 +1,8 @@
+- inside_layout 'application' do
+  - if @bill
+    #normalcontent
+      - if @header_title
+        %h1= @header_title
+      - else
+        %h1#bill_name= @bill.full_name
+  = @content_for_layout

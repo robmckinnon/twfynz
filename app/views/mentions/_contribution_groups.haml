@@ -1,0 +1,17 @@
+- contributions = contribution_groups.first
+- if contributions.first.debate.is_a? SubDebate
+  - if contributions.first.debate.about
+    %h2= contributions.first.debate.about.full_name
+  - else
+    %h2= contributions.first.debate.full_name
+  - contribution_groups.each do |contributions|
+    %h3
+      = link_to_debate(contributions.first.debate, false, false, false)
+      %span.date= format_date contributions.first.debate.date
+    = render :partial => 'mentions/contribution_match', :collection => contributions, :locals => { :terms => terms }
+- else
+  %h2
+    = link_to_debate(contributions.first.debate, false, false, false)
+    %span.date= format_date contributions.first.debate.date
+  - contribution_groups.each do |contributions|
+    = render :partial => 'mentions/contribution_match', :collection => contributions, :locals => { :terms => terms }

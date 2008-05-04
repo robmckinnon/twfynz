@@ -1,0 +1,7 @@
+- inside_layout 'application' do
+  - if @portfolio
+    #normalcontent
+      %h1
+        = @portfolio.full_name
+        = link_to "Portfolio", {:controller=>'portfolios'}, :title=>'Portfolios Index'
+  = @content_for_layout

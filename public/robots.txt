@@ -1,0 +1,15 @@
+# See http://www.robotstxt.org/wc/norobots.html for documentation on how to use the robots.txt file
+User-agent: BecomeBot
+Disallow: /
+
+User-agent: SurveyBot
+Disallow: /
+
+User-agent: SurveyBot_IgnoreIP
+Disallow: /
+
+User-agent: ichiro
+Disallow: /
+
+User-agent: Slurp
+Crawl-delay: 3

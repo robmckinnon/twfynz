@@ -1,0 +1,31 @@
+- inside_layout 'application' do
+  - if @debate
+    - @title = @debate.title unless @title
+    - @date = @debate.date unless @date
+  - if not @home
+    #normalcontent
+      - if @about and !@debate
+        %h1= @about.full_name
+      - elsif !@about_on
+        - if (@debate and @debate.respond_to? :parent)
+          %h1{ :class=> @debate.parent.css_class }= @debate.parent.name
+          %h2{ :class=> @debate.css_class }= (@debate.oral_answer_no ? @debate.oral_answer_no.to_s+'. ' : '') + @debate.name
+        - elsif @debate
+          %h1{ :class=> @debate.css_class }= @debate.name.sub(', ', ', <br />')
+          - if (@debate.is_a?(ParentDebate) and @debate.sub_debates.size == 1)
+            %h2{ :class=> @debate.sub_debate.css_class }= @debate.sub_debate.name
+        - elsif @no_heading
+        - else
+          %h1 House of Representatives debates
+      - if @date
+        - if @debate
+          %p
+            %span.date= date_to_s(@date)
+            %span.publication_status= status_description(@debate)
+            %small.hansard-source= link_to_hansard('Hansard source', @debate) + ' (external site)'
+        - else
+          %p
+            %span.date= date_to_s @date
+            - if @publication_status
+              %span.publication_status= @publication_status
+  = @content_for_layout

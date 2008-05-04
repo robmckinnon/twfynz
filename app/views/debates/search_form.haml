@@ -1,0 +1,17 @@
+- @title = "Search TheyWorkForYou.co.nz: Is Aotearoa New Zealand's Parliament working for you?"
+- @home = true
+- @javascript = "prototype"
+- @script = "Event.observe(window, 'load', function() { $('term').focus() } );"
+- @search_on = true
+#debate_search
+  .main
+    - term = flash[:term]
+    - if term
+      %p
+        no match found for:
+        = h term
+      - form_tag({:controller => 'debates', :action => :debate_search }, {:method=>"get"}) do
+        %p
+          Search NZ's Parliamentary Debates:
+          = text_field_tag(:search_term, (term ? term : ''), :maxlength=>"100", :size=>"12")
+          = submit_tag "go", :class => 'submit'

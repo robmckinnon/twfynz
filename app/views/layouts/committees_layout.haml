@@ -1,0 +1,5 @@
+- inside_layout 'application' do
+  - if @committee
+    #normalcontent
+      %h1= @committee.full_name + ' Committee'
+  = @content_for_layout

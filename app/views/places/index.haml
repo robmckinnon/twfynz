@@ -1,0 +1,23 @@
+- @javascript = 'places_table'
+- @title = "Places in Aotearoa New Zealand"
+%h1 Places in Aotearoa New Zealand
+%p
+  We have identified
+  = @places.size
+  places that have been mentioned in debates since November 2005.
+  This list may be incomplete. Please email any feedback about this list to:
+  %br
+  %img{ :alt=>"rob at they work for you dot co dot nz", :class=>"link", :src=>"images/e.png" }
+#places
+  %table.place-table
+    %thead
+      %tr
+        %th Place
+        %th Population
+        %th Mentions in debates
+    %tbody
+      - @places.each do |place|
+        %tr
+          %td= link_to place.name, show_place_url(:name => place.slug)
+          %td.number= place.population
+          %td.number= place.count_of_mentions

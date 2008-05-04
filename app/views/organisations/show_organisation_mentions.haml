@@ -1,0 +1,8 @@
+- @title = 'Mentions of ' + @organisation.name + ' in New Zealand Parliament debates'
+%h1= @title
+%p
+  = "#{link_to_organisation(@organisation)} has been "
+  - count = @organisation.count_of_mentions
+  = "mentioned in #{count} parliamentary #{count == 1 ? 'debate' : 'debates'} since November 2005."
+#mentions
+  = render :partial => 'mentions/contribution_groups', :collection => @contribution_in_groups_by_debate, :locals => { :terms => @organisation.search_names }

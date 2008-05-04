@@ -1,0 +1,9 @@
+- contribution = contribution_match
+%div{ :id=> contribution.id, :class=>contribution.css_class }
+  %p
+    - if contribution.mp
+      %span.speaker= contribution.speaker_name.name
+    - else
+      %span.speaker= contribution.speaker
+    - text = contribution.html.gsub('<em>','').gsub('</em>','')
+    = terms.collect {|term| excerpts(text, term, false) }.delete_if {|c| c.blank? }.join('<br/>')

@@ -1,0 +1,12 @@
+- @title = 'User signup'
+- individual_submit_id = 'individual_submit'
+- @script = "Event.observe(window, 'load', function() { if ($('#{individual_submit_id}')) $('#{individual_submit_id}').focus(); } );"
+%h1 Join us in tracking NZ's Parliament
+#individual_signup
+  - form_tag(:action => 'signup') do
+    = hidden_field_tag(:user_type, 'individual')
+    %span.user_type= submit_tag("I'm signing up as an individual", :id => individual_submit_id)
+#organisation_signup
+  - form_tag(:action => 'signup') do
+    = hidden_field_tag(:user_type, 'organisation')
+    %span.user_type= submit_tag "I'm signing up my organisation"

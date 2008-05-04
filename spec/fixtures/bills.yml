@@ -1,0 +1,28 @@
+a_bill:
+  first_reading: "2006-12-12"
+  referred_to_committee_id: "2"
+  second_reading:
+  consideration_of_report_discharged:
+  royal_assent:
+  act_name:
+  committal_discharged:
+  url: copyright_new_technologies_performers
+  type: GovernmentBill
+  committee_of_the_whole_house:
+  second_reading_discharged:
+  id: 22
+  sc_reports:
+  formerly_part_of_id:
+  parliament_url: b/2/a/b2ad626160694aee9536fab3362d7d15.htm
+  first_reading_negatived: "0"
+  submissions_due: "2007-03-09"
+  second_reading_negatived: "0"
+  description: This Bill amends the Copyright Act 1994 in view of the development and adoption of new technologies.
+  bill_no: 102-1
+  bill_name: Copyright (New Technologies and Performers' Rights) Amendment Bill
+  former_name:
+  introduction: "2006-12-04"
+  withdrawn:
+  first_reading_discharged:
+  third_reading:
+  member_in_charge_id: "45"

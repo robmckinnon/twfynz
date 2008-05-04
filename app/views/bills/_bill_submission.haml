@@ -1,0 +1,10 @@
+- name = bill_submission
+%tr
+  %td{:style => 'vertical-align: top;'}
+    - submitter = name_to_submissions[name].first.submitter
+    - if submitter
+      = link_to submitter.name, show_organisation_url(:name => submitter.slug)
+    - else
+      = name
+  %td
+    = render :partial => 'evidence', :collection => name_to_submissions[name], :spacer_template => 'evidence_separator'

@@ -1,0 +1,47 @@
+#sign_in, #search, #menu, #menubottom, #footer, #secondarycontent, #calendarcontent, .link_to_contribution
+  :display none
+
+#primarycontainer, #normalcontent
+  :float none
+  :width 100%
+
+#headercontent
+  :text-align right
+
+body
+  :font-family Georgia, "Times New Roman", serif
+  :padding 0px 0px 30px 0px
+  :font-size 12pt
+  :line-height 20pt
+  :color black
+
+#bills
+  table
+    :font-size 9pt
+a
+  :text-decoration none
+  :color black
+
+a:link:after, a:visited:after, a:hover:after, a:active:after
+  :content " (" attr(href) ") "
+  :color grey
+  :font-style italic
+  :font-weight normal
+
+a[href^="/"]:after
+  :content " (http://theyworkforyou.co.nz" attr(href) ") "
+
+a[href^="#"]:after
+  :content ""
+
+a[href^="?"]:after
+  :content ""
+
+a.vote_caster:after
+  :content ""
+
+thead
+  :display table-header-group
+
+tr
+  :page-break-inside avoid

@@ -1,0 +1,7 @@
+%div{ :class=> @debate.css_class }
+  = render :partial => 'debate'
+  .main
+    - @debate.sub_debates.each do |subdebate|
+      %p= link_to_debate subdebate, show_status=false, show_date=false
+  .sidebar
+  .break

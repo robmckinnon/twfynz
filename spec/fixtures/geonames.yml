@@ -1,0 +1,230 @@
+auckland:
+  slug: auckland
+  elevation:
+  admin4_code: ""
+  country_code: NZ
+  name: Auckland
+  admin3_code: ""
+  latitude: "-36.8666667"
+  geonameid: "2193733"
+  admin2_code: ""
+  first_word_in_name: Auckland
+  timezone: Pacific/Auckland
+  admin1_code: E7
+  alternatenames: ""
+  feature_code: PPL
+  id: "2207"
+  population: "417910"
+  asciiname: Auckland
+  cc2: ""
+  gtopo30: "26"
+  feature_class: P
+  longitude: "174.7666667"
+  modification_date: "2007-08-17"
+wellington:
+  slug: wellington
+  elevation:
+  admin4_code: ""
+  country_code: NZ
+  name: Wellington
+  admin3_code: ""
+  latitude: "-41.3000000"
+  geonameid: "2179537"
+  admin2_code: ""
+  first_word_in_name: Wellington
+  timezone: Pacific/Auckland
+  admin1_code: G2
+  alternatenames: "Wellington,\xCE\x9F\xCF\x85\xCE\xAD\xCE\xBB\xCE\xBB\xCE\xB9\xCE\xB3\xCE\xBA\xCF\x84\xCE\xBF\xCE\xBD"
+  feature_code: PPLC
+  id: "116"
+  population: "179240"
+  asciiname: Wellington
+  cc2: ""
+  gtopo30: "6"
+  feature_class: P
+  longitude: "174.7833333"
+  modification_date: "2007-09-04"
+ord:
+  slug: ord
+  elevation:
+  admin4_code: ""
+  country_code: GB
+  name: Ord
+  first_word_in_name: Ord
+  admin3_code: ""
+  latitude: "57.1333333"
+  geonameid: "2640944"
+  admin2_code: ""
+  timezone: Europe/London
+  admin1_code: V3
+  alternatenames: ""
+  feature_code: PPL
+  id: "37557"
+  population: "0"
+  asciiname: Ord
+  cc2: ""
+  gtopo30: "138"
+  feature_class: P
+  longitude: "-5.9500000"
+  modification_date: "2004-09-22"
+leigh:
+  slug: leigh
+  elevation:
+  admin4_code: ""
+  country_code: GB
+  name: Leigh
+  first_word_in_name: Leigh
+  admin3_code: ""
+  latitude: "51.1833333"
+  geonameid: "2644665"
+  admin2_code: ""
+  timezone: Europe/London
+  admin1_code: G5
+  alternatenames: ""
+  feature_code: PPL
+  id: "39832"
+  population: "0"
+  asciiname: Leigh
+  cc2: ""
+  gtopo30: "61"
+  feature_class: P
+  longitude: "0.2166667"
+  modification_date: "2007-06-15"
+another_leigh:
+  slug: leigh-2
+  elevation:
+  admin4_code: ""
+  country_code: GB
+  name: Leigh
+  first_word_in_name: Leigh
+  admin3_code: ""
+  latitude: "50.8666667"
+  geonameid: "2644666"
+  admin2_code: ""
+  timezone: Europe/London
+  admin1_code: D6
+  alternatenames: ""
+  feature_code: PPL
+  id: "39833"
+  population: "0"
+  asciiname: Leigh
+  cc2: ""
+  gtopo30: "94"
+  feature_class: P
+  longitude: "-2.5500000"
+  modification_date: "2007-06-15"
+liverpool:
+  slug: liverpool
+  elevation:
+  admin4_code: ""
+  country_code: GB
+  name: Liverpool
+  first_word_in_name: Liverpool
+  admin3_code: ""
+  latitude: "53.4166667"
+  geonameid: "2644210"
+  admin2_code: ""
+  timezone: Europe/London
+  admin1_code: H8
+  alternatenames: "Learpholl,Lerpwl,Liverpool,Liverpul,Liverpul',Liverpule,Liverpulis,Liverp\xC5\xABle,Livurpul,Poll a' Ghruthain,\xCE\x9B\xCE\xAF\xCE\xB2\xCE\xB5\xCF\x81\xCF\x80\xCE\xBF\xCF\x85\xCE\xBB,\xD0\x9B\xD0\xB8\xD0\xB2\xD0\xB5\xD1\x80\xD0\xBF\xD1\x83\xD0\xBB,\xD0\x9B\xD0\xB8\xD0\xB2\xD0\xB5\xD1\x80\xD0\xBF\xD1\x83\xD0\xBB\xD1\x8C,\xD0\x9B\xD0\xB8\xD0\xB2\xD1\x8A\xD1\x80\xD0\xBF\xD1\x83\xD0\xBB,\xD7\x9C\xD7\x99\xD7\x91\xD7\xA8\xD7\xA4\xD7\x95\xD7\x9C,\xD9\x84\xD9\x89\xDB\x8B\xDB\x90\xD8\xB1\xD9\xBE\xDB\x87\xD9\x84,\xD9\x84\xD9\x8A\xD9\x81\xD8\xB1\xD8\xA8\xD9\x88\xD9\x84,\xD9\x84\xDB\x8C\xD9\x88\xD8\xB1\xD9\xBE\xD9\x88\xD9\x84,\xDC\xA0\xDC\x9D\xDC\x92\xDC\xAA\xDC\xA6\xDC\x98\xDC\xA0,\xE0\xB8\xA5\xE0\xB8\xB4\xE0\xB9\x80\xE0\xB8\xA7\xE0\xB8\xAD\xE0\xB8\xA3\xE0\xB9\x8C\xE0\xB8\x9E\xE0\xB8\xB9\xE0\xB8\xA5,\xE1\x83\x9A\xE1\x83\x98\xE1\x83\x95\xE1\x83\x94\xE1\x83\xA0\xE1\x83\x9E\xE1\x83\xA3\xE1\x83\x9A\xE1\x83\x98,\xE3\x83\xAA\xE3\x83\xB4\xE3\x82\xA1\xE3\x83\x97\xE3\x83\xBC\xE3\x83\xAB,\xE5\x88\xA9\xE7\x89\xA9\xE6\xB5\xA6,\xEB\xA6\xAC\xEB\xB2\x84\xED\x92\x80"
+  feature_code: PPLA
+  id: "39542"
+  population: "468945"
+  asciiname: Liverpool
+  cc2: ""
+  gtopo30: "6"
+  feature_class: P
+  longitude: "-3.0000000"
+  modification_date: "2007-02-17"
+trent:
+  slug: trent
+  elevation:
+  admin4_code: ""
+  country_code: GB
+  name: Trent
+  first_word_in_name: Trent
+  admin3_code: ""
+  latitude: "50.9666667"
+  geonameid: "2635504"
+  admin2_code: ""
+  timezone: Europe/London
+  admin1_code: D6
+  alternatenames: ""
+  feature_code: PPL
+  id: "34337"
+  population: "0"
+  asciiname: Trent
+  cc2: ""
+  gtopo30: "76"
+  feature_class: P
+  longitude: "-2.5833333"
+  modification_date: "2007-06-15"
+stoke_on_trent:
+  slug: stoke_on_trent
+  elevation:
+  admin4_code: ""
+  country_code: GB
+  name: Stoke-on-Trent
+  first_word_in_name: Stoke-on-Trent
+  admin3_code: ""
+  latitude: "53.0000000"
+  geonameid: "2636841"
+  admin2_code: ""
+  timezone: Europe/London
+  admin1_code: N4
+  alternatenames: "Stok-on-Trent,Stoke,Stoke-on-Trent,Stoke-upon-Trent,The Potteries,\xD0\xA1\xD1\x82\xD0\xBE\xD0\xBA-\xD0\xBE\xD0\xBD-\xD0\xA2\xD1\x80\xD0\xB5\xD0\xBD\xD1\x82"
+  feature_code: PPLA
+  id: "35160"
+  population: "260419"
+  asciiname: Stoke-on-Trent
+  cc2: ""
+  gtopo30: "132"
+  feature_class: P
+  longitude: "-2.1833333"
+  modification_date: "2007-02-17"
+london:
+  slug: london
+  elevation:
+  admin4_code: ""
+  country_code: GB
+  name: London
+  admin3_code: ""
+  latitude: "51.5084153"
+  geonameid: "2643743"
+  first_word_in_name: London
+  admin2_code: ""
+  timezone: Europe/London
+  admin1_code: H9
+  alternatenames: "LON,Ljondan,Llundain,Londain,Londan,Londe,Londen,Londinium,London,Londona,Londonas,Londoni,Londono,Londra,Londres,Londres - London,Londrez,Londyn,Lond\xC3\xBDn,Lontoo,Loundres,Luan GJon,Lunden,Lundunir,Lund\xC3\xBAnir,Lunnainn,Lunnon,Lu\xC3\xA2n \xC4\x90\xC3\xB4n,\xCE\x9B\xCE\xBF\xCE\xBD\xCE\xB4\xCE\xAF\xCE\xBD\xCE\xBF,\xD0\x9B\xD0\xBE\xD0\xBD\xD0\xB4\xD0\xB0\xD0\xBD,\xD0\x9B\xD0\xBE\xD0\xBD\xD0\xB4\xD0\xBE\xD0\xBD,\xD0\x9B\xD1\x91\xD0\xBD\xD0\xB4\xD0\xB0\xD0\xBD,\xD4\xBC\xD5\xB8\xD5\xB6\xD5\xA4\xD5\xB8\xD5\xB6,\xD7\x9C\xD7\x90\xD7\xA0\xD7\x93\xD7\x90\xD7\x9F,\xD7\x9C\xD7\x95\xD7\xA0\xD7\x93\xD7\x95\xD7\x9F,\xD9\x84\xD9\x86\xD8\xAF\xD9\x86,\xD9\x84\xD9\x88\xD9\x86\xD8\xAF\xD9\x88\xD9\x86,\xDC\xA0\xDC\x98\xDC\xA2\xDC\x95\xDC\x98\xDC\xA2,\xE0\xA4\xB2\xE0\xA4\x82\xE0\xA4\xA1\xE0\xA4\xA8,\xE0\xA4\xB2\xE0\xA4\x82\xE0\xA4\xA6\xE0\xA4\xA8,\xE0\xA6\xB2\xE0\xA6\xA8\xE0\xA7\x8D\xE0\xA6\xA1\xE0\xA6\xA8,\xE0\xAA\xB2\xE0\xAA\x82\xE0\xAA\xA1\xE0\xAA\xA8,\xE0\xAE\x87\xE0\xAE\xB2\xE0\xAE\xA3\xE0\xAF\x8D\xE0\xAE\x9F\xE0\xAE\xA9\xE0\xAF\x8D,\xE0\xB8\xA5\xE0\xB8\xAD\xE0\xB8\x99\xE0\xB8\x94\xE0\xB8\xAD\xE0\xB8\x99,\xE1\x83\x9A\xE1\x83\x9D\xE1\x83\x9C\xE1\x83\x93\xE1\x83\x9D\xE1\x83\x9C\xE1\x83\x98,\xE1\x88\x88\xE1\x8A\x95\xE1\x8B\xB0\xE1\x8A\x95,\xE3\x83\xAD\xE3\x83\xB3\xE3\x83\x89\xE3\x83\xB3,\xE4\xBC\xA6\xE6\x95\xA6,\xEB\x9F\xB0\xEB\x8D\x98"
+  feature_code: PPLC
+  id: "39182"
+  population: "7421209"
+  asciiname: London
+  cc2: ""
+  gtopo30: "21"
+  feature_class: P
+  longitude: "-0.1255327"
+  modification_date: "2007-09-06"
+city_of_london:
+  slug: city_of_london
+  elevation:
+  admin4_code: ""
+  country_code: GB
+  name: City of London
+  admin3_code: ""
+  latitude: "51.5166667"
+  geonameid: "2643741"
+  first_word_in_name: City
+  admin2_code: ""
+  timezone: Europe/London
+  admin1_code: "00"
+  alternatenames: ""
+  feature_code: PPLX
+  id: "39181"
+  population: "0"
+  asciiname: City of London
+  cc2: ""
+  gtopo30: "19"
+  feature_class: P
+  longitude: "-0.0833333"
+  modification_date: "1994-01-13"

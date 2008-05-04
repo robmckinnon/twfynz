@@ -1,0 +1,26 @@
+- @title = "Bills: Aotearoa New Zealand Parliament "
+- @javascript = 'bills_table'
+#normalcontent
+  %h1 Current Bills debated by the 48th Parliament
+  .divider3
+  .contentarea
+    %p
+      %span Current bills debated by the 48th Parliament
+      %span.right
+        %span See also:
+        %span= link_to ('Assented Bills', assented_url) + ' | ' + link_to ('Negatived Bills', negatived_url)
+    #bills
+      %table.bill-table
+        %thead
+          %tr
+            %th Bill type
+            %th#party_of_mp_in_charge= 'Party of <br /> MP in charge'
+            %th Bill name
+            %th Recent activity
+            %th Recent activity date
+        %tbody
+          = render(:partial => 'a_bill', :collection => @bills_current)
+    .divider3
+    .divider3
+    %p See also:
+    = link_to ('Assented Bills', assented_url) + ' | ' + link_to ('Negatived Bills', negatived_url)

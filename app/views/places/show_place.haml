@@ -1,0 +1,23 @@
+- @title = "#{@place.name}, Aotearoa New Zealand"
+- # @javascript = 'portfolios_table'
+- count = @place.count_of_mentions
+#place
+  %h1
+    = @place.name
+  %p
+    A
+    = link_to('place in Aotearoa New Zealand', places_url())
+    that has been mentioned in
+    = link_to "#{count} parliamentary #{count == 1 ? 'debate' : 'debates'}", '#mentions'
+    since November 2005.
+  - if @map
+    = @map.div(:width => 360, :height => 360)
+  %p
+    The latitude, longitude
+    = link_to "data for #{@place.name}", "http://www.geonames.org/#{@place.geonameid}/"
+    is provided by the
+    = link_to ('GeoNames geographical database', 'http://www.geonames.org/')
+    under a
+    = link_to('Creative Commons Attribution 3.0 License', 'http://creativecommons.org/licenses/by/3.0/', :rel=>"license")+'.'
+#mentions
+  = render :partial => 'mentions/contribution_groups', :collection => @contribution_in_groups_by_debate, :locals => { :terms => @place.name }

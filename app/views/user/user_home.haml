@@ -1,0 +1,8 @@
+- @title = 'Welcome ' + @user_name
+%h1= @title
+- if @tracked_items.size > 0
+  %h2 Items you are tracking
+  = render :partial => 'tracked_items', :object => @tracked_items
+- else
+  %p
+    Items you track will be listed here.

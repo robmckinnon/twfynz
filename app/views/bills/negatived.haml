@@ -1,0 +1,17 @@
+- @title = "Bills: Aotearoa New Zealand's Parliament "
+#normalcontent
+  %h1 Negatived Bills
+  .divider3
+  .contentarea
+    %p
+      %span Bills that have been negatived by the 48th Parliament.
+      %span.right= %Q[See also: #{link_to ('Current Bills', bills_url) } | #{ link_to ('Assented Bills', assented_url) }]
+    %table
+      %tr
+        %th Bill name
+        %th Party of MP in charge
+        %th Bill type
+      = render(:partial => 'bill_group', :collection => @letter_to_negatived.keys.sort, :locals => {:letter_to_bills => @letter_to_negatived, :bills => @bills_negatived, :prefix => '', :first => @letter_to_negatived.keys.sort[0]})
+    .divider3
+    .divider3
+    %p= %Q[See also: #{ link_to ('Current Bills', bills_url) } | #{ link_to ('Assented Bills', assented_url) }]

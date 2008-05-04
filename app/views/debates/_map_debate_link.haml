@@ -1,0 +1,8 @@
+- debate = map_debate_link
+- if debate.is_a?(SubDebate) && debate.parent.is_a?(BillDebate)
+  - name = debate.full_name.sub(' -','^-').sub('No ','No^').split(' ').in_groups_of(3).collect { |g| g.join(' ') }.join('<br />&nbsp;&nbsp;&nbsp;').sub('^-',' -').sub('No^','No ')
+- elsif debate.name.include?('—')
+  - name = debate.name.split('—').join('<br />&nbsp;&nbsp;&nbsp;')
+- else
+  - name = debate.name.split(' ').in_groups_of(3).collect { |g| g.join(' ') }.join('<br />&nbsp;&nbsp;&nbsp;')
+= '<li>'+link_to(name, get_url(debate)).sub('href="',"href='").sub('">',"'>").sub('<...','...')+'</li>'

@@ -1,0 +1,9 @@
+- @organisation = organisation_edit
+%tr
+  %td{ :style => 'width: 450px' }
+    - if @organisation.wikipedia_url
+      = link_to(@organisation.name, @organisation.wikipedia_url)
+    - else
+      = @organisation.name
+  %td= in_place_editor_field(:organisation, 'alternate_names', {}, {:cols => 30}).sub('></span>','>_______________</span>')
+  %td= in_place_editor_field(:organisation, 'wikipedia_url', {}, {:cols => 30}).sub('></span>','>_______________</span>')

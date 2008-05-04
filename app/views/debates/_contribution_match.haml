@@ -1,0 +1,13 @@
+- contribution = contribution_match
+%div{ :id=> contribution.id, :class=>contribution.css_class }
+  %p
+    - if contribution.mp
+      %span.speaker= contribution.speaker_name.name
+    - else
+      %span.speaker= contribution.speaker
+    - if expand == 'false'
+      = link_to_remote_contribution('expand speech', contribution, term, 'true') + ' ' + link_to_contribution('view debate', contribution, term)
+      = excerpts(contribution.html, term)
+    - else
+      = link_to_remote_contribution('collapse speech', contribution, term, 'false') + ' ' + link_to_contribution('view debate', contribution, term)
+      = highlights(contribution.html, term)

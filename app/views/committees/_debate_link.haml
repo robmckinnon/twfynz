@@ -1,0 +1,12 @@
+- debate = debate_link
+- show_date = false unless show_date
+- if (debate.is_a?(SubDebate) or debate.is_a?(DebateAlone) or debate.sub_debates.size == 0)
+  %li= link_to_debate debate, show_status=false, show_date=true
+- elsif (debate.sub_debates.size == 1 and not(debate.is_a? OralAnswers))
+  %li= link_to_debate debate.sub_debates[0], show_status=false, show_date=true
+- else
+  %li
+    %p= debate.name
+    %ul.linklist
+      - debate.sub_debates.sort_by(&:debate_index).each do |sub_debate|
+        %li= link_to_debate sub_debate, show_status, show_date

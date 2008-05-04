@@ -1,0 +1,48 @@
+- @title = 'Show submission'
+%p
+  %b
+    Submitter name:
+  = h @submission.submitter_name
+%p
+  %b
+    Submitter url:
+  = h @submission.submitter_url
+%p
+  %b
+    Business item name:
+  = h @submission.business_item_name
+%p
+  %b
+    Committee:
+  = h @submission.committee_id
+%p
+  %b
+    Date:
+  = h @submission.date
+%p
+  %b
+    Evidence url:
+  = h @submission.evidence_url
+%p
+  %b
+    Business item type:
+  = h @submission.business_item_type
+%p
+  %b
+    Business item:
+  = h @submission.business_item_id
+%p
+  %b
+    Is from organisation:
+  = h @submission.is_from_organisation
+%p
+  %b
+    Submitter type:
+  = h @submission.submitter_type
+%p
+  %b
+    Submitter:
+  = h @submission.submitter_id
+= link_to 'Edit', edit_submission_path(@submission)
+|
+= link_to 'Back', submissions_path

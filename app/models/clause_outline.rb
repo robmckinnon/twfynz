@@ -1,0 +1,2 @@
+class ClauseOutline < ClauseModel
+end

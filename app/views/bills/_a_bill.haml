@@ -1,0 +1,7 @@
+%tr
+  %td= bill_type(a_bill).chomp(' bill')
+  %td= a_bill.member_in_charge.party ? a_bill.member_in_charge.party.short : 'no party '+ a_bill.member_in_charge.full_name
+  %td= link_to(a_bill.bill_name, show_bill_url(:bill_url => a_bill.url))
+  - last_event = a_bill.last_event
+  %td= last_event ? last_event[1] : ''
+  %td= last_event ? last_event[0] : ''

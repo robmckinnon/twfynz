@@ -1,0 +1,2 @@
+class Intervention < Contribution
+end

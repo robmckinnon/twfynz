@@ -1,0 +1,14 @@
+- @title = 'Parliamentary debates: '+ format_date(@date) + ': Aotearoa New Zealand Parliament'
+- if @debates.size > 0
+  - @publication_status = status_description(@debates.first)
+#primarycontainer
+  .debates
+    - if @debates.size == 0
+      = "<p>No #{link_to 'debates', :action => 'index'} found #{'on' if @date.day} #{'in' unless @date.day} #{@date.day+' ' if @date.day}#{@date.month.capitalize+' ' if @date.month}#{@date.year}.</p>"
+    - else
+      %ul.linklist
+        = render :partial => 'debate_link', :collection => @debates, :locals => { :show_status => !@date.day }
+#secondarycontent
+  = calendar_nav @calendar_date
+  = @ni_map.div(:width => 360, :height => 440).sub("map_div",'ni_map') if @ni_map
+  = @si_map.div(:width => 360, :height => 450).sub("map_div",'si_map') if @si_map

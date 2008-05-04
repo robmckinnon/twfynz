@@ -1,0 +1,89 @@
+- @javascript = "prototype"
+- @title = %Q[#{@name}: #{@description}: Aotearoa New Zealand's Parliament]
+#primarycontainer
+  #normalcontent
+    = portrait(@mp)
+    %h1= @name
+    - if @former_mp
+      %p Not a member of the current Parliament
+    - else
+      %h2= @description
+  #primarycontent
+    .contentarea
+      .divider3
+      .post
+        %ul.linklist
+          - if @bills_in_charge_of.size > 0
+            %li
+              %a{ :href=>"#bills_in_charge_of" } Bills in charge of
+          %li
+            %a{ :href=>"#recent_appearences" } Recent appearences in parliament
+          - if @pecuniary_interests_by_category.size > 0
+            %li
+              %a{ :href=>"#pecuniary_interests" } Register of pecuniary interests
+          %li
+            %a{ :href=>"#external_links" } External links
+    .divider2
+    - if @bills_in_charge_of.size > 0
+      %div{ :class=>"post", :id=>"bills_in_charge_of" }
+        %h3 Bills in charge of
+        .contentarea
+          %ul.linklist
+            = render :partial => 'bill_link', :collection => @bills_in_charge_of
+      .divider2
+    %div{ :class=>"post", :id=>"recent_appearences" }
+      %h3 Most recent appearances in parliament
+      .contentarea
+        %p
+          %em If this MP has contributed more than once to a debate, only one speech is shown.
+        %dl
+          = render :partial => 'recent_contribution', :collection => @recent_contributions, :locals => {:expand => 'false'}
+    - if @pecuniary_interests_by_category.size > 0
+      .divider2
+      %div{ :class=>"post", :id=>"pecuniary_interests" }
+        %h3 Register of pecuniary interests
+        .contentarea
+          - @pecuniary_interests_by_category.each do |interest|
+            .regmemcategory= interest[0].id.to_s + '. ' + interest[0].name
+            - interest[1].each do |i|
+              .regmemitem= i.item
+          %p.italic= %Q[Based on register update as at 31 Jan 2006. The official Parliament website has the <a href='http://www.parliament.nz/en-NZ/MPP/FinInterests/2/e/3/2e3fbcc753e74805944f83daaeaad225.htm'>latest register update as at 31 January 2007</a>.]
+    .divider2
+    %div{ :class=>"post", :id=>"external_links" }
+      %h3 External links
+      .contentarea
+        %ul.linklist
+          %li#wikipedia= link_to('Wikipedia entry on ' + @mp.full_name, @mp.wikipedia_url)
+          - if @mp.parliament_url
+            %li#parliament_bio
+              = link_to('Parliament page on ' + @mp.full_name, @mp.parliament_url, :rel=>"nofollow")
+#questions_section
+  - if @subjects_answered_about.size > 0
+    .box
+      %h3 Answers most questions about these subjects
+      .contentarea
+        %ul.linklist
+          %li= @subjects_answered_about.collect {|s| link_to s[0], get_url(s[1].last)}.join("</li>\n<li>")
+      - if @portfolios_answered_about.size > 0
+        .divider3
+        %h3 Answers most questions about these portfolios
+        .contentarea
+          %ul.linklist
+            %li= @portfolios_answered_about.collect {|p| link_to_portfolio(p[0])}.join("</li>\n<li>")
+      - if @subjects_answered_about.size > 0
+        .contentarea
+          %p
+            %small= %Q[(based on oral questions answered by #{ @name })]
+  - if @subjects_asked_about.size > 0
+    .box
+      %h3 Asks most questions about these subjects
+      .contentarea
+        %ul.linklist
+          %li= @subjects_asked_about.collect {|s| link_to s[0], get_url(s[1].last)}.join("</li>\n<li>")
+      .divider3
+      %h3 Asks most questions about these portfolios
+      .contentarea
+        %ul.linklist
+          %li= @portfolios_asked_about.collect {|p| link_to_portfolio(p[0])}.join("</li>\n<li>")
+        %p
+          %small= %Q[(based on oral questions asked by #{ @name } and answered by Ministers or Members)]

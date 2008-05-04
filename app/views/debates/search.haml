@@ -1,0 +1,17 @@
+- @title = %Q[#{@term} search results, Aotearoa New Zealand Parliament]
+- @no_heading = true
+- @javascript = "prototype"
+- if @term
+  %h1= %Q[Search results for: #{ @term }#{ result_summary @match_pages, @matches, @count }]
+- if @matches and @matches.length > 0
+  - pagination_line = pagination_links(@match_pages, :params => params)
+  = render :partial => 'debate_match', :collection => @debate_ids, :locals => { :expand => 'false', :debates => @debates, :by_debate => @by_debate, :term => @term.gsub('"','').gsub("'",'') }
+  - unless pagination_line.blank?
+    %p= pagination_line
+- else
+  #debate_search
+    - form_tag({:controller => 'debates', :action => :search}, {:method=>"get"}) do
+      %p
+        Search NZ's Parliamentary Debates
+        = text_field_tag 'term', @term, :size => 12, :maxlength => 100
+        = submit_tag "GO"

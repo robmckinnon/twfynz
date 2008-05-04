@@ -1,0 +1,9 @@
+- @title = 'Submissions: ' + about_title(@bill)
+- @header_title = 'Submissions on ' + link_to_bill(@bill)
+#primarycontainer
+  %table#submissions
+    %thead
+      %th Submitter
+      %th Evidence files
+    %tbody
+      = render :partial => 'bill_submission', :collection => @name_to_submissions.keys.sort, :locals => { :name_to_submissions => @name_to_submissions }

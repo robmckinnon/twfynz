@@ -1,0 +1,3 @@
+module PlacesHelper
+
+end

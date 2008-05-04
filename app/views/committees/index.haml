@@ -1,0 +1,7 @@
+- @title = "Committees: Aotearoa New Zealand's Parliament "
+#normalcontent
+  %h1 Committees
+  .divider3
+  .contentarea
+    %table
+      = render(:partial => 'committee', :collection => @committees.keys.sort, :locals => {:committees => @committees})

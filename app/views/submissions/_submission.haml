@@ -1,0 +1,20 @@
+- @submission = submission
+%td
+  = link_to submission.business_item_name, submission.evidence_url
+%td
+  = link_to 'Edit', edit_submission_path(submission)
+%td
+  - if submission.submitter_url.blank?
+    = link_to h(submission.submitter_name), submission.evidence_url
+  - elsif submission.submitter
+    = link_to h(submission.submitter_name), show_organisation_url(submission.submitter.id_hash)
+  - else
+    = link_to h(submission.submitter_name), submission.submitter_url
+%td
+  - submission_id = "submission_#{submission.id}".to_sym
+  - form_id = "edit_submission_#{submission.id}".to_sym
+  - form_for(:submission, @submission, :html => {:id => form_id.to_s}) do |f|
+    = f.check_box :is_from_organisation
+  = observe_form form_id, :url => 'submissions/update/'+submission.id.to_s+'', :update => submission_id, :frequency => "0.25"
+%td
+  = in_place_editor_field(:submission, 'submitter_url', {}, {:cols => 60}).sub('></span>','>_______________</span>')

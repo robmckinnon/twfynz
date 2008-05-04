@@ -1,0 +1,27 @@
+bill:
+  id: 1
+  user_id: 1000001
+  created_at: 2007-09-14
+  item_type: Bill
+  item_id: 22
+  tracking_on: true
+  email_alert: false
+  include_in_feed: false
+committee:
+  id: 2
+  user_id: 1000003
+  created_at: 2007-09-14
+  item_type: Committee
+  item_id: 33
+  tracking_on: true
+  email_alert: false
+  include_in_feed: false
+portfolio:
+  id: 3
+  user_id: 1000003
+  created_at: 2007-09-14
+  item_type: Portfolio
+  item_id: 44
+  tracking_on: true
+  email_alert: false
+  include_in_feed: false

@@ -1,0 +1,2 @@
+class ContinueIntervention < Contribution
+end

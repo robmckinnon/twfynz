@@ -1,0 +1,53 @@
+- @title = 'Organisation signup'
+%h1 Your organisation's details
+- form_tag(:action=> "signup_organisation") do
+  = error_messages_for('organisation').sub('<ul>', '<ul class="linklist">')
+  %table.signup
+    %tbody
+      %tr
+        %td
+          %label{ :for=>"organisation_site_url" } Organisation URL *
+        %td
+          http://
+          = text_field "organisation", "site_url", :size => 14
+        %td
+          %p Will be public on the site.
+          %p Will be used to create login name.
+      %tr
+        %td
+          %label{ :for=>"organisation_email" } Email *
+        %td
+          = text_field "organisation", "email",  :size => 20
+        %td
+          %p Must be at domain of your website.
+          %p Used if you forget your password.
+          %p Won't be public.
+      %tr
+        %td
+          %label{ :for=>"organisation_password" } Password *
+        %td
+          = password_field "organisation", "password", :size => 20
+        %td
+          %p Minium 6 characters long.
+      %tr
+        %td
+          %label{ :for=>"organisation_password_confirmation" } Confirm password *
+        %td
+          = password_field "organisation", "password_confirmation", :size => 20
+        %td
+      %tr
+        %td
+          %label{ :for=>"organisation_blog_url" } Organisation blog or news URL
+        %td
+          http://
+          = text_field "organisation", "blog_url", :size => 14
+        %td
+          %p Optional.
+          %p Will be public on the site.
+          %p Will be added to our blog search whitelist.
+      %tr
+        %td
+          %p * complusory
+        %td
+          %span#signup= submit_tag "Sign up your organisation"
+        %td

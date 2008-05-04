@@ -1,0 +1,11 @@
+- key = bill
+- bill = bills[key].first
+%tr
+- if bill
+  %td= link_to(bill.bill_name, show_bill_url(:bill_url => bill.url))
+  %td= bill.member_in_charge.party ? link_to_party(bill.member_in_charge.party) : 'no party '+ bill.member_in_charge.full_name
+  %td= bill_type(bill).chomp(' bill')
+- else
+  %td= key
+  %td
+  %td
