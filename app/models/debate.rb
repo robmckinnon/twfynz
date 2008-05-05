@@ -109,7 +109,7 @@ class Debate < ActiveRecord::Base
   end
 
   def Debate::get_by_type type, debates
-    debates.select {|d| d.publication_status == type}.group_by {|d| d.date}
+    debates.select {|d| d.publication_status == type}.group_by {|d| d.date}.to_hash
   end
 
   def Debate::remove_duplicates debates, exclude_bill_parents=true
@@ -120,18 +120,18 @@ class Debate < ActiveRecord::Base
   end
 
   def Debate::remove_duplicates_using uncorrected, advance, final, exclude_bill_parents=true
-#    logger.info uncorrected.size.to_s + ' ' + advance.size.to_s + ' ' + final.size.to_s
+    # puts uncorrected.size.to_s + ' ' + advance.size.to_s + ' ' + final.size.to_s
     final.keys.each do |date|
       advance.delete date
       uncorrected.delete date
     end
 
-#    logger.info uncorrected.size.to_s + ' ' + advance.size.to_s + ' ' + final.size.to_s
+    # puts uncorrected.size.to_s + ' ' + advance.size.to_s + ' ' + final.size.to_s
     advance.keys.each do |date|
       uncorrected.delete date
     end
 
-#    logger.info uncorrected.size.to_s + ' ' + advance.size.to_s + ' ' + final.size.to_s
+    # puts uncorrected.size.to_s + ' ' + advance.size.to_s + ' ' + final.size.to_s
     debates = (uncorrected.values << advance.values << final.values).flatten.sort {|a,b| b.date <=> a.date}
 
     if exclude_bill_parents
