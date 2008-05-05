@@ -15,3 +15,6 @@ public/stylesheets/default.css
 public/stylesheets/print.css
 data
 public/images
+mongrel_cluster.yml
+db/current_bills.yml
+google*.html
