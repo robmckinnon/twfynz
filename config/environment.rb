@@ -67,7 +67,6 @@ Rails::Initializer.run do |config|
   # config.gem 'haml'
   config.gem 'hpricot', :source => 'http://code.whytheluckystiff.net'
   config.gem 'has_many_polymorphs'
-  config.gem 'SyslogLogger'
   config.gem 'sparklines'
 end
 
