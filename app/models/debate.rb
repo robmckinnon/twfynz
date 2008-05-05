@@ -369,11 +369,13 @@ class Debate < ActiveRecord::Base
     geonames.flatten.uniq
   end
 
+  CACHE_ROOT = RAILS_ROOT + '/tmp/cache/views/theyworkforyou.co.nz'
+
   protected
 
     def uncache path
       if File.exist?(path)
-        puts 'deleting: ' + path.sub(RAILS_ROOT + '/tmp/cache/theyworkforyou.co.nz', '')
+        puts 'deleting: ' + path.sub(Debate::CACHE_ROOT, '')
         File.delete(path)
       end
     end
@@ -381,10 +383,9 @@ class Debate < ActiveRecord::Base
     def expire_cached_pages
       return unless ActionController::Base.perform_caching
 
-      cache = RAILS_ROOT + '/tmp/cache/theyworkforyou.co.nz'
       self.contributions.each do |contribution|
         if (mp = contribution.mp)
-          uncache "#{cache}/mps/#{mp.id_name}.cache"
+          uncache "#{Debate::CACHE_ROOT}/mps/#{mp.id_name}.cache"
         end
       end
 

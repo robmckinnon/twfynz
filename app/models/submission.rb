@@ -49,7 +49,7 @@ class Submission < ActiveRecord::Base
 
     def uncache path
       if File.exist?(path)
-        puts 'deleting: ' + path.sub(RAILS_ROOT + '/tmp/cache/theyworkforyou.co.nz', '')
+        puts 'deleting: ' + path.sub(Debate::CACHE_ROOT, '')
         File.delete(path)
       end
     end
@@ -57,13 +57,11 @@ class Submission < ActiveRecord::Base
     def expire_cached_pages
       return unless ActionController::Base.perform_caching
 
-      cache = RAILS_ROOT + '/tmp/cache/theyworkforyou.co.nz'
-
       if submitter
-        uncache "#{cache}/organisations/#{submitter.slug}.cache"
+        uncache "#{Debate::CACHE_ROOT}/organisations/#{submitter.slug}.cache"
       end
 
-      uncache "#{cache}/organisations.cache"
+      uncache "#{Debate::CACHE_ROOT}/organisations.cache"
     end
 
     def create_submitter_if_is_from_organisation

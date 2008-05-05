@@ -218,24 +218,23 @@ class Bill < ActiveRecord::Base
   def expire_cached_pages
     return unless ActionController::Base.perform_caching
 
-    cache = RAILS_ROOT + '/tmp/cache/theyworkforyou.co.nz'
-    uncache "#{cache}/bills/#{url}.cache"
+    uncache "#{Debate::CACHE_ROOT}/bills/#{url}.cache"
 
     if referred_to_committee
-      uncache "#{cache}/committees/#{referred_to_committee.url}.cache"
+      uncache "#{Debate::CACHE_ROOT}/committees/#{referred_to_committee.url}.cache"
     end
 
     if member_in_charge
-      uncache "#{cache}/mps/#{member_in_charge.id_name}.cache"
+      uncache "#{Debate::CACHE_ROOT}/mps/#{member_in_charge.id_name}.cache"
     end
-    uncache "#{cache}/bills.cache"
+    uncache "#{Debate::CACHE_ROOT}/bills.cache"
   end
 
   protected
 
     def uncache path
       if File.exist?(path)
-        puts 'deleting: ' + path.sub(RAILS_ROOT + '/tmp/cache/theyworkforyou.co.nz', '')
+        puts 'deleting: ' + path.sub(Debate::CACHE_ROOT, '')
         File.delete(path)
       end
     end
