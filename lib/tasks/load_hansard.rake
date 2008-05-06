@@ -64,17 +64,13 @@ namespace :kiwimp do
 end
 
 def persist publication_status, sleep_seconds
-  dates = PersistedFile.unpersisted_dates publication_status
+  dates = PersistedFile.unpersisted_dates(publication_status).select {|d| date_after_sept_2005? d}
 
-  dates.each do |date|
-    if date.year == 2005
-      if date.month > 9
-        persist_date date, publication_status, sleep_seconds
-      end
-    elsif date.year > 2005
-      persist_date date, publication_status, sleep_seconds
-    end
-  end
+  dates.each { |date| persist_date date, publication_status, sleep_seconds }
+end
+
+def date_after_sept_2005? date
+  date.year > 2005 || (date.year == 2005 && date.month > 9)
 end
 
 def persist_date date, publication_status, sleep_seconds=nil
