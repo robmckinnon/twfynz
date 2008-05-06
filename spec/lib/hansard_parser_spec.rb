@@ -418,6 +418,64 @@ describe HansardParser, "when passed General Debate 2007-07-18" do
 end
 
 
+describe HansardParser, "when passed General Debate with a ContinueSpeech without speaker name following a Speech" do
+  before(:all) do
+    @name = 'General Debate'
+    @publication_status = 'A'
+    @date = Date.new(2007,7,18)
+    @debate_index = 1
+    HansardParser.stub!(:load_doc).and_return Hpricot(html)
+
+    @debate = parse_hansard 'nil', @debate_index
+  end
+
+  after(:all) do
+    Debate.find(:all).each {|d| d.destroy}
+    PARSED.clear
+  end
+
+  it_should_behave_like "All alone debates"
+
+  it 'should not raise error when validated' do
+    @debate.contributions.first.should_receive(:populate_spoken_by_id_from_mp).with('LYNNE PILLAY (Labour—Waitakere)')
+    lambda { @debate.valid? }.should_not raise_error
+  end
+
+  it 'should have one contribution for Speech and ContinueSpeech' do
+    @debate.contributions.size.should == 1
+  end
+
+  it 'should have one contribution text for Speech and ContinueSpeech, containing two paragraphs' do
+    @debate.contributions.first.text.should == '<p>I</p><p>It</p>'
+  end
+
+  def html
+    %Q|<html>
+<head>
+<title>New Zealand Parliament - General Debate</title>
+<meta name="DC.Date" content="2007-07-18T12:00:00.000Z" />
+</head>
+<body>
+<div class="copy">
+  <div class="section">
+    <a name="DocumentTitle"></a><h1>General Debate</h1><a name="DocumentReference"></a><p>[Advance Copy - Subject to minor change before inclusion in Bound Volume.]</p>
+    <div class="DebateAlone">
+      <h2>General Debate</h2>
+      <div class="Speech">
+        <p class="Speech">
+          <strong>LYNNE PILLAY (Labour—Waitakere)</strong>
+          <strong>:</strong> I </p>
+        <p class="ContinueSpeech">It </p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>|
+  end
+end
+
+
 describe HansardParser, "when passed Points of Order — Reserve Bank (Amending Primary Function of Bank) Amendment Bill—Leave to Introduce 2007-07-19" do
   before(:all) do
     @name = 'Points of Order'

@@ -228,9 +228,7 @@ class Contribution < ActiveRecord::Base
       node.children.each do |child|
         if child.text?
           text = child.to_s
-          if text.size > 0
-            geoname_matches += Geoname.matches(text)
-          end
+          geoname_matches += Geoname.matches(text) unless text.empty?
         elsif child.elem?
           geoname_matches = handle_contribution_part(child, geoname_matches)
         end
@@ -258,30 +256,30 @@ class Contribution < ActiveRecord::Base
     end
 
     def populate_spoken_by_id
+      ignore_lack_of_speaker = (spoken_in && spoken_in.name == 'Commission Opening of Parliament')
+      return if ignore_lack_of_speaker
 
-      if (spoken_in and spoken_in.name == 'Commission Opening of Parliament')
-        # this debate is an exception, ignore lack of speaker
+      raise "Validation failed: :speaker can't be blank for #{type}: #{text}" if speaker.blank?
 
-      elsif !speaker.blank?
-        if spoken_by_id.blank?
-          downcase = speaker.downcase.chomp(':')
-          if (downcase == 'hon members' or downcase == 'hon member' or downcase == 'the chairperson')
+      if spoken_by_id.blank?
+        case speaker.downcase.chomp(':')
+          when 'hon members', 'hon member', 'the chairperson'
             # ignore populating spoken_by_id
           else
-            mp = Mp::from_name(speaker.chomp(':'))
-            if mp
-              if party_makes_sense? mp
-                self.spoken_by_id = mp.id
-              else
-                raise "Validation failed: #{mp.last}, #{mp.party.short} shouldn't be making #{self.class.name} in #{debate.name}"
-              end
-            else
-              raise 'Validation failed: cannot find member from speaker name: ' + speaker
-            end
-          end
+            populate_spoken_by_id_from_mp speaker.chomp(':')
+        end
+      end
+    end
+
+    def populate_spoken_by_id_from_mp speaker
+      if mp = Mp::from_name(speaker)
+        if party_makes_sense? mp
+          self.spoken_by_id = mp.id
+        else
+          raise "Validation failed: #{mp.last}, #{mp.party.short} shouldn't be making #{self.class.name} in #{debate.name}"
         end
       else
-        raise "Validation failed: :speaker can't be blank for #{type}: " + text
+        raise 'Validation failed: cannot find member from speaker name: ' + speaker
       end
     end
 end

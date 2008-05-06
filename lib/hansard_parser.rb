@@ -571,12 +571,12 @@ class HansardParser
     def handle_paragraph node, debate
       attributes = contribution_attributes(node)
 
-      if attributes == nil
+      if attributes == nil || (is_continue_speech = attributes[:type] == ContinueSpeech && !attributes.has_key?(:speaker) )
         type = node.attributes['class']
-        if (type == 'a' or MAKE_CSS_TYPES.include?(type))
+        if type == 'a' || MAKE_CSS_TYPES.include?(type) || is_continue_speech
           text = node.inner_html.to_clean_s
-          if (debate.contributions.size == 0 and
-            (text.include?('took the Chair') or text.include?('Prayers')) )
+
+          if debate.contributions.empty? && (text[/took the Chair/] || text[/Prayers/])
             # ignore this procedural stuff for now
           else
             raise 'no last contribution for text ' + text unless debate.contributions.last
@@ -584,15 +584,15 @@ class HansardParser
             css = MAKE_CSS_TYPES.include?(type) ? %Q[ class="#{type}"] : ''
             debate.contributions.last.text += %Q[<p#{css}>#{text}</p>]
           end
-        elsif (type == 'MsoNormal' or type == 'JHBill' or type == 'Urgency')
+        elsif type == 'MsoNormal' || type == 'JHBill' || type == 'Urgency'
           procedural = Procedural.new :text => node.inner_html.to_clean_s
           debate.contributions << procedural
         else
           raise 'what is this: ' + node.to_s
         end
-      elsif attributes[:type]
+      elsif model_type = attributes[:type]
         attributes[:page] = @page if @page
-        contribution = attributes[:type].new(attributes)
+        contribution = model_type.new(attributes)
         contribution.spoken_in = debate
         debate.contributions << contribution
       end
@@ -729,13 +729,11 @@ class HansardParser
         elsif @on_behalf_of
           a[:on_behalf_of] = text
           @on_behalf_of = false
+        elsif a[:speaker]
+          a[:speaker] += ' '+text
+          a[:speaker].squeeze(' ')
         else
-          if a[:speaker]
-            a[:speaker] += ' '+text
-            a[:speaker].squeeze(' ')
-          else
-            a[:speaker] = text
-          end
+          a[:speaker] = text
         end
       elsif name == 'em'
         a[:text] += ' ' + node.to_s.to_clean_s
@@ -754,7 +752,7 @@ class HansardParser
       @on_behalf_of = false
 
       paragraph.children.each do |node|
-        if node.text? and (text = node.to_clean_s).size > 0
+        if node.text? && (text = node.to_clean_s).size > 0
           populate_from_text text, type, node, a
         elsif node.elem?
           populate_from_element type, node, a, spoken
@@ -784,12 +782,12 @@ class HansardParser
       if type.blank?
         raise 'unexpected absence of class attribute: ' + paragraph.to_s
 
-      elsif (SPOKEN_TYPES.include? type)
+      elsif SPOKEN_TYPES.include?(type)
         populate_contribution_attributes type, paragraph
-      elsif (type == 'a' or MAKE_CSS_TYPES.include?(type) or
-          type == 'MsoNormal'or type == 'JHBill' or type == 'Urgency')
+      elsif (type == 'a' || MAKE_CSS_TYPES.include?(type) ||
+          type == 'MsoNormal' || type == 'JHBill' || type == 'Urgency')
         nil
-      elsif (NON_SPOKEN_TYPES.include? type)
+      elsif NON_SPOKEN_TYPES.include?(type)
         type = type.sub('-','').sub('0','')
         populate_contribution_attributes type, paragraph, false
       else
