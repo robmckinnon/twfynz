@@ -402,15 +402,15 @@ class Debate < ActiveRecord::Base
 
       path = nil
       if hash.has_key? :portfolio_url
-        uncache cache+'/portfolios.cache'
-        path = "#{cache}/portfolios/#{hash[:portfolio_url]}/#{index_path}.cache"
+        uncache "#{CACHE_ROOT}/portfolios.cache"
+        path = "#{CACHE_ROOT}/portfolios/#{hash[:portfolio_url]}/#{index_path}.cache"
       elsif hash.has_key? :bill_url
-        uncache cache+'/bills.cache'
-        path = "#{cache}/bills/#{hash[:bill_url]}/#{index_path}.cache"
+        uncache "#{CACHE_ROOT}/bills.cache"
+        path = "#{CACHE_ROOT}/bills/#{hash[:bill_url]}/#{index_path}.cache"
       elsif hash.has_key? :committee_url
-        path = "#{cache}/committees/#{hash[:committee_url]}/#{index_path}.cache"
+        path = "#{CACHE_ROOT}/committees/#{hash[:committee_url]}/#{index_path}.cache"
       else
-        path = "#{cache}/debates/#{index_path}.cache"
+        path = "#{CACHE_ROOT}/debates/#{index_path}.cache"
       end
 
       uncache path
@@ -420,18 +420,18 @@ class Debate < ActiveRecord::Base
       uncache path.sub("/#{index_path}", '')
 
       unless path.include?('debates')
-        uncache cache + '/debates.cache'
+        uncache CACHE_ROOT + '/debates.cache'
       end
 
       unless debate_topics.blank?
         debate_topics.each do |debate_topic|
           if debate_topic.topic.is_a? Bill
-            path = "#{cache}/bills/#{debate_topic.topic.url}.cache"
+            path = "#{CACHE_ROOT}/bills/#{debate_topic.topic.url}.cache"
             uncache path
           end
         end
       end
-      uncache cache + '/index.cache'
+      uncache CACHE_ROOT + '/index.cache'
     end
 
 end
