@@ -3,9 +3,9 @@ require File.dirname(__FILE__) + '/../spec_helper'
 def dummy_bill_params
   {:bill_name => 'Major Events Management Bill',
         :parliament_url => '2/5/c/25c94892184b4eb3b38f3d4c465e200d.htm',
+        :parliament_id => '2/5/c/25c94892184b4eb3b38f3d4c465e200d.htm',
         :introduction => '2006-12-12',
-        :mp_name => 'Rod Donald',
-        :parliament_id => ''}
+        :mp_name => 'Rod Donald'}
 end
 
 describe Debate, " destroy" do
@@ -28,10 +28,8 @@ describe Debate, " destroy" do
     debate.sub_debate.contributions << placeholder
     debate.save!
 
-    bill = Bill.new dummy_bill_params
-    bill.type = 'Bill'
     Mp.should_receive(:from_name).and_return(mock_model(Mp))
-    bill.save!
+    bill = GovernmentBill.create dummy_bill_params
     topic = DebateTopic.new
     topic.topic = bill
     topic.debate = debate

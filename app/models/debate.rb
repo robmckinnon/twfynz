@@ -5,14 +5,29 @@ class Debate < ActiveRecord::Base
 
   after_save :expire_cached_pages
 
-  # before_create :create_slug
-  # acts_as_slugged
+  before_create :create_url_slug
+  acts_as_slugged
 
-  def create_slug
-    self.slug = make_slug(name) do |candidate_slug|
-      duplicate_found = Debate.find_by_date_and_publication_status
-      duplicate_found
-    end
+  def create_url_slug
+    text = make_url_slug_text
+    text.gsub!(' and ',' ')
+
+    self.url_slug = make_slug(text) do |candidate_slug|
+      non_numbered_slug = !candidate_slug[/_\d+$/]
+
+      duplicate = find_by_candidate_slug candidate_slug
+      if non_numbered_slug
+        if duplicate
+          duplicate.url_slug = "#{duplicate.url_slug}_1"
+          duplicate.save!
+        else
+          duplicate = find_by_candidate_slug "#{candidate_slug}_1"
+        end
+      end
+      duplicate
+    end unless text.blank?
+
+    self.url_slug
   end
 
   def self.recent

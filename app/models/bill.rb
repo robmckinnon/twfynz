@@ -89,11 +89,11 @@ class Bill < ActiveRecord::Base
   end
 
   def self.find_all_negatived
-    find_all_with_debates.select &:negatived?
+    find_all_with_debates.select(&:negatived?)
   end
 
   def self.find_all_assented
-    find_all_with_debates.select &:assented?
+    find_all_with_debates.select(&:assented?)
   end
 
   def self.sort_events_by_date events

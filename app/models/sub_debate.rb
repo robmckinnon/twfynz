@@ -73,4 +73,51 @@ class SubDebate < Debate
     end
   end
 
+  protected
+
+    def find_by_candidate_slug candidate_slug
+      if about && about.is_a?(Bill)
+        SubDebate.find_by_url_slug_and_date_and_publication_status_and_about_type_and_about_id(candidate_slug, date, publication_status, about_type, about_id)
+      elsif parent
+        SubDebate.find_by_url_slug_and_date_and_publication_status(candidate_slug, date, publication_status)
+      else
+        raise 'unhandled'
+      end
+    end
+
+    def make_url_slug_text
+      if about && about.is_a?(Bill)
+        make_bill_url_slug
+      elsif parent
+        make_sub_debate_url_slug
+      else
+        nil
+      end
+    end
+
+    def make_bill_url_slug
+      case name
+        when /^Consideration of Interim Report.*/
+          'consideration_of_interim_report'
+        when /^Referral to .* Committee$/
+          'referral_to_committee'
+        when /^Second Reading\s?Third Reading$/
+          'second_and_third_reading'
+        else
+          String.new name.sub("—",' ')
+      end
+    end
+
+    def make_sub_debate_url_slug
+      case parent.name
+        when "Visitors"
+          "#{parent.name} #{name.split('—').first}"
+        when /Amended Answers to Oral Questions/i
+          'amended_answers'
+        when 'Appointments'
+          "Appointment #{name}"
+        else
+          parent.name.split('—').first
+      end
+    end
 end

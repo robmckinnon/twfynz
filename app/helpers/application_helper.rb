@@ -144,7 +144,7 @@ module ApplicationHelper
     link = ''
     if about
       full_name = about.full_name
-      full_name = (full_name[0,70]+'...').gsub(/ [A-Za-z0-9]*\.\.\./, ' ...') if full_name.length > 70
+      full_name = (full_name[0,70]+'...').gsub(/\s[A-Za-z0-9]*\.\.\./, ' ...') if full_name.length > 70
       show_url = symbolize2 'show_', about_type, '_url'
 
       xhash = {}
@@ -178,12 +178,66 @@ module ApplicationHelper
     end
   end
 
+  def url_for_portfolio portfolio
+    show_portfolio_url(:portfolio_url => portfolio.url)
+  end
+
+
+  def url_for_debate debate
+    get_url(debate)
+  end
+
+  def url_for_mp mp
+    mp_url(:name => mp.id_name)
+  end
+
+  def url_for_party party
+    if party.short == 'Independent'
+      nil
+    else
+      party_url(:name => party.id_name)
+    end
+  end
+
+  def url_for_committee committee
+    show_committee_url(:committee_url => committee.url)
+  end
+
+  def url_for_organisation organisation
+    show_organisation_url(:name => organisation.slug)
+  end
+
+  def url_for_bill bill
+    show_bill_url(:bill_url => bill.url)
+  end
+
+
+  def link_to_portfolio portfolio
+    link_to portfolio.portfolio_name, url_for_portfolio(portfolio)
+  end
+
+  def link_to_mp mp
+    link_to mp.full_name, url_for_mp(mp)
+  end
+
+  def link_to_party party
+    if party.short == 'Independent'
+      'Independent'
+    else
+      link_to party.short, url_for_party(party)
+    end
+  end
+
   def link_to_committee committee
-    link_to committee.full_committee_name, show_committee_url(:committee_url => committee.url)
+    link_to committee.full_committee_name, url_for_committee(committee)
   end
 
   def link_to_organisation organisation
-    link_to organisation.name, show_organisation_url(:name => organisation.slug)
+    link_to organisation.name, url_for_organisation(organisation)
+  end
+
+  def link_to_bill bill
+    link_to bill.bill_name, url_for_bill(bill)
   end
 
   def link_to_business_item business_item
@@ -205,10 +259,6 @@ module ApplicationHelper
       file_name = file_name.split('.')[0].tr('a-z','-') + '.' + file_name.split('.')[1]
     end
     link_to(file_name, submission.evidence_url, :rel=>"nofollow")
-  end
-
-  def link_to_bill bill
-    link_to bill.bill_name, show_bill_url(:bill_url => bill.url)
   end
 
   def link_to_user user
@@ -236,22 +286,6 @@ module ApplicationHelper
       trackings.collect {|t| link_to_user t.user}.join(', ')
     else
       ''
-    end
-  end
-
-  def link_to_portfolio portfolio
-    link_to portfolio.portfolio_name, show_portfolio_url(:portfolio_url => portfolio.url)
-  end
-
-  def link_to_mp mp
-    link_to mp.full_name, mp_url(:name => mp.id_name)
-  end
-
-  def link_to_party party
-    if party.short == 'Independent'
-      'Independent'
-    else
-      link_to party.short, party_url(:name => party.id_name)
     end
   end
 

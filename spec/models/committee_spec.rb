@@ -3,9 +3,9 @@ require File.dirname(__FILE__) + '/../spec_helper'
 def committee_bill_params
   {:bill_name => 'Major Events Management Bill',
         :parliament_url => '2/5/c/25c94892184b4eb3b38f3d4c465e200d.htm',
+        :parliament_id => '2/5/c/25c94892184b4eb3b38f3d4c465e200d.htm',
         :introduction => '2006-12-12',
-        :mp_name => 'Rod Donald',
-        :parliament_id => ''}
+        :mp_name => 'Rod Donald'}
 end
 
 describe Committee, "from_name" do
@@ -39,12 +39,9 @@ end
 describe Committee, 'in general' do
 
   it 'should have bills' do
-    committee = Committee.new :clerk_category_id=>"18", :committee_name => 'Finance', :url => 'url', :committee_type => 'type'
-    committee.save!
-    bill = Bill.new committee_bill_params.merge(:referred_to_committee_id => committee.id)
-    Mp.should_receive(:from_name).and_return(mock_model(Mp))
-    bill.type = 'Bill'
-    bill.save!
+    committee = Committee.create :clerk_category_id=>"18", :committee_name => 'Business', :url => 'business', :committee_type => 'SpecialistCommittee'
+    Mp.stub!(:from_name).and_return(mock_model(Mp))
+    bill = GovernmentBill.create committee_bill_params.merge(:referred_to_committee_id => committee.id)
     committee.bills.size.should == 1
     committee.bills.first.id.should == bill.id
 

@@ -71,4 +71,12 @@ class OralAnswers < Debate
     end
   end
 
+  def find_by_candidate_slug candidate_slug
+    OralAnswers.find_by_url_slug_and_date_and_publication_status(candidate_slug, date, publication_status)
+  end
+
+  def make_url_slug_text
+    String.new name
+  end
+
 end

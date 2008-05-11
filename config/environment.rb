@@ -68,6 +68,7 @@ Rails::Initializer.run do |config|
   config.gem 'hpricot', :source => 'http://code.whytheluckystiff.net'
   config.gem 'has_many_polymorphs'
   config.gem 'sparklines'
+  config.gem 'htmlentities'
 end
 
 #require 'htmlentities'

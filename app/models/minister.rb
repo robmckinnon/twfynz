@@ -1,13 +1,3 @@
-# == Schema Information
-# Schema version: 21
-#
-# Table name: ministers
-#
-#  id                 :integer(11)   not null, primary key
-#  responsible_for_id :integer(11)   not null
-#  title              :string(82)    default(""), not null
-#
-
 class Minister < ActiveRecord::Base
 
   belongs_to :portfolio, :foreign_key => 'responsible_for_id'
