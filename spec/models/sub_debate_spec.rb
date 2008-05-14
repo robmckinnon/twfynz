@@ -436,3 +436,72 @@ other cases
 - "Wine-box Inquiry—Legal Fees | Government Motion No. 1—28 March 2006"
 
 =end
+
+=begin
+Debate::remove_duplicates(SubDebate.find(:all)).sort{|d,e| d.parent.name.downcase<=>e.parent.name.downcase}.delete_if{|s| s.about.is_a?Bill}.in_groups_by{|s| s.parent.name.downcase}.sort_by(&:size).each {|ds| puts ds[0].parent.name + ' ' + ds.size.to_s} ;nil
+
+Wine-box Inquiry—Legal Fees 1
+Rayed Mohammed Abdullah Ali—Expulsion 1
+United Kingdom—Secretary of State for Education and Skills and Secretary of State for Work and Pensions 1
+Australia - New Zealand Political Exchange—Members 1
+Reserve Bank of New Zealand Amendment Bill, Racing Amendment Bill 1
+Biosecurity Amendment Bill (No 4), Hazardous Substances and New Organisms Amendment Bill (No 2) 1
+Tibet—Protests 1
+Telecommunications Amendment Bill (No 2), Radiocommunications Amendment Bill (No 2) 1
+Conduct in the House—Standards 1
+Corrections (Social Assistance) Amendment Bill, Customs and Excise (Social Assistance) Amendment Bill, Injury Prevention, Rehabilitation, and Compensation (Social Assistance) Amendment Bill 1
+Taxation (Savings Investment and Miscellaneous Provisions) Bill, Taxation (Annual Rates of Income Tax 2006-07) Bill 1
+Disabled Persons Employment Promotion Repeal Bill, Minimum Wage Amendment Bill 1
+Driving-related Deaths—Potential Government Reaction 1
+Election Petition 1
+Responses 1
+Taito Phillip Field—Referral of Ingram Report to Privileges Committee 1
+PlunketLine—Support 1
+Government Business—Procedure 1
+Housing—Replies to Questions 1
+Parliamentary Press Gallery—Access to Parliamentary Complex 1
+Personal Reflections and Unparliamentary Language—Principles for Intervention 1
+Select Committees—Official Business 1
+Intelligence and Security Committee 1
+Limited Partnerships Bill, Taxation (Limited Partnerships) Bill 1
+Medal Ceremony—Notification 1
+Standards Amendment Bill, Testing Laboratory Registration Amendment Bill 1
+Motion of No Confidence—Leave to Move 1
+Speaker’s statement 1
+Report—Rt Hon Winston Peters and Accusations Against Iraqis 1
+India—Parliamentary Delegation, Haryana State Legislative Assembly 1
+Ombudsman’s Report—Investigation into Criminal Justice Sector 2
+Signage in the Chamber—New Zealand Labour Party 2
+New Zealand Superannuation and Retirement Income Amendment Bill, War Pensions Amendment Bill 2
+Insolvency Bill, Companies Amendment Bill, Insolvency (Cross-border) Bill 2
+Inquiry 2
+Supplementary Estimates 2
+Taxation (Annual Rates of income Tax 2005-06) Bill, Taxation (Urgent Measures) Bill, Student Loan Scheme Amendment Bill 2
+Aviation Crimes Amendment Bill, Civil Aviation Amendment Bill (No 2) 2
+Weathertight Homes Resolution Services (Remedies) Amendment Bill, Building (Consent Authorities) Amendment Bill 2
+Parliamentary Service Commission 3
+Adjournment 4
+Budget Statement 4
+Debate on Crown Entities, Public Organisations, and State Enterprises 4
+Taxation (Annual Rates of Income Tax 2007-08) Bill, Taxation (Business Taxation and Remedial Matters) Bill, Taxation (KiwiSaver) Bill 4
+Financial Review Debate 4
+Electoral Finance Bill, Broadcasting Amendment Bill (No 3), Electoral Amendment Bill 4
+Estimates Debate 5
+Ministerial Statements 5
+Business of Select Committees 6
+Resignations 7
+Speaker’s Statements 8
+Voting 11
+Privilege 11
+Urgent Debates 16
+Appointments 16
+Personal Explanations 17
+Motions 23
+Amended answers to Oral Questions 23
+Speaker’s Rulings 24
+Obituaries 25
+Tabling of Documents 25
+Urgent Debates Declined 28
+Visitors 39
+Points of Order 98
+=end

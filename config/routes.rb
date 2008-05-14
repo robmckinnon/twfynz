@@ -1,5 +1,9 @@
-def make_route path, action, map
-  map.method_missing action, path, :action => action.to_s
+def make_category_route path, action, map
+  make_route path, action, map, :category=>path.split('/').first
+end
+
+def make_route path, action, map, options={}
+  map.method_missing action, path, options.merge(:action => action.to_s)
 end
 
 def index_route path, map
@@ -42,6 +46,9 @@ ActionController::Routing::Routes.draw do |map|
   index_options = { :requirements => date_format.merge(:index => /[odw]?\d\d/) }
   index_path = "#{date_path}/:index"
 
+  slug_options = { :requirements => date_format.merge(:slug => /[a-z].+/) }
+  slug_path = "#{date_path}/:slug"
+
   with_controller :application, map do |application|
     make_route '', :home, application
     make_route 'about', :about, application
@@ -56,7 +63,7 @@ ActionController::Routing::Routes.draw do |map|
   with_controller :portfolios, map do |portfolio|
     index_route 'portfolios', portfolio
     make_route 'portfolios/:portfolio_url', :show_portfolio, portfolio
-    make_route "portfolios/:portfolio_url/activity_sparkline.png", :activity_sparkline, portfolio
+    make_route 'portfolios/:portfolio_url/activity_sparkline.png', :activity_sparkline, portfolio
   end
 
   with_controller :user, map do |user|
@@ -75,11 +82,18 @@ ActionController::Routing::Routes.draw do |map|
     index_route 'debates', debate
     make_route 'debates/contribution_match', :contribution_match, debate
 
+    categories = %w[visitors motions urgent_debates_declined points_of_order
+        tabling_of_documents obituaries speakers_rulings]
+
     debate.with_options(date_options) do |by_date|
       make_route "debates/#{date_path}", :show_debates_on_date, by_date
       make_route "bills/:bill_url/#{date_path}", :show_bill_debates_on_date, by_date
       make_route "portfolios/:portfolio_url/#{date_path}", :show_portfolio_debates_on_date, by_date
       make_route "committees/:committee_url/#{date_path}", :show_committee_debates_on_date, by_date
+
+      categories.each do |category|
+        make_category_route "#{category}/#{date_path}", :show_debates_on_date, by_date
+      end
     end
 
     debate.with_options(index_options) do |by_index|
@@ -87,6 +101,12 @@ ActionController::Routing::Routes.draw do |map|
       make_route "bills/:bill_url/#{index_path}",           :show_bill_debate, by_index
       make_route "portfolios/:portfolio_url/#{index_path}", :show_portfolio_debate, by_index
       make_route "committees/:committee_url/#{index_path}", :show_committee_debate, by_index
+    end
+
+    debate.with_options(slug_options) do |by_slug|
+      categories.each do |category|
+        make_category_route "#{category}/#{slug_path}", :show_debate, by_slug
+      end
     end
 
     make_route 'debates/search', :debate_search, debate
