@@ -83,7 +83,9 @@ ActionController::Routing::Routes.draw do |map|
     make_route 'debates/contribution_match', :contribution_match, debate
 
     categories = %w[visitors motions urgent_debates_declined points_of_order
-        tabling_of_documents obituaries speakers_rulings]
+        tabling_of_documents obituaries speakers_rulings personal_explanations
+        appointments urgent_debates privilege speakers_statements resignations
+        ministerial_statements adjournment parliamentary_service_commission]
 
     debate.with_options(date_options) do |by_date|
       make_route "debates/#{date_path}", :show_debates_on_date, by_date

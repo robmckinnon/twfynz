@@ -474,30 +474,46 @@ Ombudsman’s Report—Investigation into Criminal Justice Sector 2
 Signage in the Chamber—New Zealand Labour Party 2
 New Zealand Superannuation and Retirement Income Amendment Bill, War Pensions Amendment Bill 2
 Insolvency Bill, Companies Amendment Bill, Insolvency (Cross-border) Bill 2
+
 Inquiry 2
-Supplementary Estimates 2
+
+Supplementary Estimates 2 # link to Appropriation (2006/07 Supplementary Estimates) Bill and the Imprest Supply (First for 2007/08) Bill?
+
 Taxation (Annual Rates of income Tax 2005-06) Bill, Taxation (Urgent Measures) Bill, Student Loan Scheme Amendment Bill 2
 Aviation Crimes Amendment Bill, Civil Aviation Amendment Bill (No 2) 2
 Weathertight Homes Resolution Services (Remedies) Amendment Bill, Building (Consent Authorities) Amendment Bill 2
+
 Parliamentary Service Commission 3
 Adjournment 4
-Budget Statement 4
+
+Budget Statement 4 # should be linked to appropriate Appropriations Estimates Bill
+
 Debate on Crown Entities, Public Organisations, and State Enterprises 4
 Taxation (Annual Rates of Income Tax 2007-08) Bill, Taxation (Business Taxation and Remedial Matters) Bill, Taxation (KiwiSaver) Bill 4
-Financial Review Debate 4
+
+Financial Review Debate 4 # should be linked to Appropriation Financial Review Bill OR split in to ministerial portfolio subdebates?
+
 Electoral Finance Bill, Broadcasting Amendment Bill (No 3), Electoral Amendment Bill 4
-Estimates Debate 5
+
+Estimates Debate 5 # should be linked to appropriate Appropriation Estimates Bill
+
 Ministerial Statements 5
-Business of Select Committees 6
+
+Business of Select Committees 6 # should be linked to committee
+
 Resignations 7
 Speaker’s Statements 8
-Voting 11
+
+Voting 11 # should be linked to bill
+
 Privilege 11
 Urgent Debates 16
 Appointments 16
 Personal Explanations 17
 Motions 23
-Amended answers to Oral Questions 23
+
+Amended answers to Oral Questions 23  # should be linked to question about http://theyworkforyou.co.nz/debates/2008/mar/18/21
+
 Speaker’s Rulings 24
 Obituaries 25
 Tabling of Documents 25

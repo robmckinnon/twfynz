@@ -1,7 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 describe DebatesController, 'when getting show_debate' do
-
   def check_category_params url
     check_params url, :category => url.split('/')[1], :slug => url.split('/').last
   end
@@ -22,6 +21,15 @@ describe DebatesController, 'when getting show_debate' do
     check_category_params '/obituaries/2008/apr/17/fraser_macdonald_colman'   # http://theyworkforyou.co.nz/debates/2008/apr/15/03
     check_category_params '/speakers_rulings/2008/apr/17/personal_explanations'   # http://theyworkforyou.co.nz/debates/2008/apr/01/02
     check_category_params '/motions/2008/apr/17/tongariro_tragedy'  # http://theyworkforyou.co.nz/debates/2008/apr/16/01
+    check_category_params '/personal_explanations/2008/apr/17/electoral_finance_act' # http://theyworkforyou.co.nz/debates/2008/apr/02/21
+    check_category_params '/appointments/2008/apr/17/chief_ombudsman' # http://theyworkforyou.co.nz/debates/2008/apr/17/17
+    check_category_params '/urgent_debates/2008/apr/17/hawkes_bay_district_health' # http://theyworkforyou.co.nz/debates/2008/mar/18/25
+    check_category_params '/privilege/2008/apr/17/contempt_of_house' # http://theyworkforyou.co.nz/debates/2007/mar/13/02
+    check_category_params '/speakers_statements/2008/apr/17/microphones_in_chamber' # http://theyworkforyou.co.nz/debates/2007/sep/19/26
+    check_category_params '/resignations/2008/apr/17/dianne_yates' # http://theyworkforyou.co.nz/debates/2008/apr/01/04
+    check_category_params '/ministerial_statements/2008/apr/17/fiji' # http://theyworkforyou.co.nz/debates/2007/jun/14/03
+    check_category_params '/adjournment/2008/apr/17/sittings_of_the_house' # http://theyworkforyou.co.nz/debates/2007/dec/18/29
+    check_category_params '/parliamentary_service_commission/2008/apr/17/membership' # http://theyworkforyou.co.nz/debates/2008/feb/19/23
   end
 end
 
@@ -46,5 +54,14 @@ describe DebatesController, 'when getting show_debates_on_date' do
     check_category_params '/obituaries/2008/apr/17'
     check_category_params '/speakers_rulings/2008/apr/17'
     check_category_params '/motions/2008/apr/17'
+    check_category_params '/personal_explanations/2008/apr/17'
+    check_category_params '/appointments/2008/apr/17'
+    check_category_params '/urgent_debates/2008/apr/17'
+    check_category_params '/privilege/2008/apr/17'
+    check_category_params '/speakers_statements/2008/apr/17'
+    check_category_params '/resignations/2008/apr/17'
+    check_category_params '/ministerial_statements/2008/apr/17'
+    check_category_params '/adjournment/2008/apr/17'
+    check_category_params '/parliamentary_service_commission/2008/apr/17'
   end
 end
