@@ -1,5 +1,6 @@
 def make_category_route path, action, map
-  make_route path, action, map, :category=>path.split('/').first
+  category = path.split('/').first
+  map.method_missing "#{action}_#{category}", path, :action => action.to_s, :category=>category
 end
 
 def make_route path, action, map, options={}
@@ -88,14 +89,14 @@ ActionController::Routing::Routes.draw do |map|
         ministerial_statements adjournment parliamentary_service_commission]
 
     debate.with_options(date_options) do |by_date|
+      categories.each do |category|
+        make_category_route "#{category}/#{date_path}", :show_debates_on_date, by_date
+      end
+
       make_route "debates/#{date_path}", :show_debates_on_date, by_date
       make_route "bills/:bill_url/#{date_path}", :show_bill_debates_on_date, by_date
       make_route "portfolios/:portfolio_url/#{date_path}", :show_portfolio_debates_on_date, by_date
       make_route "committees/:committee_url/#{date_path}", :show_committee_debates_on_date, by_date
-
-      categories.each do |category|
-        make_category_route "#{category}/#{date_path}", :show_debates_on_date, by_date
-      end
     end
 
     debate.with_options(index_options) do |by_index|

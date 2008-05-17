@@ -8,6 +8,190 @@ class Debate < ActiveRecord::Base
   before_create :create_url_slug
   acts_as_slugged
 
+  class << self
+    def recent
+      debates = find(:all, :order => "debates.`date` DESC", :limit => 20)
+      debates = find_by_sql("select * from debates where type != 'BillDebate' and type != 'OralAnswer' and type != 'SubDebate' and type != 'OralAnswers' order by date DESC limit 20")
+      debates = remove_duplicates debates
+      debates.sort! {|a,b| (a.name <=> b.name) == 0 ? (a.date <=> b.date) : (a.name <=> b.name) }
+      debates.in_groups_by {|d| d.name}
+    end
+
+    def find_referred_oral_answer debate
+      find_by_date_and_oral_answer_no(debate.date, debate.re_oral_answer_no)
+    end
+
+    def find_by_about_on_date about_type, about_url, date
+      about = about_type.find_by_url about_url
+      type = about_type.name
+      id = about.id
+      @debates = Debate.find_by_about(type, id, date.year, date.month, date.day, nil)
+    end
+
+    def find_by_about_on_date_with_index about_type, about_url, date, index
+      abouts = about_type.find_all_by_url(about_url)
+      debate = find_by_about_with_index(about_type, abouts.first.id, date, index)
+      debate = find_by_about_with_index(about_type, abouts.last.id,  date, index) unless debate
+      debate
+    end
+
+    def find_by_about_with_index about_type, about_id, date, index
+      debates = find_by_about(about_type.to_s, about_id, date.year, date.month, date.day, index)
+      remove_duplicates(debates).first
+    end
+
+    def find_by_about about_type, about_id, year, month, day, index
+      month = Debate.mmm_to_mm month if month
+      date = year+'-'+month+'-'+day if day
+
+      if index
+        index_prefix = index[0..0]
+        type = 'OralAnswer' if index_prefix == 'o'
+        type = 'SubDebate' if index_prefix == 'd'
+        debates = find_all_by_date_and_about_id_and_about_type_and_about_index_and_type(date, about_id, about_type, index[1..2], type)
+      elsif day
+        debates = find_all_by_date_and_about_id_and_about_type(date, about_id, about_type)
+      elsif month
+        debates = find(:all,
+           :conditions => ['year(date) = ? and month(date) = ? and about_id = ? and about_type = ?',
+           year, month, about_id, about_type])
+      elsif year
+        debates = find(:all,
+            :conditions => ['year(date) = ? and about_id = ? and about_type = ?',
+            year, about_id, about_type])
+      else
+        debates = find_all_by_about_id_and_about_type(about_id, about_type)
+      end
+
+      debates
+    end
+
+    def find_by_date_and_index(date, index)
+      find_by_index(date.year, date.month, date.day, index)
+    end
+
+    def find_by_index(year, month, day, index)
+      month = mmm_to_mm month if month
+      if index
+        date = year+'-'+month+'-'+day
+        debates = find_all_by_date_and_debate_index(date, index.to_i)
+
+        debate = remove_duplicates(debates, false)[0]
+
+        raise ActiveRecord::RecordNotFound.new('ActiveRecord::RecordNotFound: date ' + date + ' index ' + index.to_i.to_s + '   ' + debates.to_s) unless debate
+        debate
+      elsif day
+        find_all_by_date(year+'-'+month+'-'+day, :order => "id")
+      elsif month
+          find(:all,
+            :conditions => ['year(date) = ? and month(date) = ?', year, month],
+            :order => "id")
+      else
+          find(:all,
+            :conditions => ['year(date) = ?', year],
+            :order => "id")
+      end
+    end
+
+    ##
+    # Finds debates by date, ordered by ascending date
+    #
+    def find_by_date(year, month, day)
+      Debate.find_by_index(year, month, day, nil)
+    end
+
+    def match name
+      find(:all,
+        :conditions => "name like '%#{name}%'",
+        :order => "date DESC")
+    end
+
+    def get_by_type type, debates
+      debates.select {|d| d.publication_status == type}.group_by {|d| d.date}.to_hash
+    end
+
+    def remove_duplicates debates, exclude_bill_parents=true
+      uncorrected = get_by_type 'U', debates
+      advance = get_by_type 'A', debates
+      final = get_by_type 'F', debates
+      remove_duplicates_using uncorrected, advance, final, exclude_bill_parents
+    end
+
+    def remove_duplicates_using uncorrected, advance, final, exclude_bill_parents=true
+      # puts uncorrected.size.to_s + ' ' + advance.size.to_s + ' ' + final.size.to_s
+      final = final.to_hash if final.is_a?(ActiveSupport::OrderedHash)
+      advance = advance.to_hash if advance.is_a?(ActiveSupport::OrderedHash)
+      uncorrected = uncorrected.to_hash if uncorrected.is_a?(ActiveSupport::OrderedHash)
+
+      final.each_key do |date|
+        advance.delete date
+        uncorrected.delete date
+      end
+
+      # puts uncorrected.size.to_s + ' ' + advance.size.to_s + ' ' + final.size.to_s
+      advance.each_key do |date|
+        uncorrected.delete date
+      end
+
+      # puts uncorrected.size.to_s + ' ' + advance.size.to_s + ' ' + final.size.to_s
+      debates = (uncorrected.values << advance.values << final.values).flatten.sort {|a,b| b.date <=> a.date}
+
+      if exclude_bill_parents
+        bill_debates = debates.select {|d| d.is_a? BillDebate and d.sub_debates.size > 0}
+        debates = debates.delete_if {|d| bill_debates.include? d }
+      end
+      debates
+    end
+
+    def to_num_str num
+      str = num.to_s
+      str = '0'+str if num < 10
+      str
+    end
+
+    MONTHS_LC = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec']
+
+    def mm_to_mmm mm
+      MONTHS_LC[mm.to_i - 1]
+    end
+
+    def mmm_to_mm mmm
+      mm = (MONTHS_LC.index(mmm) + 1).to_s
+    end
+
+    def to_date_hash date
+      { :year => date.year.to_s,
+        :month => Debate.mm_to_mmm(date.month),
+        :day => Debate.to_num_str(date.mday) }
+    end
+
+    def get_debates_by_name debates
+      debates = remove_duplicates debates
+      debates_by_name = debates.group_by {|d| d.name.split('—')[0].sub('Third Readings','Third Reading')}
+      debates_by_name.values.each do |list|
+        list.sort! do |a,b|
+          comparison = b.date <=> a.date
+          if comparison == 0
+            comparison = b.id <=> a.id
+          end
+          comparison
+        end
+      end
+
+      names = debates_by_name.keys.sort do |a,b|
+        debate = debates_by_name[a]
+        other_debate = debates_by_name[b]
+        comparison = other_debate.first.date <=> debate.first.date
+        if comparison == 0
+          comparison = debate.first.id <=> other_debate.first.id
+        end
+        comparison
+      end
+
+      return debates_by_name, names
+    end
+  end
+
   def create_url_slug
     text = make_url_slug_text
     text.gsub!(' and ',' ')
@@ -28,136 +212,6 @@ class Debate < ActiveRecord::Base
     end unless text.blank?
 
     self.url_slug
-  end
-
-  def self.recent
-    debates = find(:all,
-        :order => "debates.`date` DESC",
-        :limit => 20)
-    debates = find_by_sql("select * from debates where type != 'BillDebate' and type != 'OralAnswer' and type != 'SubDebate' and type != 'OralAnswers' order by date DESC limit 20")
-    debates = Debate::remove_duplicates debates
-    debates.sort! {|a,b| (a.name <=> b.name) == 0 ? (a.date <=> b.date) : (a.name <=> b.name) }
-    debates.in_groups_by {|d| d.name}
-  end
-
-  def Debate::find_referred_oral_answer debate
-    find_by_date_and_oral_answer_no(debate.date, debate.re_oral_answer_no)
-  end
-
-  # def Debate::find_by_about_name about_type, url
-    # # Debate.with_scope(:find => {:conditions => "about_type = '"+type+"'"}) do
-      # # Debate.find :all,
-          # # :conditions => ["o.url = ?", name],
-          # # :joins => "AS d INNER JOIN "+type.downcase+"s AS o ON d.about_id = o.id"
-    # # end
-    # about = about_type.find_by_url url
-    # Debate.find_by_about about_type.name, about.id, nil, nil, nil, nil
-  # end
-
-  def Debate::find_by_about_on_date about_type, url, date
-    about = about_type.find_by_url url
-    type = about_type.name
-    id = about.id
-    @debates = Debate.find_by_about(type, id, date.year, date.month, date.day, nil)
-  end
-
-  def Debate::find_by_about about_type, about_id, year, month, day, index
-    month = Debate.mmm_to_mm month if month
-    date = year+'-'+month+'-'+day if day
-
-    if index
-      index_prefix = index[0..0]
-      type = 'OralAnswer' if index_prefix == 'o'
-      type = 'SubDebate' if index_prefix == 'd'
-      debates = find_all_by_date_and_about_id_and_about_type_and_about_index_and_type(date, about_id, about_type, index[1..2], type)
-    elsif day
-      debates = find_all_by_date_and_about_id_and_about_type(date, about_id, about_type)
-    elsif month
-      debates = find(:all,
-         :conditions => ['year(date) = ? and month(date) = ? and about_id = ? and about_type = ?',
-         year, month, about_id, about_type])
-    elsif year
-      debates = find(:all,
-          :conditions => ['year(date) = ? and about_id = ? and about_type = ?',
-          year, about_id, about_type])
-    else
-      debates = find_all_by_about_id_and_about_type(about_id, about_type)
-    end
-
-    debates
-  end
-
-  def Debate::find_by_index(year, month, day, index)
-    month = Debate.mmm_to_mm month if month
-    if index
-      date = year+'-'+month+'-'+day
-      debates = find_all_by_date_and_debate_index(date, index.to_i)
-
-      debate = Debate::remove_duplicates(debates, false)[0]
-
-      raise ActiveRecord::RecordNotFound.new('ActiveRecord::RecordNotFound: date ' + date + ' index ' + index.to_i.to_s + '   ' + debates.to_s) unless debate
-      debate
-    elsif day
-      find_all_by_date(year+'-'+month+'-'+day, :order => "id")
-    elsif month
-        find(:all,
-          :conditions => ['year(date) = ? and month(date) = ?', year, month],
-          :order => "id")
-    else
-        find(:all,
-          :conditions => ['year(date) = ?', year],
-          :order => "id")
-    end
-  end
-
-  ##
-  # Finds debates by date, ordered by ascending date
-  #
-  def Debate::find_by_date(year, month, day)
-    Debate.find_by_index(year, month, day, nil)
-  end
-
-  def Debate::match name
-    find(:all,
-      :conditions => "name like '%#{name}%'",
-      :order => "date DESC")
-  end
-
-  def Debate::get_by_type type, debates
-    debates.select {|d| d.publication_status == type}.group_by {|d| d.date}.to_hash
-  end
-
-  def Debate::remove_duplicates debates, exclude_bill_parents=true
-    uncorrected = Debate::get_by_type 'U', debates
-    advance = Debate::get_by_type 'A', debates
-    final = Debate::get_by_type 'F', debates
-    Debate::remove_duplicates_using uncorrected, advance, final, exclude_bill_parents
-  end
-
-  def Debate::remove_duplicates_using uncorrected, advance, final, exclude_bill_parents=true
-    # puts uncorrected.size.to_s + ' ' + advance.size.to_s + ' ' + final.size.to_s
-    final = final.to_hash if final.is_a?(ActiveSupport::OrderedHash)
-    advance = advance.to_hash if advance.is_a?(ActiveSupport::OrderedHash)
-    uncorrected = uncorrected.to_hash if uncorrected.is_a?(ActiveSupport::OrderedHash)
-
-    final.each_key do |date|
-      advance.delete date
-      uncorrected.delete date
-    end
-
-    # puts uncorrected.size.to_s + ' ' + advance.size.to_s + ' ' + final.size.to_s
-    advance.each_key do |date|
-      uncorrected.delete date
-    end
-
-    # puts uncorrected.size.to_s + ' ' + advance.size.to_s + ' ' + final.size.to_s
-    debates = (uncorrected.values << advance.values << final.values).flatten.sort {|a,b| b.date <=> a.date}
-
-    if exclude_bill_parents
-      bill_debates = debates.select {|d| d.is_a? BillDebate and d.sub_debates.size > 0}
-      debates = debates.delete_if {|d| bill_debates.include? d }
-    end
-    debates
   end
 
   def is_uncorrected?
@@ -299,81 +353,6 @@ class Debate < ActiveRecord::Base
 
   def title separator=':'
     %Q[#{title_name}#{separator} #{date_to_s}#{separator} NZ Parliament]
-  end
-
-  def Debate::to_num_str num
-    str = num.to_s
-    str = '0'+str if num < 10
-    str
-  end
-
-  MONTHS_LC = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec']
-
-  def Debate::mm_to_mmm mm
-    MONTHS_LC[mm.to_i - 1]
-  end
-
-  def Debate::mmm_to_mm mmm
-    mm = (MONTHS_LC.index(mmm) + 1).to_s
-  end
-
-  def Debate::to_date_hash date
-    { :year => date.year.to_s,
-      :month => Debate.mm_to_mmm(date.month),
-      :day => Debate.to_num_str(date.mday) }
-  end
-
-  # def Debate::count_by_about about_type, about_id, publication_status
-    # debate_count = Debate.count_by_sql "select count(*) from debates where about_type = '#{about_type}' and about_id = #{about_id} and publication_status = '#{publication_status}' and (debate_id is not null or type = 'DebateAlone')"
-    # if about_type == 'Bill'
-      # debate_count += DebateTopic.find_all_by_topic_type_and_topic_id(about_type, about_id).select {|t| t.debate.publication_status == publication_status }.size
-    # end
-    # debate_count
-  # end
-
-  # def Debate::debate_count cache, about_type, about_id
-    # key = about_type + about_id.to_s
-    # unless cache.has_key? key
-      # uncorrected = Debate.count_by_about about_type, about_id, 'U'
-      # advance = Debate.count_by_about about_type, about_id, 'A'
-      # final = Debate.count_by_about about_type, about_id, 'F'
-#
-      # if uncorrected > advance and uncorrected > final
-        # cache[key] = uncorrected
-      # elsif advance > final
-        # cache[key] = advance
-      # else
-        # cache[key] = final
-      # end
-    # end
-#
-    # cache[key]
-  # end
-
-  def Debate::get_debates_by_name debates
-    debates = Debate::remove_duplicates debates
-    debates_by_name = debates.group_by {|d| d.name.split('—')[0].sub('Third Readings','Third Reading')}
-    debates_by_name.values.each do |list|
-      list.sort! do |a,b|
-        comparison = b.date <=> a.date
-        if comparison == 0
-          comparison = b.id <=> a.id
-        end
-        comparison
-      end
-    end
-
-    names = debates_by_name.keys.sort do |a,b|
-      debate = debates_by_name[a]
-      other_debate = debates_by_name[b]
-      comparison = other_debate.first.date <=> debate.first.date
-      if comparison == 0
-        comparison = debate.first.id <=> other_debate.first.id
-      end
-      comparison
-    end
-
-    return debates_by_name, names
   end
 
   def votes
