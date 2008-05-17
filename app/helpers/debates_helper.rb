@@ -98,7 +98,7 @@ module DebatesHelper
 
     unless @@mp_id_to_link.has_key? key
       if contribution.mp
-        @@mp_id_to_link[key] = link_to(portrait(contribution.mp) + contribution.speaker_name.name, mp_url(:name => contribution.mp.id_name))
+        @@mp_id_to_link[key] = link_to(portrait(contribution.mp) + contribution.speaker_name.name, show_mp_url(:name => contribution.mp.id_name))
       else
         @@mp_id_to_link[key] = contribution.speaker
       end

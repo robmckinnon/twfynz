@@ -188,14 +188,14 @@ module ApplicationHelper
   end
 
   def url_for_mp mp
-    mp_url(:name => mp.id_name)
+    show_mp_url(:name => mp.id_name)
   end
 
   def url_for_party party
     if party.short == 'Independent'
       nil
     else
-      party_url(:name => party.id_name)
+      show_party_url(:name => party.id_name)
     end
   end
 
