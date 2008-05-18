@@ -31,6 +31,19 @@ describe DebatesController, 'when getting show_debate' do
     check_category_params '/adjournment/2008/apr/17/sittings_of_the_house' # http://theyworkforyou.co.nz/debates/2007/dec/18/29
     check_category_params '/parliamentary_service_commission/2008/apr/17/membership' # http://theyworkforyou.co.nz/debates/2008/feb/19/23
   end
+
+  it 'should find debate by date, category and slug' do
+    category = 'visitors'
+    slug = 'australia'
+    year = '2008'; month = 'apr'; day = '17'
+    date = mock(DebateDate, :year=>year, :month=>month, :day=>day, :is_valid_date? => true)
+    DebateDate.stub!(:new).and_return date
+    debate = mock_model(SubDebate, :debate => mock_model(ParentDebate))
+    Debate.should_receive(:find_by_url_category_and_url_slug).with(date, category, slug).and_return debate
+    get 'show_debate', :controller => 'debates', :action=>'show_debate', :day=>day, :month=>month, :year=>year, :category => category, :slug => slug
+    assigns[:debate].should == debate
+    assigns[:date].should == date
+  end
 end
 
 describe DebatesController, 'when getting show_debates_on_date' do

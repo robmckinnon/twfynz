@@ -8,7 +8,7 @@ def dummy_bill_params
         :mp_name => 'Rod Donald'}
 end
 
-describe Debate, " destroy" do
+describe Debate, "when being destroyed" do
 
   it 'should destroy child sub-debates, contributions, debate topics, votes, and vote casts' do
     date = Date.new(2007,8,29)
@@ -71,3 +71,20 @@ describe Debate, " destroy" do
     Bill.delete_all
   end
 end
+
+describe Debate, 'when finding by category and slug' do
+  it 'should find using parameters' do
+    category = 'visitors'
+    url_slug = 'australia'
+    year = '2008'; month = 'apr'; day = '17'
+    yyyy_mm_dd = "#{year}-04-#{day}"
+    date = mock(DebateDate, :year=>year, :month=>month, :day=>day, :is_valid_date? => true, :yyyy_mm_dd => yyyy_mm_dd)
+    debate = mock_model(SubDebate)
+    debates = [debate]
+    Debate.should_receive(:find_all_by_date_and_url_category_and_url_slug).with(yyyy_mm_dd, category, url_slug).and_return debates
+    Debate.should_receive(:remove_duplicates).with(debates).and_return debates
+
+    Debate.find_by_url_category_and_url_slug(date, category, url_slug).should == debate
+  end
+end
+

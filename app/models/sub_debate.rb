@@ -35,10 +35,8 @@ class SubDebate < Debate
     parent.category
   end
 
-  ##
-  # index of next debate
   def next_index
-    index.next
+    index.next # index of next debate
   end
 
   def index_prefix
@@ -57,7 +55,10 @@ class SubDebate < Debate
 
   def id_hash
     unless about_id.blank?
-      hash = {:year => year, :month => month, :day => day, :index => index_suffix}
+      hash = {}.merge(date_hash)
+      hash.merge!(:url_category => url_category) unless url_category.blank?
+      hash.merge!(:url_slug => url_slug) unless url_slug.blank?
+      hash.merge!({:index => index_suffix}) if (!url_category.blank? && !url_slug.blank?)
 
       if about_type == Portfolio.name
         hash.merge :portfolio_url => about_url
@@ -73,6 +74,16 @@ class SubDebate < Debate
     end
   end
 
+  def parent_name
+    parent ? parent.name : ''
+  end
+
+  def create_url_slug
+    populate_url_category parent_name.gsub(' and ',' ')
+    populate_url_slug     make_sub_debate_url_slug_text(self.url_category).gsub(' and ',' ')
+    self.url_slug
+  end
+
   protected
 
     def find_by_candidate_slug candidate_slug
@@ -85,13 +96,12 @@ class SubDebate < Debate
       end
     end
 
-    def make_url_slug_text
-      if about && about.is_a?(Bill)
-        make_bill_url_slug
-      elsif parent
-        make_sub_debate_url_slug
-      else
-        nil
+    def populate_url_category category_text
+      unless category_text.blank?
+        category = make_slug(category_text) { |candidate_category| nil }
+        if Debate::CATEGORIES.include?(category)
+          self.url_category = category
+        end
       end
     end
 
@@ -108,16 +118,19 @@ class SubDebate < Debate
       end
     end
 
-    def make_sub_debate_url_slug
-      case parent.name
-        when "Visitors"
-          "#{parent.name} #{name.split('—').first}"
-        when /Amended Answers to Oral Questions/i
+    def make_sub_debate_url_slug_text url_category
+      if about && about.is_a?(Bill)
+        make_bill_url_slug
+      elsif parent
+        if parent.name[/Amended Answers to Oral Questions/i]
           'amended_answers'
-        when 'Appointments'
-          "Appointment #{name}"
+        elsif url_category
+          name.split('—').first
         else
-          parent.name.split('—').first
+          parent_name.split('—').first
+        end
+      else
+        nil
       end
     end
 end

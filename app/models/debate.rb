@@ -1,3 +1,5 @@
+require 'acts_as_slugged'
+
 class Debate < ActiveRecord::Base
 
   has_many :contributions, :foreign_key => 'spoken_in_id', :dependent => :destroy, :order => 'id'
@@ -8,13 +10,30 @@ class Debate < ActiveRecord::Base
   before_create :create_url_slug
   acts_as_slugged
 
+  CATEGORIES = %w[visitors motions urgent_debates_declined points_of_order
+      tabling_of_documents obituaries speakers_rulings personal_explanations
+      appointments urgent_debates privilege speakers_statements resignations
+      ministerial_statements adjournment parliamentary_service_commission
+      business_of_select_committees
+      business_statement general_debate business_of_the_house sittings_of_the_house
+      members_sworn address_in_reply debate_on_prime_ministers_statement list_member_vacancy
+      budget_debate standing_orders maiden_statement valedictory_statement members_bills
+      prime_ministers_statement debate_on_budget_policy_statement offices_of_parliament
+      state_opening officers_of_parliament reinstatement_of_business commission_opening_of_parliament]
+
+  MONTHS_LC = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec']
+
   class << self
+
+    def find_by_url_category_and_url_slug date, category, url_slug
+      debates = find_all_by_date_and_url_category_and_url_slug date.yyyy_mm_dd, category, url_slug
+      remove_duplicates(debates).first
+    end
+
     def recent
-      debates = find(:all, :order => "debates.`date` DESC", :limit => 20)
-      debates = find_by_sql("select * from debates where type != 'BillDebate' and type != 'OralAnswer' and type != 'SubDebate' and type != 'OralAnswers' order by date DESC limit 20")
-      debates = remove_duplicates debates
-      debates.sort! {|a,b| (a.name <=> b.name) == 0 ? (a.date <=> b.date) : (a.name <=> b.name) }
-      debates.in_groups_by {|d| d.name}
+      debates = remove_duplicates find_by_sql("select * from debates where type != 'BillDebate' and type != 'OralAnswer' and type != 'SubDebate' and type != 'OralAnswers' order by date DESC limit 20")
+      debates.sort! {|a,b| (comparison = a.name <=> b.name) == 0 ? (a.date <=> b.date) : comparison }
+      debates.in_groups_by(&:name)
     end
 
     def find_referred_oral_answer debate
@@ -41,7 +60,7 @@ class Debate < ActiveRecord::Base
     end
 
     def find_by_about about_type, about_id, year, month, day, index
-      month = Debate.mmm_to_mm month if month
+      month = mmm_to_mm month if month
       date = year+'-'+month+'-'+day if day
 
       if index
@@ -93,17 +112,12 @@ class Debate < ActiveRecord::Base
       end
     end
 
-    ##
-    # Finds debates by date, ordered by ascending date
-    #
     def find_by_date(year, month, day)
-      Debate.find_by_index(year, month, day, nil)
+      find_by_index(year, month, day, nil) # Finds debates by date, ordered by ascending date
     end
 
     def match name
-      find(:all,
-        :conditions => "name like '%#{name}%'",
-        :order => "date DESC")
+      find(:all, :conditions => "name like '%#{name}%'", :order => "date DESC")
     end
 
     def get_by_type type, debates
@@ -144,25 +158,21 @@ class Debate < ActiveRecord::Base
     end
 
     def to_num_str num
-      str = num.to_s
-      str = '0'+str if num < 10
-      str
+      (num < 10) ? "0#{num}" : num.to_s
     end
 
-    MONTHS_LC = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec']
-
     def mm_to_mmm mm
-      MONTHS_LC[mm.to_i - 1]
+      Debate::MONTHS_LC[mm.to_i - 1]
     end
 
     def mmm_to_mm mmm
-      mm = (MONTHS_LC.index(mmm) + 1).to_s
+      mm = (Debate::MONTHS_LC.index(mmm) + 1).to_s
     end
 
     def to_date_hash date
       { :year => date.year.to_s,
-        :month => Debate.mm_to_mmm(date.month),
-        :day => Debate.to_num_str(date.mday) }
+        :month => mm_to_mmm(date.month),
+        :day => to_num_str(date.mday) }
     end
 
     def get_debates_by_name debates
@@ -192,11 +202,19 @@ class Debate < ActiveRecord::Base
     end
   end
 
-  def create_url_slug
-    text = make_url_slug_text
-    text.gsub!(' and ',' ')
+  def make_category
+  end
 
-    self.url_slug = make_slug(text) do |candidate_slug|
+  def find_by_candidate_category
+  end
+
+  def create_url_slug
+    populate_url_slug make_url_slug_text.gsub(' and ',' ')
+    self.url_slug
+  end
+
+  def populate_url_slug slug_text
+    self.url_slug = make_slug(slug_text) do |candidate_slug|
       non_numbered_slug = !candidate_slug[/_\d+$/]
 
       duplicate = find_by_candidate_slug candidate_slug
@@ -209,9 +227,7 @@ class Debate < ActiveRecord::Base
         end
       end
       duplicate
-    end unless text.blank?
-
-    self.url_slug
+    end unless slug_text.blank?
   end
 
   def is_uncorrected?
@@ -227,11 +243,7 @@ class Debate < ActiveRecord::Base
   end
 
   def short_name
-    if name.size < 35
-      name
-    else
-      name[0..35]+'...'
-    end
+    (name.size < 35) ? name : "#{name[0..35]}..."
   end
 
   def year
@@ -259,64 +271,57 @@ class Debate < ActiveRecord::Base
   end
 
   def id_hash
-    date_hash.merge({:index => index})
+    hash = {}.merge(date_hash)
+    hash.merge!(:url_category => url_category) unless url_category.blank?
+    hash.merge!(:url_slug => url_slug) unless url_slug.blank?
+    hash.merge!({:index => index}) if (!url_category.blank? && !url_slug.blank?)
+    hash
   end
 
   def next_debate_id_hash
     begin
       debate = Debate.find_by_index year, month, day, next_index
-      if debate
-        if debate.is_a? BillDebate
-          if debate.sub_debates.size > 0
-            debate.sub_debates[0].id_hash
-          else
-            debate.id_hash
-          end
-        elsif debate.is_a? OralAnswers
-          debate.sub_debates[0].id_hash
-        else
-          debate.id_hash
-        end
+      return nil unless debate
+    rescue Exception => e
+      return nil
+    end
+
+    case debate
+      when BillDebate
+        debate.sub_debates.empty? ? debate.id_hash : debate.sub_debates[0].id_hash
+      when OralAnswers
+        debate.sub_debates[0].id_hash
       else
-        nil
-      end
-    rescue
-      nil
+        debate.id_hash
     end
   end
 
   def prev_debate_id_hash
-    hash = nil
-    if index != '01' and not(is_a? SubDebate and parent.is_a? BillDebate and index == '02')
+    begin
+      can_have_previous = (index != '01') && !(index == '02' && self.is_a?(SubDebate) && parent.sub_debates.size == 1)
+      return nil unless can_have_previous
       prev_index = Debate.to_num_str index.to_i-1
-      begin
-        debate = Debate.find_by_index year, month, day, prev_index
-      rescue Exception => e
-        debate = nil
-      end
-
-      if debate
-        if debate.is_a? BillDebate
-          hash = debate.prev_debate_id_hash
-        elsif debate.is_a? OralAnswers
-          hash = debate.prev_debate_id_hash
-        elsif debate.is_a? OralAnswer
-          hash = debate.id_hash
-        elsif debate.is_a? SubDebate
-          parent = debate.debate
-          if parent.is_a? BillDebate
-            hash = debate.id_hash
-          elsif parent.sub_debates.size == 1
-            hash = parent.id_hash
-          else
-            hash = debate.id_hash
-          end
-        else
-          hash = debate.id_hash
-        end
-      end
+      debate = Debate.find_by_index year, month, day, prev_index
+      return nil unless debate
+    rescue Exception => e
+      return nil
     end
-    hash
+
+    case debate
+      when BillDebate, OralAnswers
+        debate.prev_debate_id_hash
+      when OralAnswer
+        debate.id_hash
+      when SubDebate
+        parent = debate.debate
+        if parent.is_a? BillDebate || parent.sub_debates.size != 1
+          debate.id_hash
+        else
+          parent.id_hash
+        end
+      else
+        debate.id_hash
+    end
   end
 
   def contribution_id contribution
@@ -330,7 +335,6 @@ class Debate < ActiveRecord::Base
         anchor = sub_debate.contribution_index(contribution)
         if anchor
           anchor = (anchor+1).to_s
-          # anchor = index.to_s + '.' + (anchor+1).to_s
           break
         else
           index = index.next
@@ -356,15 +360,11 @@ class Debate < ActiveRecord::Base
   end
 
   def votes
-    contributions.select { |o| o.is_vote? }.collect { |o| o.vote }
+    contributions.select(&:is_vote?).collect(&:vote)
   end
 
   def geonames
-    geonames = []
-    contributions.each do |c|
-      geonames << c.geonames
-    end
-    geonames.flatten.uniq
+    contributions.collect(&:geonames).flatten.uniq
   end
 
   CACHE_ROOT = RAILS_ROOT + '/tmp/cache/views/theyworkforyou.co.nz'

@@ -102,6 +102,6 @@ describe OralAnswer, "creating url slug" do
   end
 
   def new_answer name
-    OralAnswer.new(:name => name, :date => '2008-04-01', :publication_status => 'U')
+    OralAnswer.new(:name => name, :date => '2008-04-01', :publication_status => 'U', :debate => mock_model(OralAnswers, :name=>'Questions for Oral Answer') )
   end
 end

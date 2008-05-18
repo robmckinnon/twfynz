@@ -68,7 +68,7 @@ class HansardParser
       create_debate debate_index, 'Debate'
 
     elsif type == 'DebateDebate'
-      name = (((@doc/'.DebateDebate/h2').first)/'text()')[0].to_clean_s
+      name = (((@doc/'.DebateDebate/h2').first) / 'text()')[0].to_clean_s
       if name.ends_with?('Bill')
         create_bill_debate_from_debate_debate debate_index
       else

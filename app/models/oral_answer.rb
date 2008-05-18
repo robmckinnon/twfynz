@@ -16,6 +16,11 @@ class OralAnswer < SubDebate
     'o'
   end
 
+  def create_url_slug
+    populate_url_slug make_url_slug_text.gsub(' and ',' ')
+    self.url_slug
+  end
+
   protected
 
     def find_by_candidate_slug candidate_slug

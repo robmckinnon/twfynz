@@ -21,6 +21,7 @@ describe SubDebate, "creating url slug for bill subdebate" do
   def assert_slug_correct name, expected
     debate = SubDebate.new(:name => name, :date => '2008-04-01', :publication_status => 'U')
     debate.stub!(:about).and_return mock_model(Bill)
+    debate.stub!(:make_url_category_text).and_return ''
     debate.create_url_slug
     debate.url_slug.should == expected
   end
@@ -29,30 +30,38 @@ end
 
 describe SubDebate, "creating url slug for non-bill subdebate" do
 
-  def assert_slug_correct parent_name, name, expected
+  def assert_slug_correct parent_name, name, category_or_slug, slug=nil
     debate = SubDebate.new(:name => name, :date => '2008-04-01', :publication_status => 'U')
     debate.stub!(:about).and_return nil
     debate.stub!(:parent).and_return mock_model(ParentDebate, :name => parent_name)
     debate.create_url_slug
-    debate.url_slug.should == expected
+    debate.url_category.should == category_or_slug if slug
+    debate.url_slug.should == (slug ? slug : category_or_slug)
   end
 
-  it 'should show country for visitors debate' do
-    assert_slug_correct 'Visitors', "Australia—Attorney-General", 'visitors_australia'
+  it 'should create url_category and url_slug' do
+    assert_slug_correct 'Points of Order', 'Mispronunciation—Māori Language and Members’ Names', 'points_of_order', 'mispronunciation'              # http://theyworkforyou.co.nz/debates/2008/apr/09/02
+    assert_slug_correct 'Visitors', "Australia—Attorney-General", 'visitors', 'australia'
+    assert_slug_correct 'Urgent Debates Declined', 'Auckland International Airport—Canada Pension Plan Investment Board Bid', 'urgent_debates_declined', 'auckland_international_airport'  # http://theyworkforyou.co.nz/debates/2008/apr/15/20
+    assert_slug_correct 'Tabling of Documents', 'Driving Incident', 'tabling_of_documents', 'driving_incident'                                      # http://theyworkforyou.co.nz/debates/2008/apr/02/23
+    assert_slug_correct 'Obituaries', 'Rt Hon Fraser MacDonald Colman QSO', 'obituaries', 'rt_hon_fraser_macdonald_colman_qso'                      # http://theyworkforyou.co.nz/debates/2008/apr/15/03
+    assert_slug_correct 'Speaker’s Rulings', 'Personal Explanations—Member’s Word Must Be Accepted', 'speakers_rulings', 'personal_explanations'    # http://theyworkforyou.co.nz/debates/2008/apr/01/02
+    assert_slug_correct 'Motions', 'Tongariro Tragedy—Elim Christian College', 'motions', 'tongariro_tragedy'                                       # http://theyworkforyou.co.nz/debates/2008/apr/16/01
+    assert_slug_correct 'Personal Explanations', 'Electoral Finance Act—Third Party Registration', 'personal_explanations', 'electoral_finance_act' # http://theyworkforyou.co.nz/debates/2008/apr/02/21
+    assert_slug_correct 'Appointments', 'Chief Ombudsman', 'appointments', 'chief_ombudsman' # http://theyworkforyou.co.nz/debates/2008/apr/17/17
+    assert_slug_correct 'Urgent Debates', 'Hawke’s Bay District Health Board—Conflicts of Interest Report', 'urgent_debates', 'hawkes_bay_district_health_board' # http://theyworkforyou.co.nz/debates/2008/mar/18/25
+    assert_slug_correct 'Privilege', 'Contempt of House—Apology from Hon Matt Robson', 'privilege', 'contempt_of_house'                             # http://theyworkforyou.co.nz/debates/2007/mar/13/02
+    assert_slug_correct 'Speaker’s Statements', 'Microphones in Chamber—Fault', 'speakers_statements', 'microphones_in_chamber'                     # http://theyworkforyou.co.nz/debates/2007/sep/19/26
+    assert_slug_correct 'Resignations', 'Dianne Yates, NZ Labour', 'resignations', 'dianne_yates_nz_labour'                                         # http://theyworkforyou.co.nz/debates/2008/apr/01/04
+    assert_slug_correct 'Ministerial Statements', 'Fiji—High Commissioner for New Zealand', 'ministerial_statements', 'fiji'                        # http://theyworkforyou.co.nz/debates/2007/jun/14/03
+    assert_slug_correct 'Adjournment', 'Sittings of the House', 'adjournment', 'sittings_of_the_house'                                              # http://theyworkforyou.co.nz/debates/2007/dec/18/29
+    assert_slug_correct 'Parliamentary Service Commission', 'Membership', 'parliamentary_service_commission', 'membership'                          # http://theyworkforyou.co.nz/debates/2008/feb/19/23
+    assert_slug_correct 'Business of Select Committees', 'Meetings', 'business_of_select_committees', 'meetings'                          # http://theyworkforyou.co.nz/debates/2006/nov/15/02
   end
 
   it 'should abbreviate amended answers' do
     assert_slug_correct 'AMENDED ANSWERS TO ORAL QUESTIONS', "Question No. 11 to Minister", 'amended_answers'
     assert_slug_correct 'Amended Answers to Oral Questions', "Question No. 11 to Minister", 'amended_answers'
-  end
-
-  it 'should use adjournment if parent is named Adjournment' do
-    assert_slug_correct 'Adjournment', 'Sittings of the House', 'adjournment'
-  end
-
-  it 'should show title of appointment when parent is named Appointments, breaking on word' do
-    assert_slug_correct 'Appointments', 'Abortion Supervisory Committee', 'appointment_abortion_supervisory'
-    assert_slug_correct 'Appointments', 'Chairperson of Commonwealth Local Government Forum', 'appointment_chairperson_of_commonwealth'
   end
 
   it 'should abbreviate New Zealand to nz, and " - " to "_"' do

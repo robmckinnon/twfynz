@@ -128,7 +128,8 @@ class DebatesController < ApplicationController
 
   def show_debate
     begin
-      render_debate Debate.find_by_date_and_index(@date, index_id(params))
+      render_debate Debate.find_by_date_and_index(@date, index_id(params)) unless params[:category]
+      render_debate Debate.find_by_url_category_and_url_slug(@date, params[:category], params[:slug]) if params[:category]
     rescue ActiveRecord::RecordNotFound
       render :template => 'debates/debate_not_found', :status => "404 Not Found"
     end

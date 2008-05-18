@@ -16,6 +16,12 @@ class DebateDate
     @year.length == 4 and (!@month or @month.length == 3) and (!@day or @day.length == 2)
   end
 
+  def yyyy_mm_dd
+    mm = Debate::MONTHS_LC.index(month) + 1
+    mm = (mm < 10) ? "0#{mm}" : mm.to_s
+    "#{year}-#{mm}-#{day}"
+  end
+
   def to_hash
     { :year => year, :month => month, :day => day }
   end
