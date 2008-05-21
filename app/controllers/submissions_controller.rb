@@ -1,3 +1,5 @@
+require 'net/http'
+
 class SubmissionsController < ApplicationController
 
   in_place_edit_for :submission, :submitter_url
