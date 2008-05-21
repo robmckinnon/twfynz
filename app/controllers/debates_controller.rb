@@ -126,10 +126,14 @@ class DebatesController < ApplicationController
     @debates.delete_if {|d| d.kind_of? SubDebate }
   end
 
+  def redirect_show_debate
+    render_debate Debate.find_by_date_and_index(@date, index_id(params)) unless params[:url_category]
+  end
+
   def show_debate
     begin
-      render_debate Debate.find_by_date_and_index(@date, index_id(params)) unless params[:category]
-      render_debate Debate.find_by_url_category_and_url_slug(@date, params[:category], params[:slug]) if params[:category]
+      render_debate Debate.find_by_date_and_index(@date, index_id(params)) unless params[:url_category]
+      render_debate Debate.find_by_url_category_and_url_slug(@date, params[:url_category], params[:url_slug]) if params[:url_category]
     rescue ActiveRecord::RecordNotFound
       render :template => 'debates/debate_not_found', :status => "404 Not Found"
     end

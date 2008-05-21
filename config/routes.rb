@@ -21,24 +21,6 @@ end
 
 ActionController::Routing::Routes.draw do |map|
 
-  map.resources :submissions
-
-  with_controller :submissions, map do |submission|
-    make_route 'submissions/set_submission_submitter_url/:id', submission, :set_submission_submitter_url
-    make_route 'submissions/update/:id', submission, :update_submission
-  end
-
-  with_controller :organisations, map do |organisation|
-    index_route 'organisations', organisation
-    make_route 'organisations/:name', organisation
-    make_route 'organisations/edit', organisation, :edit_organisations
-    make_route 'organisations/:name/mentions', organisation, :show_organisation_mentions
-    make_route 'organisations/set_organisation_wikipedia_url/:id', organisation, :set_organisation_wikipedia_url
-    make_route 'organisations/set_organisation_alternate_names/:id', organisation, :set_organisation_alternate_names
-  end
-
-  map.resources :trackings
-
   date_format = { :year => /(19|20)\d\d/,
                   :month => /(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|[01]?\d|january|february|march|april|may|june|july|august|september|november|december)/,
                   :day => /[0-3]?\d/ }
@@ -69,18 +51,6 @@ ActionController::Routing::Routes.draw do |map|
     make_route 'portfolios/:portfolio_url/activity_sparkline.png', portfolio
   end
 
-  with_controller :user, map do |user|
-    make_route 'users/signup', user, :signup
-    make_route 'users/signup/individual', user, :signup_individual
-    make_route 'users/signup/organisation', user, :signup_organisation
-    make_route 'users/login', user
-    make_route 'users/logout', user
-    make_route 'users/forgot_password', user
-    make_route 'users/change_password', user
-    make_route 'user/:user_name.:format', user, :user_home
-    make_route 'user/:user_name', user, :user_home
-  end
-
   with_controller :debates, map do |debate|
     index_route 'debates', debate
     make_route 'debates/contribution_match', debate
@@ -97,7 +67,7 @@ ActionController::Routing::Routes.draw do |map|
     end
 
     debate.with_options(index_options) do |by_index|
-      # make_route "debates/#{index_path}", by_index, :show_debate
+      make_route "debates/#{index_path}", by_index, :redirect_show_debate
       # make_route "bills/:bill_url/#{index_path}", by_index, :show_bill_debate
       # make_route "portfolios/:portfolio_url/#{index_path}", by_index, :show_portfolio_debate
       # make_route "committees/:committee_url/#{index_path}", by_index, :show_committee_debate
@@ -142,6 +112,35 @@ ActionController::Routing::Routes.draw do |map|
   with_controller :parties, map do |party|
     index_route 'parties', party
     make_route 'parties/:name', party
+  end
+
+  map.resources :trackings
+  map.resources :submissions
+
+  with_controller :submissions, map do |submission|
+    make_route 'submissions/set_submission_submitter_url/:id', submission, :set_submission_submitter_url
+    make_route 'submissions/update/:id', submission, :update_submission
+  end
+
+  with_controller :organisations, map do |organisation|
+    index_route 'organisations', organisation
+    make_route 'organisations/:name', organisation
+    make_route 'organisations/edit', organisation, :edit_organisations
+    make_route 'organisations/:name/mentions', organisation, :show_organisation_mentions
+    make_route 'organisations/set_organisation_wikipedia_url/:id', organisation, :set_organisation_wikipedia_url
+    make_route 'organisations/set_organisation_alternate_names/:id', organisation, :set_organisation_alternate_names
+  end
+
+  with_controller :user, map do |user|
+    make_route 'users/signup', user, :signup
+    make_route 'users/signup/individual', user, :signup_individual
+    make_route 'users/signup/organisation', user, :signup_organisation
+    make_route 'users/login', user
+    make_route 'users/logout', user
+    make_route 'users/forgot_password', user
+    make_route 'users/change_password', user
+    make_route 'user/:user_name.:format', user, :user_home
+    make_route 'user/:user_name', user, :user_home
   end
 
 end

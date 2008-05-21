@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe DebatesController, 'when getting show_debate' do
   def check_category_params url
-    check_params url, :category => url.split('/')[1], :slug => url.split('/').last
+    check_params url, :url_category => url.split('/')[1], :url_slug => url.split('/').last
   end
 
   def check_params url, params
@@ -10,7 +10,7 @@ describe DebatesController, 'when getting show_debate' do
   end
 
   it 'should show debate given date and index' do
-    check_params '/debates/2008/apr/17/01', :index=>'01'
+    check_params '/debates/2008/apr/17/01', :index => '01', :action => 'redirect_show_debate'
   end
 
   it 'should show debate given category, date and slug' do
@@ -40,7 +40,7 @@ describe DebatesController, 'when getting show_debate' do
     DebateDate.stub!(:new).and_return date
     debate = mock_model(SubDebate, :debate => mock_model(ParentDebate))
     Debate.should_receive(:find_by_url_category_and_url_slug).with(date, category, slug).and_return debate
-    get 'show_debate', :controller => 'debates', :action=>'show_debate', :day=>day, :month=>month, :year=>year, :category => category, :slug => slug
+    get 'show_debate', :controller => 'debates', :action=>'show_debate', :day=>day, :month=>month, :year=>year, :url_category => category, :url_slug => slug
     assigns[:debate].should == debate
     assigns[:date].should == date
   end
@@ -48,7 +48,7 @@ end
 
 describe DebatesController, 'when getting show_debates_on_date' do
   def check_category_params url
-    check_params url, :category => url.split('/')[1]
+    check_params url, :url_category => url.split('/')[1]
   end
 
   def check_params url, params={}
