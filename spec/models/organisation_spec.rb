@@ -82,6 +82,10 @@ describe Organisation, 'when finding organisation from text' do
     check_found_on_second_try 'Wood Council of New Zealand Incorporated', 'Wood Council of New Zealand Inc'
   end
 
+  it 'should find organisation when name provided ends with New Zealand Limited but text does not' do
+    check_found_on_third_try 'Transpower', 'Transpower Limited',  'Transpower New Zealand Limited'
+  end
+
 end
 
 describe Organisation, 'on creation' do
