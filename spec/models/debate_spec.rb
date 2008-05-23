@@ -86,5 +86,19 @@ describe Debate, 'when finding by category and slug' do
 
     Debate.find_by_url_category_and_url_slug(date, category, url_slug).should == debate
   end
+
+  it 'should find only using slug parameter when category is debates' do
+    category = 'debates'
+    url_slug = 'voting'
+    year = '2008'; month = 'apr'; day = '17'
+    yyyy_mm_dd = "#{year}-04-#{day}"
+    date = mock(DebateDate, :year=>year, :month=>month, :day=>day, :is_valid_date? => true, :yyyy_mm_dd => yyyy_mm_dd)
+    debate = mock_model(SubDebate)
+    debates = [debate]
+    Debate.should_receive(:find_all_by_date_and_url_slug).with(yyyy_mm_dd, url_slug).and_return debates
+    Debate.should_receive(:remove_duplicates).with(debates).and_return debates
+
+    Debate.find_by_url_category_and_url_slug(date, category, url_slug).should == debate
+  end
 end
 

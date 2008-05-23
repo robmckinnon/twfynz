@@ -26,7 +26,11 @@ class Debate < ActiveRecord::Base
   class << self
 
     def find_by_url_category_and_url_slug date, category, url_slug
-      debates = find_all_by_date_and_url_category_and_url_slug date.yyyy_mm_dd, category, url_slug
+      if category == 'debates'
+        debates = find_all_by_date_and_url_slug date.yyyy_mm_dd, url_slug
+      else
+        debates = find_all_by_date_and_url_category_and_url_slug date.yyyy_mm_dd, category, url_slug
+      end
       remove_duplicates(debates).first
     end
 
@@ -227,7 +231,7 @@ class Debate < ActiveRecord::Base
         end
       end
       duplicate
-    end unless slug_text.blank?
+    end unless slug_text.blank? || self.url_slug
   end
 
   def is_uncorrected?
@@ -272,9 +276,15 @@ class Debate < ActiveRecord::Base
 
   def id_hash
     hash = {}.merge(date_hash)
+    unless url_slug.blank?
+      hash.merge!(:url_slug => url_slug)
+      hash.merge!(:url_category => 'debates') if url_category.blank?
+      hash.delete(:index)
+    else
+      hash.merge!(:url_slug => nil)
+    end
     hash.merge!(:url_category => url_category) unless url_category.blank?
-    hash.merge!(:url_slug => url_slug) unless url_slug.blank?
-    hash.merge!({:index => index}) if (!url_category.blank? && !url_slug.blank?)
+    hash.merge!({:index => index}) if (url_category.blank? && url_slug.blank?)
     hash
   end
 

@@ -58,7 +58,7 @@ describe DebateAlone, "creating url slug" do
     debate = DebateAlone.new(:name => name, :date => '2008-04-01', :publication_status => 'U')
     debate.create_url_slug
     debate.url_category.should == category_or_slug if slug
-    debate.url_slug.should == (slug ? slug : category_or_slug)
+    debate.url_slug.should == (slug ? (slug.blank? ? nil : slug) : category_or_slug)
   end
 end
 

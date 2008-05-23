@@ -21,7 +21,7 @@ class DebateAlone < Debate
       if minor
         populate_url_slug minor.strip
       else
-        self.url_slug = ''
+        self.url_slug = nil
       end
     else
       populate_url_slug make_url_slug_text.gsub(' and ',' ')

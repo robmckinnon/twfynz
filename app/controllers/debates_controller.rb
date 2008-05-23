@@ -14,7 +14,7 @@ class DebatesController < ApplicationController
       :only => [:show_debate, :show_bill_debate, :show_portfolio_debate, :show_committee_debate]
 
   before_filter :validate_date,
-      :only => [:show_debates_on_date, :show_debate,
+      :only => [:show_debates_on_date, :show_debate, :redirect_show_debate,
               :show_bill_debate, :show_portfolio_debate, :show_committee_debate,
               :show_portfolio_debates_on_date, :show_committee_debates_on_date, :show_bill_debates_on_date]
 
@@ -127,13 +127,15 @@ class DebatesController < ApplicationController
   end
 
   def redirect_show_debate
-    render_debate Debate.find_by_date_and_index(@date, index_id(params)) unless params[:url_category]
+    debate = Debate.find_by_date_and_index(@date, index_id(params))
+    id_hash = debate.id_hash
+    redirect_to show_debate_url(id_hash)
   end
 
   def show_debate
     begin
-      render_debate Debate.find_by_date_and_index(@date, index_id(params)) unless params[:url_category]
-      render_debate Debate.find_by_url_category_and_url_slug(@date, params[:url_category], params[:url_slug]) if params[:url_category]
+      debate = Debate.find_by_url_category_and_url_slug(@date, params[:url_category], params[:url_slug])
+      render_debate debate
     rescue ActiveRecord::RecordNotFound
       render :template => 'debates/debate_not_found', :status => "404 Not Found"
     end

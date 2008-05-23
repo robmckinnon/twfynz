@@ -31,8 +31,12 @@ ActionController::Routing::Routes.draw do |map|
   index_options = { :requirements => date_format.merge(:index => /[odw]?\d\d/) }
   index_path = "#{date_path}/:index"
 
-  slug_options = { :requirements => date_format.merge(:url_slug => /[a-z].+/) }
+  slug_format = {:url_slug => /[a-z].+/}
+  slug_options = { :requirements => date_format.merge(slug_format) }
   slug_path = "#{date_path}/:url_slug"
+
+  category_format = { :url_category => /(#{Debate::CATEGORIES.join('|')}|debates)/ }
+  category_options = { :requirements => date_format.merge(slug_format).merge(category_format), :url_slug => nil }
 
   with_controller :application, map do |application|
     make_route '', application, :home
@@ -73,11 +77,12 @@ ActionController::Routing::Routes.draw do |map|
       # make_route "committees/:committee_url/#{index_path}", by_index, :show_committee_debate
     end
 
-    debate.with_options(slug_options) do |by_slug|
-      Debate::CATEGORIES.each do |category|
-        make_category_route "#{category}/#{slug_path}", by_slug, :show_debate
-      end
+    debate.with_options(category_options) do |by_category|
+      category_path = ":url_category/#{date_path}/:url_slug"
+      make_route category_path, by_category, :show_debate
+    end
 
+    debate.with_options(slug_options) do |by_slug|
       make_route "bills/:bill_url/#{slug_path}", by_slug, :show_bill_debate
       make_route "portfolios/:portfolio_url/#{slug_path}", by_slug, :show_portfolio_debate
       make_route "committees/:committee_url/#{slug_path}", by_slug, :show_committee_debate
