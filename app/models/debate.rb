@@ -90,7 +90,9 @@ class Debate < ActiveRecord::Base
     end
 
     def find_by_date_and_index(date, index)
-      find_by_index(date.year, date.month, date.day, index)
+      debate = find_by_index(date.year, date.month, date.day, index)
+      debate = debate.sub_debate if debate.is_a?(ParentDebate) && debate.sub_debates.size == 1
+      debate
     end
 
     def find_by_index(year, month, day, index)
