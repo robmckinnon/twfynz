@@ -107,8 +107,26 @@ describe Debate, 'when finding by date and index' do
     date = mock('date', :year=>'year',:month=>'month',:day=>'day')
     index = mock('index')
     sub_debate = mock('sub_debate')
-    parent_debate = mock_model(ParentDebate, :sub_debates => [sub_debate], :sub_debate=>sub_debate)
+    parent_debate = mock_model(ParentDebate, :is_parent_with_one_sub_debate? => true, :sub_debate => sub_debate)
     Debate.should_receive(:find_by_index).with('year','month','day',index).and_return parent_debate
     Debate.find_by_date_and_index(date, index).should == sub_debate
+  end
+end
+
+describe Debate, 'when finding on date by category' do
+  it 'should return subdebate if index is pointing to parent debate with one subdebate' do
+    date = mock('date', :year=>'year',:month=>'month',:day=>'day')
+    index = mock('index')
+    sub_debate = mock('sub_debate')
+    parent_debate = mock_model(ParentDebate, :is_parent_with_one_sub_debate? => true, :sub_debate => sub_debate)
+    Debate.should_receive(:find_by_index).with('year','month','day',index).and_return parent_debate
+    Debate.find_by_date_and_index(date, index).should == sub_debate
+  end
+end
+
+describe Debate, 'in general' do
+  it 'should not identify itself as a parent debate with a single sub_debate' do
+    debate = Debate.new
+    debate.is_parent_with_one_sub_debate?.should be_false
   end
 end

@@ -1,9 +1,11 @@
 - debate = debate_link
 - show_date = false unless show_date
 - if (debate.is_a?(SubDebate) or debate.is_a?(DebateAlone) or debate.sub_debates.size == 0)
-  %li= link_to_debate debate, show_status, show_date
+  %li
+    = link_to_debate debate, show_status, show_date, show_parent
 - elsif (debate.sub_debates.size == 1 and not(debate.is_a? OralAnswers))
-  %li= link_to_debate debate.sub_debates[0], show_status, show_date
+  %li
+    = link_to_debate debate.sub_debate, show_status, show_date, show_parent
 - else
   %li
     %p= debate.name

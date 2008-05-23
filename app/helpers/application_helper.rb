@@ -110,15 +110,11 @@ module ApplicationHelper
   end
 
   def link_to_debate debate, show_status=false, show_date=false, show_parent=true
-    if show_date
-      date = ' ' + format_date(debate.date)
-    else
-      date = ''
-    end
+    date = show_date ? ' ' + format_date(debate.date) : ''
 
-    if (show_parent and debate.is_a?(SubDebate) and !debate.is_a?(OralAnswer))
+    if show_parent && debate.is_a?(SubDebate) && !debate.is_a?(OralAnswer)
       text = debate.parent.name + ' - ' + debate.name
-    elsif debate.is_a? OralAnswer
+    elsif debate.is_a?(OralAnswer)
       text = debate.title_name
     elsif debate.instance_of?(ParentDebate) && debate.sub_debate
       text = debate.name + ' - ' + debate.sub_debate.name

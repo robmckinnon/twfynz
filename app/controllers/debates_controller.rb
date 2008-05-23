@@ -116,14 +116,25 @@ class DebatesController < ApplicationController
   end
 
   def show_debates_on_date
-    @calendar_date = @date.to_date
-    debates = Debate.find_by_date(@date.year, @date.month, @date.day)
+    @debates = Debate.find_by_date(@date.year, @date.month, @date.day)
 
-    @debates = Debate::remove_duplicates debates, false
+    if category = params[:url_category]
+      @debates = @debates.select{|d| d.url_category == category}
+      if @date.day && @debates.size == 1 && @debates.first.url_slug.blank?
+        load_organisations
+        show_debate
+      else
+        @category = category
+      end
+    else
+      @debates.delete_if {|d| d.kind_of? SubDebate }
+      @category = 'debates'
+    end
+
     names = geonames_to_debates(@debates)
     @ni_map = make_map names, -38.2, 175
     @si_map = make_map names, -43.6, 170.3
-    @debates.delete_if {|d| d.kind_of? SubDebate }
+    @calendar_date = @date.to_date
   end
 
   def redirect_show_debate

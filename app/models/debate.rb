@@ -91,7 +91,7 @@ class Debate < ActiveRecord::Base
 
     def find_by_date_and_index(date, index)
       debate = find_by_index(date.year, date.month, date.day, index)
-      debate = debate.sub_debate if debate.is_a?(ParentDebate) && debate.sub_debates.size == 1
+      debate = debate.sub_debate if debate.is_parent_with_one_sub_debate?
       debate
     end
 
@@ -108,18 +108,14 @@ class Debate < ActiveRecord::Base
       elsif day
         find_all_by_date(year+'-'+month+'-'+day, :order => "id")
       elsif month
-          find(:all,
-            :conditions => ['year(date) = ? and month(date) = ?', year, month],
-            :order => "id")
+        find(:all, :conditions => ['year(date) = ? and month(date) = ?', year, month], :order => "id")
       else
-          find(:all,
-            :conditions => ['year(date) = ?', year],
-            :order => "id")
+        find(:all, :conditions => ['year(date) = ?', year], :order => "id")
       end
     end
 
     def find_by_date(year, month, day)
-      find_by_index(year, month, day, nil) # Finds debates by date, ordered by ascending date
+      remove_duplicates(find_by_index(year, month, day, nil), false) # Finds debates by date, ordered by ascending date
     end
 
     def match name
@@ -131,35 +127,24 @@ class Debate < ActiveRecord::Base
     end
 
     def remove_duplicates debates, exclude_bill_parents=true
-      uncorrected = get_by_type 'U', debates
-      advance = get_by_type 'A', debates
-      final = get_by_type 'F', debates
+      uncorrected = get_by_type('U', debates)
+      advance =     get_by_type('A', debates)
+      final =       get_by_type('F', debates)
       remove_duplicates_using uncorrected, advance, final, exclude_bill_parents
     end
 
     def remove_duplicates_using uncorrected, advance, final, exclude_bill_parents=true
-      # puts uncorrected.size.to_s + ' ' + advance.size.to_s + ' ' + final.size.to_s
       final = final.to_hash if final.is_a?(ActiveSupport::OrderedHash)
       advance = advance.to_hash if advance.is_a?(ActiveSupport::OrderedHash)
       uncorrected = uncorrected.to_hash if uncorrected.is_a?(ActiveSupport::OrderedHash)
 
-      final.each_key do |date|
-        advance.delete date
-        uncorrected.delete date
-      end
-
-      # puts uncorrected.size.to_s + ' ' + advance.size.to_s + ' ' + final.size.to_s
-      advance.each_key do |date|
-        uncorrected.delete date
-      end
-
-      # puts uncorrected.size.to_s + ' ' + advance.size.to_s + ' ' + final.size.to_s
+      final.each_key { |date| advance.delete date; uncorrected.delete date }
+      advance.each_key { |date| uncorrected.delete date }
       debates = (uncorrected.values << advance.values << final.values).flatten.sort {|a,b| b.date <=> a.date}
 
-      if exclude_bill_parents
-        bill_debates = debates.select {|d| d.is_a? BillDebate and d.sub_debates.size > 0}
-        debates = debates.delete_if {|d| bill_debates.include? d }
-      end
+      # puts uncorrected.size.to_s + ' ' + advance.size.to_s + ' ' + final.size.to_s
+
+      debates = debates.delete_if {|d| d.is_a?(BillDebate) && d.sub_debates.size > 0 } if exclude_bill_parents
       debates
     end
 
@@ -206,6 +191,10 @@ class Debate < ActiveRecord::Base
 
       return debates_by_name, names
     end
+  end
+
+  def is_parent_with_one_sub_debate?
+    false
   end
 
   def make_category
@@ -292,7 +281,7 @@ class Debate < ActiveRecord::Base
 
   def next_debate_id_hash
     begin
-      debate = Debate.find_by_index year, month, day, next_index
+      debate = find_by_index year, month, day, next_index
       return nil unless debate
     rescue Exception => e
       return nil
@@ -312,8 +301,8 @@ class Debate < ActiveRecord::Base
     begin
       can_have_previous = (index != '01') && !(index == '02' && self.is_a?(SubDebate) && parent.sub_debates.size == 1)
       return nil unless can_have_previous
-      prev_index = Debate.to_num_str index.to_i-1
-      debate = Debate.find_by_index year, month, day, prev_index
+      prev_index = to_num_str index.to_i-1
+      debate = find_by_index year, month, day, prev_index
       return nil unless debate
     rescue Exception => e
       return nil

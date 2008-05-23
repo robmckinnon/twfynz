@@ -1,5 +1,13 @@
 module DebatesHelper
 
+  def format_debate_category(category)
+    if category == 'debates'
+      'Parliamentary debates'
+    else
+      category.gsub('_',' ').titleize
+    end
+  end
+
   def status_description debate
     case debate.publication_status
       when 'F'
