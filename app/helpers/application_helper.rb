@@ -114,8 +114,6 @@ module ApplicationHelper
 
     if show_parent && debate.is_a?(SubDebate) && !debate.is_a?(OralAnswer)
       text = debate.parent.name + ' - ' + debate.name
-    elsif debate.is_a?(OralAnswer)
-      text = debate.title_name
     elsif debate.instance_of?(ParentDebate) && debate.sub_debate
       text = debate.name + ' - ' + debate.sub_debate.name
     else

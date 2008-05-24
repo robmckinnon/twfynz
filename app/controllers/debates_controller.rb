@@ -153,15 +153,15 @@ class DebatesController < ApplicationController
   end
 
   def show_bill_debate
-    show_debate_about Bill, params[:bill_url]
+    show_debate_about Bill, params[:bill_url], params[:url_slug]
   end
 
   def show_portfolio_debate
-    show_debate_about Portfolio, params[:portfolio_url]
+    show_debate_about Portfolio, params[:portfolio_url], params[:url_slug]
   end
 
   def show_committee_debate
-    show_debate_about Committee, params[:committee_url]
+    show_debate_about Committee, params[:committee_url], params[:url_slug]
   end
 
   private
@@ -197,8 +197,12 @@ class DebatesController < ApplicationController
       end
     end
 
-    def show_debate_about about_type, about_url
-      @debate = Debate.find_by_about_on_date_with_index about_type, about_url, @date, params[:index]
+    def show_debate_about about_type, about_url, url_slug
+      if url_slug
+        @debate = Debate.find_by_about_on_date_with_slug about_type, about_url, @date, url_slug
+      else
+        @debate = Debate.find_by_about_on_date_with_index about_type, about_url, @date, params[:index]
+      end
       @about_type = about_type
       @hash = params
 

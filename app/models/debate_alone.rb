@@ -24,7 +24,7 @@ class DebateAlone < Debate
         debates = Debate.find_all_by_url_category_and_date_and_publication_status(url_category, date, publication_status)
         debates.delete_if {|d| d.url_slug && !d.url_slug.starts_with?('part_')}
         debates = debates.sort_by(&:debate_index)
-        if debates.size > 0 && (index = debates.index(self))
+        if debates.size > 1 && (index = debates.index(self))
           self.url_slug = "part_#{index+1}"
         else
           self.url_slug = nil

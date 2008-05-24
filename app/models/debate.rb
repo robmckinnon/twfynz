@@ -51,6 +51,18 @@ class Debate < ActiveRecord::Base
       @debates = Debate.find_by_about(type, id, date.year, date.month, date.day, nil)
     end
 
+    def find_by_about_on_date_with_slug about_type, about_url, date, slug
+      abouts = about_type.find_all_by_url(about_url)
+      debate = find_by_about_with_slug(about_type, abouts.first.id, date, slug)
+      debate = find_by_about_with_slug(about_type, abouts.last.id,  date, slug) unless debate
+      debate
+    end
+
+    def find_by_about_with_slug about_type, about_id, date, slug
+      debates = find_by_about(about_type.to_s, about_id, date.year, date.month, date.day, nil, slug)
+      remove_duplicates(debates).first
+    end
+
     def find_by_about_on_date_with_index about_type, about_url, date, index
       abouts = about_type.find_all_by_url(about_url)
       debate = find_by_about_with_index(about_type, abouts.first.id, date, index)
@@ -63,7 +75,7 @@ class Debate < ActiveRecord::Base
       remove_duplicates(debates).first
     end
 
-    def find_by_about about_type, about_id, year, month, day, index
+    def find_by_about about_type, about_id, year, month, day, index, slug=nil
       month = mmm_to_mm month if month
       date = year+'-'+month+'-'+day if day
 
@@ -72,6 +84,8 @@ class Debate < ActiveRecord::Base
         type = 'OralAnswer' if index_prefix == 'o'
         type = 'SubDebate' if index_prefix == 'd'
         debates = find_all_by_date_and_about_id_and_about_type_and_about_index_and_type(date, about_id, about_type, index[1..2], type)
+      elsif slug
+        debates = find_all_by_date_and_about_id_and_about_type_and_url_slug(date, about_id, about_type, slug)
       elsif day
         debates = find_all_by_date_and_about_id_and_about_type(date, about_id, about_type)
       elsif month
