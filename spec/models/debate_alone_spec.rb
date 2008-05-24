@@ -2,22 +2,12 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe DebateAlone, "creating url slug" do
 
-  it 'should use the second part of debate name if it starts with "Address in Reply—"' do
-    assert_slug_correct 'Address in Reply—Presentation to Governor-General', 'presentation_to_governor-general'
-    assert_slug_correct 'Address in Reply—Presentation to Governor-GENERAL', 'presentation_to_governor-general'
-  end
-
-  it 'should use the second part of debate name if it starts with "Offices of Parliament—"' do
-    assert_slug_correct 'Offices of Parliament—Address to Governor-General', 'address_to_governor-general'
-  end
-
   it 'should set category for frequent debate names' do
     assert_category_correct 'Business Statement',    'business_statement'
     assert_category_correct 'General Debate',        'general_debate'
     assert_category_correct 'Business of the House', 'business_of_the_house'
     assert_category_correct 'Sittings of the House', 'sittings_of_the_house'
     assert_category_correct 'Members Sworn',         'members_sworn'
-    assert_category_correct 'Member Sworn',         'members_sworn'
     assert_category_correct 'Address in Reply',      'address_in_reply'
     assert_category_correct 'Debate on Prime Minister’s Statement', 'debate_on_prime_ministers_statement'
     assert_category_correct 'List Member Vacancy',   'list_member_vacancy'
@@ -35,14 +25,25 @@ describe DebateAlone, "creating url slug" do
     assert_category_correct 'Commission Opening of Parliament', 'commission_opening_of_parliament'
   end
 
+  it 'should set category for variants of frequent debate names' do
+    assert_category_correct 'Member Sworn', 'members_sworn'
+  end
+
   it 'should set category and slug for frequent debate names' do
     assert_slug_correct 'Standing Orders—Sessional',  'standing_orders', 'sessional'
     assert_slug_correct 'Standing Orders—Suspension', 'standing_orders', 'suspension'
     assert_slug_correct 'Members’ Bills — Procedure', 'members_bills', 'procedure'
     assert_slug_correct 'Offices of Parliament—Address to Governor-General', 'offices_of_parliament', 'address_to_governor-general'
-    assert_slug_correct 'Offices of Parliament — Address to Governor-General', 'offices_of_parliament', 'address_to_governor-general'
     assert_slug_correct 'Address in Reply—Presentation to Governor-General', 'address_in_reply', 'presentation_to_governor-general'
+  end
+
+  it 'should set category and slug for variants of frequent debate names' do
+    assert_slug_correct 'Offices of Parliament — Address to Governor-General', 'offices_of_parliament', 'address_to_governor-general'
     assert_slug_correct 'Address in Reply—Presentation to Governor-GENERAL', 'address_in_reply', 'presentation_to_governor-general'
+  end
+
+  it 'should set slug to part_1 and part_2 if there are two parts to a debate with same category' do
+    assert_category_correct 'General Debate',        'general_debate'
   end
 
   it 'should not set category for other frequent debate names' do
@@ -55,10 +56,25 @@ describe DebateAlone, "creating url slug" do
   end
 
   def assert_slug_correct name, category_or_slug, slug=nil
-    debate = DebateAlone.new(:name => name, :date => '2008-04-01', :publication_status => 'U')
+    category = slug ? category_or_slug : nil
+    slug = (slug ? (slug.blank? ? nil : slug) : category_or_slug)
+    publication_status = 'U'
+    date = Date.parse('2008-04-01')
+
+    if category && slug.blank?
+      lookup_method = :find_all_by_url_category_and_date_and_publication_status
+      Debate.should_receive(lookup_method).with(category, date, publication_status).and_return []
+    end
+    unless slug.blank?
+      lookup_method = :find_by_url_category_and_url_slug_and_date_and_publication_status
+      Debate.should_receive(lookup_method).with(category, slug, date, publication_status).and_return nil
+      Debate.should_receive(lookup_method).with(category, slug+'_1', date, publication_status).and_return nil
+    end
+
+    debate = DebateAlone.new(:name => name, :date => date, :publication_status => publication_status)
     debate.create_url_slug
-    debate.url_category.should == category_or_slug if slug
-    debate.url_slug.should == (slug ? (slug.blank? ? nil : slug) : category_or_slug)
+    debate.url_category.should == category if category
+    debate.url_slug.should == slug
   end
 end
 
