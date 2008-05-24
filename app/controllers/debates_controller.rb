@@ -138,9 +138,13 @@ class DebatesController < ApplicationController
   end
 
   def redirect_show_debate
-    debate = Debate.find_by_date_and_index(@date, index_id(params))
-    id_hash = debate.id_hash
-    redirect_to show_debate_url(id_hash)
+    begin
+      debate = Debate.find_by_date_and_index(@date, index_id(params))
+      id_hash = debate.id_hash
+      redirect_to get_url_from_hash(id_hash)
+    rescue ActiveRecord::RecordNotFound
+      render :template => 'debates/debate_not_found', :status => "404 Not Found"
+    end
   end
 
   def show_debate
@@ -216,16 +220,20 @@ class DebatesController < ApplicationController
     end
 
     def get_url_from_hash hash
-      is_index = (hash.has_key?(:index) and (not hash[:index].nil?))
+      has_slug = !hash[:url_slug].blank?
 
       if hash.has_key? :portfolio_url
-        is_index ? show_portfolio_debate_url(hash) : show_portfolio_debates_on_date_url(hash)
+        has_slug ? show_portfolio_debate_url(hash) : show_portfolio_debates_on_date_url(hash)
+        # show_portfolio_debate_url(hash)
       elsif hash.has_key? :committee_url
-        is_index ? show_committee_debate_url(hash) : show_committee_debates_on_date_url(hash)
+        has_slug ? show_committee_debate_url(hash) : show_committee_debates_on_date_url(hash)
+        # show_committee_debate_url(hash)
       elsif hash.has_key? :bill_url
-        is_index ? show_bill_debate_url(hash) : show_bill_debates_on_date_url(hash)
+        has_slug ? show_bill_debate_url(hash) : show_bill_debates_on_date_url(hash)
+        # show_bill_debate_url(hash)
       else
-        is_index ? show_debate_url(hash) : show_debates_on_date_url(hash)
+        has_slug ? show_debate_url(hash) : show_debates_on_date_url(hash)
+        # show_debate_url(hash)
       end
     end
 

@@ -293,3 +293,27 @@ describe Bill, 'getting NzlEvents' do
     titles.include?(nzl_events(:one).title).should be_true
   end
 end
+
+describe Bill, 'when finding bills from text' do
+
+  def check_bills billname1, and_the, billname2
+    date = mock('date')
+    bill1 = mock('bill1')
+    bill2 = mock('bill2')
+    Bill.should_receive(:from_name_and_date).with(billname1, date).and_return bill1
+    Bill.should_receive(:from_name_and_date).with(billname2, date).and_return bill2
+    Bill.bills_from_text_and_date("#{billname1}#{and_the} #{billname2}", date).should == [bill1, bill2]
+  end
+
+  it 'should match on two bills separated by ", and the"' do
+    check_bills 'Biosecurity Amendment Bill', ', and the', 'Hazardous Substances and New Organisms Amendment Bill (No 2)'
+  end
+
+  it 'should match on two bills separated by " and the"' do
+    check_bills 'Biosecurity Amendment Bill', ' and the', 'Hazardous Substances and New Organisms Amendment Bill (No 2)'
+  end
+
+  it 'should match on bill ending with (No 4) joined to another bill with "and the" text' do
+    check_bills 'Biosecurity Amendment Bill (No 4)', ' and the', 'Hazardous Substances and New Organisms Amendment Bill (No 2)'
+  end
+end
