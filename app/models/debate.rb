@@ -103,6 +103,10 @@ class Debate < ActiveRecord::Base
       debates
     end
 
+    def find_with_url_category(category)
+      remove_duplicates(find_all_by_url_category(category), false)
+    end
+
     def find_by_date_and_index(date, index)
       debate = find_by_index(date.year, date.month, date.day, index)
       debate = debate.sub_debate if debate.is_parent_with_one_sub_debate?
@@ -110,26 +114,26 @@ class Debate < ActiveRecord::Base
     end
 
     def find_by_index(year, month, day, index)
-      month = mmm_to_mm month if month
       if index
         date = year+'-'+month+'-'+day
         debates = find_all_by_date_and_debate_index(date, index.to_i)
-
         debate = remove_duplicates(debates, false)[0]
-
         raise ActiveRecord::RecordNotFound.new('ActiveRecord::RecordNotFound: date ' + date + ' index ' + index.to_i.to_s + '   ' + debates.to_s) unless debate
         debate
-      elsif day
-        find_all_by_date(year+'-'+month+'-'+day, :order => "id")
-      elsif month
-        find(:all, :conditions => ['year(date) = ? and month(date) = ?', year, month], :order => "id")
       else
-        find(:all, :conditions => ['year(date) = ?', year], :order => "id")
+        find_by_date(year, month, day)
       end
     end
 
     def find_by_date(year, month, day)
-      remove_duplicates(find_by_index(year, month, day, nil), false) # Finds debates by date, ordered by ascending date
+      if day
+        debates = find_all_by_date(year+'-'+mmm_to_mm(month)+'-'+day, :order => "id")
+      elsif month
+        debates = find(:all, :conditions => ['year(date) = ? and month(date) = ?', year, mmm_to_mm(month)], :order => "id")
+      else
+        debates = find(:all, :conditions => ['year(date) = ?', year], :order => "id")
+      end
+      remove_duplicates(debates, false)
     end
 
     def match name
@@ -171,7 +175,7 @@ class Debate < ActiveRecord::Base
     end
 
     def mmm_to_mm mmm
-      mm = (Debate::MONTHS_LC.index(mmm) + 1).to_s
+      Debate::MONTHS_LC.index(mmm) ? (Debate::MONTHS_LC.index(mmm) + 1).to_s : mmm
     end
 
     def to_date_hash date

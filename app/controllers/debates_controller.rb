@@ -101,6 +101,11 @@ class DebatesController < ApplicationController
     show_about_debates_on_date Bill, params[:bill_url]
   end
 
+  def show_debates_by_category
+    @category = params[:url_category]
+    @debates = Debate.find_with_url_category(@category)
+  end
+
   def show_about_debates_on_date about_type, url
     debates = Debate.find_by_about_on_date about_type, url, @date
     @hash = params
@@ -120,7 +125,9 @@ class DebatesController < ApplicationController
 
     if category = params[:url_category]
       @debates = @debates.select{|d| d.url_category == category}
-      if @date.day && @debates.size == 1 && @debates.first.url_slug.blank?
+      single_debate_identified = @date.day && @debates.size == 1 && @debates.first.url_slug.blank?
+
+      if single_debate_identified
         load_organisations
         show_debate
       else
@@ -224,16 +231,12 @@ class DebatesController < ApplicationController
 
       if hash.has_key? :portfolio_url
         has_slug ? show_portfolio_debate_url(hash) : show_portfolio_debates_on_date_url(hash)
-        # show_portfolio_debate_url(hash)
       elsif hash.has_key? :committee_url
         has_slug ? show_committee_debate_url(hash) : show_committee_debates_on_date_url(hash)
-        # show_committee_debate_url(hash)
       elsif hash.has_key? :bill_url
         has_slug ? show_bill_debate_url(hash) : show_bill_debates_on_date_url(hash)
-        # show_bill_debate_url(hash)
       else
         has_slug ? show_debate_url(hash) : show_debates_on_date_url(hash)
-        # show_debate_url(hash)
       end
     end
 

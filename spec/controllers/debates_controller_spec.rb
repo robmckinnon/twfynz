@@ -18,7 +18,7 @@ describe DebatesController, 'when receiving request for debate using index numbe
     Debate.should_receive(:find_by_date_and_index).with(date, index).and_return debate
 
     get 'redirect_show_debate', :controller => 'debates', :action=>'redirect_show_debate', :day=>day, :month=>month, :year=>year, :index => index
-    response.should redirect_to(show_debate_url(id_hash))
+    response.should redirect_to(show_debates_on_date_url(id_hash))
   end
 end
 
@@ -131,5 +131,30 @@ describe DebatesController, 'when getting show_debates_on_date' do
     check_category_params '/ministerial_statements/2008/apr/17'
     check_category_params '/adjournment/2008/apr/17'
     check_category_params '/parliamentary_service_commission/2008/apr/17'
+  end
+end
+
+describe DebatesController, 'when getting show_debates_by_category' do
+  def check_params url, params={}
+    params_from(:get, url).should == {:controller => 'debates', :action=>'show_debates_by_category', :url_category => url.split('/')[1]}
+  end
+
+  it 'should show debates given category' do
+    check_params '/points_of_order'
+    check_params '/visitors'
+    check_params '/urgent_debates_declined'
+    check_params '/tabling_of_documents'
+    check_params '/obituaries'
+    check_params '/speakers_rulings'
+    check_params '/motions'
+    check_params '/personal_explanations'
+    check_params '/appointments'
+    check_params '/urgent_debates'
+    check_params '/privilege'
+    check_params '/speakers_statements'
+    check_params '/resignations'
+    check_params '/ministerial_statements'
+    check_params '/adjournment'
+    check_params '/parliamentary_service_commission'
   end
 end

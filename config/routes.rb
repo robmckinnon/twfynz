@@ -59,6 +59,10 @@ ActionController::Routing::Routes.draw do |map|
     index_route 'debates', debate
     make_route 'debates/contribution_match', debate
 
+    Debate::CATEGORIES.each do |category|
+      make_category_route "#{category}", debate, :show_debates_by_category
+    end
+
     debate.with_options(date_options) do |by_date|
       Debate::CATEGORIES.each do |category|
         make_category_route "#{category}/#{date_path}", by_date, :show_debates_on_date
