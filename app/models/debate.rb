@@ -311,7 +311,7 @@ class Debate < ActiveRecord::Base
       when OralAnswers
         debate.sub_debates[0].id_hash
       else
-        debate.id_hash
+        debate.is_parent_with_one_sub_debate? ? debate.sub_debates[0].id_hash : debate.id_hash
     end
   end
 
@@ -331,14 +331,9 @@ class Debate < ActiveRecord::Base
       when OralAnswer
         debate.id_hash
       when SubDebate
-        parent = debate.debate
-        if parent.is_a? BillDebate || parent.sub_debates.size != 1
-          debate.id_hash
-        else
-          parent.id_hash
-        end
-      else
         debate.id_hash
+      else
+        debate.is_parent_with_one_sub_debate? ? debate.prev_debate_id_hash : debate.id_hash
     end
   end
 

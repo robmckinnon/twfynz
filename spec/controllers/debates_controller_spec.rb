@@ -54,6 +54,10 @@ describe DebatesController, 'when getting show_debate' do
     check_params '/debates/2008/apr/17/06', :index => '06', :action => 'redirect_show_debate'
   end
 
+  it 'should find params for bill debate' do
+    check_params '/bills/summary_offences_tagging_graffiti/2008/apr/17/first_reading_1', :url_slug=>'first_reading_1', :action =>'show_bill_debate', :bill_url=>'summary_offences_tagging_graffiti'
+  end
+
   it 'should show debate given category, date and slug' do
     check_category_params '/points_of_order/2008/apr/17/mispronunciation'  # http://theyworkforyou.co.nz/debates/2008/apr/09/02
     check_category_params '/visitors/2008/apr/17/australia'  # http://localhost:3000/debates/2008/apr/15/01
@@ -100,6 +104,7 @@ describe DebatesController, 'when getting show_debate' do
     assigns[:debate].should == debate
     assigns[:date].should == date
   end
+
 end
 
 describe DebatesController, 'when getting show_debates_on_date' do
