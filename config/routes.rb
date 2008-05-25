@@ -31,7 +31,7 @@ ActionController::Routing::Routes.draw do |map|
   index_options = { :requirements => date_format.merge(:index => /[odw]?\d\d/) }
   index_path = "#{date_path}/:index"
 
-  slug_format = {:url_slug => /[0-9a-z_]+/}
+  slug_format = {:url_slug => /[0-9a-z_-]+/}
   slug_options = { :requirements => date_format.merge(slug_format) }
   slug_path = "#{date_path}/:url_slug"
 
