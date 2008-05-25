@@ -54,11 +54,15 @@ namespace :kiwimp do
 
       puts 'saving: ' + oral_answers.class.name
       oral_answers.save!
-      puts 'persisted: ' + date.to_s
       files.each do |f|
         f.persisted = true
         f.save!
       end
+
+      puts 'persisted: ' + date.to_s
+
+      oral_answers.create_url_slugs!
+      puts 'created url slugs: ' + date.to_s
     end
   end
 end
@@ -102,7 +106,6 @@ def persist_date date, publication_status, sleep_seconds=nil
     sleep sleep_seconds if sleep_seconds
   end
 
-
   debates.each_with_index do |debate, index|
     puts 'saving: ' + debate.name
     begin
@@ -123,4 +126,7 @@ def persist_date date, publication_status, sleep_seconds=nil
   end
 
   puts 'persisted: ' + date.to_s
+
+  debates.each {|d| d.create_url_slug; d.save!}
+  puts 'created url slugs: ' + date.to_s
 end

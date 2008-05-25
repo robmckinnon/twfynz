@@ -63,6 +63,10 @@ class OralAnswers < Debate
     answer.about_index = about_index
   end
 
+  def create_url_slugs!
+    oral_answers.each {|answer| answer.create_url_slug; answer.save!}
+  end
+
   def next_index
     index.next
   end
