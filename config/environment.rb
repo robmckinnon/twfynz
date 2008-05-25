@@ -63,4 +63,6 @@ require 'acts_as_slugged'
 require 'string_extensions_for_maori'
 require 'date_extension'
 require 'in_groups_by'
-#require 'sitemap'
+require 'route_helper'
+require 'sitemap'
+

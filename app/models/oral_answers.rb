@@ -64,7 +64,7 @@ class OralAnswers < Debate
   end
 
   def create_url_slugs!
-    oral_answers.each {|answer| answer.create_url_slug; answer.save!}
+    oral_answers.sort_by(&:debate_index).each {|answer| answer.create_url_slug; answer.save!}
   end
 
   def next_index

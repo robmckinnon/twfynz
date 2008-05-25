@@ -126,6 +126,6 @@ def persist_date date, publication_status, sleep_seconds=nil
 
   puts 'persisted: ' + date.to_s
 
-  debates.each {|d| d.create_url_slug; d.save!}
+  debates.sort_by(&:debate_index).each {|d| d.create_url_slug; d.save!}
   puts 'created url slugs: ' + date.to_s
 end

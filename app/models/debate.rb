@@ -25,6 +25,16 @@ class Debate < ActiveRecord::Base
 
   class << self
 
+    def each_year_of_debates
+      all_debates = remove_duplicates find(:all)
+      year_to_debates = all_debates.group_by{ |d| d.date.year }
+      descending_years = year_to_debates.keys.sort.reverse
+      descending_years.each do |year|
+        debates = year_to_debates[year]
+        yield year, debates
+      end
+    end
+
     def find_by_url_category_and_url_slug date, category, url_slug
       if category == 'debates'
         debates = find_all_by_date_and_url_slug date.yyyy_mm_dd, url_slug
@@ -281,6 +291,11 @@ class Debate < ActiveRecord::Base
 
   def calendar_hash
     {:year => date.year, :month => date.month, :day => date.day}
+  end
+
+  def download_date
+    file = PersistedFile.find_by_parliament_url_and_publication_status(source_url, publication_status)
+    file.download_date
   end
 
   def id_hash

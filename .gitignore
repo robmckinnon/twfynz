@@ -18,3 +18,4 @@ public/images
 mongrel_cluster.yml
 db/current_bills.yml
 google*.html
+public/sitemap_*
