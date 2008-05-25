@@ -299,7 +299,7 @@ class Debate < ActiveRecord::Base
 
   def next_debate_id_hash
     begin
-      debate = find_by_index year, month, day, next_index
+      debate = Debate.find_by_index year, month, day, next_index
       return nil unless debate
     rescue Exception => e
       return nil
@@ -316,11 +316,10 @@ class Debate < ActiveRecord::Base
   end
 
   def prev_debate_id_hash
+    return nil unless can_have_previous
     begin
-      can_have_previous = (index != '01') && !(index == '02' && self.is_a?(SubDebate) && parent.sub_debates.size == 1)
-      return nil unless can_have_previous
-      prev_index = to_num_str index.to_i-1
-      debate = find_by_index year, month, day, prev_index
+      prev_index = Debate.to_num_str(index.to_i-1)
+      debate = Debate.find_by_index year, month, day, prev_index
       return nil unless debate
     rescue Exception => e
       return nil
@@ -389,6 +388,10 @@ class Debate < ActiveRecord::Base
   CACHE_ROOT = RAILS_ROOT + '/tmp/cache/views/theyworkforyou.co.nz'
 
   protected
+
+    def can_have_previous
+      (index != '01') && !(index == '02' && self.is_a?(SubDebate) && parent.sub_debates.size == 1)
+    end
 
     def uncache path
       if File.exist?(path)
