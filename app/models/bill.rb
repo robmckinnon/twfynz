@@ -41,6 +41,7 @@ class Bill < ActiveRecord::Base
 
   def self.from_name_and_date_by_method name, date, method
     bills = Bill.send(method, name)
+    bills = Bill.send(method, name.gsub('-',' - ') if bills.empty?
     bills = Bill.send(method, name.gsub('’',"'")) if bills.empty?
     bills = Bill.send(method, name.gsub('’',"'").chomp(')')) if bills.empty?
     bills = Bill.send(method, name.gsub('’',"'").chomp(')').sub(')',') ').sub('(',' (').squeeze(' ')) if bills.empty?
