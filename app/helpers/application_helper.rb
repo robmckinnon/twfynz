@@ -35,7 +35,7 @@ module ApplicationHelper
   end
 
   def to_show_debates_on_date_url date
-    link_to date.mday, show_debates_on_date_url(Debate::to_date_hash(date))
+    link_to date.mday, show_debates_on_date_url({:url_category=>'debates'}.merge(Debate::to_date_hash(date)) )
   end
 
   def title_for_sitting_day date

@@ -16,6 +16,7 @@ class DebatesController < ApplicationController
   before_filter :validate_date,
       :only => [:show_debates_on_date, :show_debate, :redirect_show_debate,
               :show_bill_debate, :show_portfolio_debate, :show_committee_debate,
+              :redirect_show_bill_debate, :redirect_show_portfolio_debate, :redirect_show_committee_debate,
               :show_portfolio_debates_on_date, :show_committee_debates_on_date, :show_bill_debates_on_date]
 
   def index
@@ -123,7 +124,7 @@ class DebatesController < ApplicationController
   def show_debates_on_date
     @debates = Debate.find_by_date(@date.year, @date.month, @date.day)
 
-    if category = params[:url_category]
+    if (category = params[:url_category]) && (category != 'debates')
       @debates = @debates.select{|d| d.url_category == category}
       single_debate_identified = @date.day && @debates.size == 1 && @debates.first.url_slug.blank?
 
@@ -147,8 +148,7 @@ class DebatesController < ApplicationController
   def redirect_show_debate
     begin
       debate = Debate.find_by_date_and_index(@date, index_id(params))
-      id_hash = debate.id_hash
-      redirect_to get_url_from_hash(id_hash)
+      redirect_to get_url_from_hash(debate.id_hash)
     rescue ActiveRecord::RecordNotFound
       render :template => 'debates/debate_not_found', :status => "404 Not Found"
     end
@@ -161,6 +161,18 @@ class DebatesController < ApplicationController
     rescue ActiveRecord::RecordNotFound
       render :template => 'debates/debate_not_found', :status => "404 Not Found"
     end
+  end
+
+  def redirect_show_bill_debate
+    redirect_show_debate_about Bill, params[:bill_url]
+  end
+
+  def redirect_show_portfolio_debate
+    redirect_show_debate_about Portfolio, params[:portfolio_url]
+  end
+
+  def redirect_show_committee_debate
+    redirect_show_debate_about Committee, params[:committee_url]
   end
 
   def show_bill_debate
@@ -208,12 +220,17 @@ class DebatesController < ApplicationController
       end
     end
 
-    def show_debate_about about_type, about_url, url_slug
-      if url_slug
-        @debate = Debate.find_by_about_on_date_with_slug about_type, about_url, @date, url_slug
-      else
-        @debate = Debate.find_by_about_on_date_with_index about_type, about_url, @date, params[:index]
+    def redirect_show_debate_about about_type, about_url
+      begin
+        debate = Debate.find_by_about_on_date_with_index about_type, about_url, @date, params[:index]
+        redirect_to get_url_from_hash(debate.id_hash)
+      rescue ActiveRecord::RecordNotFound
+        render :template => 'debates/debate_not_found', :status => "404 Not Found"
       end
+    end
+
+    def show_debate_about about_type, about_url, url_slug
+      @debate = Debate.find_by_about_on_date_with_slug about_type, about_url, @date, url_slug
       @about_type = about_type
       @hash = params
 

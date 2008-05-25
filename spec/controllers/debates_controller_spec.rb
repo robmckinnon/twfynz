@@ -51,6 +51,7 @@ describe DebatesController, 'when getting show_debate' do
 
   it 'should show debate given date and index' do
     check_params '/debates/2008/apr/17/01', :index => '01', :action => 'redirect_show_debate'
+    check_params '/debates/2008/apr/17/06', :index => '06', :action => 'redirect_show_debate'
   end
 
   it 'should show debate given category, date and slug' do
@@ -111,7 +112,7 @@ describe DebatesController, 'when getting show_debates_on_date' do
   end
 
   it 'should show debates on date given date' do
-    check_params '/debates/2008/apr/17'
+    check_category_params '/debates/2008/apr/17'
   end
 
   it 'should show debates on date given category and date' do

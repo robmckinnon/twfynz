@@ -115,7 +115,7 @@ class Debate < ActiveRecord::Base
 
     def find_by_index(year, month, day, index)
       if index
-        date = year+'-'+month+'-'+day
+        date = year+'-'+mmm_to_mm(month)+'-'+day
         debates = find_all_by_date_and_debate_index(date, index.to_i)
         debate = remove_duplicates(debates, false)[0]
         raise ActiveRecord::RecordNotFound.new('ActiveRecord::RecordNotFound: date ' + date + ' index ' + index.to_i.to_s + '   ' + debates.to_s) unless debate
