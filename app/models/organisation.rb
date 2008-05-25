@@ -58,10 +58,10 @@ class Organisation < ActiveRecord::Base
       organisation = Organisation.find_by_name(second_try) if second_try != name
 
       unless organisation
-        if name[/^The /]
-          third_try = "#{name.sub(/^The /, '')} of New Zealand"
-          organisation = Organisation.find_by_name(third_try)
-        end
+        third_try = nil
+        third_try = "#{name.sub(/^The /, '')} of New Zealand" if name[/^The /]
+        third_try = "#{name} New Zealand Limited" unless name[/^The /] || name[/Limited$/]
+        organisation = Organisation.find_by_name(third_try) if third_try
       end
     end
     organisation

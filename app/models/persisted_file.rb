@@ -6,7 +6,10 @@ class PersistedFile < ActiveRecord::Base
     files = find_all_by_publication_status_and_persisted(publication_status, false)
     dates = files.collect(&:debate_date).uniq.sort
 
-    dates.delete_if {|d| find_all_by_publication_status_and_persisted('F', true) } if publication_status == 'A'
+    if publication_status == 'A'
+      finals = find_all_by_publication_status_and_persisted('F', true).collect(&:debate_date).uniq.sort
+      dates.delete_if {|d| finals.include? d }
+    end
     dates
   end
 

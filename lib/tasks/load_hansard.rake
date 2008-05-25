@@ -26,8 +26,7 @@ namespace :kiwimp do
   end
 
   desc 'load hansard from /data'
-  # task :load_hansard => [:environment, :load_questions] do
-  task :load_hansard => [:environment] do
+  task :load_hansard => [:environment, :load_questions] do
     # require File.dirname(__FILE__) + '/../hansard_parser.rb'
     sleep_seconds = ENV['sleep'].to_i if ENV['sleep']
     persist 'A', sleep_seconds
