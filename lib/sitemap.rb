@@ -1,6 +1,6 @@
 class SiteMapIndex
   def write_to_file!
-    site_maps = [PortfoliosSiteMap, BillsSiteMap, MpsSiteMap, PartiesSiteMap, OrganisationsSiteMap].inject([]) do |maps, site_map_type|
+    site_maps = [GeneralSiteMap, PortfoliosSiteMap, BillsSiteMap, MpsSiteMap, PartiesSiteMap, OrganisationsSiteMap].inject([]) do |maps, site_map_type|
       maps << site_map_type.new
     end
     site_maps += DebatesSiteMap::get_site_maps
@@ -12,9 +12,9 @@ class SiteMapIndex
 
     site_maps.each do |site_map|
       siteindex <<
-          "<sitemap>\n" <<
-          "<loc>http://theyworkforyou.co.nz/#{site_map.location}</loc>\n" <<
-          "<lastmod>#{site_map.most_recent_modification}</lastmod>\n" <<
+          "<sitemap>" <<
+          "<loc>http://theyworkforyou.co.nz/#{site_map.location}</loc>" <<
+          "<lastmod>#{site_map.most_recent_modification}</lastmod>" <<
           "</sitemap>\n"
     end
 
@@ -51,9 +51,9 @@ class SiteMap
           %Q|<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n|
       pages.each do |page|
         site_map <<
-            "<url>\n" <<
-            '<loc>' << page.location << "</loc>\n" <<
-            '<lastmod>' << page.last_modification.to_s << "</lastmod>\n" <<
+            "<url>" <<
+            '<loc>' << page.location << "</loc>" <<
+            '<lastmod>' << page.last_modification.to_s << "</lastmod>" <<
             "</url>\n" if page.location
       end
       site_map <<
@@ -96,11 +96,28 @@ class DebatesSiteMap < SiteMap
         last_modification = debate.download_date
         pages << Page.new(url, last_modification)
       rescue Exception => e
-        puts "debate id #{debate.id}: " + e.message
+        # puts "debate id #{debate.id}: " + e.message
         pages
       end
     end
     populate_sitemap "sitemap_#{year}.xml", pages
+  end
+end
+
+class GeneralSiteMap < SiteMap
+  def initialize
+    pages = []
+    last_modification = Date.today
+    pages << Page.new('http://theyworkforyou.co.nz/', last_modification)
+    pages << Page.new('http://theyworkforyou.co.nz/debates', last_modification)
+    pages << Page.new('http://theyworkforyou.co.nz/about', last_modification)
+
+    Debate::CATEGORIES.each do |category|
+      last_modification = Debate.remove_duplicates(Debate.find_all_by_url_category(category)).collect(&:download_date).max
+      pages << Page.new("http://theyworkforyou.co.nz/#{category}", last_modification)
+    end
+
+    populate_sitemap "sitemap_general.xml", pages
   end
 end
 
@@ -113,9 +130,7 @@ end
 class BillsSiteMap < SiteMap
   def initialize
     populate_sitemap_for_model(Bill) do |pages, bill, url, last_modification|
-      if bill.submissions.size > 0
-        pages << Page.new("#{url}/submissions", last_modification)
-      end
+      pages << Page.new("#{url}/submissions", last_modification) unless bill.submissions.empty?
     end
   end
 end
@@ -135,9 +150,7 @@ end
 class OrganisationsSiteMap < SiteMap
   def initialize
     populate_sitemap_for_model(Organisation) do |pages, organisation, url, last_modification|
-      if organisation.count_of_mentions > 0
-        pages << Page.new("#{url}/mentions", last_modification)
-      end
+      pages << Page.new("#{url}/mentions", last_modification) if organisation.count_of_mentions > 0
     end
   end
 end
