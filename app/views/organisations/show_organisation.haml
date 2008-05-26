@@ -15,7 +15,7 @@
       = render :partial => 'business_item_submission', :collection => @business_item_name_to_submissions.keys, :locals => {:business_item_name_to_submissions => @business_item_name_to_submissions}
 - count = @organisation.count_of_mentions
 - if count > 0
-  #mentions
+  #mentions_in_parliament
     %h2 Mentions in Parliament
     %p
       = "#{@organisation.name} has been "
