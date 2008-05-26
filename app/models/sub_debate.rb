@@ -90,7 +90,7 @@ class SubDebate < Debate
       if about && about.is_a?(Bill)
         SubDebate.find_by_url_slug_and_date_and_publication_status_and_about_type_and_about_id(candidate_slug, date, publication_status, about_type, about_id)
       elsif parent
-        SubDebate.find_by_url_slug_and_date_and_publication_status(candidate_slug, date, publication_status)
+        SubDebate.find_by_url_category_and_url_slug_and_date_and_publication_status(url_category, candidate_slug, date, publication_status)
       else
         raise 'unhandled'
       end

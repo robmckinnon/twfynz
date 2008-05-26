@@ -150,16 +150,16 @@ class DebatesController < ApplicationController
       debate = Debate.find_by_date_and_index(@date, index_id(params))
       redirect_to get_url_from_hash(debate.id_hash)
     rescue ActiveRecord::RecordNotFound
-      render :template => 'debates/debate_not_found', :status => "404 Not Found"
+      render_debate_not_found
     end
   end
 
   def show_debate
     begin
       debate = Debate.find_by_url_category_and_url_slug(@date, params[:url_category], params[:url_slug])
-      render_debate debate
+      debate ? render_debate(debate) : render_debate_not_found
     rescue ActiveRecord::RecordNotFound
-      render :template => 'debates/debate_not_found', :status => "404 Not Found"
+      render_debate_not_found
     end
   end
 
@@ -225,7 +225,7 @@ class DebatesController < ApplicationController
         debate = Debate.find_by_about_on_date_with_index about_type, about_url, @date, params[:index]
         redirect_to get_url_from_hash(debate.id_hash)
       rescue ActiveRecord::RecordNotFound
-        render :template => 'debates/debate_not_found', :status => "404 Not Found"
+        render_debate_not_found
       end
     end
 
@@ -239,7 +239,7 @@ class DebatesController < ApplicationController
         @parent = @debate.debate
         render :template => 'debates/show_subdebate'
       else
-        render :template => 'debates/debate_not_found'
+        render_debate_not_found
       end
     end
 
@@ -260,5 +260,9 @@ class DebatesController < ApplicationController
     def redirect_url date
       params.merge! :day => date.day, :month => date.month
       redirect_to get_url_from_hash(params), :status => :moved_permanently
+    end
+
+    def render_debate_not_found
+      render :template => 'debates/debate_not_found', :status => "404 Not Found"
     end
 end

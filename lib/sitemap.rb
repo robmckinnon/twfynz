@@ -92,13 +92,15 @@ class DebatesSiteMap < SiteMap
   def initialize year, debates
     pages = debates.inject([]) do |pages, debate|
       begin
-        url = SiteMap::route_helper.get_url(debate)
-        last_modification = debate.download_date
-        pages << Page.new(url, last_modification)
+        unless debate.is_parent_with_one_sub_debate? || debate.is_a?(OralAnswers)
+          url = SiteMap::route_helper.get_url(debate)
+          last_modification = debate.download_date
+          pages << Page.new(url, last_modification)
+        end
       rescue Exception => e
         # puts "debate id #{debate.id}: " + e.message
-        pages
       end
+      pages
     end
     populate_sitemap "sitemap_#{year}.xml", pages
   end

@@ -46,6 +46,10 @@ class OralAnswers < Debate
     4
   end
 
+  def is_parent_with_one_sub_debate?
+    sub_debates.size == 1
+  end
+
   def sub_debates
     oral_answers
   end
@@ -64,6 +68,7 @@ class OralAnswers < Debate
   end
 
   def create_url_slugs!
+    reload
     oral_answers.sort_by(&:debate_index).each {|answer| answer.create_url_slug; answer.save!}
   end
 

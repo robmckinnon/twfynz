@@ -7,7 +7,6 @@ class Debate < ActiveRecord::Base
 
   after_save :expire_cached_pages
 
-  before_create :create_url_slug
   acts_as_slugged
 
   CATEGORIES = %w[visitors motions urgent_debates_declined points_of_order
@@ -24,6 +23,17 @@ class Debate < ActiveRecord::Base
   MONTHS_LC = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec']
 
   class << self
+
+    def recreate_url_slugs!
+      find(:all).each {|d| d.url_slug = nil; d.url_category = nil; d.save!}
+
+      find(:all).in_groups_by(&:date).each do |group|
+        group.sort_by(&:debate_index).each do |debate|
+          debate.create_url_slug
+          debate.save!
+        end
+      end
+    end
 
     def each_year_of_debates
       all_debates = remove_duplicates find(:all)
