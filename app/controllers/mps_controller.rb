@@ -27,7 +27,7 @@ class MpsController < ApplicationController
     render :template => 'mps/index'
   end
 
-  def mp
+  def show_mp
     name = params[:name]
     mp = Mp.find_by_id_name name
     # mp = Mp.find_by_id_name(name, :include => [{:contributions => :spoken_in}])
@@ -62,10 +62,10 @@ class MpsController < ApplicationController
       @mp = mp
     elsif name == 'ian_ewen_street'
       headers["Status"] = "301 Moved Permanently"
-      redirect_to mp_url(:name => 'ian_ewen-street')
+      redirect_to show_mp_url(:name => 'ian_ewen-street')
     elsif name == 'david_benson_pope'
       headers["Status"] = "301 Moved Permanently"
-      redirect_to mp_url(:name => 'david_benson-pope')
+      redirect_to show_mp_url(:name => 'david_benson-pope')
     else
       render(:template => 'mps/invalid_mp', :status => 404)
     end

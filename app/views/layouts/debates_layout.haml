@@ -7,14 +7,17 @@
       - if @about and !@debate
         %h1= @about.full_name
       - elsif !@about_on
-        - if (@debate and @debate.respond_to? :parent)
-          %h1{ :class=> @debate.parent.css_class }= @debate.parent.name
-          %h2{ :class=> @debate.css_class }= (@debate.oral_answer_no ? @debate.oral_answer_no.to_s+'. ' : '') + @debate.name
-        - elsif @debate
-          %h1{ :class=> @debate.css_class }= @debate.name.sub(', ', ', <br />')
-          - if (@debate.is_a?(ParentDebate) and @debate.sub_debates.size == 1)
-            %h2{ :class=> @debate.sub_debate.css_class }= @debate.sub_debate.name
+        - if @debate
+          - if @debate.respond_to? :parent
+            %h1{ :class=> @debate.parent.css_class }= @debate.parent.name
+            %h2{ :class=> @debate.css_class }= (@debate.oral_answer_no ? @debate.oral_answer_no.to_s+'. ' : '') + @debate.name
+          - else
+            %h1{ :class=> @debate.css_class }= @debate.name.sub(', ', ', <br />')
+            - if @debate.is_parent_with_one_sub_debate?
+              %h2{ :class=> @debate.sub_debate.css_class }= @debate.sub_debate.name
         - elsif @no_heading
+        - elsif @heading
+          %h1= @heading
         - else
           %h1 House of Representatives debates
       - if @date

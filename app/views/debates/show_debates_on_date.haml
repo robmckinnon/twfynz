@@ -1,4 +1,5 @@
-- @title = 'Parliamentary debates: '+ format_date(@date) + ': Aotearoa New Zealand Parliament'
+- @title = "#{format_debate_category(@category)}: #{format_date(@date)}: Aotearoa New Zealand Parliament"
+- @heading = format_debate_category(@category)
 - if @debates.size > 0
   - @publication_status = status_description(@debates.first)
 #primarycontainer
@@ -7,7 +8,8 @@
       = "<p>No #{link_to 'debates', :action => 'index'} found #{'on' if @date.day} #{'in' unless @date.day} #{@date.day+' ' if @date.day}#{@date.month.capitalize+' ' if @date.month}#{@date.year}.</p>"
     - else
       %ul.linklist
-        = render :partial => 'debate_link', :collection => @debates, :locals => { :show_status => !@date.day }
+        - no_category = (@category.blank? || @category =='debates')
+        = render :partial => 'debate_link', :collection => @debates, :locals => { :show_status => !@date.day, :show_parent => no_category, :show_date => !no_category }
 #secondarycontent
   = calendar_nav @calendar_date
   = @ni_map.div(:width => 360, :height => 440).sub("map_div",'ni_map') if @ni_map

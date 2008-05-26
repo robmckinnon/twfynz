@@ -3,6 +3,6 @@
     = vote_cast
   - elsif vote_cast
     - name = vote_cast.vote_label
-    = link_to(name, mp_url(:name => vote_cast.mp.id_name))
+    = link_to(name, show_mp_url(:name => vote_cast.mp.id_name))
   - else
     = ''

@@ -9,14 +9,32 @@ class OralAnswer < SubDebate
   end
 
   def title_name s=':'
-    name.gsub(/ -([A-Z0-9])/,s+' \1').gsub(/- ([A-Z0-9])/,s+' \1').gsub(/-([A-Z0-9])/, s+' \1').sub('Benson'+s+' Pope','Benson-Pope').sub('Auditor'+s+' General','Auditor-General').sub('United States '+s+' New Zealand', 'United States - New Zealand').sub('Pupil'+s+' Teacher Ratios','Pupil-Teacher Ratios')
+    name.gsub(/\s-([A-Z0-9])/,s+' \1').gsub(/-\s([A-Z0-9])/,s+' \1').gsub(/-([A-Z0-9])/, s+' \1').sub('Benson'+s+' Pope','Benson-Pope').sub('Auditor'+s+' General','Auditor-General').sub('United States '+s+' New Zealand', 'United States - New Zealand').sub('Pupil'+s+' Teacher Ratios','Pupil-Teacher Ratios')
   end
 
   def index_prefix
     'o'
   end
 
+  def create_url_slug
+    populate_url_slug make_url_slug_text.gsub(' and ',' ')
+    self.url_slug
+  end
+
   protected
+
+    def find_by_candidate_slug candidate_slug
+      OralAnswer.find_by_url_slug_and_date_and_publication_status_and_about_type_and_about_id(candidate_slug, date, publication_status, about_type, about_id)
+    end
+
+    def make_url_slug_text
+      if name.include?("—")
+        major, minor = name.split("—")
+        text = matches_about_name_or_minister_name(major) ? minor : major
+      else
+        text = String.new name
+      end
+    end
 
     def question_to= name
       @question_to = name
@@ -55,5 +73,10 @@ class OralAnswer < SubDebate
         end
         @question_to = nil
       end
+    end
+  private
+
+    def matches_about_name_or_minister_name text
+      about && ( (text.gsub(',','') == about.full_name.gsub(',','') ) || (text =~ /#{about.full_name}, (Associate )?Minister/) )
     end
 end

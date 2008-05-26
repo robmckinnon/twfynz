@@ -44,6 +44,18 @@ class BillDebate < ParentDebate
 
   protected
 
+    def find_by_candidate_slug candidate_slug
+      BillDebate.find_by_url_slug_and_date_and_publication_status_and_about_type_and_about_id(candidate_slug, date, publication_status, about_type, about_id)
+    end
+
+    def make_url_slug_text
+      if sub_debate && sub_debate.name
+        text = sub_debate.name
+      else
+        text = String.new name
+      end
+    end
+
     def populate_sub_debate type=SubDebate
       if @sub_names
         original_populate_sub_debate type

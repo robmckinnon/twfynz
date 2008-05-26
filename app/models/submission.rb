@@ -12,23 +12,15 @@ class Submission < ActiveRecord::Base
   after_save :expire_cached_pages
 
   def self.count_by_business_item item
-    if item && item.is_a?(Bill)
-      count_by_sql("SELECT COUNT(*) FROM submissions WHERE business_item_id = #{item.id} and business_item_type = 'Bill'")
-    else
-      0
-    end
+    item.is_a?(Bill) ? count_by_sql("SELECT COUNT(*) FROM submissions WHERE business_item_id = #{item.id} and business_item_type = 'Bill'") : 0
   end
 
   def self.find_all_by_business_item item
-    if item && item.is_a?(Bill)
-      Submission.find_all_by_business_item_id_and_business_item_type(item.id, Bill.name)
-    else
-      nil
-    end
+    item.is_a?(Bill) ? Submission.find_all_by_business_item_id_and_business_item_type(item.id, Bill.name) : nil
   end
 
   def populate_submitter_id
-    if (submitter_name and (submitter_id == nil))
+    if submitter_name && submitter_id.blank?
       organisation = Organisation.from_name(submitter_name)
       if organisation
         self.submitter_id = organisation.id
@@ -56,17 +48,13 @@ class Submission < ActiveRecord::Base
 
     def expire_cached_pages
       return unless ActionController::Base.perform_caching
-
-      if submitter
-        uncache "#{Debate::CACHE_ROOT}/organisations/#{submitter.slug}.cache"
-      end
-
+      uncache "#{Debate::CACHE_ROOT}/organisations/#{submitter.slug}.cache" if submitter
       uncache "#{Debate::CACHE_ROOT}/organisations.cache"
     end
 
     def create_submitter_if_is_from_organisation
-      if self.submitter_id.nil?
-        if (self.is_from_organisation && self.is_from_organisation != 0)
+      if submitter_id.nil?
+        if (is_from_organisation && is_from_organisation != 0)
           organisation = Organisation.from_name(submitter_name)
           unless organisation
             if submitter_url.blank?

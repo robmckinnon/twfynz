@@ -2,7 +2,7 @@
 .box
   .contentarea
     %ul.linklist
-      %li= 'All on ' + link_to("#{date_to_s debate.date}", show_debates_on_date_url(debate.date_hash))
+      %li= 'All on ' + link_to("#{date_to_s debate.date}", show_debates_on_date_url({:url_category=>'debates'}.merge(debate.date_hash)))
       - if debate.prev_debate_id_hash
         %li= '&laquo; ' + link_to("Previous", get_url_from_hash(debate.prev_debate_id_hash)) + ' on day'
       - if debate.next_debate_id_hash

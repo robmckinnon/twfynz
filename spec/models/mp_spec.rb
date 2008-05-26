@@ -20,9 +20,9 @@ end
 def mp_bill_params
   {:bill_name => 'Major Events Management Bill',
         :parliament_url => '2/5/c/25c94892184b4eb3b38f3d4c465e200d.htm',
+        :parliament_id => '2/5/c/25c94892184b4eb3b38f3d4c465e200d.htm',
         :introduction => '2006-12-12',
-        :mp_name => 'Rod Donald',
-        :parliament_id => ''}
+        :mp_name => 'Rod Donald'}
 end
 
 def mp_invalid_without param
@@ -161,9 +161,7 @@ describe Mp, 'if member in charge of bills' do
   it 'should have bills' do
     mp = Mp.new mp_params
     mp.save!
-    bill = Bill.new mp_bill_params.merge(:member_in_charge_id=>mp.id)
-    bill.type = 'Bill'
-    bill.save!
+    bill = GovernmentBill.create mp_bill_params.merge(:member_in_charge_id => mp.id)
     mp.bills.size.should == 1
     mp.bills.first.id.should == bill.id
 

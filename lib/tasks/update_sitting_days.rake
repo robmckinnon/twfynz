@@ -4,7 +4,7 @@ require 'hpricot'
 namespace :kiwimp do
 
   desc 'update sitting days using data in database'
-  task :update_sitting_days => [:environment, :load_hansard] do
+  task :update_sitting_days => [:environment, :load_hansard, :make_sitemap] do
     Organisation.find(:all).each {|o| o.save!}
     PersistedFile.find(:all).each do |file|
       day = SittingDay.find_by_date(file.debate_date)

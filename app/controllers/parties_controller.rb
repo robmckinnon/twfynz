@@ -10,7 +10,7 @@ class PartiesController < ApplicationController
     @total_mps = @parties.inject(0) {|count, p| count + p.mps.size }
   end
 
-  def party
+  def show_party
     party = Party::get_party params[:name]
 
     if party

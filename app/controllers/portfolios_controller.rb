@@ -28,10 +28,10 @@ class PortfoliosController < ApplicationController
     counts = Portfolio::questions_asked_count_by_month params['portfolio_url']
     params = { :type => 'smooth', :height => (counts.max * 0.5), :step => 3, :line_color => '#333333' }
 
-		send_data(Sparklines.plot(counts, params),
-					:disposition => 'inline',
-					:type => 'image/png',
-					:filename => "spark_#{params[:type]}.png" )
+    send_data(Sparklines.plot(counts, params),
+          :disposition => 'inline',
+          :type => 'image/png',
+          :filename => "spark_#{params[:type]}.png" )
   end
 
   def show_portfolio
@@ -55,7 +55,5 @@ class PortfoliosController < ApplicationController
       @older_debates_by_name, @older_names = [], []
     end
   end
-
-  private
 
 end

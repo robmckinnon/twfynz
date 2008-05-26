@@ -1,5 +1,13 @@
 module DebatesHelper
 
+  def format_debate_category(category)
+    if category == 'debates'
+      'Parliamentary debates'
+    else
+      category.gsub('_',' ').titleize
+    end
+  end
+
   def status_description debate
     case debate.publication_status
       when 'F'
@@ -35,6 +43,14 @@ module DebatesHelper
     end
   end
 
+  def format_bill_in_contribution transcript, text, date
+    bills = Bill.bills_from_text_and_date text, date
+    bills.compact.each do |bill|
+      bill_link = link_to(bill.bill_name, show_bill_url(:bill_url => bill.url))
+      transcript.gsub!(bill.bill_name, bill_link)
+    end
+  end
+
   def format_contribution contribution, organisations, organisation_names
     transcript = contribution.html ''
 
@@ -57,21 +73,11 @@ module DebatesHelper
       end
       continued_from = contribution.debate.about.sub_debates.select{|d| d.date == date}
       transcript.sub!(match[1], link_to(match[1], get_url(continued_from.first))) unless continued_from.empty?
-    elsif contribution.debate.name.include?('Reading') and transcript.include?('I move') and transcript.include?('That the ') and transcript.include?('be now read')
-      bill_text = transcript.match(/That the (.*)be now read/)[1].gsub('Bill and the','Bill, and the')
-      bills = bill_text.split(/,( and)? the/).collect do |name|
-        name = name.match(/[a-z ]*(.*)/)[1]
-        name.chomp!(', ') if name.length > 0
-        if (name.length > 0 and (name.strip.length > 0))
-          Bill.from_name_and_date(name.strip, contribution.spoken_in.date)
-        else
-          nil
-        end
-      end
-      bills.compact.each do |bill|
-        bill_link = link_to(bill.bill_name, show_bill_url(:bill_url => bill.url))
-        transcript.gsub!(bill.bill_name, bill_link)
-      end
+    elsif contribution.debate.name.include?('Reading') && transcript.include?('I move') && transcript.include?('That the ') && transcript.include?('be now read')
+      text = transcript[/That the (.*)be now read/, 1]
+      format_bill_in_contribution transcript, text, contribution.spoken_in.date
+    elsif contribution.debate.name == 'Business Statement' && contribution.debate.contributions.index(contribution) == 0
+      # format_bill_in_contribution transcript, text, contribution.spoken_in.date
     end
 
     downcase = transcript.downcase
@@ -98,7 +104,7 @@ module DebatesHelper
 
     unless @@mp_id_to_link.has_key? key
       if contribution.mp
-        @@mp_id_to_link[key] = link_to(portrait(contribution.mp) + contribution.speaker_name.name, mp_url(:name => contribution.mp.id_name))
+        @@mp_id_to_link[key] = link_to(portrait(contribution.mp) + contribution.speaker_name.name, show_mp_url(:name => contribution.mp.id_name))
       else
         @@mp_id_to_link[key] = contribution.speaker
       end

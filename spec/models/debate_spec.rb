@@ -3,12 +3,12 @@ require File.dirname(__FILE__) + '/../spec_helper'
 def dummy_bill_params
   {:bill_name => 'Major Events Management Bill',
         :parliament_url => '2/5/c/25c94892184b4eb3b38f3d4c465e200d.htm',
+        :parliament_id => '2/5/c/25c94892184b4eb3b38f3d4c465e200d.htm',
         :introduction => '2006-12-12',
-        :mp_name => 'Rod Donald',
-        :parliament_id => ''}
+        :mp_name => 'Rod Donald'}
 end
 
-describe Debate, " destroy" do
+describe Debate, "when being destroyed" do
 
   it 'should destroy child sub-debates, contributions, debate topics, votes, and vote casts' do
     date = Date.new(2007,8,29)
@@ -28,10 +28,8 @@ describe Debate, " destroy" do
     debate.sub_debate.contributions << placeholder
     debate.save!
 
-    bill = Bill.new dummy_bill_params
-    bill.type = 'Bill'
     Mp.should_receive(:from_name).and_return(mock_model(Mp))
-    bill.save!
+    bill = GovernmentBill.create dummy_bill_params
     topic = DebateTopic.new
     topic.topic = bill
     topic.debate = debate
@@ -71,5 +69,64 @@ describe Debate, " destroy" do
     Vote.delete_all
     VoteCast.delete_all
     Bill.delete_all
+  end
+end
+
+describe Debate, 'when finding by category and slug' do
+  it 'should find using parameters' do
+    category = 'visitors'
+    url_slug = 'australia'
+    year = '2008'; month = 'apr'; day = '17'
+    yyyy_mm_dd = "#{year}-04-#{day}"
+    date = mock(DebateDate, :year=>year, :month=>month, :day=>day, :is_valid_date? => true, :yyyy_mm_dd => yyyy_mm_dd)
+    debate = mock_model(SubDebate)
+    debates = [debate]
+    Debate.should_receive(:find_all_by_date_and_url_category_and_url_slug).with(yyyy_mm_dd, category, url_slug).and_return debates
+    Debate.should_receive(:remove_duplicates).with(debates).and_return debates
+
+    Debate.find_by_url_category_and_url_slug(date, category, url_slug).should == debate
+  end
+
+  it 'should find only using slug parameter when category is debates' do
+    category = 'debates'
+    url_slug = 'voting'
+    year = '2008'; month = 'apr'; day = '17'
+    yyyy_mm_dd = "#{year}-04-#{day}"
+    date = mock(DebateDate, :year=>year, :month=>month, :day=>day, :is_valid_date? => true, :yyyy_mm_dd => yyyy_mm_dd)
+    debate = mock_model(SubDebate)
+    debates = [debate]
+    Debate.should_receive(:find_all_by_date_and_url_slug).with(yyyy_mm_dd, url_slug).and_return debates
+    Debate.should_receive(:remove_duplicates).with(debates).and_return debates
+
+    Debate.find_by_url_category_and_url_slug(date, category, url_slug).should == debate
+  end
+end
+
+describe Debate, 'when finding by date and index' do
+  it 'should return subdebate if index is pointing to parent debate with one subdebate' do
+    date = mock('date', :year=>'year',:month=>'month',:day=>'day')
+    index = mock('index')
+    sub_debate = mock('sub_debate')
+    parent_debate = mock_model(ParentDebate, :is_parent_with_one_sub_debate? => true, :sub_debate => sub_debate)
+    Debate.should_receive(:find_by_index).with('year','month','day',index).and_return parent_debate
+    Debate.find_by_date_and_index(date, index).should == sub_debate
+  end
+end
+
+describe Debate, 'when finding on date by category' do
+  it 'should return subdebate if index is pointing to parent debate with one subdebate' do
+    date = mock('date', :year=>'year',:month=>'month',:day=>'day')
+    index = mock('index')
+    sub_debate = mock('sub_debate')
+    parent_debate = mock_model(ParentDebate, :is_parent_with_one_sub_debate? => true, :sub_debate => sub_debate)
+    Debate.should_receive(:find_by_index).with('year','month','day',index).and_return parent_debate
+    Debate.find_by_date_and_index(date, index).should == sub_debate
+  end
+end
+
+describe Debate, 'in general' do
+  it 'should not identify itself as a parent debate with a single sub_debate' do
+    debate = Debate.new
+    debate.is_parent_with_one_sub_debate?.should be_false
   end
 end

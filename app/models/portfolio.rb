@@ -1,5 +1,6 @@
 class Portfolio < ActiveRecord::Base
 
+  has_many :ministers, :foreign_key => 'responsible_for_id'
   has_many :oral_answers, :as => :about
 
   def Portfolio::questions_asked_count_by_month name

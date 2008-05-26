@@ -35,7 +35,7 @@ module ApplicationHelper
   end
 
   def to_show_debates_on_date_url date
-    link_to date.mday, show_debates_on_date_url(Debate::to_date_hash(date))
+    link_to date.mday, show_debates_on_date_url({:url_category=>'debates'}.merge(Debate::to_date_hash(date)) )
   end
 
   def title_for_sitting_day date
@@ -110,16 +110,10 @@ module ApplicationHelper
   end
 
   def link_to_debate debate, show_status=false, show_date=false, show_parent=true
-    if show_date
-      date = ' ' + format_date(debate.date)
-    else
-      date = ''
-    end
+    date = show_date ? ' ' + format_date(debate.date) : ''
 
-    if (show_parent and debate.is_a?(SubDebate) and !debate.is_a?(OralAnswer))
+    if show_parent && debate.is_a?(SubDebate) && !debate.is_a?(OralAnswer)
       text = debate.parent.name + ' - ' + debate.name
-    elsif debate.is_a? OralAnswer
-      text = debate.title_name
     elsif debate.instance_of?(ParentDebate) && debate.sub_debate
       text = debate.name + ' - ' + debate.sub_debate.name
     else
@@ -144,7 +138,7 @@ module ApplicationHelper
     link = ''
     if about
       full_name = about.full_name
-      full_name = (full_name[0,70]+'...').gsub(/ [A-Za-z0-9]*\.\.\./, ' ...') if full_name.length > 70
+      full_name = (full_name[0,70]+'...').gsub(/\s[A-Za-z0-9]*\.\.\./, ' ...') if full_name.length > 70
       show_url = symbolize2 'show_', about_type, '_url'
 
       xhash = {}
@@ -163,6 +157,8 @@ module ApplicationHelper
       show_committee_debate_url(debate_id_hash)
     elsif debate_id_hash.has_key? :bill_url
       show_bill_debate_url(debate_id_hash)
+    elsif debate_id_hash[:url_slug].blank?
+      show_debates_on_date_url(debate_id_hash)
     else
       show_debate_url(debate_id_hash)
     end
@@ -178,12 +174,66 @@ module ApplicationHelper
     end
   end
 
+  def url_for_portfolio portfolio
+    show_portfolio_url(:portfolio_url => portfolio.url)
+  end
+
+
+  def url_for_debate debate
+    get_url(debate)
+  end
+
+  def url_for_mp mp
+    show_mp_url(:name => mp.id_name)
+  end
+
+  def url_for_party party
+    if party.short == 'Independent'
+      nil
+    else
+      show_party_url(:name => party.id_name)
+    end
+  end
+
+  def url_for_committee committee
+    show_committee_url(:committee_url => committee.url)
+  end
+
+  def url_for_organisation organisation
+    show_organisation_url(:name => organisation.slug)
+  end
+
+  def url_for_bill bill
+    show_bill_url(:bill_url => bill.url)
+  end
+
+
+  def link_to_portfolio portfolio
+    link_to portfolio.portfolio_name, url_for_portfolio(portfolio)
+  end
+
+  def link_to_mp mp
+    link_to mp.full_name, url_for_mp(mp)
+  end
+
+  def link_to_party party
+    if party.short == 'Independent'
+      'Independent'
+    else
+      link_to party.short, url_for_party(party)
+    end
+  end
+
   def link_to_committee committee
-    link_to committee.full_committee_name, show_committee_url(:committee_url => committee.url)
+    link_to committee.full_committee_name, url_for_committee(committee)
   end
 
   def link_to_organisation organisation
-    link_to organisation.name, show_organisation_url(:name => organisation.slug)
+    link_to organisation.name, url_for_organisation(organisation)
+  end
+
+  def link_to_bill bill
+    link_to bill.bill_name, url_for_bill(bill)
   end
 
   def link_to_business_item business_item
@@ -205,10 +255,6 @@ module ApplicationHelper
       file_name = file_name.split('.')[0].tr('a-z','-') + '.' + file_name.split('.')[1]
     end
     link_to(file_name, submission.evidence_url, :rel=>"nofollow")
-  end
-
-  def link_to_bill bill
-    link_to bill.bill_name, show_bill_url(:bill_url => bill.url)
   end
 
   def link_to_user user
@@ -239,22 +285,6 @@ module ApplicationHelper
     end
   end
 
-  def link_to_portfolio portfolio
-    link_to portfolio.portfolio_name, show_portfolio_url(:portfolio_url => portfolio.url)
-  end
-
-  def link_to_mp mp
-    link_to mp.full_name, mp_url(:name => mp.id_name)
-  end
-
-  def link_to_party party
-    if party.short == 'Independent'
-      'Independent'
-    else
-      link_to party.short, party_url(:name => party.id_name)
-    end
-  end
-
   def percentage nominator, denominator
     number_to_percentage(nominator.to_f / denominator * 100, :precision => 1)
   end
@@ -280,6 +310,8 @@ module ApplicationHelper
       show_bill_debate_url(debate.id_hash)
     elsif (debate.is_a?(BillDebate) && debate.sub_debate.about_id)
       show_bill_debate_url(debate.sub_debate.id_hash)
+    elsif debate.is_a?(ParentDebate) && debate.sub_debates.size == 1
+      show_debate_url(debate.sub_debate.id_hash)
     else
       show_debate_url(debate.id_hash)
     end

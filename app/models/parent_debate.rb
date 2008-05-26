@@ -7,6 +7,10 @@ class ParentDebate < Debate
            :foreign_key => 'debate_id',
            :dependent => :destroy
 
+  def is_parent_with_one_sub_debate?
+    sub_debates.size == 1
+  end
+
   def sub_debate
     sub_debates.first
   end
@@ -24,6 +28,10 @@ class ParentDebate < Debate
   end
 
   protected
+
+    def make_url_slug_text
+      '' # slugs are set on the sub-debates
+    end
 
     def sub_names= names
       @sub_names = names

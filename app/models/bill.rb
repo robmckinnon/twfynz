@@ -30,53 +30,99 @@ class Bill < ActiveRecord::Base
 
   after_save :expire_cached_pages
 
-  def self.from_name_and_date name, date
-    Bill.from_name_and_date_by_method name, date, :find_all_by_bill_name
-  end
+  class << self
 
-  def self.find_all_by_plain_bill_name_and_year name, year
-    bills = Bill.find_all_by_plain_bill_name name
-    bills.select {|b| b.introduction && b.introduction.year == year}
-  end
+    def bills_from_text_and_date text, date
+      bill_text = text.gsub(/Bill( \([^\)]+\))? and the/,'Bill\1, and the')
+      bills = bill_text.split(/,( and)? the/).collect do |name|
+        name = name.match(/[a-z ]*(.*)/)[1]
+        name = name.chomp(', ').strip unless name.empty?
+        name.empty? ? nil : Bill.from_name_and_date(name, date)
+      end.compact
+    end
 
-  def self.from_name_and_date_by_method name, date, method
-    bills = Bill.send(method, name)
-    bills = Bill.send(method, name.gsub('’',"'")) if bills.empty?
-    bills = Bill.send(method, name.gsub('’',"'").chomp(')')) if bills.empty?
-    bills = Bill.send(method, name.gsub('’',"'").chomp(')').sub(')',') ').sub('(',' (').squeeze(' ')) if bills.empty?
-    bills = Bill.send(method, name.gsub('’',"'").chomp(')').sub(')',') ').sub('(',' (').squeeze(' ').sub('Appropriations','Appropriation')) if bills.empty?
-    bills = Bill.send(method, name.gsub('’',"'").chomp(')').sub(')',') ').sub('(',' (').squeeze(' ').sub('RateAmendments','Rate Amendments')) if bills.empty?
-    bills = Bill.send(method, name.gsub('’',"'").chomp(')').sub(')',') ').sub('(',' (').squeeze(' ').sub('andAsure','and Asure')) if bills.empty?
-    bills = bills.select {|b| b.royal_assent.nil? or (b.royal_assent > date) }
+    def from_name_and_date name, date
+      from_name_and_date_by_method name, date, :find_all_by_bill_name
+    end
 
-    if bills.size == 1
-      bills[0]
-    elsif bills.empty?
-      if method == :find_all_by_bill_name
-        Bill.from_name_and_date_by_method name, date, :find_all_by_former_name
-      else
-        raise "no bills match: #{name}, #{date.to_s}"
-      end
-    else
-      begin
-        the_date = date
-        if the_date.is_a? String
-          the_date = Date.parse(date)
+    def find_all_by_plain_bill_name_and_year name, year
+      bills = find_all_by_plain_bill_name name
+      bills.select {|b| b.introduction && b.introduction.year == year}
+    end
+
+    def from_name_and_date_by_method name, date, method
+      bills = send(method, name)
+      bills = send(method, name.gsub('-',' - ')) if bills.empty?
+      bills = send(method, name.gsub('’',"'")) if bills.empty?
+      bills = send(method, name.gsub('’',"'").chomp(')')) if bills.empty?
+      bills = send(method, name.gsub('’',"'").chomp(')').sub(')',') ').sub('(',' (').squeeze(' ')) if bills.empty?
+      bills = send(method, name.gsub('’',"'").chomp(')').sub(')',') ').sub('(',' (').squeeze(' ').sub('Appropriations','Appropriation')) if bills.empty?
+      bills = send(method, name.gsub('’',"'").chomp(')').sub(')',') ').sub('(',' (').squeeze(' ').sub('RateAmendments','Rate Amendments')) if bills.empty?
+      bills = send(method, name.gsub('’',"'").chomp(')').sub(')',') ').sub('(',' (').squeeze(' ').sub('andAsure','and Asure')) if bills.empty?
+      bills = bills.select {|b| b.royal_assent.nil? or (b.royal_assent > date) }
+
+      if bills.size == 1
+        bills[0]
+      elsif bills.empty?
+        if method == :find_all_by_bill_name
+          from_name_and_date_by_method name, date, :find_all_by_former_name
+        else
+          raise "no bills match: #{name}, #{date.to_s}"
         end
-        days_back = bills.collect {|b| [(the_date - b.introduction).to_i, b] }
-        bill = days_back.sort.first[1]
-        bill
-      rescue Exception => e
-        raise "#{bills.size} bills match: #{name}, #{date.to_s}"
+      else
+        begin
+          the_date = date
+          if the_date.is_a? String
+            the_date = Date.parse(date)
+          end
+          days_back = bills.collect {|b| [(the_date - b.introduction).to_i, b] }
+          bill = days_back.sort.first[1]
+          bill
+        rescue Exception => e
+          raise "#{bills.size} bills match: #{name}, #{date.to_s}"
+        end
       end
     end
-  end
 
-  def self.find_all_current
-    sql = 'select * from bills where royal_assent is null and first_reading_negatived = 0 and second_reading_negatived = 0 and withdrawn is null and second_reading_withdrawn is null and committal_discharged is null and consideration_of_report_discharged is null and second_reading_discharged is null and first_reading_discharged is null'
-    sql += %Q[ and type = "#{self.to_s}"] unless self == Bill
-    bills = find_by_sql(sql)
-    bills.select { |b| b.probably_not_divided? }
+    def find_all_current
+      sql = 'select * from bills where royal_assent is null and first_reading_negatived = 0 and second_reading_negatived = 0 and withdrawn is null and second_reading_withdrawn is null and committal_discharged is null and consideration_of_report_discharged is null and second_reading_discharged is null and first_reading_discharged is null'
+      sql += %Q[ and type = "#{self.to_s}"] unless self == Bill
+      bills = find_by_sql(sql)
+      bills.select { |b| b.probably_not_divided? }
+    end
+
+    def find_all_negatived
+      find_all_with_debates.select(&:negatived?)
+    end
+
+    def find_all_assented
+      find_all_with_debates.select(&:assented?)
+    end
+
+    def sort_events_by_date events
+      events = events.sort do |a,b|
+        date = a[0]
+        other_date = b[0]
+        comparison = date <=> other_date
+        if comparison == 0
+          name = a[1]
+          other_name = b[1]
+          if (name.include? 'First' and (other_name.include? 'Second' or other_name.include? 'Third'))
+            comparison = -1
+          elsif (name.include? 'Second' and (other_name.include? 'Third'))
+            comparison = -1
+          elsif (name.include? 'Second' and (other_name.include? 'First'))
+            comparison = +1
+          elsif (name.include? 'Third' and (other_name.include? 'First' or other_name.include? 'Second'))
+            comparison = +1
+          else
+            comparison = 0
+          end
+        end
+        comparison
+      end
+      events
+    end
   end
 
   def probably_not_divided?
@@ -86,39 +132,6 @@ class Bill < ActiveRecord::Base
 
   def current?
     ( (not(negatived? or assented? or withdrawn? or discharged?)) and probably_not_divided? )
-  end
-
-  def self.find_all_negatived
-    find_all_with_debates.select &:negatived?
-  end
-
-  def self.find_all_assented
-    find_all_with_debates.select &:assented?
-  end
-
-  def self.sort_events_by_date events
-    events = events.sort do |a,b|
-      date = a[0]
-      other_date = b[0]
-      comparison = date <=> other_date
-      if comparison == 0
-        name = a[1]
-        other_name = b[1]
-        if (name.include? 'First' and (other_name.include? 'Second' or other_name.include? 'Third'))
-          comparison = -1
-        elsif (name.include? 'Second' and (other_name.include? 'Third'))
-          comparison = -1
-        elsif (name.include? 'Second' and (other_name.include? 'First'))
-          comparison = +1
-        elsif (name.include? 'Third' and (other_name.include? 'First' or other_name.include? 'Second'))
-          comparison = +1
-        else
-          comparison = 0
-        end
-      end
-      comparison
-    end
-    events
   end
 
   def full_name

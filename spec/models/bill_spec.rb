@@ -3,23 +3,22 @@ require File.dirname(__FILE__) + '/../spec_helper'
 def bill_params
   {:bill_name => 'Major Events Management Bill',
         :parliament_url => '2/5/c/25c94892184b4eb3b38f3d4c465e200d.htm',
+        :parliament_id => '2/5/c/25c94892184b4eb3b38f3d4c465e200d.htm',
         :introduction => '2006-12-12',
-        :mp_name => 'Rod Donald',
-        :parliament_id => ''}
+        :mp_name => 'Rod Donald'}
 end
 
 def new_bill params=nil
   Mp.should_receive(:from_name).any_number_of_times.and_return(mock_model(Mp))
-  bill = Bill.new(params ? bill_params.merge(params) : bill_params)
+  bill = GovernmentBill.new(params ? bill_params.merge(params) : bill_params)
   bill.should be_valid
-  bill.type = 'Bill'
   bill
 end
 
 def bill_invalid_without param
   params = bill_params; params.delete(param)
   Mp.should_receive(:from_name).and_return(mock_model(Mp))
-  bill = Bill.new(params)
+  bill = GovernmentBill.new(params)
   bill.should_not be_valid
 end
 
@@ -255,11 +254,9 @@ describe Bill, 'when divided into other bills' do
   it 'should have reference to divided into bills' do
     Mp.should_receive(:from_name).twice.and_return(mock_model(Mp))
 
-    former_bill = Bill.new bill_params.merge(:bill_name => 'Statutes Amendment Bill (No 2)')
-    former_bill.type = 'Bill'
+    former_bill = GovernmentBill.new bill_params.merge(:bill_name => 'Statutes Amendment Bill (No 2)')
     former_bill.save!
-    bill = Bill.new bill_params.merge(:formerly_part_of_id => former_bill.id)
-    bill.type = 'Bill'
+    bill = GovernmentBill.new bill_params.merge(:formerly_part_of_id => former_bill.id)
     bill.save!
 
     former_bill.divided_into_bills.first.should eql(bill)
@@ -270,8 +267,7 @@ end
 
 describe Bill, "on update" do
   it 'should raise error if committee not found when referred_to is present' do
-    bill = Bill.new(bill_params)
-    bill.type = 'Bill'
+    bill = GovernmentBill.new(bill_params)
     Mp.should_receive(:from_name).and_return(mock_model(Mp))
     bill.save!
 
@@ -295,5 +291,29 @@ describe Bill, 'getting NzlEvents' do
     titles = bills(:a_bill).nzl_events.collect(&:title)
     titles.include?(nzl_events(:two).title).should be_true
     titles.include?(nzl_events(:one).title).should be_true
+  end
+end
+
+describe Bill, 'when finding bills from text' do
+
+  def check_bills billname1, and_the, billname2
+    date = mock('date')
+    bill1 = mock('bill1')
+    bill2 = mock('bill2')
+    Bill.should_receive(:from_name_and_date).with(billname1, date).and_return bill1
+    Bill.should_receive(:from_name_and_date).with(billname2, date).and_return bill2
+    Bill.bills_from_text_and_date("#{billname1}#{and_the} #{billname2}", date).should == [bill1, bill2]
+  end
+
+  it 'should match on two bills separated by ", and the"' do
+    check_bills 'Biosecurity Amendment Bill', ', and the', 'Hazardous Substances and New Organisms Amendment Bill (No 2)'
+  end
+
+  it 'should match on two bills separated by " and the"' do
+    check_bills 'Biosecurity Amendment Bill', ' and the', 'Hazardous Substances and New Organisms Amendment Bill (No 2)'
+  end
+
+  it 'should match on bill ending with (No 4) joined to another bill with "and the" text' do
+    check_bills 'Biosecurity Amendment Bill (No 4)', ' and the', 'Hazardous Substances and New Organisms Amendment Bill (No 2)'
   end
 end

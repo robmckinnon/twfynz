@@ -1,0 +1,12 @@
+- @title = "#{format_debate_category(@category)}: Aotearoa New Zealand Parliament"
+- @heading = format_debate_category(@category)
+- if @debates.size > 0
+  - @publication_status = status_description(@debates.first)
+#primarycontainer
+  .debates
+    - if @debates.size == 0
+      = "<p>No #{link_to 'debates', :action => 'index'} found.</p>"
+    - else
+      %ul.linklist
+        - no_category = (@category.blank? || @category =='debates')
+        = render :partial => 'debate_link', :collection => @debates, :locals => { :show_status => true, :show_parent => no_category, :show_date => !no_category }

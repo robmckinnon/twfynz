@@ -41,7 +41,7 @@ class MpsDownloader
   def self.download
     doc = Hpricot open('http://www.parliament.nz/en-NZ/MPP/MPs/MPs/Default.htm?pf=&sf=&lgc=1')
 
-    (doc.at('table.listing').at('tbody')/'a').each do |link|
+    (doc.at('table.listing').at('tbody') / 'a').each do |link|
       name = link.inner_text
       names = name.split(',')
       last = names[0]
