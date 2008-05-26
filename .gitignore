@@ -19,3 +19,4 @@ mongrel_cluster.yml
 db/current_bills.yml
 google*.html
 public/sitemap_*
+config/environments/production.rb
