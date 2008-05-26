@@ -10,10 +10,10 @@
         - if @debate
           - if @debate.respond_to? :parent
             - if @debate.parent.is_a? OralAnswers
-              %h1{ :class=> @debate.css_class }= (@debate.oral_answer_no ? @debate.oral_answer_no.to_s+'. ' : '') + @debate.name
+              %h1{ :class=> @debate.css_class }= @debate.name
             - else
               %h1{ :class=> @debate.parent.css_class }= @debate.parent.name
-              %h2{ :class=> @debate.css_class }= (@debate.oral_answer_no ? @debate.oral_answer_no.to_s+'. ' : '') + @debate.name
+              %h2{ :class=> @debate.css_class }= @debate.name
           - else
             %h1{ :class=> @debate.css_class }= @debate.name.sub(', ', ', <br />')
             - if @debate.is_parent_with_one_sub_debate?

@@ -100,6 +100,12 @@ module DebatesHelper
   @@mp_id_to_link = {}
 
   def mp_link contribution
+    if contribution.is_a?(SubsQuestion) && contribution.mp
+      number = contribution.debate.oral_answer_no ? contribution.debate.oral_answer_no.to_s+'. ' : ''
+      url = show_mp_url(:name => contribution.mp.id_name)
+      return link_to(portrait(contribution.mp),url) + number + link_to(contribution.speaker_name.name, url)
+    end
+
     key = contribution.spoken_by_id.to_s + contribution.speaker_name.name
 
     unless @@mp_id_to_link.has_key? key
@@ -131,7 +137,7 @@ module DebatesHelper
       end
 
       if contribution.is_a? SubsQuestion
-        speaker += link_to_this_contribution contribution
+        speaker += link_to_this_contribution(contribution)
         if @debate.about.is_a? Bill
           speaker += '<br /> to the Member in charge of the ' + link_to_about(@hash, @about, @about_type)
         elsif @debate.answer_from
