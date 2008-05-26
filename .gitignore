@@ -18,5 +18,7 @@ public/images
 mongrel_cluster.yml
 db/current_bills.yml
 google*.html
+public/portfolios
+vendor/plugins/css_graphs
 public/sitemap_*
 config/environments/production.rb
