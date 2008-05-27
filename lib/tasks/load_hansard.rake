@@ -130,5 +130,7 @@ def persist_date date, publication_status, sleep_seconds=nil
     debate.create_url_slug
     debate.save!
   end
+  SubDebate.find_all_by_url_slug(nil).each {|s| s.create_url_slug; s.save!}
+
   puts 'created url slugs: ' + date.to_s
 end

@@ -310,7 +310,7 @@ module ApplicationHelper
       show_bill_debate_url(debate.id_hash)
     elsif (debate.is_a?(BillDebate) && debate.sub_debate.about_id)
       show_bill_debate_url(debate.sub_debate.id_hash)
-    elsif debate.is_a?(ParentDebate) && debate.sub_debates.size == 1
+    elsif debate.is_a?(ParentDebate)
       show_debate_url(debate.sub_debate.id_hash)
     else
       show_debate_url(debate.id_hash)

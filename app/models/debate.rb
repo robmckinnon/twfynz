@@ -133,7 +133,7 @@ class Debate < ActiveRecord::Base
       debate
     end
 
-    def find_by_index(year, month, day, index)
+    def find_by_index year, month, day, index
       if index
         date = year+'-'+mmm_to_mm(month)+'-'+day
         debates = find_all_by_date_and_debate_index(date, index.to_i)
