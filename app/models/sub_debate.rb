@@ -15,14 +15,6 @@ class SubDebate < Debate
     debate.contribution_id contribution
   end
 
-  def contribution_index contribution
-    if contributions and contributions.include? contribution
-      contributions.index contribution
-    else
-      nil
-    end
-  end
-
   def parent
     debate
   end

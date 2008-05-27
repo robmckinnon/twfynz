@@ -141,11 +141,11 @@ class Debate < ActiveRecord::Base
         raise ActiveRecord::RecordNotFound.new('ActiveRecord::RecordNotFound: date ' + date + ' index ' + index.to_i.to_s + '   ' + debates.to_s) unless debate
         debate
       else
-        find_by_date(year, month, day)
+        find_by_date year, month, day
       end
     end
 
-    def find_by_date(year, month, day)
+    def find_by_date year, month, day
       if day
         debates = find_all_by_date(year+'-'+mmm_to_mm(month)+'-'+day, :order => "id")
       elsif month
@@ -363,24 +363,16 @@ class Debate < ActiveRecord::Base
   end
 
   def contribution_id contribution
-    anchor = nil
-
-    if contributions and contributions.include? contribution
-      anchor = (contributions.index(contribution) + 1).to_s
-    elsif sub_debates and sub_debates.size > 0
-      index = 1
+    unless index = contribution_index(contribution)
       sub_debates.each do |sub_debate|
-        anchor = sub_debate.contribution_index(contribution)
-        if anchor
-          anchor = (anchor+1).to_s
-          break
-        else
-          index = index.next
-        end
-      end
+        break if index = sub_debate.contribution_index(contribution)
+      end if sub_debates
     end
+    index ? (index + 1).to_s : nil
+  end
 
-    anchor
+  def contribution_index contribution
+    (contributions && contributions.include?(contribution)) ? contributions.index(contribution) : nil
   end
 
   def date_to_s

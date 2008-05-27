@@ -129,4 +129,24 @@ describe Debate, 'in general' do
     debate = Debate.new
     debate.is_parent_with_one_sub_debate?.should be_false
   end
+
+  it "should return contribution_id when contribution is in debate's contributions" do
+    debate = Debate.new
+    contribution = mock('contribution')
+    debate.should_receive(:contribution_index).with(contribution).and_return 1
+    debate.contribution_id(contribution).should == '2'
+  end
+
+  it "should return contribution_id when contribution is in a sub_debate's contributions" do
+    contribution = mock('contribution')
+    sub_debate = Debate.new
+    sub_debate.should_receive(:contribution_index).with(contribution).and_return 2
+
+    debate = Debate.new
+    debate.should_receive(:contribution_index).with(contribution).and_return nil
+    debate.should_receive(:sub_debates).twice.and_return [sub_debate]
+
+    debate.contribution_id(contribution).should == '3'
+  end
+
 end
