@@ -139,24 +139,25 @@ class Contribution < ActiveRecord::Base
     self.class.to_s.downcase
   end
 
-  def html indent=''
+  def html
     html = text.gsub('&quote;','"')
     index = 'a'
-    new_line = "\n#{indent}"
+    new_line = "\n"
 
-    unless html.include?('<p>')
-      html = '<p>'+html+'</p>'
-    end
+    html = "<p>#{html}</p>" unless html.include?('<p>')
     paragraphs = html.split('<p').select {|p| p.strip.length > 0}
 
-    paragraphs.inject('') do |result, p|
-      result += new_line unless index == 'a'
-      result += '<p'
-      result += %Q[ id='#{anchor()}#{index}'] if paragraphs.size > 1
-      result += p
+    text = paragraphs.inject([]) do |result, p|
+      result << new_line unless index == 'a'
+      result << '<p'
+      result << %Q[ id='#{anchor()}#{index}'] if paragraphs.size > 1
+      result << p
       index.next!
       result
-    end
+    end.join('')
+
+    text.gsub!(/<\/em>([A-Za-z0-9])/, '</em> \1')
+    text
   end
 
   def has_speaker?

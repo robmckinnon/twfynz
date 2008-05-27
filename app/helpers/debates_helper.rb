@@ -52,7 +52,7 @@ module DebatesHelper
   end
 
   def format_contribution contribution, organisations, organisation_names
-    transcript = contribution.html ''
+    transcript = contribution.html
 
     if contribution.is_question?
       opening = '\1<span class="speechtype">Question:</span> '
