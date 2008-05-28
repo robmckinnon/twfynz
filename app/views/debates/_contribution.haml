@@ -9,7 +9,11 @@
     = ''
   - else
     %div{ :class => get_preceding_divider(contribution) }
-  %div{ :id => contribution.anchor_in_debate(debate), :class => contribution.css_class }
+  - anchor_in_debate = contribution.anchor_in_debate(debate)
+  %div{ :id => anchor_in_debate, :class => contribution.css_class }
     - if contribution.has_speaker?
-      %p.speaker= speaker_link contribution
+      - if contribution.speaker_anchor
+        %p.speaker{:id=>contribution.speaker_anchor+'_'+anchor_in_debate}= speaker_link contribution
+      - else
+        %p.speaker= speaker_link contribution
     = format_contribution(contribution, @organisations, @organisation_names)

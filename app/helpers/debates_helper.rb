@@ -124,7 +124,6 @@ module DebatesHelper
   end
 
   def speaker_link contribution
-    speaker = ''
     if contribution.spoken_by_id
       speaker = mp_link contribution
 
@@ -146,10 +145,10 @@ module DebatesHelper
       else
         speaker += link_to_this_contribution contribution
       end
+      speaker
     else
-      speaker = contribution.speaker
+      contribution.speaker
     end
-    speaker
   end
 
   def get_preceding_divider contribution
