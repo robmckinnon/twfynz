@@ -43,7 +43,7 @@ describe SpeakerName, "when creating anchor" do
     anchor_correct 'Ann Hartley', 'The ASSISTANT SPEAKER', 'assistant_speaker'
   end
 
-  it 'should handle The CHAIRPERSON' do
+  it 'should handle The CHAIRPERSON with name in brackets' do
     anchor_correct 'Ann Hartley', 'The CHAIRPERSON', 'chairperson'
   end
 
@@ -123,11 +123,62 @@ describe SpeakerName, "when creating anchor" do
     anchor_correct 'Minister responsible for Climate Change Issues', 'Hon DAVID PARKER', 'minister'
   end
 
+  it 'should handle Mr Speaker' do
+    anchor_correct nil, 'Mr SPEAKER', 'mr_speaker'
+    anchor_correct nil, 'Mr SPEAKER-ELECT', 'speaker-elect'
+  end
+
+  it 'should handle Madame Speaker' do
+    anchor_correct nil, 'Madam SPEAKER', 'madam_speaker'
+    anchor_correct nil, 'Madam SPEAKER-ELECT', 'speaker-elect'
+  end
+
+  it 'should handle Mr DEPUTY SPEAKER' do
+    anchor_correct nil, 'Mr DEPUTY SPEAKER', 'deputy_speaker'
+  end
+
+  it 'should handle The CHAIRPERSON' do
+    anchor_correct nil, 'The CHAIRPERSON', 'chairperson'
+  end
+
+  it 'should remember anchor for same name' do
+    anchor_correct 'Green', 'KEITH LOCKE', 'green'
+    anchor_correct nil, 'KEITH LOCKE', 'green'
+  end
+
+  it 'should remember anchor for same name ignoring case' do
+    anchor_correct 'Green', 'KEITH LOCKE', 'green'
+    anchor_correct nil, 'Keith Locke', 'green'
+  end
+
+  it 'should forget anchor after reset_anchors is called' do
+    anchor_correct 'Green', 'KEITH LOCKE', 'green'
+    SpeakerName.reset_anchors
+    anchor_correct nil, 'KEITH LOCKE', nil
+  end
+
+  it "should lookup anchor from member's party if no remaining text previously given" do
+    mp = mock(Mp, :anchor => 'green')
+    name = 'KEITH LOCKE'
+    Mp.should_receive(:from_name).with(name).and_return mp
+    speaker_name = create_speaker_name name, nil, mp
+    speaker_name.anchor.should == 'green'
+  end
+
+  after :each do
+    SpeakerName.reset_anchors
+  end
+
   def anchor_correct remaining, name, expected
-    speaker_name = SpeakerName.new ''
-    speaker_name.stub!(:name).and_return name
-    speaker_name.stub!(:remaining).and_return remaining
+    speaker_name = create_speaker_name name, remaining
     speaker_name.anchor.should == expected
+  end
+
+  def create_speaker_name name, remaining, mp=nil
+    returning SpeakerName.new('', mp) do |speaker_name|
+      speaker_name.stub!(:name).and_return name
+      speaker_name.stub!(:remaining).and_return remaining
+    end
   end
 
 end

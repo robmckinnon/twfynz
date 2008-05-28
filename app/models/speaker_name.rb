@@ -2,6 +2,14 @@ class SpeakerName
 
   attr_reader :name, :remaining
 
+  @@name_to_anchor = {}
+
+  class << self
+    def reset_anchors
+      @@name_to_anchor.clear
+    end
+  end
+
   def initialize(name)
     name = name.split ' ('
     @name = name[0]
@@ -14,10 +22,39 @@ class SpeakerName
   end
 
   def anchor
-    if name[/^The /]
-      to_id(name).sub('the_','')
+    case name
+      when /^The /
+        to_id(name).sub('the_','')
+      when /^Madam SPEAKER$/i
+        'madam_speaker'
+      when /^Mr SPEAKER$/i
+        'mr_speaker'
+      when /SPEAKER-ELECT/
+        'speaker-elect'
+      when 'Mr DEPUTY SPEAKER'
+        'deputy_speaker'
+      else
+        if remaining
+          anchor = anchor_from_remaining
+          @@name_to_anchor[name.downcase] = anchor
+          anchor
+        else
+          anchor = @@name_to_anchor[name.downcase]
+          unless anchor
+            mp = Mp::from_name(name)
+            anchor = mp.anchor if mp
+          end
+          anchor
+        end
+    end
+  end
 
-    elsif remaining
+  protected
+    def to_id text
+      text.to_latin.to_s.downcase.gsub(' ', '_')
+    end
+
+    def anchor_from_remaining
       case remaining
         when /^(Deputy )?Leader of the House/
           to_id remaining
@@ -32,14 +69,5 @@ class SpeakerName
         else
           remaining.downcase.gsub(' ','_')
       end
-    else
-      nil
     end
-  end
-
-  protected
-    def to_id text
-      text.to_latin.to_s.downcase.gsub(' ', '_')
-    end
-
 end

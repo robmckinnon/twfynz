@@ -10,7 +10,7 @@ class DebatesController < ApplicationController
       :only => [:index, :show_debates_on_date, :show_debate,
               :show_bill_debate, :show_portfolio_debate, :show_committee_debate]
 
-  before_filter :load_organisations,
+  before_filter :load_organisations, :reset_speaker_anchors,
       :only => [:show_debate, :show_bill_debate, :show_portfolio_debate, :show_committee_debate]
 
   before_filter :validate_date,
@@ -191,6 +191,10 @@ class DebatesController < ApplicationController
 
     def hansard_on
       @hansard_on = true
+    end
+
+    def reset_speaker_anchors
+      SpeakerName.reset_anchors
     end
 
     def load_organisations

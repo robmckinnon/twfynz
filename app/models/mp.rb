@@ -16,6 +16,10 @@ class Mp < ActiveRecord::Base
 
   # before_save :set_wikipedia
 
+  def anchor
+    party.short == 'Independent' ? nil : party.short.downcase
+  end
+
   def set_wikipedia
     self.wikipedia_url = "http://en.wikipedia.org/wiki/#{first}_#{last.downcase.titleize}" unless !self.wikipedia_url.blank?
   end

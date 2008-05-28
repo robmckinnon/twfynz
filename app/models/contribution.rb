@@ -9,7 +9,7 @@ class Contribution < ActiveRecord::Base
 
   # acts_as_solr :fields => [:text]
 
-  composed_of :speaker_name, :class_name => 'SpeakerName', :mapping => [ [:speaker, :name] ]
+  composed_of :speaker_name, :class_name => 'SpeakerName', :mapping => [ %w(speaker name) ]
 
   class << self
 
@@ -262,7 +262,7 @@ class Contribution < ActiveRecord::Base
       raise "Validation failed: :speaker can't be blank for #{type}: #{text}" if speaker.blank?
 
       if spoken_by_id.blank?
-        self.speaker = speaker.chomp(':').chomp('“').chomp(',').strip
+        self.speaker = speaker.chomp(':').chomp('“').chomp(',').strip.sub(/(\S)\(/,'\1 (').sub('Madsam SPEAKER','Madam SPEAKER')
         case speaker.downcase
           when 'hon members', 'hon member', 'the chairperson'
             # ignore populating spoken_by_id
