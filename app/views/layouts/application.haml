@@ -4,7 +4,7 @@
     %meta{ 'http-equiv'.to_sym => "content-type", :content=>"text/html; charset=utf-8" }
     %title= @title + (@home ? '' : ' | TheyWorkForYou.co.nz')
     %link{ :rel=>"shortcut icon", :href=>"/twfy.ico" }
-    %meta{ :name=>"description", :content=>"TheyWorkForYou.co.nz, helping you track Aotearoa New Zealand's Parliament" }
+    %meta{ :name=>"description", :content=> @description ? @description : "TheyWorkForYou.co.nz, helping you track Aotearoa New Zealand's Parliament" }
     - if @home
       %meta{ :name=>"keywords", :content=>"NZ, New Zealand, Parliament, Hansard, MP, Member of Parliament, MPs, government, house of representatives, Aotearoa" }
     - else

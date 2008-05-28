@@ -263,6 +263,14 @@ class Debate < ActiveRecord::Base
     end unless slug_text.blank? || self.url_slug
   end
 
+  def description
+    description = contributions.first.first_sentence
+    if !description || description.starts_with?('Debate resumed')
+      description = contributions[1].first_sentence if contributions.size > 1
+    end
+    description
+  end
+
   def is_uncorrected?
     publication_status == 'U'
   end

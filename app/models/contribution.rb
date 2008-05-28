@@ -116,6 +116,22 @@ class Contribution < ActiveRecord::Base
 
   end
 
+  def first_sentence
+    sentence = /[^;^\.^\?]+(;|\.|\?)/
+    case text
+      when sentence
+        first = text[sentence].gsub(/<[^>]+>/,'')
+        if first[/I raise a point of order, M(adam|r) Speaker./]
+          second = text.sub(first+' ','')[sentence]
+          second ? second.gsub(/<[^>]+>/,'') : first
+        else
+          first
+        end
+      else
+        nil
+    end
+  end
+
   def speaker_anchor
     speaker_name.anchor
   end

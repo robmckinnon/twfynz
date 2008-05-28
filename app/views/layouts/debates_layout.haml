@@ -2,6 +2,7 @@
   - if @debate
     - @title = @debate.title unless @title
     - @date = @debate.date unless @date
+    - @description = @debate.description if @debate.description
   - if not @home
     #normalcontent
       - if @about and !@debate
