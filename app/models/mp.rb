@@ -17,7 +17,7 @@ class Mp < ActiveRecord::Base
   # before_save :set_wikipedia
 
   def anchor
-    party.short == 'Independent' ? nil : party.short.downcase
+    party.short == 'Independent' ? nil : party.short.downcase.gsub(' ','_')
   end
 
   def set_wikipedia
