@@ -90,7 +90,7 @@ module DebatesHelper
           end
         elsif transcript.include? name
           organisation = organisations[index]
-          transcript.sub!(name, '<a href="/organisations/'+organisation.slug+'">\1</a>')
+          transcript.sub!(name, '<a href="/organisations/'+organisation.slug+'">'+name+'</a>')
         end
       end
     end
