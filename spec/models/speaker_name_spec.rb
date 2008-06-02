@@ -161,7 +161,7 @@ describe SpeakerName, "when creating anchor" do
     mp = mock(Mp, :anchor => 'green')
     name = 'KEITH LOCKE'
     Mp.should_receive(:from_name).with(name).and_return mp
-    speaker_name = create_speaker_name name, nil, mp
+    speaker_name = create_speaker_name name, nil
     speaker_name.anchor.should == 'green'
   end
 
@@ -174,8 +174,8 @@ describe SpeakerName, "when creating anchor" do
     speaker_name.anchor.should == expected
   end
 
-  def create_speaker_name name, remaining, mp=nil
-    returning SpeakerName.new('', mp) do |speaker_name|
+  def create_speaker_name name, remaining
+    returning SpeakerName.new('') do |speaker_name|
       speaker_name.stub!(:name).and_return name
       speaker_name.stub!(:remaining).and_return remaining
     end

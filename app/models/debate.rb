@@ -414,7 +414,7 @@ class Debate < ActiveRecord::Base
     end
 
     def uncache path
-      if File.exist?(path)
+      if path && File.exist?(path)
         puts 'deleting: ' + path.sub(Debate::CACHE_ROOT, '')
         File.delete(path)
       end
@@ -423,7 +423,7 @@ class Debate < ActiveRecord::Base
     def expire_cached_pages
       return unless ActionController::Base.perform_caching
 
-      self.contributions.each do |contribution|
+      contributions.each do |contribution|
         if (mp = contribution.mp)
           uncache "#{Debate::CACHE_ROOT}/mps/#{mp.id_name}.cache"
         end
@@ -434,30 +434,33 @@ class Debate < ActiveRecord::Base
       month = hash[:month]
       day = hash[:day]
       index = hash[:index]
-      index_path = "#{year}/#{month}/#{day}/#{index}"
+
+      identifier = hash[:url_slug] ? hash[:url_slug] : index
+      path_suffix = "#{year}/#{month}/#{day}/#{identifier}"
 
       path = nil
-      if hash.has_key? :portfolio_url
+      if hash[:portfolio_url]
         uncache "#{CACHE_ROOT}/portfolios.cache"
-        path = "#{CACHE_ROOT}/portfolios/#{hash[:portfolio_url]}/#{index_path}.cache"
-      elsif hash.has_key? :bill_url
+        path = "#{CACHE_ROOT}/portfolios/#{hash[:portfolio_url]}/#{path_suffix}.cache"
+      elsif hash[:bill_url]
         uncache "#{CACHE_ROOT}/bills.cache"
-        path = "#{CACHE_ROOT}/bills/#{hash[:bill_url]}/#{index_path}.cache"
-      elsif hash.has_key? :committee_url
-        path = "#{CACHE_ROOT}/committees/#{hash[:committee_url]}/#{index_path}.cache"
+        path = "#{CACHE_ROOT}/bills/#{hash[:bill_url]}/#{path_suffix}.cache"
+      elsif hash[:committee_url]
+        path = "#{CACHE_ROOT}/committees/#{hash[:committee_url]}/#{path_suffix}.cache"
+      elsif hash[:url_category]
+        path_suffix.sub!("/#{identifier}",'') unless hash[:url_slug]
+        path = "#{CACHE_ROOT}/#{hash[:url_category]}/#{path_suffix}.cache"
       else
-        path = "#{CACHE_ROOT}/debates/#{index_path}.cache"
+        path = "#{CACHE_ROOT}/debates/#{path_suffix}.cache"
       end
 
       uncache path
-      uncache path.sub("/#{index}", '')
-      uncache path.sub("/#{day}/#{index}", '')
-      uncache path.sub("/#{month}/#{day}/#{index}", '')
-      uncache path.sub("/#{index_path}", '')
+      uncache path.sub!("/#{identifier}", '')
+      uncache path.sub!("/#{day}", '')
+      uncache path.sub!("/#{month}", '')
+      uncache path.sub!("/#{path_suffix}", '')
 
-      unless path.include?('debates')
-        uncache CACHE_ROOT + '/debates.cache'
-      end
+      uncache CACHE_ROOT + '/debates.cache' unless path.include?('debates')
 
       unless debate_topics.blank?
         debate_topics.each do |debate_topic|
