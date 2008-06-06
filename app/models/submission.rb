@@ -11,12 +11,14 @@ class Submission < ActiveRecord::Base
 
   after_save :expire_cached_pages
 
-  def self.count_by_business_item item
-    item.is_a?(Bill) ? count_by_sql("SELECT COUNT(*) FROM submissions WHERE business_item_id = #{item.id} and business_item_type = 'Bill'") : 0
-  end
+  class << self
+    def count_by_business_item item
+      item.is_a?(Bill) ? count_by_sql("SELECT COUNT(*) FROM submissions WHERE business_item_id = #{item.id} and business_item_type = 'Bill'") : 0
+    end
 
-  def self.find_all_by_business_item item
-    item.is_a?(Bill) ? Submission.find_all_by_business_item_id_and_business_item_type(item.id, Bill.name) : nil
+    def find_all_by_business_item item
+      item.is_a?(Bill) ? find_all_by_business_item_id_and_business_item_type(item.id, Bill.name) : nil
+    end
   end
 
   def populate_submitter_id
