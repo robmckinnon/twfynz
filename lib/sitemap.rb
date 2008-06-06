@@ -57,7 +57,7 @@ class SiteMap
   end
 
   def entry
-    new_entry location, most_recent_modification
+    new_entry location.sub('public/',''), most_recent_modification
   end
 
   def new_entry location, last_modification=Date.today
