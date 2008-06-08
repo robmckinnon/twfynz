@@ -1,5 +1,6 @@
 - @javascript = "prototype"
-- @title = %Q[#{@name}: #{@description}: Aotearoa New Zealand's Parliament]
+- @description = %Q[#{@name}, #{@role_description}, Aotearoa New Zealand's Parliament]
+- @title = %Q[#{@name}: #{@role_description}: Aotearoa New Zealand's Parliament]
 #primarycontainer
   #normalcontent
     = portrait(@mp)
@@ -7,7 +8,7 @@
     - if @former_mp
       %p Not a member of the current Parliament
     - else
-      %h2= @description
+      %h2= @role_description
   #primarycontent
     .divider3
     - unless @bills_in_charge_of.empty?

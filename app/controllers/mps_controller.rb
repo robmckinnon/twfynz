@@ -53,11 +53,11 @@ class MpsController < ApplicationController
       @bills_in_charge_of = mp.bills_in_charge_of
 
       if mp.is_former?
-        @description = 'Former MP'
+        @role_description = 'Former MP'
       elsif @electorate != 'List'
-        @description = "Member for #{@electorate}, #{party}"
+        @role_description = "Member for #{@electorate}, #{party}"
       else
-        @description = %Q[List member, #{party}]
+        @role_description = %Q[List member, #{party}]
       end
       @mp = mp
     elsif name == 'ian_ewen_street'
