@@ -265,8 +265,10 @@ class Debate < ActiveRecord::Base
 
   def description
     description = contributions.first.first_sentence
-    if !description || description.starts_with?('Debate resumed')
-      description = contributions[1].first_sentence if contributions.size > 1
+    index = 1
+    while (!description || description.starts_with?('Debate resumed')) && index < contributions.size
+      description = contributions[index].first_sentence
+      index = index.next
     end
     description
   end
