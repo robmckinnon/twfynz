@@ -1,6 +1,6 @@
 class MpsController < ApplicationController
 
-  caches_action :index, :by_first, :by_party, :by_electorate, :mp
+  caches_action :index, :by_first, :by_party, :by_electorate, :show_mp
 
   layout "mps_layout"
 
@@ -30,9 +30,6 @@ class MpsController < ApplicationController
   def show_mp
     name = params[:name]
     mp = Mp.find_by_id_name name
-    # mp = Mp.find_by_id_name(name, :include => [{:contributions => :spoken_in}])
-    # mp = Mp.find_by_id_name(name, :include =>
-        # [:party, :bills, {:contributions => :spoken_in}])
 
     if mp
       party = mp.party.abbreviated if mp.party
