@@ -21,7 +21,7 @@ class SpeakerName
     @remaining.chomp!(')') if @remaining
   end
 
-  def anchor
+  def anchor date
     case name
       when /^The /
         to_id(name).sub('the_','')
@@ -36,13 +36,17 @@ class SpeakerName
       else
         if remaining
           anchor = anchor_from_remaining
+          if anchor == 'independent'
+            mp = Mp::from_name(name)
+            anchor = mp ? mp.anchor(date) : nil
+          end
           @@name_to_anchor[name.downcase] = anchor
           anchor
         else
           anchor = @@name_to_anchor[name.downcase]
           unless anchor
             mp = Mp::from_name(name)
-            anchor = mp.anchor if mp
+            anchor = mp.anchor(date) if mp
           end
           anchor
         end

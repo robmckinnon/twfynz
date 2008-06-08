@@ -9,28 +9,14 @@
     - else
       %h2= @description
   #primarycontent
-    .contentarea
-      .divider3
-      .post
-        %ul.linklist
-          - if @bills_in_charge_of.size > 0
-            %li
-              %a{ :href=>"#bills_in_charge_of" } Bills in charge of
-          %li
-            %a{ :href=>"#recent_appearences" } Recent appearences in parliament
-          - if @pecuniary_interests_by_category.size > 0
-            %li
-              %a{ :href=>"#pecuniary_interests" } Register of pecuniary interests
-          %li
-            %a{ :href=>"#external_links" } External links
-    .divider2
-    - if @bills_in_charge_of.size > 0
+    .divider3
+    - unless @bills_in_charge_of.empty?
       %div{ :class=>"post", :id=>"bills_in_charge_of" }
         %h3 Bills in charge of
         .contentarea
           %ul.linklist
             = render :partial => 'bill_link', :collection => @bills_in_charge_of
-      .divider2
+      .divider3
     %div{ :class=>"post", :id=>"recent_appearences" }
       %h3 Most recent appearances in parliament
       .contentarea
@@ -38,8 +24,8 @@
           %em If this MP has contributed more than once to a debate, only one speech is shown.
         %dl
           = render :partial => 'recent_contribution', :collection => @recent_contributions, :locals => {:expand => 'false'}
-    - if @pecuniary_interests_by_category.size > 0
-      .divider2
+    - unless @pecuniary_interests_by_category.empty?
+      .divider3
       %div{ :class=>"post", :id=>"pecuniary_interests" }
         %h3 Register of pecuniary interests
         .contentarea
@@ -48,7 +34,7 @@
             - interest[1].each do |i|
               .regmemitem= i.item
           %p.italic= %Q[Based on register update as at 31 Jan 2006. The official Parliament website has the <a href='http://www.parliament.nz/en-NZ/MPP/FinInterests/2/e/3/2e3fbcc753e74805944f83daaeaad225.htm'>latest register update as at 31 January 2007</a>.]
-    .divider2
+    .divider3
     %div{ :class=>"post", :id=>"external_links" }
       %h3 External links
       .contentarea

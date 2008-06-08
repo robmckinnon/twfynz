@@ -32,6 +32,53 @@ def mp_invalid_without param
   mp.should_not be_valid
 end
 
+describe Mp do
+  assert_model_has_many :members
+  assert_model_has_many :pecuniary_interests
+  assert_model_has_many :bills
+  assert_model_has_many :contributions
+end
+
+describe Mp, 'finding member on date' do
+  before do
+    @mp = Mp.new
+    @date = mock('date')
+    @member1 = mock('member')
+    @member2 = mock('member')
+  end
+  it 'should return member on date' do
+    @member1.should_receive(:is_active_on).with(@date).and_return false
+    @member2.should_receive(:is_active_on).with(@date).and_return true
+
+    @mp.should_receive(:members).and_return [@member1, @member2]
+    @mp.member_on_date(@date).should == @member2
+  end
+  it 'should return nil if no member on date' do
+    @member1.should_receive(:is_active_on).with(@date).and_return false
+    @member2.should_receive(:is_active_on).with(@date).and_return false
+
+    @mp.should_receive(:members).and_return [@member1, @member2]
+    @mp.member_on_date(@date).should be_nil
+  end
+end
+
+describe Mp, 'finding party on date' do
+  it 'should return party from member on date' do
+    mp = Mp.new
+    party = mock('party')
+    date = mock('date')
+    member = mock('member', :party => party)
+    mp.should_receive(:member_on_date).with(date).and_return member
+    mp.party_on_date(date).should == party
+  end
+  it 'should return nil if no member on date' do
+    mp = Mp.new
+    date = mock('date')
+    mp.should_receive(:member_on_date).with(date).and_return nil
+    mp.party_on_date(date).should be_nil
+  end
+end
+
 describe Mp, 'on validation' do
 
   it 'should be invalid without last name' do

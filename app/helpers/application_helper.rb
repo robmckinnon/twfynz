@@ -126,11 +126,11 @@ module ApplicationHelper
   end
 
   def link_to_contribution text, contribution, term=nil, class_name=nil
+    anchor = contribution.speaker_anchor ? contribution.speaker_anchor+'_'+contribution.anchor : contribution.anchor
     if term.nil?
-      anchor = contribution.speaker_anchor ? contribution.speaker_anchor+'_'+contribution.anchor : contribution.anchor
       link_to(text, get_url(contribution.debate)+'#'+anchor, :class=>class_name)
     else
-      paragraph_key = paragraph_id(contribution.html, term, contribution.anchor)
+      paragraph_key = paragraph_id(contribution.html, term, anchor)
       link_to(text, get_url(contribution.debate)+'#'+paragraph_key, :class=>class_name)
     end
   end

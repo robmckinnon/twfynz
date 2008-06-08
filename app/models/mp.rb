@@ -8,6 +8,7 @@ class Mp < ActiveRecord::Base
 
   belongs_to :party, :foreign_key => 'member_of_id'
 
+  has_many :members, :foreign_key => 'person_id'
   has_many :pecuniary_interests
   has_many :bills, :foreign_key => 'member_in_charge_id'
   has_many :contributions, :foreign_key => 'spoken_by_id'
@@ -16,8 +17,10 @@ class Mp < ActiveRecord::Base
 
   # before_save :set_wikipedia
 
-  def anchor
-    party.short == 'Independent' ? nil : party.short.downcase.gsub(' ','_')
+  def anchor(date)
+    party = party_on_date(date)
+    raise first + ' ' + last + ' ' + former.to_s unless party
+    party.short == 'Independent' ? last.downcase : party.short.downcase.gsub(' ','_')
   end
 
   def set_wikipedia
@@ -136,6 +139,15 @@ class Mp < ActiveRecord::Base
       @alt_downcase_name = (alt.downcase + ' ' + last.downcase) unless @alt_downcase_name
     end
     @alt_downcase_name
+  end
+
+  def member_on_date date
+    members.detect { |m| m.is_active_on(date) }
+  end
+
+  def party_on_date date
+    member = member_on_date(date)
+    member ? member.party : nil
   end
 
   def is_former?

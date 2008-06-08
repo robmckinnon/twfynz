@@ -133,7 +133,7 @@ class Contribution < ActiveRecord::Base
   end
 
   def speaker_anchor
-    speaker_name.anchor
+    speaker_name.anchor debate.date
   end
 
   def debate
