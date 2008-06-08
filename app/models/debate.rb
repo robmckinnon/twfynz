@@ -341,10 +341,10 @@ class Debate < ActiveRecord::Base
     case debate
       when BillDebate
         debate.sub_debates.empty? ? debate.id_hash : debate.sub_debates[0].id_hash
-      when OralAnswers
+      when OralAnswers, ParentDebate
         debate.sub_debates[0].id_hash
       else
-        debate.is_parent_with_one_sub_debate? ? debate.sub_debates[0].id_hash : debate.id_hash
+        debate.id_hash
     end
   end
 
@@ -359,14 +359,12 @@ class Debate < ActiveRecord::Base
     end
 
     case debate
-      when BillDebate, OralAnswers
+      when BillDebate, OralAnswers, ParentDebate
         debate.prev_debate_id_hash
-      when OralAnswer
-        debate.id_hash
-      when SubDebate
+      when OralAnswer, SubDebate
         debate.id_hash
       else
-        debate.is_parent_with_one_sub_debate? ? debate.prev_debate_id_hash : debate.id_hash
+        debate.id_hash
     end
   end
 
