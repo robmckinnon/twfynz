@@ -23,22 +23,22 @@ class CreateMembers < ActiveRecord::Migration
     left_parliament = {
         :jim_sutton=>['30 July 2006','http://theyworkforyou.co.nz/valedictory_statement/2006/jul/26',
             'http://theyworkforyou.co.nz/resignations/2006/aug/01/hon_jim_sutton_labour',
-            :charles_chauvel],
+            :charles_chauvel, 'Labour'],
         :don_brash=>['6 February 2007','http://theyworkforyou.co.nz/valedictory_statement/2006/dec/12',
             'http://theyworkforyou.co.nz/resignations/2007/feb/13/dr_don_brash_nz_national',
-            :katrina_shanks],
+            :katrina_shanks, "National"],
         :georgina_beyer=>['16 February 2007','http://theyworkforyou.co.nz/debate_on_prime_ministers_statement/2007/feb/14#labour_86',
             'http://theyworkforyou.co.nz/resignations/2007/feb/20/georgina_beyer_labour',
-            :lesley_soper],
+            :lesley_soper, 'Labour'],
         :ann_hartley=>['28 February 2008','http://theyworkforyou.co.nz/valedictory_statement/2008/feb/20',
             'http://theyworkforyou.co.nz/resignations/2008/mar/04/ann_hartley_labour',
-            :louisa_wall],
+            :louisa_wall, 'Labour'],
         :brian_donnelly=>['14 February 2008','http://theyworkforyou.co.nz/debate_on_prime_ministers_statement/2008/feb/13#nz_first_90',
             'http://theyworkforyou.co.nz/resignations/2008/feb/19/hon_brian_donnelly_nz_first',
-            :dail_jones],
+            :dail_jones, "NZ First"],
         :dianne_yates=>['29 March 2008','http://theyworkforyou.co.nz/valedictory_statement/2008/mar/19',
             'http://theyworkforyou.co.nz/resignations/2008/apr/01/dianne_yates_nz_labour',
-            :sua_william_sio]
+            :sua_william_sio, 'Labour']
     }
 
     joined_parliament = {
@@ -65,7 +65,7 @@ class CreateMembers < ActiveRecord::Migration
       Member.create({
           :person_id => mp.id,
           :electorate => mp.electorate,
-          :party_id => has_left_party ? Party.find_by_short(left_party[id_name][1]).id : mp.member_of_id,
+          :party_id => has_left_party ? Party.find_by_short(left_party[id_name][1]).id : (has_left ? Party.find_by_short(left_parliament[id_name][4]).id : mp.member_of_id),
           :from_date => not_in_48th ? nil : (has_joined ? Date.parse(joined_parliament[id_name][0]) : '2005-11-07'),
           :list_member_vacancy_url => has_joined ? joined_parliament[id_name][1] : nil,
           :members_sworn_url => not_in_48th ? nil : (has_joined ? joined_parliament[id_name][2] : 'http://theyworkforyou.co.nz/members_sworn/2005/nov/07'),

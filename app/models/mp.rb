@@ -19,7 +19,7 @@ class Mp < ActiveRecord::Base
 
   def anchor(date)
     party = party_on_date(date)
-    raise first + ' ' + last + ' ' + former.to_s unless party
+    raise date.to_s + ' ' + first + ' ' + last + ' ' + former.to_s unless party
     party.short == 'Independent' ? last.downcase : party.short.downcase.gsub(' ','_')
   end
 
