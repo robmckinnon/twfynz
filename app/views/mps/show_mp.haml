@@ -10,6 +10,22 @@
     - else
       %h2= @role_description
   #primarycontent
+    - if @former_member_role
+      .divider3
+      %div{ :class=>"post", :id=>'membership_change' }
+        %p
+          = "Prior to #{@member_role.from_date.as_date} "
+          - party = @former_member_role.party.abbreviated
+          = link_to("was a member of #{party[/Party$/] ? 'the '+party : party}", @former_member_role.membership_change_url) + '.'
+    - if @member_role.maiden_statement_url
+      .divider3
+      %div{ :class=>"post", :id=>'maiden_statement' }
+        %p
+          = "Sworn in to Parliament on "
+          = link_to(@member_role.members_sworn_date.as_date, @member_role.members_sworn_url) + ", and gave "
+          = link_to("maiden statement", @member_role.maiden_statement_url)
+          - if @member_role.members_sworn_date == @member_role.maiden_statement_date
+            = ' on the same day.'
     .divider3
     - unless @bills_in_charge_of.empty?
       %div{ :class=>"post", :id=>"bills_in_charge_of" }

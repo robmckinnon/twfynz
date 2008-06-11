@@ -22,4 +22,10 @@ class Date
     day = SittingDay.find_by_date self
     day.has_final?
   end
+
+  def as_date
+    text = strftime "%d %B %Y"
+    text = text[1..(text.size-1)] if text.size > 0 and text[0..0] == '0'
+    text
+  end
 end

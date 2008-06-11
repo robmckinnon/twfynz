@@ -48,4 +48,19 @@ describe Member do
       member.is_active_on(date).should be_false
     end
   end
+
+  describe 'when there is a members sworn url' do
+    it 'should determine date from members sworn url' do
+      member = Member.new
+      member.stub!(:members_sworn_url).and_return 'http://theyworkforyou.co.nz/members_sworn/2008/mar/04'
+      member.members_sworn_date.should == Date.new(2008,3,4)
+    end
+  end
+  describe 'when there is a maiden statement url' do
+    it 'should determine date from maiden statement url' do
+      member = Member.new
+      member.stub!(:maiden_statement_url).and_return 'http://theyworkforyou.co.nz/maiden_statement/2008/mar/04'
+      member.maiden_statement_date.should == Date.new(2008,3,4)
+    end
+  end
 end
