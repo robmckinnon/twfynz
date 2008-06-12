@@ -4,6 +4,7 @@ describe Member do
 
   assert_model_belongs_to :party
   assert_model_belongs_to :person
+  assert_model_belongs_to :replaced_by
 
   describe 'when determing if active on date' do
     it 'should return false if given date is less than from_date' do
@@ -49,18 +50,23 @@ describe Member do
     end
   end
 
-  describe 'when there is a members sworn url' do
+  describe 'when member has urls' do
     it 'should determine date from members sworn url' do
-      member = Member.new
-      member.stub!(:members_sworn_url).and_return 'http://theyworkforyou.co.nz/members_sworn/2008/mar/04'
+      member = Member.new :members_sworn_url => 'http://theyworkforyou.co.nz/members_sworn/2008/mar/04'
       member.members_sworn_date.should == Date.new(2008,3,4)
     end
-  end
-  describe 'when there is a maiden statement url' do
+
     it 'should determine date from maiden statement url' do
-      member = Member.new
-      member.stub!(:maiden_statement_url).and_return 'http://theyworkforyou.co.nz/maiden_statement/2008/mar/04'
+      member = Member.new :maiden_statement_url => 'http://theyworkforyou.co.nz/maiden_statement/2008/mar/04'
       member.maiden_statement_date.should == Date.new(2008,3,4)
+    end
+    it 'should determine date from resignation_url' do
+      member = Member.new :resignation_url => 'http://theyworkforyou.co.nz/resignation/2008/mar/04'
+      member.resignation_date.should == Date.new(2008,3,4)
+    end
+    it 'should determine date from valedictory_statement_url' do
+      member = Member.new :valedictory_statement_url => 'http://theyworkforyou.co.nz/valedictory_statement/2008/mar/04'
+      member.valedictory_statement_date.should == Date.new(2008,3,4)
     end
   end
 end

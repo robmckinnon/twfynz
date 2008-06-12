@@ -2,6 +2,7 @@ class Member < ActiveRecord::Base
 
   belongs_to :party
   belongs_to :person, :class_name => 'Mp'
+  belongs_to :replaced_by, :class_name => 'Mp'
 
   def maiden_statement_date
     maiden_statement_url ? date_from_url(maiden_statement_url) : nil
@@ -9,6 +10,14 @@ class Member < ActiveRecord::Base
 
   def members_sworn_date
     members_sworn_url ? date_from_url(members_sworn_url) : nil
+  end
+
+  def resignation_date
+    resignation_url ? date_from_url(resignation_url) : nil
+  end
+
+  def valedictory_statement_date
+    valedictory_statement_url ? date_from_url(valedictory_statement_url) : nil
   end
 
   def is_active_on date

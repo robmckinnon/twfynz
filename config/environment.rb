@@ -1,4 +1,4 @@
-RAILS_GEM_VERSION = '2.0.2' unless defined? RAILS_GEM_VERSION
+RAILS_GEM_VERSION = '2.1' unless defined? RAILS_GEM_VERSION
 require File.join(File.dirname(__FILE__), 'boot')
 
 Rails::Initializer.run do |config|
@@ -13,6 +13,8 @@ Rails::Initializer.run do |config|
   config.gem 'has_many_polymorphs'
   config.gem 'sparklines'
   config.gem 'htmlentities'
+  # config.gem 'morph'
+  # config.gem 'rugalytics'
 
   # Only load the plugins named here, by default all plugins in vendor/plugins are loaded
   # config.plugins = %W( exception_notification ssl_requirement )
