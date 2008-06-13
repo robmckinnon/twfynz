@@ -105,7 +105,7 @@ module ApplicationHelper
       text = debate.name
     end
     url = get_url(debate)
-    date = include_date ? format_date(debate.date) : ''
+    date = include_date ? %Q[<span class="inform_date">#{format_date(debate.date)}</span>] : ''
     link_to(text, url) + ' ' + date
   end
 

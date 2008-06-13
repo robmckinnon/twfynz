@@ -1,35 +1,31 @@
 .recent_debates
-  %h2= title
   .contentarea
-    %ul.linklist
-      - recent_debates.each do |debate|
-        - if (debate.is_a?(Array) and (debate.size == 1) and (debate.first.is_a?(OralAnswer) or debate.first.instance_of?(ParentDebate)) )
-          - the_debate = debate.first
-          - if debate.first.is_a?(OralAnswer)
-            %li.debate_links
-              - if the_debate.about
-                %span.debate_title= the_debate.about.full_name
-              %ul.linklist
-                %li= link_to_recent_debate(the_debate, false)
-          - else
-            %li.debate_links
-              %span.debate_title= the_debate.name
-              %ul.linklist
-                %li= link_to_recent_debate(the_debate, false)
-        - elsif (debate.is_a? Array)
-          - debates = debate
-          %li.debate_links
-            - if debates.first.is_a? OralAnswer
-              %span.debate_title= debates.first.about ? debates.first.about.full_name : 'Other'
-            - else
-              %span.debate_title= debates.first.name
-            %ul.linklist
-              - if debates.first.is_a?(BillDebate)
-                - debates.each do |d|
-                  %li= link_to_recent_debate(d, (debates.size > 1))
-              - else
-                - debates.sort_by(&:date).each do |d|
-                  %li= link_to_recent_debate(d, (!d.is_a?(OralAnswer) && debates.size > 1))
+    - recent_debates.each do |debate|
+      - if (debate.is_a?(Array) and (debate.size == 1) and (debate.first.is_a?(OralAnswer) or debate.first.instance_of?(ParentDebate)) )
+        - the_debate = debate.first
+        - if debate.first.is_a?(OralAnswer)
+          - if the_debate.about
+            %h3.debates_about= the_debate.about.full_name
+          %ul.debate_list
+            %li= link_to_recent_debate(the_debate, true)
         - else
-          %li= link_to_recent_debate debate, true
+          %h3.debates_about= the_debate.name
+          %ul.debate_list
+            %li= link_to_recent_debate(the_debate, true)
+      - elsif (debate.is_a? Array)
+        - debates = debate
+        %h3.debates_about
+          - if debates.first.is_a? OralAnswer
+            = debates.first.about ? debates.first.about.full_name : 'Other'
+          - else
+            = debates.first.name
+        %ul.debate_list
+          - if debates.first.is_a?(BillDebate)
+            - debates.each do |d|
+              %li= link_to_recent_debate(d, true)
+          - else
+            - debates.sort_by(&:date).each do |d|
+              %li= link_to_recent_debate(d, true)
+      - else
+        %li= link_to_recent_debate debate, true
 .divider3
