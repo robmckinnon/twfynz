@@ -19,6 +19,7 @@ class NzlEvent < ActiveRecord::Base
     def description
       @description
     end
+
     def description= description
       @description = description
     end
@@ -77,11 +78,11 @@ class NzlEvent < ActiveRecord::Base
     def populate_description_data
       if description
         parts = description.gsub("\r",'').gsub("\n",'').gsub('&lt;','<').gsub('&gt;','>').split('<br />').collect {|p| p.split(': ')}
-        event = NzdEventProxy.new
+        event = NzlEventProxy.new
         parts.each do |part|
           field = part[0].downcase.gsub(' ','_').strip
           field = 'nzl_id' if field == 'id'
-          event.send field+'=', part[1]
+          event.morph(field, part[1])
         end
 
         self.status = event.status.downcase
@@ -90,9 +91,9 @@ class NzlEvent < ActiveRecord::Base
         self.information_type = event.information_type
         self.year = event.year.to_i
         self.no = event.no
-        if event.current_as_at_date
+        if event.respond_to?(:current_as_at_date)
           match = /(\d\d)\/(\d\d)\/(\d\d\d\d)/.match event.current_as_at_date
-          self.current_as_at_date = Date.new(match[3].to_i,match[2].to_i,match[0].to_i)
+          self.current_as_at_date = Date.new(match[3].to_i,match[2].to_i,match[0].to_i) if match
         end
 
         populate_about_information event
@@ -101,7 +102,7 @@ class NzlEvent < ActiveRecord::Base
     end
 end
 
-class NzdEventProxy
+class NzlEventProxy
 
   include Morph
 

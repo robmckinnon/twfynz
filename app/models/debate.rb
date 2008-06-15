@@ -289,6 +289,10 @@ class Debate < ActiveRecord::Base
     (name.size < 35) ? name : "#{name[0..35]}..."
   end
 
+  def parent_name
+    nil
+  end
+
   def year
     date.year.to_s
   end

@@ -22,3 +22,4 @@ public/portfolios
 vendor/plugins/css_graphs
 public/sitemap_*
 config/environments/production.rb
+config/rugalytics.yml

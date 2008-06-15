@@ -149,4 +149,8 @@ describe Debate, 'in general' do
     debate.contribution_id(contribution).should == '3'
   end
 
+  it 'should return nil for parent name' do
+    debate = Debate.new
+    debate.parent_name.should be_nil
+  end
 end

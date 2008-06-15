@@ -19,6 +19,10 @@ class SubDebate < Debate
     debate
   end
 
+  def parent_name
+    parent.name
+  end
+
   def title_name separator=':'
     %Q[#{debate.name}#{separator} #{name}]
   end

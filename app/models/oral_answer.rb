@@ -29,10 +29,10 @@ class OralAnswer < SubDebate
 
     def make_url_slug_text
       if name.include?("—")
-        major, minor = name.split("—")
+        major, minor = name.to_latin.split("—")
         text = matches_about_name_or_minister_name(major) ? minor : major
       else
-        text = String.new name
+        text = String.new name.to_latin
       end
     end
 

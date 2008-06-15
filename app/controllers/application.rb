@@ -19,6 +19,9 @@ class ApplicationController < ActionController::Base
   layout "application"
 
   def home
+    # @months_top_pages = top_content 30
+    @weeks_top_pages = top_content 7
+    @days_top_pages = top_content 1
     render :template => 'home'
   end
 
@@ -62,7 +65,38 @@ class ApplicationController < ActionController::Base
     current_user && current_user.login == 'rob'
   end
 
+  def self.title_from_path path
+    case path.gsub('/',' ').sub('mori','maori')
+      when /^ (bills|portfolios|committees) (\S+)$/
+        about = $1.singularize.titleize.constantize.find_by_url($2)
+        about.send("#{$1.singularize}_name")
+      when /^ bills (\S+) submissions$/
+        bill = Bill.find_by_url($1)
+        "Submissions on #{bill.bill_name}"
+      when /^ (bills|portfolios|committees) (\S+) (\d\d\d\d) (\S\S\S) (\d\d) (\S+)/
+        date = DebateDate.new({:year=>$3,:month=>$4,:day=>$5})
+        debate = Debate.find_by_about_on_date_with_slug($1.singularize.titleize.constantize, $2, date, $6)
+        if debate
+          ($1 == 'bills') ? "#{debate.parent_name}, #{debate.name}" : debate.name
+        else
+          path
+        end
+      else
+        path
+    end
+  end
+
   private
+
+    def top_content days
+      report = Rugalytics.default_profile.load_report('TopContent', :from=>(Date.today - days) )
+      items = report.items.delete_if{|i| (i.path[/\d\d\d\d/].nil? && !i.path[/bills\//]) || i.path[/search\?/] }.sort_by{|i| i.unique_page_views.to_i}.reverse
+      items = items[0..9] if items.size > 10
+      items.each do |item|
+        item.page_title = ApplicationController.title_from_path item.path
+      end
+      items
+    end
 
     def site_url
       host = request.host_with_port.include?('80') ? request.host : request.host_with_port

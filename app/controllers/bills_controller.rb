@@ -6,7 +6,7 @@ class BillsController < ApplicationController
 
   def index
     @bills_on = true
-    @bills_current = Bill.find_all_current.sort_by &:bill_name
+    @bills_current = Bill.find_all_current.sort_by(&:bill_name)
     # @bills_with_debates = Bill.find_all_current.group_by &:url
     # @letter_to_bills = @bills_with_debates.keys.group_by {|b| b[0..0]}
     # View code:
@@ -16,13 +16,13 @@ class BillsController < ApplicationController
 
   def negatived
     @bills_on = true
-    @bills_negatived = Bill.find_all_negatived.group_by &:url
+    @bills_negatived = Bill.find_all_negatived.group_by(&:url)
     @letter_to_negatived = @bills_negatived.keys.group_by {|b| b[0..0]}
   end
 
   def assented
     @bills_on = true
-    @bills_assented = Bill.find_all_assented.group_by &:url
+    @bills_assented = Bill.find_all_assented.group_by(&:url)
     @letter_to_assented = @bills_assented.keys.group_by {|b| b[0..0]}
   end
 

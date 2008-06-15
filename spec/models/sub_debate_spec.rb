@@ -1,5 +1,14 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
+describe SubDebate, 'in general' do
+  it 'should return parent name' do
+    debate = SubDebate.new
+    parent = mock('parent',:name=>'name')
+    debate.should_receive(:parent).twice.and_return parent
+    debate.parent_name.should == 'name'
+  end
+end
+
 describe SubDebate, "creating url slug for bill subdebate" do
 
   it 'should shorten "Consideration of Interim Report of Transport and Industrial Relations Committee" to "consideration_of_interim_report"' do

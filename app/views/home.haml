@@ -13,19 +13,31 @@
         -# = link_to("Committees", {:controller=>'committees'}, :title=>'Questions about Committees') + ', and '
         = link_to("MPs", {:controller=>'mps'}, :title=>'List of all MPs') + ' or '
         = link_to("organisations", {:controller=>'organisations'}, :title=>'List of organisations') + '.'
-      %p
         You can also view an
         = link_to('index of recent debates', {:controller=>'debates'}, :title=>'List of recent debates') + '.'
-    %table.bill-table
-      %thead
-        %tr
-          %th You can make submissions on these bills
-          %th.date Deadline
-      %tbody
-        - SubmissionDate.find(:all, :include => :bill).select{|sd| sd.date >= Date::today}.sort {|a,b| ((a.date <=> b.date) == 0) ? a.title <=> b.title : a.date <=> b.date }.each do |date|
+    #public_bill_submissions
+      %h2 Public Bill Submissions
+      %table.bill-table
+        %thead
           %tr
-            %td= link_to date.title, show_bill_url(:bill_url => date.bill.url)
-            %td.date= format_date date.date
+            %th You can make submissions on these bills
+            %th.date Deadline
+        %tbody
+          - SubmissionDate.find(:all, :include => :bill).select{|sd| sd.date >= Date::today}.sort {|a,b| ((a.date <=> b.date) == 0) ? a.title <=> b.title : a.date <=> b.date }.each do |date|
+            %tr
+              %td= link_to date.title, show_bill_url(:bill_url => date.bill.url)
+              %td.date= format_date date.date
+    #popular_content
+      - if @days_top_pages
+        %h2 Popular yesterday
+        %ul
+          - @days_top_pages.each do |item|
+            %li= link_to("#{item.page_title}", item.url) + " <span class='page_views'>(#{item.unique_page_views})</span>"
+      - if @weeks_top_pages
+        %h2 Popular over last week
+        %ul
+          - @weeks_top_pages.each do |item|
+            %li= link_to("#{item.page_title}", item.url) + " <span class='page_views'>(#{item.unique_page_views})</span>"
 #calendarcontent
   #login_form
     = '' # render :partial => 'login_form'

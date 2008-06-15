@@ -1,4 +1,3 @@
-require File.dirname(__FILE__) + '/morph.rb'
 require 'open-uri'
 require 'yaml'
 

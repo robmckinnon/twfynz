@@ -13,8 +13,8 @@ Rails::Initializer.run do |config|
   config.gem 'has_many_polymorphs'
   config.gem 'sparklines'
   config.gem 'htmlentities'
-  # config.gem 'morph'
-  # config.gem 'rugalytics'
+  config.gem 'morph'
+  config.gem 'rugalytics'
 
   # Only load the plugins named here, by default all plugins in vendor/plugins are loaded
   # config.plugins = %W( exception_notification ssl_requirement )
@@ -67,4 +67,3 @@ require 'date_extension'
 require 'in_groups_by'
 require 'route_helper'
 require 'sitemap'
-

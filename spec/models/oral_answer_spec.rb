@@ -10,6 +10,10 @@ describe OralAnswer, "creating url slug" do
     assert_slug_correct 'Music', 'music'
   end
 
+  it 'should latinized maori long vowel characters' do
+    assert_slug_correct 'Māori Wardens—Capacity Increases', 'maori_wardens'
+  end
+
   it 'should replace spaces in debate name with underscores in url slug' do
     assert_slug_correct 'Music Awards', 'music_awards'
   end
