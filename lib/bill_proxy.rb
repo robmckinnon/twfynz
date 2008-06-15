@@ -1,5 +1,6 @@
 require 'open-uri'
 require 'yaml'
+require 'morph'
 
 class BillProxy
 
