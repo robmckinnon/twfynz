@@ -27,16 +27,17 @@ class BillProxy
   def create_bill
     attributes = {
       :bill_name => data_title,
-      :act_name => data_act,
       :bill_no => data_bill_no,
       :description => data_info,
       :parliament_url => parliament_url
     }
 
     attributes[:type] = data_type_of_bill.gsub("'",'')+'Bill'
-    attributes[:mp_name] = data_member_in_charge if data_member_in_charge
-    attributes[:referred_to] = data_referred_to if data_referred_to
-    attributes[:bill_change] = data_bill_change if data_bill_change
+
+    attributes[:act_name] if respond_to? :data_act
+    attributes[:mp_name] = data_member_in_charge if respond_to? :data_member_in_charge
+    attributes[:referred_to] = data_referred_to if respond_to? :data_referred_to
+    attributes[:bill_change] = data_bill_change if respond_to? :data_bill_change
 
     populate_dates attributes
 
@@ -157,6 +158,7 @@ class BillProxy
     end
 
     def populate_date field, attributes
+      return unless respond_to? field
       value = send field
       name = field.to_s.sub('data_','')
       date_field = name.to_sym
@@ -187,8 +189,6 @@ class BillProxy
         else
           p(name+': '+value) if value
         end
-      else
-        p(name+': ' +value) if value
       end
     end
 
