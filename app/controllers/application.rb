@@ -66,7 +66,7 @@ class ApplicationController < ActionController::Base
   end
 
   def self.title_from_path path
-    case path.gsub('/',' ').sub('mori','maori')
+    case path.gsub('/',' ')
       when /^ (bills|portfolios|committees) (\S+)$/
         about = $1.singularize.titleize.constantize.find_by_url($2)
         about.send("#{$1.singularize}_name")
@@ -93,6 +93,7 @@ class ApplicationController < ActionController::Base
       items = report.items.delete_if{|i| (i.path[/\d\d\d\d/].nil? && !i.path[/bills\//]) || i.path[/search\?/] }.sort_by{|i| i.unique_page_views.to_i}.reverse
       items = items[0..9] if items.size > 10
       items.each do |item|
+        item.path.sub!('mori','maori')
         item.page_title = ApplicationController.title_from_path item.path
       end
       items
