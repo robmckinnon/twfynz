@@ -16,16 +16,17 @@ module BillsHelper
   end
 
   def committee_report_details bill, event_name
+    details = ''
     if bill.was_reported_by_committee?
       details = %Q[The #{link_to_committee(bill.referred_to_committee)} reported on this bill.]
-      if bill.nzl_events
-        events = bill.nzl_events.select {|e| e.version_stage == 'reported' || e.version_stage == 'wip version updated' }.sort_by(&:publication_date)
-        if events.size > 0
-          details = %Q[#{link_to('View the bill', events.last.link)} as reported from the #{events.last.version_committee} at the New Zealand Legislation website.]
-        end
-      end
-      details
     end
+    if bill.nzl_events
+      events = bill.nzl_events.select {|e| e.version_stage == 'reported' || e.version_stage == 'wip version updated' }.sort_by(&:publication_date)
+      if events.size > 0
+        details += %Q[#{link_to('View the bill', events.last.link)} as reported from the #{events.last.version_committee} at the New Zealand Legislation website.]
+      end
+    end
+    details
   end
 
   def committee_details bill, event_name
