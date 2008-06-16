@@ -106,7 +106,11 @@ class BillProxy
       elsif (match = /<td>Order of the day for first reading discharged<\/td><\/tr><tr><th scope="row"><\/th><td>([^<]*)<\/td>/.match line)
         send "data_first_reading_discharged=".to_sym, match[1]
 
-      elsif (match = /SC report(s):<\/th><td>Discharged from Transport and Industrial Relations Committee 21\/8\/06<\/td><\/tr><tr><th scope="row"><\/th><td>29\/6\/07<\/td>/.match line)
+      elsif (match = /SC report\(s\):<\/th><td>(.*) \(Interim report\)<\/td><\/tr><tr><th scope="row"><\/th><td>(.*)<\/td>/.match line)
+        send "data_sc_reports_interim_report=".to_sym, match[1] # hack for Climate Change (Emissions Trading and Renewable Preference) Bill
+        send "data_sc_reports=".to_sym, match[2] # hack for Climate Change (Emissions Trading and Renewable Preference) Bill
+
+      elsif (match = /SC report\(s\):<\/th><td>Discharged from Transport and Industrial Relations Committee 21\/8\/06<\/td><\/tr><tr><th scope="row"><\/th><td>29\/6\/07<\/td>/.match line)
         send "data_sc_reports=".to_sym, '29/6/07' # hack for Minimum Wage (Abolition of Age Discrimination) Amendment Bill, bill_no: 9-2
 
       elsif (match = /Second reading:<\/th><td>Order of the day for second reading discharged. Referred to Transport and Industrial Relations Committee 30\/8\/06<\/td><\/tr><tr><th scope="row"><\/th><td>25\/7\/07<\/td>/.match line)
@@ -145,6 +149,7 @@ class BillProxy
       populate_date(:data_first_reading, attributes)
       populate_date(:data_submissions_due, attributes)
       populate_date(:data_sc_reports, attributes)
+      populate_date(:data_sc_reports_interim_report, attributes)
       populate_date(:data_consideration_of_report, attributes)
       populate_date(:data_committee_of_the_whole_house, attributes)
       populate_date(:data_second_reading, attributes)
