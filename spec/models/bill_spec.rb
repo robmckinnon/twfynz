@@ -8,10 +8,10 @@ def bill_params
         :mp_name => 'Rod Donald'}
 end
 
-def new_bill params=nil
+def new_bill params=nil, validate=true
   Mp.should_receive(:from_name).any_number_of_times.and_return(mock_model(Mp))
   bill = GovernmentBill.new(params ? bill_params.merge(params) : bill_params)
-  bill.should be_valid
+  bill.should(be_valid) if validate
   bill
 end
 
@@ -23,22 +23,39 @@ def bill_invalid_without param
 end
 
 describe Bill, 'finding by plain bill name and year' do
-  before(:all) do
-    @bill = new_bill bill_params
-    @bill.save
-    @other_bill = new_bill bill_params.merge(:introduction => '2005-12-12')
-    @other_bill.save
-  end
-
-  after(:all) do
-    Bill.delete_all
-  end
 
   it 'should return bill if plain name and introduction year match' do
+    bill = new_bill bill_params
+    other_bill = new_bill bill_params.merge(:introduction => '2005-12-12')
+    Bill.should_receive(:find_all_by_plain_bill_name).and_return [bill, other_bill]
     bills = Bill.find_all_by_plain_bill_name_and_year(bill_params[:bill_name], 2006)
-    bills.should == [@bill]
+    bills.should == [bill]
   end
 
+  it 'should return bill if plain name matches, and former_part_of bill has matching introduction' do
+    bill = new_bill bill_params.merge(:introduction => nil), validate=false
+    Bill.should_receive(:find_all_by_plain_bill_name).and_return [bill]
+    bills = Bill.find_all_by_plain_bill_name_and_year(bill_params[:bill_name], 2006)
+    bills.should == []
+  end
+
+  it 'should return bill if plain name matches, and former_part_of bill has matching introduction' do
+    bill = new_bill bill_params
+    split_bill = new_bill bill_params.merge(:introduction => nil), validate=false
+    split_bill.should_receive(:formerly_part_of).and_return bill
+    Bill.should_receive(:find_all_by_plain_bill_name).and_return [split_bill]
+    bills = Bill.find_all_by_plain_bill_name_and_year(bill_params[:bill_name], 2006)
+    bills.should == [split_bill]
+  end
+
+  it 'should return bill if plain name matches, and former_part_of bill has introduction within one year' do
+    bill = new_bill bill_params
+    split_bill = new_bill bill_params.merge(:introduction => nil), validate=false
+    split_bill.should_receive(:formerly_part_of).twice.and_return bill
+    Bill.should_receive(:find_all_by_plain_bill_name).and_return [split_bill]
+    bills = Bill.find_all_by_plain_bill_name_and_year(bill_params[:bill_name], 2007)
+    bills.should == [split_bill]
+  end
 end
 
 describe Bill, 'the class' do

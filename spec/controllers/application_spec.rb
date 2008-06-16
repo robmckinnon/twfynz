@@ -50,6 +50,21 @@ describe ApplicationController do
 
       ApplicationController.title_from_path(path).should == title
     end
+
+    # /appointments/2008/apr/17/chief_ombudsman
+    it 'should find url_category debate title' do
+      url_slug = 'chief_ombudsman'
+      url_category = 'appointments'
+      path = "/#{url_category}/2006/mar/02/#{url_slug}"
+      date = mock('date')
+      DebateDate.should_receive(:new).and_return date
+      parent_name = 'Appointments'
+      debate_name = 'Chief Ombudsman'
+      debate = mock('debate', :name => debate_name, :parent_name=>parent_name)
+      Debate.should_receive(:find_by_url_category_and_url_slug).with(date, url_category, url_slug).and_return(debate)
+
+      ApplicationController.title_from_path(path).should == "#{parent_name}, #{debate_name}"
+    end
   end
 
 end

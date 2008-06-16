@@ -47,7 +47,22 @@ class Bill < ActiveRecord::Base
 
     def find_all_by_plain_bill_name_and_year name, year
       bills = find_all_by_plain_bill_name name
-      bills.select {|b| b.introduction && b.introduction.year == year}
+      selected = select_by_year bills, year
+      selected = select_by_year bills, (year-1) if selected.empty?
+      selected
+    end
+
+    def select_by_year bills, year
+      selected = bills.select do |b|
+        introduced_that_year = b.introduction && b.introduction.year == year
+        if introduced_that_year
+          true
+        elsif (formerly = b.formerly_part_of)
+          formerly.introduction && formerly.introduction.year == year
+        else
+          false
+        end
+      end
     end
 
     def from_name_and_date_by_method name, date, method
