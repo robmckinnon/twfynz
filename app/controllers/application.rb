@@ -94,6 +94,7 @@ class ApplicationController < ActionController::Base
       items = items[0..9] if items.size > 10
       items.each do |item|
         item.path.sub!('mori','maori')
+        item.url.sub!('mori','maori')
         item.page_title = ApplicationController.title_from_path item.path
       end
       items
