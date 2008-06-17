@@ -28,13 +28,13 @@ class BillProxy
     attributes = {
       :bill_name => data_title,
       :bill_no => data_bill_no,
-      :description => data_info,
       :parliament_url => parliament_url
     }
 
     attributes[:type] = data_type_of_bill.gsub("'",'')+'Bill'
 
-    attributes[:act_name] if respond_to? :data_act
+    attributes[:description] = data_info if respond_to? :data_info
+    attributes[:act_name] = data_act if respond_to? :data_act
     attributes[:mp_name] = data_member_in_charge if respond_to? :data_member_in_charge
     attributes[:referred_to] = data_referred_to if respond_to? :data_referred_to
     attributes[:bill_change] = data_bill_change if respond_to? :data_bill_change
