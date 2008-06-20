@@ -67,13 +67,21 @@ class ApplicationController < ActionController::Base
 
   def self.title_from_path path
     case path.gsub('/',' ')
+      when /^ debates (\d\d\d\d) (\S\S\S) (\d\d)$/
+        date = DebateDate.new({:year=>$1,:month=>$2,:day=>$3})
+        debates = Debate.find_by_date(date.year, date.month, date.day)
+        if debates.first.is_a? OralAnswers
+          "Questions for Oral Answer, #{date.to_date.as_date}"
+        else
+          "Parlimentary Debates, #{date.to_date.as_date}"
+        end
       when /^ (bills|portfolios|committees) (\S+)$/
         about = $1.singularize.titleize.constantize.find_by_url($2)
         about.send("#{$1.singularize}_name")
       when /^ bills (\S+) submissions$/
         bill = Bill.find_by_url($1)
         "Submissions on #{bill.bill_name}"
-      when /^ (bills|portfolios|committees) (\S+) (\d\d\d\d) (\S\S\S) (\d\d) (\S+)/
+      when /^ (bills|portfolios|committees) (\S+) (\d\d\d\d) (\S\S\S) (\d\d) (\S+)$/
         date = DebateDate.new({:year=>$3,:month=>$4,:day=>$5})
         debate = Debate.find_by_about_on_date_with_slug($1.singularize.titleize.constantize, $2, date, $6)
         if debate
@@ -81,7 +89,7 @@ class ApplicationController < ActionController::Base
         else
           path
         end
-      when /^ (\S+) (\d\d\d\d) (\S\S\S) (\d\d) (\S+)/
+      when /^ (\S+) (\d\d\d\d) (\S\S\S) (\d\d) (\S+)$/
         if Debate::CATEGORIES.include? $1
           date = DebateDate.new({:year=>$2,:month=>$3,:day=>$4})
           debate = Debate.find_by_url_category_and_url_slug(date, $1, $5)

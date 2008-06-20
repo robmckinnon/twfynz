@@ -65,6 +65,16 @@ describe ApplicationController do
 
       ApplicationController.title_from_path(path).should == "#{parent_name}, #{debate_name}"
     end
+
+    # /debates/2008/jun/17
+    it 'should find debates on day title' do
+      path = "/debates/2008/jun/17"
+      date = mock('date',:year=>'2007',:month=>'jun',:day=>'17',:to_date=>Date.new(2008,6,17))
+      DebateDate.should_receive(:new).and_return date
+      Debate.should_receive(:find_by_date).with('2007','jun','17').and_return [mock_model(OralAnswers)]
+
+      ApplicationController.title_from_path(path).should == "Questions for Oral Answer, 17 June 2008"
+    end
   end
 
 end
