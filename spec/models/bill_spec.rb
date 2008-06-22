@@ -256,6 +256,8 @@ end
 
 describe Bill, 'when formerly part of another bill' do
 
+  assert_model_belongs_to :formerly_part_of
+
   it 'should have reference to former part of bill' do
     id = 123
     former_bill = Bill.new(bill_params.merge(:bill_name => 'Statutes Amendment Bill (No 2)'))
@@ -267,6 +269,8 @@ describe Bill, 'when formerly part of another bill' do
 end
 
 describe Bill, 'when divided into other bills' do
+
+  assert_model_has_many :divided_into_bills
 
   it 'should have reference to divided into bills' do
     Mp.should_receive(:from_name).twice.and_return(mock_model(Mp))
@@ -280,6 +284,7 @@ describe Bill, 'when divided into other bills' do
 
     Bill.delete_all
   end
+
 end
 
 describe Bill, "on update" do

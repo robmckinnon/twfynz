@@ -104,7 +104,7 @@ class Bill < ActiveRecord::Base
       sql = 'select * from bills where royal_assent is null and first_reading_negatived = 0 and second_reading_negatived = 0 and withdrawn is null and second_reading_withdrawn is null and committal_discharged is null and consideration_of_report_discharged is null and second_reading_discharged is null and first_reading_discharged is null'
       sql += %Q[ and type = "#{self.to_s}"] unless self == Bill
       bills = find_by_sql(sql)
-      bills.select { |b| b.probably_not_divided? }
+      bills.select { |b| b.current? && b.url != 'business_law_reform' }
     end
 
     def find_all_negatived
@@ -143,15 +143,19 @@ class Bill < ActiveRecord::Base
 
   def probably_not_divided?
     year = Date.today.year
-    divided_into_bills.size == 0 or (divided_into_bills.size > 0 and (last_event and last_event[0].year == year))
+    divided_into_bills.empty? or (divided_into_bills.size > 0 and (last_event and last_event[0].year == year))
   end
 
   def current?
-    ( (not(negatived? or assented? or withdrawn? or discharged?)) and probably_not_divided? )
+    if divided_into_bills.empty?
+      ( (not(negatived? or assented? or withdrawn? or discharged?)) and probably_not_divided? )
+    else
+      divided_into_bills.inject(false) {|current, bill| current && bill.current?}
+    end
   end
 
   def full_name
-    self.bill_name
+    bill_name
   end
 
   def negatived?

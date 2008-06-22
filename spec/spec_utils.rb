@@ -2,7 +2,7 @@
 # e.g. assert_model_has_many Answer, :questions
 def assert_model_has_many(association_name)
   eval %Q|it 'should have many #{association_name.to_s}' do
-    model = self.class.description.constantize
+    model = self.class.description.split.first.constantize
     assert_association_exists model, :has_many, association_name
   end|
 end
@@ -10,7 +10,7 @@ end
 # e.g. assert_model_belongs_to Question, :answer
 def assert_model_belongs_to(association_name)
   eval %Q|it 'should belong to #{association_name.to_s}' do
-    model = self.class.description.constantize
+    model = self.class.description.split.first.constantize
     assert_association_exists model, :belongs_to, association_name, model_with_foreign_key=model
   end|
 end
