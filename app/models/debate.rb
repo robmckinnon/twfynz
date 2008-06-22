@@ -232,8 +232,10 @@ class Debate < ActiveRecord::Base
 
     # expires other pages in that month
     def expire_cached_pages date
+      puts "finding all in month: #{date.year} #{date.month}"
       debates = Debate.find_by_date date.year, date.month, nil
-      debates.each {|d| d.expire_cached_pages}
+      puts 'found: '+debates.size.to_s
+      debates.each { |d| d.expire_cached_pages }
     end
   end
 
@@ -472,7 +474,6 @@ class Debate < ActiveRecord::Base
     end
 
     def uncache path
-      puts 'checking: ' + path
       if path && File.exist?(path)
         puts 'deleting: ' + path.sub(Debate::CACHE_ROOT, '')
         File.delete(path)
