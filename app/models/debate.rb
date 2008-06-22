@@ -418,6 +418,7 @@ class Debate < ActiveRecord::Base
     end
 
     def uncache path
+      puts 'checking: ' + path
       if path && File.exist?(path)
         puts 'deleting: ' + path.sub(Debate::CACHE_ROOT, '')
         File.delete(path)
@@ -441,6 +442,7 @@ class Debate < ActiveRecord::Base
       index = hash[:index]
 
       identifier = hash[:url_slug] ? hash[:url_slug] : index
+      path_suffix = "#{year}/#{month}/#{day}/#{identifier}"
 
       path = nil
       if hash[:portfolio_url]
