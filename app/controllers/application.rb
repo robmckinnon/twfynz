@@ -22,6 +22,7 @@ class ApplicationController < ActionController::Base
     # @months_top_pages = top_content 30
     @weeks_top_pages = top_content 7
     @days_top_pages = top_content 1
+    @submission_dates = SubmissionDate.find_live_bill_submissions
     render :template => 'home'
   end
 

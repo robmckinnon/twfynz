@@ -240,6 +240,7 @@ span.page_views
   ul
     :list-style none
     li
+      :margin-left 0em
       :padding-top 0.2em
       :padding-bottom 0.2em
 
@@ -468,14 +469,16 @@ ul#trackers_list
 #bill_description_gap
   :margin 1.5em 19.5em 0em 0em
 
-#news_feed
+#news_feed, #popular_last_day
   :float left
   :margin-right -26.0em
   :width 100%
   div.hfeed
     :margin 1.5em 27.5em 0em 0em
+  div.popular_last_day
+    :margin 1.5em 27.5em 0em 0em
 
-#blog_feed
+#blog_feed, #popular_last_week
   :margin-top 0.5em
   :float right
   :width 25.0em
@@ -538,7 +541,10 @@ table
 #submissions table
   :margin-bottom 0em
 
-#bills table, .bill-table, #portfolios table, .portfolio-table, #items_tracked, #organisations table, .organisation-table
+.bill-table
+  :margin 0em 0pt
+
+#bills table, #portfolios table, .portfolio-table, #items_tracked, #organisations table, .organisation-table
   :margin 1em 0pt
 
 #organisations table td.yui-dt-number

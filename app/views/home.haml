@@ -15,37 +15,29 @@
         = link_to("organisations", {:controller=>'organisations'}, :title=>'List of organisations') + '.'
         You can also view an
         = link_to('index of recent debates', {:controller=>'debates'}, :title=>'List of recent debates') + '.'
+  - unless @submission_dates.empty?
     #public_bill_submissions
-      %h2 Public Bill Submissions
+      %h2 Bills open for public submissions
       %table.bill-table
-        %thead
-          %tr
-            %th You can make submissions on these bills
-            %th.date Deadline
         %tbody
-          - SubmissionDate.find(:all, :include => :bill).select{|sd| sd.date >= Date::today}.sort {|a,b| ((a.date <=> b.date) == 0) ? a.title <=> b.title : a.date <=> b.date }.each do |date|
+          - @submission_dates.each do |date|
             %tr
               %td= link_to date.title, show_bill_url(:bill_url => date.bill.url)
-              %td.date= format_date date.date
-    #popular_content
+              %td= "#{format_date date.date}"
+  #popular_content
+    #popular_last_day
       - if @days_top_pages
-        %h2 Popular yesterday
-        %ul
-          - @days_top_pages.each do |item|
-            %li= link_to("#{item.page_title}", item.url) + " <span class='page_views'>(#{item.unique_page_views})</span>"
+        .popular_last_day
+          %h2 Popular yesterday
+          %ul
+            - @days_top_pages.each do |item|
+              %li= link_to("#{item.page_title}", item.url) + " <span class='page_views'>(#{item.unique_page_views})</span>"
+    #popular_last_week
       - if @weeks_top_pages
-        %h2 Popular over last week
-        %ul
-          - @weeks_top_pages.each do |item|
-            %li= link_to("#{item.page_title}", item.url) + " <span class='page_views'>(#{item.unique_page_views})</span>"
-#calendarcontent
-  #login_form
-    = '' # render :partial => 'login_form'
-  %div
-    = calendar_nav Date::today, 'Debates in '
-  %p= '&nbsp;'
-  %div
-    = calendar_nav(Time.now.at_beginning_of_month.to_date - 1, 'Debates in ')
-  %p= '&nbsp;'
-  %div
-    = calendar_nav((Time.now.at_beginning_of_month.to_date - 1).at_beginning_of_month - 1, 'Debates in ')
+        .popular_last_week
+          %h2 Popular over last week
+          %ul
+            - @weeks_top_pages.each do |item|
+              %li= link_to("#{item.page_title}", item.url) + " <span class='page_views'>(#{item.unique_page_views})</span>"
+= render :partial => 'calendar.haml'
+

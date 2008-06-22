@@ -1,0 +1,12 @@
+#calendarcontent
+  #login_form
+    = '' # render :partial => 'login_form'
+  %div
+    = calendar_nav Date::today, 'Debates in '
+  - if @previous_months
+    %p= '&nbsp;'
+    %div
+      = calendar_nav(Time.now.at_beginning_of_month.to_date - 1, 'Debates in ')
+    %p= '&nbsp;'
+    %div
+      = calendar_nav((Time.now.at_beginning_of_month.to_date - 1).at_beginning_of_month - 1, 'Debates in ')
