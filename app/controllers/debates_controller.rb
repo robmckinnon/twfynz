@@ -28,7 +28,7 @@ class DebatesController < ApplicationController
       a = a.first if a.is_a?(Array)
       b = b.first if b.is_a?(Array)
       a_title = (a.is_a?(OralAnswer) && a.about) ? a.about.full_name : a.name
-      b_title = b.is_a?(OralAnswer) ? b.about.full_name : b.name
+      b_title = (b.is_a?(OralAnswer) && b.about) ? b.about.full_name : b.name
       a_title <=> b_title
     end
   end
