@@ -19,9 +19,14 @@ class ApplicationController < ActionController::Base
   layout "application"
 
   def home
-    # @months_top_pages = top_content 30
-    @weeks_top_pages = top_content 7
-    @days_top_pages = top_content 1
+    begin
+      # @months_top_pages = top_content 30
+      @weeks_top_pages = top_content 7
+      @days_top_pages = top_content 1
+    rescue Exception => e
+      @weeks_top_pages = nil
+      @days_top_pages = nil
+    end
     @submission_dates = SubmissionDate.find_live_bill_submissions
     render :template => 'home'
   end

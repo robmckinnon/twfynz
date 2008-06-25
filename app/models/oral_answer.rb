@@ -21,6 +21,10 @@ class OralAnswer < SubDebate
     self.url_slug
   end
 
+  def questions
+    contributions.select {|o| o.is_question? }
+  end
+
   protected
 
     def find_by_candidate_slug candidate_slug

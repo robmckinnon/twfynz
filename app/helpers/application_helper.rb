@@ -208,6 +208,43 @@ module ApplicationHelper
     show_bill_url(:bill_url => bill.url)
   end
 
+  def percent number
+    sprintf('%.1f', number*100)
+  end
+
+  def portfolio_pie_chart_url size, title
+    name_to_count = Portfolio.name_to_questions_asked_count
+    name_to_count = name_to_count.sort{|a,b|b[1]<=>a[1]}
+    total = name_to_count.collect{|x| x[1]}.sum.to_f
+
+    names = []
+    counts = []
+    other = 0
+
+    name_to_count.each do |name_and_count|
+      count = name_and_count[1]
+      unless count == 0
+        if (fraction = count/total) > 0.02
+          name = name_and_count[0].sub(' ','%20').sub('Development','Develop.')
+          names  << "#{name} #{percent(fraction)}%"
+          counts << percent(fraction)
+        else
+          other += count
+        end
+      end
+    end
+
+    names << "Other portfolios #{percent(other/total)}%"
+    counts << percent(other/total)
+
+    "http://chart.apis.google.com/chart?cht=p&chs=#{size}&chd=t:#{counts.join(',')}&chl=#{names.join('|')}&chtt=#{title}"
+  end
+
+  def portfolio_pie_chart
+    size = '660x240'
+    title = %Q|Oral Questions by Portfolio since November 2005*|
+    image_tag(portfolio_pie_chart_url(size, title), :size => size, :class => 'pie_chart', :alt => "Pie chart of #{title}")
+  end
 
   def link_to_portfolio portfolio
     link_to portfolio.portfolio_name, url_for_portfolio(portfolio)

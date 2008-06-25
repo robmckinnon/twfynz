@@ -1,8 +1,8 @@
 YAHOO.example.enhanceFromMarkup = function() {
     this.columnHeaders = [
-        {key:"portfolio", text:"Sort portfolio<br /> name", sortable:true},
+        {key:"portfolio", text:"Portfolio<br /> name", sortable:true},
         {key:"sparkline", text:"Oral Question<br /> monthly activity<br /> since Nov 2005", sortable:false},
-        {key:"count", type:"number", text:"Oral Questions<br /> asked since<br /> Nov 2005", sortable:true},
+        {key:"count", type:"number", text:"Oral Questions<br /> asked since<br /> Nov 2005*", sortable:true, sortOptions:{defaultDir:YAHOO.widget.DataTable.CLASS_DESC}},
     ];
     this.columnSet = new YAHOO.widget.ColumnSet(this.columnHeaders);
 
