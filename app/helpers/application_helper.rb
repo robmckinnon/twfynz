@@ -224,7 +224,7 @@ module ApplicationHelper
     name_to_count.each do |name_and_count|
       count = name_and_count[1]
       unless count == 0
-        if (fraction = count/total) > 0.02
+        if (fraction = count/total) > 0.015
           name = name_and_count[0].sub(' ','%20').sub('Development','Develop.')
           names  << "#{name} #{percent(fraction)}%"
           counts << percent(fraction)
@@ -234,15 +234,15 @@ module ApplicationHelper
       end
     end
 
-    names << "Other portfolios #{percent(other/total)}%"
-    counts << percent(other/total)
+    names.insert 0, "Other portfolios #{percent(other/total)}%"
+    counts.insert 0, percent(other/total)
 
     "http://chart.apis.google.com/chart?cht=p&chs=#{size}&chd=t:#{counts.join(',')}&chl=#{names.join('|')}&chtt=#{title}"
   end
 
   def portfolio_pie_chart
     size = '660x240'
-    title = %Q|Oral Questions by Portfolio since November 2005*|
+    title = 'Oral Questions by Portfolio since November 2005|source: TheyWorkForYou.co.nz'
     image_tag(portfolio_pie_chart_url(size, title), :size => size, :class => 'pie_chart', :alt => "Pie chart of #{title}")
   end
 
