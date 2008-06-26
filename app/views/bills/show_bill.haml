@@ -3,7 +3,6 @@
 - @javascript = 'feeds' if is_production_env
 - cache do
   #primarycontainer
-    %p= link_to @bill.parliament_url, 'http://www.parliament.nz/en-NZ/PB/Legislation/Bills/'+@bill.parliament_url
     = render :partial => 'bill_description', :object => @bill
     - if @submissions_count > 0
       %p

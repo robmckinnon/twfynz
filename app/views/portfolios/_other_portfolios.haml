@@ -1,0 +1,6 @@
+.divider2
+%h1 Other Portfolios
+.divider3
+.contentarea
+  %table
+    = render(:partial => 'portfolio', :collection => @portfolios_without_debates.keys.sort, :locals => {:portfolios => @portfolios_without_debates})
