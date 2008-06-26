@@ -242,7 +242,7 @@ module ApplicationHelper
 
   def portfolio_pie_chart
     size = '660x240'
-    title = 'Oral Questions by Portfolio since November 2005|source: TheyWorkForYou.co.nz'
+    title = "Oral Questions by Portfolio from November 2005 to #{Date.today.strftime "%B %Y"} |source: TheyWorkForYou.co.nz"
     image_tag(portfolio_pie_chart_url(size, title), :size => size, :class => 'pie_chart', :alt => "Pie chart of #{title}")
   end
 
