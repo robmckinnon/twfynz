@@ -35,7 +35,8 @@ class PortfoliosController < ApplicationController
       Area.new('142,192,235,204','Housing'),
       Area.new('142,205,235,215','Police'),
       Area.new('142,216,235,228','Transport'),
-      Area.new('142,229,235,239','Maori Affairs')
+      Area.new('142,229,235,239','Maori Affairs'),
+      Area.new('425,198,543,213','Other Porfolios', '#portfolios')
     ]
   end
 
@@ -77,8 +78,8 @@ end
 class Area
   attr_reader :coords, :url, :alt
 
-  def initialize coords, name
+  def initialize coords, name, anchor=nil
     @coords, @alt = coords, name
-    @url = "http://theyworkforyou.co.nz/portfolios/#{name.downcase.tr(' ','_')}"
+    @url = "http://theyworkforyou.co.nz/portfolios/#{anchor ? anchor : name.downcase.tr(' ','_')}"
   end
 end
