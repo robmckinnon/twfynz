@@ -21,6 +21,22 @@ class PortfoliosController < ApplicationController
     @portfolios_with_debates = @portfolios_with_debates.group_by {|p| p.url}
     @letter_to_portfolios = @portfolios_with_debates.keys.group_by {|p| p[0..0]}
     @portfolios_without_debates = Portfolio.find_all_without_debates.group_by {|b| b.url}
+    @portfolios_image_map_areas = [
+      Area.new('425,106,540,122','Prime Minister'),
+      Area.new('425,60,500,78','Health'),
+      Area.new('160,52,235,68','Finance'),
+      Area.new('150,69,235,85','Education'),
+      Area.new('164,100,235,116','Justice'),
+      Area.new('34,130,235,142','Social Development and Employment'),
+      Area.new('142,143,235,155','Immigration'),
+      Area.new('142,156,235,168','Corrections'),
+      Area.new('142,169,235,177','Energy'),
+      Area.new('86,178,235,191','Climate Change Issues'),
+      Area.new('142,192,235,204','Housing'),
+      Area.new('142,205,235,215','Police'),
+      Area.new('142,216,235,228','Transport'),
+      Area.new('142,229,235,239','Maori Affairs')
+    ]
   end
 
   def activity_sparkline
@@ -56,4 +72,13 @@ class PortfoliosController < ApplicationController
     end
   end
 
+end
+
+class Area
+  attr_reader :coords, :url, :alt
+
+  def initialize coords, name
+    @coords, @alt = coords, name
+    @url = "http://theyworkforyou.co.nz/portfolios/#{name.downcase.tr(' ','_')}"
+  end
 end
