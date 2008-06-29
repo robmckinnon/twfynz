@@ -214,7 +214,7 @@ module ApplicationHelper
 
   def portfolio_pie_chart_url size, title
     name_to_count = Portfolio.name_to_questions_asked_count
-    name_to_count = name_to_count.sort{|a,b|b[1]<=>a[1]}
+    name_to_count = name_to_count.sort{|a,b|a[1]<=>b[1]}
     total = name_to_count.collect{|x| x[1]}.sum.to_f
 
     names = []
@@ -237,12 +237,12 @@ module ApplicationHelper
     names.insert 0, "Other portfolios #{percent(other/total)}%"
     counts.insert 0, percent(other/total)
 
-    "http://chart.apis.google.com/chart?cht=p&chs=#{size}&chd=t:#{counts.join(',')}&chl=#{names.join('|')}&chtt=#{title}"
+    "http://chart.apis.google.com/chart?cht=p&chco=ffebcc,ff9900&chs=#{size}&chd=t:#{counts.join(',')}&chl=#{names.join('|')}&chtt=#{title}"
   end
 
   def portfolio_pie_chart
     size = '660x240'
-    title = "Oral Questions by Portfolio from November 2005 to #{Date.today.strftime "%B %Y"} |source: TheyWorkForYou.co.nz"
+    title = "Oral Questions to Ministers — November 2005 to #{Date.today.strftime "%B %Y"} |[source: TheyWorkForYou.co.nz]"
     image_tag(portfolio_pie_chart_url(size, title), :size => size, :class => 'pie_chart', :alt => "Pie chart of #{title}")
   end
 
