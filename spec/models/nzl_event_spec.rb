@@ -237,22 +237,45 @@ end
 
 describe NzlEvent, 'creating using create_from method' do
 
-  it 'should create new NzlEvent if there is no matching publication date and title' do
+  it 'should create new NzlEvent if there is no matching NzlEvent all attributes the same' do
     data = example_nzl_event_data
     event = mock_model(NzlEvent)
     date = Time.parse('Fri, 04 Jan 2008 01:00:00')
     NzlEvent.should_receive(:parse_pub_date).with(example_nzl_event_data[:pub_date]).and_return date
-    NzlEvent.should_receive(:find_by_publication_date_and_title).with(date, example_nzl_event_data[:title]).and_return nil
+    NzlEvent.should_receive(:find_all_by_title).with(example_nzl_event_data[:title]).and_return []
     NzlEvent.should_receive(:create).with(data).and_return event
     NzlEvent.create_from(data).should == event
   end
 
-  it 'should not create a new NzlEvent if there is a matching publication date and title' do
+  it 'should not create a new NzlEvent if there is a matching NzlEvent with all attributes the same' do
     data = example_nzl_event_data
+    existing = mock_model(NzlEvent)
+    existing.stub!(:attributes).and_return :title => 'The Same'
+
     event = mock_model(NzlEvent)
-    date = Time.parse('Fri, 04 Jan 2008 01:00:00')
-    NzlEvent.should_receive(:parse_pub_date).with(example_nzl_event_data[:pub_date]).and_return date
-    NzlEvent.should_receive(:find_by_publication_date_and_title).with(date, data[:title]).and_return event
+    event.stub!(:attributes).and_return :title => 'The Same'
+    event.should_receive(:valid?).and_return true
+
+    NzlEvent.should_receive(:find_all_by_title).with(data[:title]).and_return [existing]
+    NzlEvent.should_receive(:new).with(example_nzl_event_data).and_return event
+
+    NzlEvent.create_from(data).should == nil
+  end
+
+  it 'should create a new NzlEvent if othere NzlEvents with matching title have different attributes' do
+    data = example_nzl_event_data
+    existing = mock_model(NzlEvent)
+    existing.stub!(:attributes).and_return :title => 'The Same', :link => 'Old'
+
+    event = mock_model(NzlEvent)
+    event.stub!(:attributes).and_return :title => 'The Same', :link => 'Not the same'
+    event.should_receive(:valid?).and_return true
+    event.should_receive(:save!)
+
+    NzlEvent.should_receive(:find_all_by_title).with(data[:title]).and_return [existing]
+    NzlEvent.should_receive(:new).with(example_nzl_event_data).and_return event
+
     NzlEvent.create_from(data).should == event
   end
+
 end

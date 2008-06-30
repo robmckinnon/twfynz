@@ -3,15 +3,36 @@ class NzlEvent < ActiveRecord::Base
   belongs_to :about, :polymorphic => true
 
   before_validation_on_create :populate_publication_date, :populate_description_data
+  after_create :clean_cache
 
-  def self.create_from params
-    publication_date = NzlEvent.parse_pub_date params[:pub_date]
-    existing = NzlEvent.find_by_publication_date_and_title(publication_date, params[:title])
-    if existing
-      existing
-    else
-      puts 'creating ' + params[:title] + ' (' + publication_date.to_s + ')' if RAILS_ENV != 'test'
-      NzlEvent.create params
+  class << self
+    def create_from params
+      publication_date = NzlEvent.parse_pub_date params[:pub_date]
+      existing = NzlEvent.find_all_by_title(params[:title])
+      if existing.empty?
+        puts 'creating ' + params[:title] + ' (' + publication_date.to_s + ')' if RAILS_ENV != 'test'
+        NzlEvent.create params
+      else
+        event = NzlEvent.new params
+        saved_event = nil
+        if event.valid?
+          new_attributes = event.attributes.merge({'publication_date'=>nil, 'id'=>nil})
+          should_ignore = false
+
+          existing.each do |old_event|
+            old_attributes = old_event.attributes.merge({'publication_date'=>nil, 'id'=>nil})
+            should_ignore = true if (old_attributes == new_attributes)
+          end
+
+          unless should_ignore
+            puts 'creating ' + params[:title] + ' (' + publication_date.to_s + ')' if RAILS_ENV != 'test'
+            event.save!
+            saved_event = event
+          end
+        end
+
+        saved_event
+      end
     end
   end
 
@@ -41,6 +62,13 @@ class NzlEvent < ActiveRecord::Base
       Time.parse(pub_date.sub(' NZST',''))
     end
 
+    def clean_cache
+      if about_type == 'Bill'
+        bill = about
+        bill.expire_cached_pages
+      end
+    end
+
     def populate_about_information event
       if event.information_type == 'bill'
         self.about_type = 'Bill'
@@ -48,7 +76,6 @@ class NzlEvent < ActiveRecord::Base
         if bills.size == 1
           bill = bills.first
           self.about_id = bill.id
-          bill.expire_cached_pages
         elsif bills.size > 0
           raise 'more than one matching bill for ' + self.title + ' ' +
               self.year.to_s + ': ' + bills.inspect
@@ -98,6 +125,7 @@ class NzlEvent < ActiveRecord::Base
 
         populate_about_information event
         populate_version_information event
+        self.link = self.link.sub('www.','')
       end
     end
 end
