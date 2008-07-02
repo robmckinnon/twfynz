@@ -20,6 +20,14 @@
           = link_to("valedictory statement", @former_member_role.valedictory_statement_url)
           = " on #{@former_member_role.valedictory_statement_date.as_date}."
           = "Replaced by #{link_to_mp(@former_member_role.replaced_by)}."
+    - if @former_member_role && @former_member_role.valedictory_statement_url
+      .divider3
+      %div{ :class=>"post", :id=>'resignation' }
+        %p
+          = 'Gave '
+          = link_to("valedictory statement", @former_member_role.valedictory_statement_url)
+          = " on #{@former_member_role.valedictory_statement_date.as_date}."
+          = "Replaced by #{link_to_mp(@former_member_role.replaced_by)}."
     - if @former_member_role && @former_member_role.membership_change_url
       .divider3
       %div{ :class=>"post", :id=>'membership_change' }
