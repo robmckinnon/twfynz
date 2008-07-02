@@ -389,8 +389,12 @@ module ApplicationHelper
   end
 
   def contribution_title_link contribution
-    label = "<strong>#{contribution.debate.title_name ' - '}</strong>"
+    debate = contribution.debate
+    label = "<strong>#{debate.title_name ' - '}</strong>"
     link = link_to_contribution(label, contribution)
+    if debate.contributions.size == 1
+      link = link.sub(/(#[^'^"]+)/, '')
+    end
     %Q[#{link} <small>(#{ format_date(contribution.debate.date) })</small>]
   end
 
