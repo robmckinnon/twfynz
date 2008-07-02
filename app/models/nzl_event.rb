@@ -63,7 +63,7 @@ class NzlEvent < ActiveRecord::Base
     end
 
     def clean_cache
-      if about_type == 'Bill'
+      if about_type == 'Bill' && about
         bill = about
         bill.expire_cached_pages
       end
@@ -80,7 +80,9 @@ class NzlEvent < ActiveRecord::Base
           raise 'more than one matching bill for ' + self.title + ' ' +
               self.year.to_s + ': ' + bills.inspect
         else
-          puts "\ndidn't find Bill for event: " + self.title + ' (' + self.publication_date.to_s + ')'
+          require 'yaml'
+          y self.attributes
+          puts "\ndidn't find Bill for event: " + self.title + ', ' + self.year.to_s + ' (' + self.publication_date.to_s + ')'
         end
       end
     end
