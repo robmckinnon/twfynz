@@ -53,7 +53,9 @@ class Contribution < ActiveRecord::Base
 
       recent_contributions = debates.collect do |d|
         if spoken_by_type == Mp
-          d.contributions.select {|o| o.spoken_by_id == spoken_by_id}.first
+          by_mp = d.contributions.select {|c| c.spoken_by_id == spoken_by_id }
+          non_interjections = by_mp.select {|c| !c.is_a?(Interjection) }
+          non_interjections.empty? ? by_mp.first : non_interjections.first
         elsif spoken_by_type == Party
           speech = d.contributions.select {|o| o.mp and o.mp.party.id == spoken_by_id and (o.is_speech? or o.is_answer? or o.is_question?) }.first
           speech = d.contributions.select {|o| contributions.include? o }.first unless speech
