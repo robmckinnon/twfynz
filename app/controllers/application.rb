@@ -96,13 +96,9 @@ class ApplicationController < ActionController::Base
           path
         end
       when /^ (\S+) (\d\d\d\d) (\S\S\S) (\d\d) (\S+)$/
-        if Debate::CATEGORIES.include? $1
-          date = DebateDate.new({:year=>$2,:month=>$3,:day=>$4})
-          debate = Debate.find_by_url_category_and_url_slug(date, $1, $5)
-          debate.parent_name ? "#{debate.parent_name}, #{debate.name}" : debate.name
-        else
-          path
-        end
+        date = DebateDate.new({:year=>$2,:month=>$3,:day=>$4})
+        debate = Debate.find_by_url_category_and_url_slug(date, $1, $5)
+        debate.parent_name ? "#{debate.parent_name}, #{debate.name}" : debate.name
       else
         path
     end
