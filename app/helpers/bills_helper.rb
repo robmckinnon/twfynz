@@ -174,11 +174,11 @@ module BillsHelper
         result.sub!(':<br />','.') if result.ends_with?(':<br />')
       else
         while (statement and statement.is_procedural?)
-          results << statement.text.gsub(/<[pi]>/, '').gsub(/<\/[pi]>/,'')
+          results << statement.text.gsub(/<[pi]>/, '').gsub(/<\/[pi]>/,'') unless statement.text[/(Waiata|Sitting suspended)/]
           i = i.next
           statement = (i != contributions.size) ? contributions[i] : nil
           statement = nil if (statement and statement.text.include? 'House resumed')
-          statement = nil if (statement and statement.text.gsub('<p>', '').strip.starts_with? 'Clause ')
+          statement = nil if (statement and statement.text.gsub('<p>', '').strip[/^(Clause|\[An interpretation)/])
         end
         result = results.reverse.flatten.join('<br /><br />')
       end
