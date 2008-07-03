@@ -412,6 +412,8 @@ class Bill < ActiveRecord::Base
     end
 
     def reset_earliest_date
+      self.introduction = '2008-07-02' if bill_name == 'Privacy (Cross-border Information) Amendment Bill'
+
       dates = [introduction, first_reading, second_reading,
           committee_of_the_whole_house, third_reading, royal_assent].compact.sort
       if dates.size > 0
