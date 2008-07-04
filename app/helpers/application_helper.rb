@@ -392,7 +392,7 @@ module ApplicationHelper
     debate = contribution.debate
     label = "<strong>#{debate.title_name ' - '}</strong>"
     link = link_to_contribution(label, contribution)
-    if debate.contributions.size == 1
+    if debate.contributions.size == 1 || debate.contributions.index(contribution) == 0
       link = link.sub(/(#[^'^"]+)/, '')
     end
     %Q[#{link} <small>(#{ format_date(contribution.debate.date) })</small>]
