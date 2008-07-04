@@ -73,6 +73,8 @@ class NzlEvent < ActiveRecord::Base
       if event.information_type == 'bill'
         self.about_type = 'Bill'
         bills = Bill.find_all_by_plain_bill_name_and_year(self.title, self.year)
+        bills = Bill.find_all_by_plain_bill_name_and_year(self.title, self.year + 1) if bills.empty?
+
         if bills.size == 1
           bill = bills.first
           self.about_id = bill.id
