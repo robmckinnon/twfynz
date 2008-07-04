@@ -49,7 +49,7 @@ class NzlEvent < ActiveRecord::Base
       nil
     end
   end
-
+=begin
   def == other
     attributes_less_id == other.attributes_less_id
   end
@@ -75,7 +75,7 @@ class NzlEvent < ActiveRecord::Base
       id <=> other.id
     end
   end
-
+=end
   protected
     def description
       @description
