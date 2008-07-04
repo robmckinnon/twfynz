@@ -34,6 +34,46 @@ class NzlEvent < ActiveRecord::Base
         saved_event
       end
     end
+
+    def remove_duplicates
+      dups = find(:all).sort_by(&:title).in_groups_by(&:title).select{|g| g.size > 1}
+      dups.each do |list|
+        keep = list.sort.reverse.uniq.collect(&:id)
+        list.each do |event|
+          unless keep.include? event.id
+            puts 'deleting ' + event.id.to_s
+            event.destroy
+          end
+        end
+      end
+      nil
+    end
+  end
+
+  def == other
+    attributes_less_id == other.attributes_less_id
+  end
+
+  def attributes_less_id
+    fields = {}.merge(attributes)
+    fields.delete('id')
+    fields
+  end
+
+  def eql?(object)
+    self == (object)
+  end
+
+  def hash
+    nzl_id.hash
+  end
+
+  def <=> other
+    if self == other
+      0
+    else
+      id <=> other.id
+    end
   end
 
   protected
