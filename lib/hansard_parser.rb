@@ -560,27 +560,27 @@ class HansardParser
     end
 
     def handle_div div, debate
-      type = div['class']
-      if type == 'SubDebate'
-        handle_contributions div, debate
-      elsif type == 'Speech'
-        handle_contributions div, debate
-      elsif type == 'partyVote'
-        handle_party_vote div, debate
-      elsif type == 'personalVote'
-        handle_personal_vote div, debate
-      elsif type == 'section'
-        if (h4 = div.at('h4'))
-          header = SectionHeader.new :text => h4.inner_html.to_clean_s
-          debate.contributions << header
-        elsif (h3 = div.at('h3'))
-          header = SectionHeader.new :text => h3.inner_html.to_clean_s
-          debate.contributions << header
+      case div['class']
+        when 'SubDebate'
+          handle_contributions div, debate
+        when 'Speech'
+          handle_contributions div, debate
+        when 'partyVote'
+          handle_party_vote div, debate
+        when 'personalVote'
+          handle_personal_vote div, debate
+        when 'section'
+          if (h4 = div.at('h4'))
+            header = SectionHeader.new :text => h4.inner_html.to_clean_s
+            debate.contributions << header
+          elsif (h3 = div.at('h3'))
+            header = SectionHeader.new :text => h3.inner_html.to_clean_s
+            debate.contributions << header
+          else
+            raise 'unexpected div ' + div.to_s
+          end
         else
-          raise 'unexpected div section'
-        end
-      else
-        raise 'unexpected div ' + div.to_s
+          raise 'unexpected div ' + div.to_s
       end
     end
 
