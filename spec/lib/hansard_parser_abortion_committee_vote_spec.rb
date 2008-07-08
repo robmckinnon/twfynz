@@ -55,7 +55,8 @@ describe HansardParser, "when passed Abortion Supervisory Committee Appointments
 
   it 'should set vote question on a vote when vote question is NOT in an em element' do
     index = @sub_debate.contributions.size - 2
-    @sub_debate.contributions[index].vote.vote_question.should == 'That the motion be amended by omitting the words “Patricia Ann Allan of Christchurch”, and substituting the words “Dr Peter Hall of Whangaparāoa”'
+    vote = @sub_debate.contributions[index].vote
+    vote.vote_question.should == 'That the motion be amended by omitting the words “Patricia Ann Allan of Christchurch”, and substituting the words “Dr Peter Hall of Whangaparāoa”'
   end
 
   it 'should create a vote with vote result text' do

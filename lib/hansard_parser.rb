@@ -36,7 +36,7 @@ class HansardParser
 
   def parse debate_index=1
     @doc ? @doc : (@doc = HansardParser.load_doc(@file))
-    type = @doc.at('.copy/.section[1]/div[1]').attributes['class']
+    type = @doc.at('.copy/.section[1]/div[1]')['class']
 
     document_reference = @doc.at('.copy/.section[1]/p[1]').inner_html
     if (document_reference.include?('Volume:') and document_reference.include?('Page:'))
@@ -83,7 +83,7 @@ class HansardParser
   protected
 
     def get_date
-      yyyy_mm_dd = (@doc/'meta[@name="DC.Date"]')[0].attributes['content']
+      yyyy_mm_dd = (@doc/'meta[@name="DC.Date"]')[0]['content']
       year = yyyy_mm_dd[0..3].to_i
       month = yyyy_mm_dd[5..6].to_i
       day = yyyy_mm_dd[8..9].to_i
@@ -135,7 +135,7 @@ class HansardParser
         elsif node.elem?
           if (node.name == 'h4' or
               (node.name == 'h2' and (re_question = node.at('text()').to_clean_s.starts_with?('Question No')) ) )
-            type = node.attributes['class']
+            type = node['class']
             if (type == 'QSubjectHeading' or type == 'QSubjectheadingalone' or re_question)
               hit_first_question = true
               debate_index = debate_index.next
@@ -172,7 +172,7 @@ class HansardParser
           elsif node.name == 'div'
             # should be handled in the handling of 'h4'
           elsif node.name == 'a'
-            @page = node.attributes['name'].sub('page_','').to_i
+            @page = node['name'].sub('page_','').to_i
           elsif (node.name == 'p' and (node.to_s.include?('took the Chair') or node.to_s.include?('Prayers')))
             # ignore
           elsif (not(hit_first_question) and node.name == 'p')
@@ -376,54 +376,68 @@ class HansardParser
       end
     end
 
+    def handle_personal_vote_text text, placeholder, vote
+      if text.include?('That the ')
+        parts = text.split('That the ')
+        placeholder.text = parts[0].strip
+        vote.vote_question = 'That the ' + parts[1]
+      else
+        placeholder.text = text
+      end
+    end
+
+    def handle_personal_vote_element element, vote, placeholder, debate
+      case element.name
+        when 'em'
+          vote.vote_question = element.inner_html.to_clean_s
+        when 'p'
+          vote.vote_result = element.inner_html.to_clean_s if element['class'] == 'VoteResult'
+        when 'table'
+          if debate.contributions.last != placeholder
+            placeholder.vote = vote
+            placeholder.spoken_in = debate
+            debate.contributions << placeholder
+          end
+          handle_personal_vote_table element, vote if element['class'] == 'table vote'
+        when 'a'
+          if element['name'] && element['name'].include?('page')
+            @page = element['name'].sub('page_','').to_i
+          end
+        when 'ul'
+          if vote.vote_result.blank?
+            items = (element/'li')
+            vote.vote_result = ''
+            items.each do |item|
+              vote.vote_result += "<p>#{item.inner_html.to_clean_s}</p>"
+            end
+          else
+            proceduals = handle_procedural element
+            proceduals.each {|procedual| debate.contributions << procedual}
+          end
+        else
+          raise 'unexpected element in vote: ' + element.name
+      end
+    end
+
+    def check_for_vote_blanks vote
+      type = vote.is_a?(PersonalVote) ? 'personal' : 'party'
+      raise "vote.vote_question is blank for #{type} vote: #{vote.reason}... #{vote.result}" if vote.question.strip.blank?
+      raise "vote.vote_result is blank for #{type} vote: #{vote.reason}... #{vote.question}" if vote.vote_result.strip.blank?
+    end
+
     def handle_personal_vote div, debate
       placeholder = VotePlaceholder.new :text => ''
-      vote = PersonalVote.new :vote_question => '',
-          :vote_result => ''
+      vote = PersonalVote.new :vote_question => '', :vote_result => ''
 
       div.children.each do |node|
         if node.text?
-          text = node.to_clean_s
-          if text.include?('That the ')
-            parts = text.split('That the ')
-            placeholder.text = parts[0].strip
-            vote.vote_question = 'That the ' + parts[1]
-          else
-            placeholder.text = text
-          end
+          handle_personal_vote_text node.to_clean_s, placeholder, vote
         elsif node.elem?
-          name = node.name
-          type = node.attributes['class']
-
-          if name == 'em'
-            vote.vote_question = node.inner_html.to_clean_s
-          elsif (name == 'p' and type == 'VoteResult')
-            vote.vote_result = node.inner_html.to_clean_s
-          elsif (name == 'table' and type == 'table vote')
-            handle_personal_vote_table node, vote
-          elsif name == 'a' && node.attributes['name'] && node.attributes['name'].include?('page')
-            @page = node.attributes['name'].sub('page_','').to_i
-          elsif (name == 'ul' and vote.vote_result.blank?)
-            items = (node/'li')
-            vote.vote_result = ''
-            items.each do |item|
-              vote.vote_result += '<p>' + item.inner_html.to_clean_s + '</p>'
-            end
-          else
-            raise 'unexpected element in vote: ' + node.name
-          end
+          handle_personal_vote_element node, vote, placeholder, debate
         end
       end
 
-      if vote.question.strip.blank?
-        raise 'vote.vote_question is blank for personal vote: ' + vote.reason + '... ' + vote.result
-      end
-      if vote.vote_result.strip.blank?
-        raise 'vote.vote_result is blank for personal vote: ' + vote.reason + '... ' + vote.question
-      end
-      placeholder.vote = vote
-      placeholder.spoken_in = debate
-      debate.contributions << placeholder
+      check_for_vote_blanks(vote)
     end
 
     def check_vote_text vote, text
@@ -500,51 +514,53 @@ class HansardParser
       end
     end
 
-    def handle_party_vote div, debate
-      placeholder = VotePlaceholder.new :text => ''
-      vote = PartyVote.new :vote_question => '',
-          :vote_result => ''
-
-      div.children.each do |node|
-        if node.elem?
-          name = node.name
-          if name == 'table'
+    def handle_party_vote_element element, placeholder, vote, debate
+      case element.name
+        when 'table'
+          if debate.contributions.last != placeholder
             placeholder.vote = vote
             vote.contribution = placeholder
             placeholder.spoken_in = debate
             debate.contributions << placeholder
-            handle_party_vote_table node, vote, placeholder
-          elsif (name == 'ul' and !vote.vote_result.blank?)
-            proceduals = handle_procedural node
-            proceduals.each {|procedual| debate.contributions << procedual}
-          elsif name == 'p'
-            type = node.attributes['class']
-            if type == 'a'
-              raise 'paragraph of type "a" not expected in partyVote div: ' + node.to_s
-            else
-              handle_paragraph node, debate
-            end
-          elsif name == 'a' && node.attributes['name'] && node.attributes['name'].include?('page')
-            @page = node.attributes['name'].sub('page_','').to_i
-          else
-            raise 'unexpected element in party vote: ' + node.name + ': ' + node.to_s
           end
+          handle_party_vote_table element, vote, placeholder
+        when 'ul'
+          if !vote.vote_result.blank?
+            proceduals = handle_procedural element
+            proceduals.each {|procedual| debate.contributions << procedual}
+          end
+        when 'p'
+          if element['class'] == 'a'
+            raise 'paragraph of type "a" not expected in partyVote div: ' + element.to_s
+          else
+            handle_paragraph element, debate
+          end
+        when 'a'
+          if element['name'] && element['name'].include?('page')
+            @page = element['name'].sub('page_','').to_i
+          end
+        else
+          raise 'unexpected element in party vote: ' + element.name + ': ' + element.to_s
+      end
+    end
+
+    def handle_party_vote div, debate
+      placeholder = VotePlaceholder.new :text => ''
+      vote = PartyVote.new :vote_question => '', :vote_result => ''
+
+      div.children.each do |node|
+        if node.elem?
+          handle_party_vote_element node, placeholder, vote, debate
         elsif node.text? && !node.to_clean_s.blank?
           raise 'unexpected text in party vote: ' + node.to_clean_s
         end
       end
 
-      if vote.question.strip.blank?
-        raise 'vote.vote_question is blank for party vote: ' + vote.reason + '... ' + vote.result
-      end
-      if vote.vote_result.strip.blank?
-        raise 'vote.vote_result is blank for party vote: ' + vote.reason + '... ' + vote.question
-      end
-
+      check_for_vote_blanks vote
     end
 
     def handle_div div, debate
-      type = div.attributes['class']
+      type = div['class']
       if type == 'SubDebate'
         handle_contributions div, debate
       elsif type == 'Speech'
@@ -572,7 +588,7 @@ class HansardParser
       attributes = contribution_attributes(node)
 
       if attributes == nil || (is_continue_speech = attributes[:type] == ContinueSpeech && !attributes.has_key?(:speaker) )
-        type = node.attributes['class']
+        type = node['class']
         if type == 'a' || MAKE_CSS_TYPES.include?(type) || is_continue_speech
           text = node.inner_html.to_clean_s
 
@@ -605,7 +621,7 @@ class HansardParser
           if name == 'p'
             handle_paragraph node, debate
           elsif name == 'a'
-            @page = node.attributes['name'].sub('page_','').to_i
+            @page = node['name'].sub('page_','').to_i
           elsif name == 'ul'
             proceduals = handle_procedural node
             proceduals.each {|procedual| debate.contributions << procedual}
@@ -711,8 +727,8 @@ class HansardParser
     def populate_from_element type, node, a, spoken
       name = node.name
       if name == 'a'
-        if node.attributes['name'].include?('time_')
-          a[:time] = node.attributes['name'].sub('time_','')
+        if node['name'].include?('time_')
+          a[:time] = node['name'].sub('time_','')
         else
           raise 'unexpected a element: ' + node.to_s
         end
@@ -777,7 +793,7 @@ class HansardParser
     MAKE_CSS_TYPES = ['Incorporation', 'AgreementByLeave', 'AgreementByLeave-points']
 
     def contribution_attributes paragraph
-      type = paragraph.attributes['class']
+      type = paragraph['class']
 
       if type.blank?
         raise 'unexpected absence of class attribute: ' + paragraph.to_s
@@ -910,7 +926,7 @@ class HansardParser
         sibling = sub_debates.last.next_sibling
         while sibling
           if (sibling.elem? and sibling.name == 'h2')
-            # (sibling.name == 'h3' and sibling.previous_sibling.attributes['class'] == 'SubDebate')
+            # (sibling.name == 'h3' and sibling.previous_sibling['class'] == 'SubDebate')
             sub_name = sibling.inner_html.to_clean_s
             if sub_name != 'Speaker Recalled'
               sub_names << sub_name
