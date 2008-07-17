@@ -341,5 +341,9 @@ describe Bill do
     it 'should match on bill ending with (No 4) joined to another bill with "and the" text' do
       check_bills 'Biosecurity Amendment Bill (No 4)', ' and the', 'Hazardous Substances and New Organisms Amendment Bill (No 2)'
     end
+
+    it 'should ignore bills joined by "/" character' do
+      check_bills = 'Judicature Amendment Bill (No 2)', ',', 'Te Ture Whenua Maori Amendment Bill (No 2) / Maori Land Amendment Bill (No 2)'
+    end
   end
 end

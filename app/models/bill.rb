@@ -33,7 +33,8 @@ class Bill < ActiveRecord::Base
   class << self
 
     def bills_from_text_and_date text, date
-      bill_text = text.gsub(/Bill( \([^\)]+\))? and the/,'Bill\1, and the')
+      bill_text = text.gsub(/(\d)\), Te/, '\1), the Te')
+      bill_text = bill_text.gsub(/Bill( \([^\)]+\))? and the/,'Bill\1, and the')
       bills = bill_text.split(/,( and)? the/).collect do |name|
         name = name.match(/[a-z ]*(.*)/)[1]
         name = name.chomp(', ').strip unless name.empty?
