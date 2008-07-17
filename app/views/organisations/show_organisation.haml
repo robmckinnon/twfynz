@@ -4,15 +4,19 @@
   = @organisation.name
   is an
   = link_to 'organisation', {:controller => 'organisations'}
-  that has made one or more submissions to select committees of New Zealand's Parliament.
-#submissions
-  %h2 Submissions to Select Committees
-  %table
-    %thead
-      %th= 'Since September 2007'
-      %th Evidence submitted
-    %tbody
-      = render :partial => 'business_item_submission', :collection => @business_item_name_to_submissions.keys, :locals => {:business_item_name_to_submissions => @business_item_name_to_submissions}
+  - if @business_item_name_to_submissions.empty?
+    that has been mentioned in Parliament.
+  - else
+    that has made one or more submissions to select committees of New Zealand's Parliament.
+- unless @business_item_name_to_submissions.empty?
+  #submissions
+    %h2 Submissions to Select Committees
+    %table
+      %thead
+        %th= 'Since September 2007'
+        %th Evidence submitted
+      %tbody
+        = render :partial => 'business_item_submission', :collection => @business_item_name_to_submissions.keys, :locals => {:business_item_name_to_submissions => @business_item_name_to_submissions}
 - count = @organisation.count_of_mentions
 - if count > 0
   #mentions_in_parliament
