@@ -52,6 +52,7 @@ class Bill < ActiveRecord::Base
       bills = find_all_by_plain_former_name name if bills.empty?
       selected = select_by_year bills, year
       selected = select_by_year bills, (year-1) if selected.empty?
+      selected = select_by_year bills, (year-2) if selected.empty?
       selected
     end
 

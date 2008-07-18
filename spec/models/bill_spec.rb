@@ -54,7 +54,17 @@ describe Bill do
           bills = Bill.find_all_by_plain_bill_name_and_year(bill_params[:bill_name], 2006)
           bills.should == [@bill]
         end
+
+        describe 'that has introduction within two years' do
+          it 'should return bill' do
+            Bill.should_receive(:find_all_by_plain_bill_name).and_return []
+            Bill.should_receive(:find_all_by_plain_former_name).and_return [@bill]
+            bills = Bill.find_all_by_plain_bill_name_and_year(bill_params[:bill_name], 2008)
+            bills.should == [@bill]
+          end
+        end
       end
+
     end
 
     describe 'when plain name matches' do
