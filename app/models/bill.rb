@@ -26,7 +26,8 @@ class Bill < ActiveRecord::Base
   before_validation_on_create :populate_member_in_charge,
       :default_negatived,
       :create_url_identifier,
-      :populate_plain_bill_name
+      :populate_plain_bill_name,
+      :populate_plain_former_name
 
   after_save :expire_cached_pages
 
@@ -48,6 +49,7 @@ class Bill < ActiveRecord::Base
 
     def find_all_by_plain_bill_name_and_year name, year
       bills = find_all_by_plain_bill_name name
+      bills = find_all_by_plain_former_name name if bills.empty?
       selected = select_by_year bills, year
       selected = select_by_year bills, (year-1) if selected.empty?
       selected
@@ -246,7 +248,15 @@ class Bill < ActiveRecord::Base
   end
 
   def populate_plain_bill_name
-    self.plain_bill_name = bill_name.gsub('(','').gsub(')','').gsub('-','').gsub("'",'').gsub(':','').gsub('/','').gsub(',','') if bill_name
+    self.plain_bill_name = strip_name(bill_name) if bill_name
+  end
+
+  def populate_plain_former_name
+    self.plain_former_name = strip_name(former_name) if former_name
+  end
+
+  def strip_name name
+    name.tr("()-:/,'",'')
   end
 
   def expire_cached_pages
@@ -435,17 +445,16 @@ class Bill < ActiveRecord::Base
     def create_url_identifier
       if bill_name and not url
         url = bill_name.to_latin.to_s.downcase.
-            gsub('(','').gsub(')','').
-            gsub(',','').gsub(':','').
-            gsub('/ ',' ').gsub('/',' ').
+            tr('(),:','').
+            gsub('/ ',' ').tr('/',' ').
             gsub(/ng\S*ti/, 'ngati').
-            gsub("'",'').gsub(' and', '').
+            tr("'",'').gsub(' and', '').
             gsub('new zealand', 'nz').
             gsub(' bill', '').
             gsub(' miscellaneous', '').
             gsub(' provisions', '').
             gsub(' as a','').gsub(' - ','-').
-            gsub('  ',' ').gsub(' ','_')
+            gsub('  ',' ').tr(' ','_')
 
         num = /.*(_no_.*)/.match url
 
