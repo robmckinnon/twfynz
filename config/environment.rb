@@ -15,6 +15,7 @@ Rails::Initializer.run do |config|
   config.gem 'htmlentities'
   config.gem 'morph'
   config.gem 'rugalytics'
+  config.gem 'twitter'
 
   # Only load the plugins named here, by default all plugins in vendor/plugins are loaded
   # config.plugins = %W( exception_notification ssl_requirement )
@@ -67,3 +68,18 @@ require 'date_extension'
 require 'in_groups_by'
 require 'route_helper'
 require 'sitemap'
+
+module Twfynz
+  def twitter_user
+    'twitter_user'
+  end
+
+  def twitter_password
+    'twitter_password'
+  end
+
+  def twitter_update message
+    twitter = Twitter::Base.new(twitter_user, twitter_password)
+    twitter.update message
+  end
+end
