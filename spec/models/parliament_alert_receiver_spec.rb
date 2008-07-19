@@ -153,24 +153,35 @@ describe ParliamentAlertReceiver do
       @name = %Q|Provisional Order Paper for Tuesday, 22 July 2008|
       @url = %Q|http://www.parliament.nz/en-NZ/?document=00HOHOrderPaper1|
       @raw_email = order_paper_alert @name, @alert_date, @url
+      @alert = mock('alert')
     end
+
+    it 'should send twitter update' do
+      OrderPaperAlert.should_receive(:new).with(anything, anything, anything, anything).and_return @alert
+      @alert.should_receive(:tweet_alert)
+      ParliamentAlertReceiver.receive(@raw_email)
+    end
+
     describe "on creation of new order paper alert" do
+      before do
+        @alert.stub!(:tweet_alert)
+      end
       it 'should set name correctly' do
-        OrderPaperAlert.should_receive(:new).with(@name, anything, anything, anything)
+        OrderPaperAlert.should_receive(:new).with(@name, anything, anything, anything).and_return @alert
         ParliamentAlertReceiver.receive(@raw_email)
       end
       it 'should set date correctly' do
         order_paper_date = Date.new(2008,7,22)
-        OrderPaperAlert.should_receive(:new).with(anything, order_paper_date, anything, anything)
+        OrderPaperAlert.should_receive(:new).with(anything, order_paper_date, anything, anything).and_return @alert
         ParliamentAlertReceiver.receive(@raw_email)
       end
       it 'should set url correctly' do
-        OrderPaperAlert.should_receive(:new).with(anything, anything, @url, anything)
+        OrderPaperAlert.should_receive(:new).with(anything, anything, @url, anything).and_return @alert
         ParliamentAlertReceiver.receive(@raw_email)
       end
       it 'should set date correctly' do
         alert_date = Date.new(2008,7,18)
-        OrderPaperAlert.should_receive(:new).with(anything, anything, anything, alert_date)
+        OrderPaperAlert.should_receive(:new).with(anything, anything, anything, alert_date).and_return @alert
         ParliamentAlertReceiver.receive(@raw_email)
       end
     end
