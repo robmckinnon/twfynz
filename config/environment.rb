@@ -70,15 +70,15 @@ require 'route_helper'
 require 'sitemap'
 
 module Twfynz
-  def twitter_user
+  def self.twitter_user
     'twitter_user'
   end
 
-  def twitter_password
+  def self.twitter_password
     'twitter_password'
   end
 
-  def twitter_update message
+  def self.twitter_update message
     twitter = Twitter::Base.new(twitter_user, twitter_password)
     twitter.update message
   end
