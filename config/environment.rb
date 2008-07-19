@@ -72,7 +72,7 @@ require 'sitemap'
 module Twfynz
   def self.twitter_update message
     twitter = Twitter::Base.new(twitter_user, twitter_password)
-    logger.info "twittering @#{twitter_user}: #{message}"
+    # logger.info "twittering @#{twitter_user}: #{message}"
     twitter.update message
   end
 end

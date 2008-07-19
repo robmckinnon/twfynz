@@ -4,7 +4,6 @@ class OrderPaperAlert
 
   def initialize name, order_paper_date, url, alert_date
     @name, @order_paper_date, @url, @alert_date = name, order_paper_date, url, alert_date
-    logger.info "OrderPaperAlert: #{@name}"
   end
 
   def tweet_alert
