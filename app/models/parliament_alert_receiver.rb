@@ -3,8 +3,6 @@ require 'hpricot'
 class ParliamentAlertReceiver < ActionMailer::Base
 
   def receive(email)
-    return unless email.multipart?
-
     case email.subject
       when /Order Paper/
         html = (email.parts.first.content_type == 'text/html') ? email.parts.first : email.parts.last
