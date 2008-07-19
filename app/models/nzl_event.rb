@@ -108,7 +108,7 @@ class NzlEvent < ActiveRecord::Base
         bill.expire_cached_pages
       end
     end
-
+public
     def populate_about_information event
       if event.information_type == 'bill'
         self.about_type = 'Bill'
@@ -130,8 +130,8 @@ class NzlEvent < ActiveRecord::Base
     end
 
     def populate_version_information event
-      version = event.version
-
+      version = event.respond_to?(:version) ? event.version : nil
+      return unless version
       if (match = /(.+)\s+from the\s+(.+)\s+on\s+(.+)/.match version)
         self.version_stage = match[1].strip.downcase
         committee_name = match[2].strip
