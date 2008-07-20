@@ -15,7 +15,7 @@ class ParliamentAlertReceiver < ActionMailer::Base
           order_paper_date = Date.parse(name.to_s[/\d\d\s[^\s]+\s\d\d\d\d/])
           url = element.at('a')['href'].to_s
           logger.info "OrderPaperAlert: #{name}"
-          alert = OrderPaperAlert.new(name, order_paper_date, url, alert_date)
+          alert = OrderPaperAlert.new(:name => name, :order_paper_date => order_paper_date, :url => url, :alert_date => alert_date)
           alert.tweet_alert
         end
     end

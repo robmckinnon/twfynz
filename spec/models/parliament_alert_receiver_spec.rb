@@ -157,7 +157,7 @@ describe ParliamentAlertReceiver do
     end
 
     it 'should send twitter update' do
-      OrderPaperAlert.should_receive(:new).with(anything, anything, anything, anything).and_return @alert
+      OrderPaperAlert.should_receive(:new).with(anything).and_return @alert
       @alert.should_receive(:tweet_alert)
       ParliamentAlertReceiver.receive(@raw_email)
     end
@@ -167,21 +167,21 @@ describe ParliamentAlertReceiver do
         @alert.stub!(:tweet_alert)
       end
       it 'should set name correctly' do
-        OrderPaperAlert.should_receive(:new).with(@name, anything, anything, anything).and_return @alert
+        OrderPaperAlert.should_receive(:new).with(hash_including(:name=>@name)).and_return @alert
         ParliamentAlertReceiver.receive(@raw_email)
       end
       it 'should set date correctly' do
         order_paper_date = Date.new(2008,7,22)
-        OrderPaperAlert.should_receive(:new).with(anything, order_paper_date, anything, anything).and_return @alert
+        OrderPaperAlert.should_receive(:new).with(hash_including(:order_paper_date=>order_paper_date)).and_return @alert
         ParliamentAlertReceiver.receive(@raw_email)
       end
       it 'should set url correctly' do
-        OrderPaperAlert.should_receive(:new).with(anything, anything, @url, anything).and_return @alert
+        OrderPaperAlert.should_receive(:new).with(hash_including(:url=>@url)).and_return @alert
         ParliamentAlertReceiver.receive(@raw_email)
       end
       it 'should set date correctly' do
         alert_date = Date.new(2008,7,18)
-        OrderPaperAlert.should_receive(:new).with(anything, anything, anything, alert_date).and_return @alert
+        OrderPaperAlert.should_receive(:new).with(hash_including(:alert_date=>alert_date)).and_return @alert
         ParliamentAlertReceiver.receive(@raw_email)
       end
     end
