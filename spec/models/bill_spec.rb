@@ -230,21 +230,30 @@ describe Bill do
         bill.current?.should be_true
       end
 
-      it 'should have plain bill name set to be bill name without parentheses, without dashes, without single quotes' do
-        bill = new_bill :bill_name => 'Social Security (Long-term Residential Care) Amendment Bill'
-        bill.plain_bill_name.should == 'Social Security Longterm Residential Care Amendment Bill'
-        bill = new_bill :bill_name => 'Companies (Minority Buy-out Rights) Amendment Bill'
-        bill.plain_bill_name.should == 'Companies Minority Buyout Rights Amendment Bill'
-        bill = new_bill :bill_name => "Copyright (New Technologies and Performers' Rights) Amendment Bill"
-        bill.plain_bill_name.should == 'Copyright New Technologies and Performers Rights Amendment Bill'
+      def check_plain_name name, plain_name
+        bill = new_bill :bill_name => name
+        bill.plain_bill_name.should == plain_name
       end
+
+      def check_plain_former_name name, plain_name
+        bill = new_bill :former_name => name
+        bill.plain_former_name.should == plain_name
+      end
+
+      it 'should have plain bill name set to be bill name without parentheses, without dashes, without single quotes' do
+        check_plain_name 'Social Security (Long-term Residential Care) Amendment Bill', 'Social Security Longterm Residential Care Amendment Bill'
+        check_plain_name 'Companies (Minority Buy-out Rights) Amendment Bill', 'Companies Minority Buyout Rights Amendment Bill'
+        check_plain_name "Copyright (New Technologies and Performers' Rights) Amendment Bill", 'Copyright New Technologies and Performers Rights Amendment Bill'
+        check_plain_name "Arms Amendment Bill (No 3)", 'Arms Amendment Bill No 3'
+        check_plain_name "Appropriation (2008/09 Estimates) Bill", 'Appropriation 200809 Estimates Bill'
+      end
+
       it 'should have plain former bill name set to be bill name without parentheses, without dashes, without single quotes' do
-        bill = new_bill :former_name => 'Social Security (Long-term Residential Care) Amendment Bill'
-        bill.plain_former_name.should == 'Social Security Longterm Residential Care Amendment Bill'
-        bill = new_bill :former_name => 'Companies (Minority Buy-out Rights) Amendment Bill'
-        bill.plain_former_name.should == 'Companies Minority Buyout Rights Amendment Bill'
-        bill = new_bill :former_name => "Copyright (New Technologies and Performers' Rights) Amendment Bill"
-        bill.plain_former_name.should == 'Copyright New Technologies and Performers Rights Amendment Bill'
+        check_plain_former_name 'Social Security (Long-term Residential Care) Amendment Bill', 'Social Security Longterm Residential Care Amendment Bill'
+        check_plain_former_name 'Companies (Minority Buy-out Rights) Amendment Bill', 'Companies Minority Buyout Rights Amendment Bill'
+        check_plain_former_name "Copyright (New Technologies and Performers' Rights) Amendment Bill", 'Copyright New Technologies and Performers Rights Amendment Bill'
+        check_plain_former_name "Arms Amendment Bill (No 3)", 'Arms Amendment Bill No 3'
+        check_plain_former_name "Appropriation (2008/09 Estimates) Bill", 'Appropriation 200809 Estimates Bill'
       end
     end
 

@@ -257,7 +257,7 @@ class Bill < ActiveRecord::Base
   end
 
   def strip_name name
-    name.tr("()-:/,'",'')
+    name.tr("-:/,'",'').gsub('(','').gsub(')','')
   end
 
   def expire_cached_pages
@@ -446,7 +446,7 @@ class Bill < ActiveRecord::Base
     def create_url_identifier
       if bill_name and not url
         url = bill_name.to_latin.to_s.downcase.
-            tr('(),:','').
+            tr(',:','').gsub('(','').gsub(')','').
             gsub('/ ',' ').tr('/',' ').
             gsub(/ng\S*ti/, 'ngati').
             tr("'",'').gsub(' and', '').
