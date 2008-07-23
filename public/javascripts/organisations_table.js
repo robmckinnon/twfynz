@@ -50,7 +50,7 @@ YAHOO.example.enhanceFromMarkup = function() {
     this.columnHeaders = [
         {key:"organisation", text:"Organisation", sortable:true},
         {key:"submissions", type:"number", text:"Submission items (since Sept 2007)", sortable:true, sortOptions:{ascFunction:YAHOO.example.sortSubmissionsAsc,descFunction:YAHOO.example.sortSubmissionsDesc}},
-        {key:"mentions", type:"number", text:"Mentions in debates (since Nov 2005)", sortable:true, sortOptions:{ascFunction:YAHOO.example.sortMentionsAsc,descFunction:YAHOO.example.sortMentionsDesc}},
+        {key:"mentions", type:"number", text:"Debates mentioned in (since Nov 2005)", sortable:true, sortOptions:{ascFunction:YAHOO.example.sortMentionsAsc,descFunction:YAHOO.example.sortMentionsDesc}},
         {key:"category", text:"Organisational category", sortable:true, sortOptions:{ascFunction:YAHOO.example.sortCategoriesAsc,descFunction:YAHOO.example.sortCategoriesDesc}}
     ];
     this.columnSet = new YAHOO.widget.ColumnSet(this.columnHeaders);
