@@ -40,10 +40,10 @@ YAHOO.example.sortSubmissionsDesc = function(a, b) {
 };
 
 YAHOO.example.sortMentionsAsc = function(a, b) {
-  return YAHOO.example.compNull(b, a, 1, -1, YAHOO.util.Sort.compareAsc, a, b, 'mentions', 'organisation', 'category', 'n');
+  return YAHOO.example.compNull(b, a, -1, 1, YAHOO.util.Sort.compareDesc, b, a, 'mentions', 'organisation', 'category', 'n');
 };
 YAHOO.example.sortMentionsDesc = function(a, b) {
-  return YAHOO.example.compNull(b, a, -1, 1, YAHOO.util.Sort.compareDesc, b, a, 'mentions', 'organisation', 'category', 'n');
+  return YAHOO.example.compNull(b, a, 1, -1, YAHOO.util.Sort.compareAsc, a, b, 'mentions', 'organisation', 'category', 'n');
 };
 
 YAHOO.example.enhanceFromMarkup = function() {
