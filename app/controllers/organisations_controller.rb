@@ -8,7 +8,7 @@ class OrganisationsController < ApplicationController
   in_place_edit_for :organisation, :alternate_names
 
   def index
-    @organisations = Organisation.find(:all).sort_by { |o| o.name.downcase }
+    @organisations = Organisation.find(:all).sort_by(&:count_of_mentions).reverse
   end
 
   def edit_organisations
