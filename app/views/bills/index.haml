@@ -1,11 +1,12 @@
 - @title = "Bills: Aotearoa New Zealand Parliament "
+- @description = 'Current bills debated by the 48th New Zealand Parliament'
 - @javascript = 'bills_table'
 #normalcontent
-  %h1 Current Bills debated by the 48th Parliament
+  %h1 Current Bills
   .divider3
   .contentarea
     %p
-      %span Current bills debated by the 48th Parliament
+      %span= @description
       %span.right
         %span See also:
         %span= link_to('Assented Bills', assented_url) + ' | ' + link_to ('Negatived Bills', negatived_url)
