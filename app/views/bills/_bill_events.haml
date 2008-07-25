@@ -5,21 +5,25 @@
     %tr
       %th.debate-column Event
       %th.date Date
-      %th.ayes Ayes
-      %th.noes Noes
-      %th.abstentions Abstentions
       %th.summary
+      - have_votes = have_votes(bill_events, debates_by_name, votes_by_name)
+      - if have_votes
+        %th.ayes Ayes
+        %th.noes Noes
+        %th.abstentions Abstentions
     - bill_events.reverse.each do |date_event|
       - date = date_event[0]
       - name = date_event[1]
       - debates = debates_by_name ? debates_by_name[name] : nil
       - votes = debates_by_name ? votes_by_name[name] : nil
+      - no_vote_info = (debates.nil? && date < Date.new(2005,11,1) && name.include?('Reading') ) ? 'n/a*' : nil
       %tr
         %td= debate_name name, debates
         %td.date= debate_date date, debates
-        %td.ayes= vote_ayes votes, debates, date, name
-        %td.noes= vote_noes votes, debates, date, name
-        %td.abstentions= vote_abstentions votes, debates, date, name
         %td.summary= bill_event_summary name, votes, @bill, debates
+        - if have_votes
+          %td.ayes= no_vote_info ? no_vote_info : vote_ayes(votes, debates)
+          %td.noes= no_vote_info ? no_vote_info : vote_noes(votes, debates)
+          %td.abstentions= no_vote_info ? no_vote_info : vote_abstentions(votes, debates)
   - if missing_votes? bill_events
     %p* We don't have voting data from before Nov 2005 in our database at present.

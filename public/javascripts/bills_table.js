@@ -45,8 +45,8 @@ YAHOO.example.sortDatesDesc = function(a, b) {
 
 YAHOO.example.enhanceFromMarkup = function() {
     this.columnHeaders = [
-        {key:"type", text:"Bill type", sortable:true, sortOptions:{ascFunction:YAHOO.example.sortTypesAsc,descFunction:YAHOO.example.sortTypesDesc}},
-        {key:"party", text:"Party of MP in charge", sortable:true, _id:"party_of_mp_in_charge", sortOptions:{ascFunction:YAHOO.example.sortPartiesAsc,descFunction:YAHOO.example.sortPartiesDesc}},
+        {key:"type", text:"Type", sortable:true, sortOptions:{ascFunction:YAHOO.example.sortTypesAsc,descFunction:YAHOO.example.sortTypesDesc}},
+        {key:"party", text:"Party", sortable:true, _id:"party_of_mp_in_charge", sortOptions:{ascFunction:YAHOO.example.sortPartiesAsc,descFunction:YAHOO.example.sortPartiesDesc}},
         {key:"bill", text:"Bill name", sortable:true},
         {key:"event", text:"Event", sortable:true},
         {key:"date", type:"date", text:"Event date", sortable:true, sortOptions:{ascFunction:YAHOO.example.sortDatesDesc,descFunction:YAHOO.example.sortDatesAsc}}

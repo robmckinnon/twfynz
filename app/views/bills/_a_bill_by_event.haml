@@ -1,0 +1,7 @@
+%li
+  = link_to(a_bill_by_event.bill_name, show_bill_url(:bill_url => a_bill_by_event.url))
+  = '(' + bill_type(a_bill_by_event).chomp(' bill')
+  = ','
+  = a_bill_by_event.member_in_charge.party ? a_bill_by_event.member_in_charge.party.short : 'no party '+ a_bill_by_event.member_in_charge.full_name
+  = ') '
+  = a_bill_by_event.last_event_date

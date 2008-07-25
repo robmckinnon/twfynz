@@ -23,7 +23,7 @@ module BillsHelper
     if bill.nzl_events
       events = bill.nzl_events.select {|e| e.version_stage == 'reported' || e.version_stage == 'wip version updated' }.sort_by(&:publication_date)
       if events.size > 0
-        details += %Q[#{link_to('View the bill', events.last.link)} as reported from the #{events.last.version_committee} at the New Zealand Legislation website.]
+        details = %Q[#{link_to('View the bill', events.last.link)} as reported from the #{events.last.version_committee} at the New Zealand Legislation website.]
       end
     end
     details
@@ -79,42 +79,41 @@ module BillsHelper
     vote ? vote.question : ''
   end
 
-  def no_vote debates, date, name
-    if debates.nil?
-      if date < Date.parse('2005-11-01') and name.include? 'Reading'
-        '&nbsp;n/a *'
-      else
-        ''
+  def have_votes bill_events, debates_by_name, votes_by_name
+    have_votes = false
+    bill_events.each do |date_event|
+      date = date_event[0]
+      name = date_event[1]
+      debates = debates_by_name ? debates_by_name[name] : nil
+      votes = debates_by_name ? votes_by_name[name] : nil
+      no_vote_info = (date < Date.new(2005,11,1) && name.include?('Reading') ) ? '&nbsp;n/a *' : nil
+      if no_vote_info || (votes && votes.size > 0)
+        have_votes = true
+        break
       end
-    else
-      false
     end
+
+    have_votes
   end
 
-  def vote_ayes votes, debates, date, name
-    if (non_vote = no_vote debates, date, name)
-      non_vote
-    elsif votes and votes.size > 0
+  def vote_ayes votes, debates
+    if votes and votes.size > 0
       votes.collect { |v| (v and v.ayes_count != 0) ? v.ayes_count : '-' }.join('<br /><br />')
     else
       ''
     end
   end
 
-  def vote_noes votes, debates, date, name
-    if (non_vote = no_vote debates, date, name)
-      non_vote
-    elsif votes and votes.size > 0
+  def vote_noes votes, debates
+    if votes and votes.size > 0
       votes.collect { |v| (v and v.noes_count != 0) ? v.noes_count : '-' }.join('<br /><br />')
     else
       ''
     end
   end
 
-  def vote_abstentions votes, debates, date, name
-    if (non_vote = no_vote debates, date, name)
-      non_vote
-    elsif votes and votes.size > 0
+  def vote_abstentions votes, debates
+    if votes and votes.size > 0
       votes.collect { |v| (v and v.abstentions_count != 0) ? v.abstentions_count : '-' }.join('<br /><br />')
     else
       ''
@@ -192,7 +191,7 @@ module BillsHelper
     if bill.nzl_events
       events = bill.nzl_events.select {|e| e.version_stage == 'introduction'}.sort_by(&:publication_date)
       if events.size > 0
-        intro += %Q[<br/><br/>#{link_to('View the bill', events.last.link)} at introduction at the New Zealand Legislation website.]
+        intro += %Q[<br/><br/>#{link_to('View the bill', events.last.link)} at introduction at the NZ Legislation website.]
       end
     end
   end
@@ -225,6 +224,19 @@ module BillsHelper
 
   def vote_result vote
     vote ? vote.result : ''
+  end
+
+  def bill_type_label bill
+    type = bill_type(bill).chomp(' bill')
+    type = 'Govt.' if type == 'Government'
+    type = 'Member' if type == "Member's"
+    type
+  end
+
+  def party_name bill
+    party = bill.party_in_charge ? bill.party_in_charge.short : 'no party '+ bill.member_in_charge.full_name
+    party = 'Progres-<br/>sive' if party == 'Progressive'
+    party
   end
 
   private

@@ -13,11 +13,11 @@
       %table.bill-table
         %thead
           %tr
-            %th Bill type
-            %th#party_of_mp_in_charge= 'Party of <br /> MP in charge'
+            %th Type
+            %th#party_of_mp_in_charge= 'Party'
             %th Bill name
-            %th Recent activity
-            %th Recent activity date
+            %th Event
+            %th Event date
         %tbody
           = render(:partial => 'a_bill', :collection => @bills_current)
     .divider3

@@ -1,0 +1,3 @@
+%h2= bills_by_event.first.last_event_name
+%ul
+  = render(:partial => 'a_bill_by_event', :collection => bills_by_event)

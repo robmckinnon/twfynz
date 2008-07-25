@@ -380,6 +380,85 @@ describe Bill do
     end
   end
 
+  describe 'when asked for party in charge' do
+    before do
+      @bill = Bill.new
+    end
+    describe 'and there is a member in charge' do
+      describe 'that belongs to a party' do
+        it 'should return party of member' do
+          party = mock('party', :short=>name)
+          @bill.should_receive(:member_in_charge).twice.and_return mock('member', :party=>party)
+          @bill.party_in_charge.should == party
+        end
+      end
+      describe 'that does not belong to a party' do
+        it 'should return nil' do
+          @bill.should_receive(:member_in_charge).twice.and_return mock('member', :party=>nil)
+          @bill.party_in_charge.should be_nil
+        end
+      end
+    end
+    describe 'and there is no member in charge' do
+      it 'should return nil' do
+        @bill.should_receive(:member_in_charge).and_return nil
+        @bill.party_in_charge.should be_nil
+      end
+    end
+  end
+
+  describe 'when asked for last event' do
+    before do
+      @bill = Bill.new
+      @date = mock('date')
+      @name = 'name'
+      @event = [@date, @name]
+    end
+
+    describe 'and bill has events' do
+      it 'should return last event' do
+        @bill.should_receive(:events_by_date).and_return [@event]
+        @bill.last_event.should == @event
+      end
+    end
+    describe 'and bill has no events' do
+      it 'should return nil' do
+        @bill.should_receive(:events_by_date).and_return []
+        @bill.last_event.should be_nil
+      end
+    end
+
+    describe 'date' do
+      describe 'and bill has events' do
+        it 'should return date of last event' do
+          @bill.should_receive(:last_event).twice.and_return @event
+          @bill.last_event_date.should == @date
+        end
+      end
+      describe 'and bill has no events' do
+        it 'should return nil' do
+          @bill.should_receive(:last_event).and_return nil
+          @bill.last_event_date.should be_nil
+        end
+      end
+    end
+
+    describe 'name' do
+      describe 'and bill has events' do
+        it 'should return name of last event' do
+          @bill.should_receive(:last_event).twice.and_return @event
+          @bill.last_event_name.should == @name
+        end
+      end
+      describe 'and bill has no events' do
+        it 'should return nil' do
+          @bill.should_receive(:last_event).and_return nil
+          @bill.last_event_name.should be_nil
+        end
+      end
+    end
+  end
+
   describe 'when finding bills from text' do
 
     def check_bills billname1, and_the, billname2
