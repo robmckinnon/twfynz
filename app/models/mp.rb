@@ -61,7 +61,7 @@ class Mp < ActiveRecord::Base
       name.strip!
       speaker = name.split('(')[0].downcase.strip.gsub('’',"'")
 
-      unless speaker.include? 'speaker' or speaker.include? 'member' or speaker.include? 'chairperson'
+      unless speaker[/speaker|member|chairperson/]
         Mp.find(:all).each do |m|
           if ((m.downcase_name == speaker) or
               (m.alt_downcase_name and m.alt_downcase_name == speaker) or

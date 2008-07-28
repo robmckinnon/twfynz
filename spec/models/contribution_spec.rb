@@ -8,6 +8,10 @@ describe Contribution, 'on validation' do
     contribution.should be_valid
   end
 
+  it 'should be valid when speaker name is "Hon Member"' do
+    contribution = Contribution.new(:speaker=>'Hon Member.')
+    contribution.should be_valid
+  end
 end
 
 describe Contribution, 'finding first sentence' do
