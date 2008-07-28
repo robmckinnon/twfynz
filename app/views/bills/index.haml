@@ -10,17 +10,18 @@
       %span.right
         %span See also:
         %span= link_to('Assented Bills', assented_url) + ' | ' + link_to ('Negatived Bills', negatived_url)
-    #bills
-      %table.bill-table
-        %thead
-          %tr
-            %th Type
-            %th#party_of_mp_in_charge= 'Party'
-            %th Bill name
-            %th Event
-            %th Event date
-        %tbody
-          = render(:partial => 'a_bill', :collection => @bills_current)
+    .yui-skin-sam
+      #bills
+        %table#bill-table
+          %thead
+            %tr
+              %th Type
+              %th#party_of_mp_in_charge= 'Party'
+              %th Bill name
+              %th Event
+              %th Event date
+          %tbody
+            = render(:partial => 'a_bill', :collection => @bills_current)
     .divider3
     .divider3
     %p See also:

@@ -8,13 +8,14 @@
   This list may be incomplete. Please email any feedback about this list to:
   %br
   %img{ :alt=>"rob at they work for you dot co dot nz", :class=>"link", :src=>"images/e.png" }
-#organisations
-  %table.organisation-table
-    %thead
-      %tr
-        %th Organisation
-        %th Submission items (count since Sept 2007)
-        %th Debates mentioned in (count since Nov 2005)
-        %th Organisational Category
-    %tbody
-      = render :partial => 'organisation', :collection => @organisations
+.yui-skin-sam
+  #organisations
+    %table#organisation-table
+      %thead
+        %tr
+          %th Organisation
+          %th Submission items (count since Sept 2007)
+          %th Debates mentioned in (count since Nov 2005)
+          %th Organisational Category
+      %tbody
+        = render :partial => 'organisation', :collection => @organisations

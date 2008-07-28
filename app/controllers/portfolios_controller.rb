@@ -43,7 +43,7 @@ class PortfoliosController < ApplicationController
   def activity_sparkline
     logger.info('request.request_uri: ' + request.request_uri)
     counts = Portfolio::questions_asked_count_by_month params['portfolio_url']
-    params = { :type => 'smooth', :height => (counts.max * 0.5), :step => 3, :line_color => '#333333' }
+    params = { :type => 'smooth', :height => (counts.max * 0.5), :step => 3, :line_color => '#333333', :background_color => 'transparent' }
 
     send_data(Sparklines.plot(counts, params),
           :disposition => 'inline',

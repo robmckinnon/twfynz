@@ -9,13 +9,15 @@
         - @portfolios_image_map_areas.each do |area|
           %area{ :shape=>"rect", :coords => area.coords, :href => area.url, :alt => area.alt }
       = portfolio_pie_chart
-    #portfolios
-      %table.portfolio-table
-        %thead
-          %tr
-            %th='Portfolio<br /> Name'
-            %th='Oral Question<br /> monthly activity<br /> since Nov 2005'
-            %th{ :style=>"text-align: right;" }='Oral Questions<br /> asked since<br /> Nov 2005*'
-        %tbody
-          = render(:partial => 'portfolio_group', :collection => @letter_to_portfolios.keys.sort, :locals => {:letter_to_portfolios => @letter_to_portfolios, :portfolios => @portfolios_with_debates})
+      %h3 Oral Question monthly activity since Nov 2005
+      .yui-skin-sam
+        #portfolios
+          %table#portfolio-table
+            %thead
+              %tr
+                %th='Portfolio<br /> Name'
+                %th='Oral Question<br /> monthly activity<br /> since Nov 2005'
+                %th{ :style=>"text-align: right;" }='Oral Questions<br /> asked since<br /> Nov 2005*'
+            %tbody
+              = render(:partial => 'portfolio_group', :collection => @letter_to_portfolios.keys.sort, :locals => {:letter_to_portfolios => @letter_to_portfolios, :portfolios => @portfolios_with_debates})
   %p * Count of oral questions to the Minister including supplementary questions

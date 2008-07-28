@@ -3,4 +3,4 @@
   %td= party_name(a_bill)
   %td= link_to(a_bill.bill_name, show_bill_url(:bill_url => a_bill.url))
   %td= a_bill.last_event_name
-  %td= a_bill.last_event_date
+  %td= a_bill.last_event_date.to_s.gsub('-','/')

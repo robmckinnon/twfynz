@@ -1,62 +1,57 @@
-YAHOO.example.compNull = function(a, b, x, y, comp, m, n, primary, first, second, first_reverse_sort) {
-  var a_null = (a === null) || (typeof a == "undefined");
-  var b_null = (b === null) || (typeof b == "undefined");
-  if (a_null) {
-    if (b_null) {
-      return 0;
-    } else {
-      return x;
-    }
-  } else if (b_null) {
-    return y;
-  } else {
-    var comparison = comp(a[primary], b[primary]);
-    if (first != null) {
-      if (first_reverse_sort == "y") {
-        comparison = (comparison !== 0) ? comparison : comp(n[first], m[first]);
-      } else {
-        comparison = (comparison !== 0) ? comparison : comp(m[first], n[first]);
-      }
-    }
-    if (second != null) {
-      comparison = (comparison !== 0) ? comparison : comp(m[second], n[second]);
-    }
-    return comparison;
+YAHOO.example.compNull = function(a, b, desc, primary, first, first_dir, second, second_dir) {
+  if(!YAHOO.lang.isValue(a)) {
+    return (!YAHOO.lang.isValue(b)) ? 0 : 1;
+  } else if(!YAHOO.lang.isValue(b)) {
+    return -1;
   }
+
+  var comp = YAHOO.util.Sort.compare;
+  var comparison = comp(a.getData(primary), b.getData(primary), desc);
+
+  if (comparison == 0 && first != null) {
+    var a_first = a.getData(first);
+    var b_first = b.getData(first);
+    comparison = comp(a_first, b_first, first_dir);
+  }
+  if (comparison == 0 && second != null) {
+    var a_second = a.getData(second);
+    var b_second = b.getData(second);
+    comparison = comp(a_second, b_second, second_dir);
+  }
+  return comparison;
 };
 
-YAHOO.example.sortCategoriesAsc = function(a, b) {
-  return YAHOO.example.compNull(a, b, 1, -1, YAHOO.util.Sort.compareAsc, a, b, 'category', 'mentions', 'organisation', 'y');
-};
-YAHOO.example.sortCategoriesDesc = function(a, b) {
-  return YAHOO.example.compNull(b, a, -1, 1, YAHOO.util.Sort.compareDesc, b, a, 'category', 'mentions', 'organisation', 'y');
+var sortCategories = function(a, b, desc) {
+  return YAHOO.example.compNull(a, b, desc, 'category', 'mentions', true, 'organisation', false);
 };
 
-YAHOO.example.sortSubmissionsAsc = function(a, b) {
-  return YAHOO.example.compNull(b, a, 1, -1, YAHOO.util.Sort.compareAsc, a, b, 'submissions', 'organisation', 'category', 'n');
-};
-YAHOO.example.sortSubmissionsDesc = function(a, b) {
-  return YAHOO.example.compNull(b, a, -1, 1, YAHOO.util.Sort.compareDesc, b, a, 'submissions', 'organisation', 'category', 'n');
+var sortSubmissions = function(a, b, desc) {
+  return YAHOO.example.compNull(a, b, desc, 'submissions', 'organisation', false, 'category', false);
 };
 
-YAHOO.example.sortMentionsAsc = function(a, b) {
-  return YAHOO.example.compNull(b, a, -1, 1, YAHOO.util.Sort.compareDesc, b, a, 'mentions', 'organisation', 'category', 'n');
-};
-YAHOO.example.sortMentionsDesc = function(a, b) {
-  return YAHOO.example.compNull(b, a, 1, -1, YAHOO.util.Sort.compareAsc, a, b, 'mentions', 'organisation', 'category', 'n');
+var sortMentions = function(a, b, desc) {
+  return YAHOO.example.compNull(a, b, desc, 'mentions', 'organisation', false, 'category', false);
 };
 
-YAHOO.example.enhanceFromMarkup = function() {
-    this.columnHeaders = [
-        {key:"organisation", text:"Organisation", sortable:true},
-        {key:"submissions", type:"number", text:"Submission items (since Sept 2007)", sortable:true, sortOptions:{ascFunction:YAHOO.example.sortSubmissionsAsc,descFunction:YAHOO.example.sortSubmissionsDesc}},
-        {key:"mentions", type:"number", text:"Debates mentioned in (since Nov 2005)", sortable:true, sortOptions:{ascFunction:YAHOO.example.sortMentionsAsc,descFunction:YAHOO.example.sortMentionsDesc}},
-        {key:"category", text:"Organisational category", sortable:true, sortOptions:{ascFunction:YAHOO.example.sortCategoriesAsc,descFunction:YAHOO.example.sortCategoriesDesc}}
+YAHOO.util.Event.addListener(window, "load", function() {
+  YAHOO.example.EnhanceFromMarkup = new function() {
+    var myColumnDefs = [
+      {key:"organisation", label:"Organisation",  sortable:true},
+      {key:"submissions",  label:"Submission items", sortable:true, sortOptions:{sortFunction:sortSubmissions, defaultDir:YAHOO.widget.DataTable.CLASS_DESC} },
+      {key:"mentions",     label:"Debates mentioned in", sortable:true, sortOptions:{sortFunction:sortMentions, defaultDir:YAHOO.widget.DataTable.CLASS_DESC} },
+      {key:"category",     label:"Organisational category", sortable:true, sortOptions:{sortFunction:sortCategories} }
     ];
-    this.columnSet = new YAHOO.widget.ColumnSet(this.columnHeaders);
-
-    var portfolios = YAHOO.util.Dom.get("organisations");
-    this.dataTable = new YAHOO.widget.DataTable(portfolios,this.columnSet,null,{_sName:"organisation-table"});
-};
-
-YAHOO.util.Event.onAvailable("organisations",YAHOO.example.enhanceFromMarkup,YAHOO.example.enhanceFromMarkup,true);
+    this.myDataSource = new YAHOO.util.DataSource(YAHOO.util.Dom.get("organisation-table"));
+    this.myDataSource.responseType = YAHOO.util.DataSource.TYPE_HTMLTABLE;
+    this.myDataSource.responseSchema = {
+      fields: [{key:"organisation", parser:YAHOO.util.DataSource.parseString},
+              {key:"submissions", parser:YAHOO.util.DataSource.parseNumber},
+              {key:"mentions", parser:YAHOO.util.DataSource.parseNumber},
+              {key:"category", parser:YAHOO.util.DataSource.parseString}
+      ]
+    };
+    this.myDataTable = new YAHOO.widget.DataTable("organisations", myColumnDefs, this.myDataSource,
+      {sortedBy:{key:"mentions",dir:"desc"}}
+    );
+  };
+});
