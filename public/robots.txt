@@ -11,5 +11,8 @@ Disallow: /
 User-agent: ichiro
 Disallow: /
 
+User-agent: dotbot
+Disallow: /
+
 User-agent: Slurp
 Crawl-delay: 3
