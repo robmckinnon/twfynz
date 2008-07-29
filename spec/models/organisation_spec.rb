@@ -54,6 +54,10 @@ describe Organisation, 'when finding organisation from text' do
     check_found_on_second_try 'Genesis Energy Limited', 'Genesis Energy'
   end
 
+  it 'should find organisation when text provided ends with Limted' do
+    check_found_on_second_try 'Genesis Energy Limted', 'Genesis Energy'
+  end
+
   it 'should find organisation when text starts with "The" but name does not' do
     check_found_on_second_try 'The Royal Forest and Bird Protection Society', 'Royal Forest and Bird Protection Society'
   end

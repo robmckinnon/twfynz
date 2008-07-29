@@ -35,7 +35,7 @@ class Organisation < ActiveRecord::Base
   end
 
   def self.government_domains
-    %w[govt.nz www.nelsoncitycouncil.co.nz www.franklindistrict.co.nz]
+    %w[govt.nz www.nelsoncitycouncil.co.nz www.franklindistrict.co.nz www.hamilton.co.nz]
   end
 
   def self.other_domains
@@ -46,7 +46,7 @@ class Organisation < ActiveRecord::Base
     name = text[/(^.+)\s(Supp\s?\d+|Appendix(\s?\d+)?|Part\s?\d+)$/i, 1] || text
     organisation = Organisation.find_by_name(name)
     unless organisation
-      second_try = name[/(^.+)\s(Limited|Inc)$/i, 1] ||
+      second_try = name[/(^.+)\s(Limi?ted|Inc)$/i, 1] ||
           (name[/Incorporated/] ? name.sub('Incorporated', 'Inc') :
             (name[/^The /] ? name.sub(/^The /, '') :
               (name[/New Zealand/] ? name.sub('New Zealand', 'NZ') :
