@@ -90,6 +90,10 @@ describe Organisation, 'when finding organisation from text' do
     check_found_on_third_try 'Transpower', 'Transpower Limited',  'Transpower New Zealand Limited'
   end
 
+  it 'should find organisation when text provided ends with Limted and actual name ends in Limited' do
+    check_found 'New Zealand Steel Limted', 'New Zealand Steel Limited'
+  end
+
 end
 
 describe Organisation, 'on creation' do
