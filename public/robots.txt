@@ -14,5 +14,8 @@ Disallow: /
 User-agent: dotbot
 Disallow: /
 
+User-agent: CazoodleBot
+Disallow: /
+
 User-agent: Slurp
 Crawl-delay: 3
