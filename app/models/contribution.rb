@@ -255,6 +255,9 @@ class Contribution < ActiveRecord::Base
     end
 
     def self.create_condition term
+      if term[/^"([\S]+)"$/]
+        term = term[/^"([\S]+)"$/, 1]
+      end
       term = term.gsub('\\', '').gsub(';','').gsub('>','').gsub('<','').gsub("'",'')
       terms = term.split
 
