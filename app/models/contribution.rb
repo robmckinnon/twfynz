@@ -135,7 +135,7 @@ class Contribution < ActiveRecord::Base
   end
 
   def speaker_anchor
-    speaker_name.anchor debate.date
+    speaker ? speaker_name.anchor(debate.date) : nil
   end
 
   def debate
