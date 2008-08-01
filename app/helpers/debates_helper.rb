@@ -24,6 +24,7 @@ module DebatesHelper
       bill_link = link_to(bill.bill_name, show_bill_url(:bill_url => bill.url))
       question.gsub!(bill.bill_name, bill_link)
     end
+    question
   end
 
   def format_vote_question vote
