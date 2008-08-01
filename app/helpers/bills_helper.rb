@@ -15,6 +15,15 @@ module BillsHelper
     end
   end
 
+  def split_bill_details bill, event_name
+    if bill.nzl_events
+      events = bill.nzl_events.select {|e| e.version_stage == 'reported' || e.version_stage == 'wip version updated' }.sort_by(&:publication_date)
+      if events.size > 0
+        details = %Q[#{link_to('View the bill', events.last.link)} as reported from the #{events.last.version_committee} at the New Zealand Legislation website.]
+      end
+    end
+  end
+
   def committee_report_details bill, event_name
     details = ''
     if bill.was_reported_by_committee?
@@ -196,7 +205,7 @@ module BillsHelper
     end
   end
 
-  def bill_event_summary name, votes, bill, debates
+  def bill_event_summary name, votes, bill, debates, is_first_event
     if debates.nil?
       if name == 'Introduction'
         introduction @bill
@@ -204,6 +213,8 @@ module BillsHelper
         committee_details @bill, name
       elsif name == 'SC Reports'
         committee_report_details @bill, name
+      elsif name == 'Third Reading' && is_first_event
+        split_bill_details @bill, name
       elsif name == 'Committee of the whole House: Order of the day for committal discharged'
         'Order of the day for committal discharged.'
       elsif name == 'Consideration of report: Order of the day for consideration of report discharged'

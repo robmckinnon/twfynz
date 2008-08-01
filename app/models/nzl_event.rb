@@ -109,9 +109,8 @@ class NzlEvent < ActiveRecord::Base
       end
     end
 public
-    def populate_about_information event
-      if event.information_type == 'bill'
-        self.about_type = 'Bill'
+    def populate_bill
+      if self.about_type == 'Bill' && about_id.nil?
         bills = Bill.find_all_by_plain_bill_name_and_year(self.title, self.year)
         bills = Bill.find_all_by_plain_bill_name_and_year(self.title, self.year + 1) if bills.empty?
 
@@ -126,6 +125,12 @@ public
           y self.attributes
           puts "\ndidn't find Bill for event: " + self.title + ', ' + self.year.to_s + ' (' + self.publication_date.to_s + ')'
         end
+      end
+    end
+
+    def populate_about_information event
+      if event.information_type == 'bill'
+        self.about_type = 'Bill'
       end
     end
 
@@ -168,6 +173,7 @@ public
         end
 
         populate_about_information event
+        populate_bill
         populate_version_information event
         self.link = self.link.sub('www.','')
       end

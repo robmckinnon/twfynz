@@ -11,7 +11,9 @@
         %th.ayes Ayes
         %th.noes Noes
         %th.abstentions Abstentions
-    - bill_events.reverse.each do |date_event|
+    - bill_events = bill_events.reverse
+    - bill_events.each do |date_event|
+      - is_first_event = (date_event == bill_events.last)
       - date = date_event[0]
       - name = date_event[1]
       - debates = debates_by_name ? debates_by_name[name] : nil
@@ -20,7 +22,7 @@
       %tr
         %td= debate_name name, debates
         %td.date= debate_date date, debates
-        %td.summary= bill_event_summary name, votes, @bill, debates
+        %td.summary= bill_event_summary name, votes, @bill, debates, is_first_event
         - if have_votes
           %td.ayes= no_vote_info ? no_vote_info : vote_ayes(votes, debates)
           %td.noes= no_vote_info ? no_vote_info : vote_noes(votes, debates)
