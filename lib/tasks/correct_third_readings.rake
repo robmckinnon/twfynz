@@ -1,5 +1,6 @@
 namespace :kiwimp do
 
+  desc "corrects topic of third readings"
   task :correct_third_readings => :environment do
     debates = Debate.find_by_sql('select * from debates where name like "%Third Readings%";')
 

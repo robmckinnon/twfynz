@@ -16,12 +16,14 @@ module BillsHelper
   end
 
   def split_bill_details bill, event_name
+    details = ''
     if bill.nzl_events
       events = bill.nzl_events.select {|e| e.version_stage == 'reported' || e.version_stage == 'wip version updated' }.sort_by(&:publication_date)
       if events.size > 0
         details = %Q[#{link_to('View the bill', events.last.link)} as reported from the #{events.last.version_committee} at the New Zealand Legislation website.]
       end
     end
+    details
   end
 
   def committee_report_details bill, event_name
@@ -227,7 +229,10 @@ module BillsHelper
         ''
       end
     elsif votes
-      result_from_vote debates.first, votes, bill
+      view_bill = (name == 'Third Reading' && is_first_event) ? split_bill_details(@bill, name) : ''
+      result = result_from_vote(debates.first, votes, bill)
+      result += "<br/><br/>#{view_bill}" unless view_bill.blank?
+      result
     else
       result_from_contributions debates.first, bill
     end
