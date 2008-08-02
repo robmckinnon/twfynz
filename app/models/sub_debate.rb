@@ -3,6 +3,20 @@ class SubDebate < Debate
   belongs_to :debate
   belongs_to :about, :polymorphic => true
 
+  def self.all_titles
+    a = o.collect(&:major_name).sort.in_groups_by(&:to_s).sort{|a,b| a.size <=> b.size}.reverse; nil
+    a.collect{|i| (i.size > 1 && i.first[/Question No/].nil?) ? i.size.to_s + ' ' + i.first : nil }.compact
+    a.collect{|i| (i.size > 9 && i.first[/Question No/].nil?) ? ((i.size / o.size.to_f)*100).to_s + ' ' + i.first : nil }.compact
+  end
+
+  def major_name
+    name.split('—').first
+  end
+
+  def minor_name
+    name.include?('—') ? name.split('—').last : nil
+  end
+
   def full_name
     debate.name + ' - ' + name
   end

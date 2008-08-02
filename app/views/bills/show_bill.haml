@@ -9,7 +9,7 @@
         There have been
         = link_to "#{@submissions_count} submissions", show_bill_submissions_url(:bill_url => @bill.url)
         on this bill.
-    = render :partial => 'bill_events', :object => @events_by_date, :locals => { :debates_by_name => @debates_by_name, :votes_by_name => @votes_by_name }
+    = render :partial => 'bill_events', :object => @bill_events, :locals => { :debates_by_name => @debates_by_name, :votes_by_name => @votes_by_name }
     - if is_production_env
       #news_feed
         .hfeed

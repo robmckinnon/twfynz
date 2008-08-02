@@ -64,7 +64,6 @@ describe Bill do
           end
         end
       end
-
     end
 
     describe 'when plain name matches' do
@@ -107,7 +106,6 @@ describe Bill do
   end
 
   describe 'with introduction date' do
-
     it 'should have date of earliest recorded activity equal to introduction date' do
       bill = new_bill
       date = bill_params[:introduction]
@@ -128,7 +126,6 @@ describe Bill do
   end
 
   describe 'unique url identifier' do
-
     it 'should be generated on create if none exists' do
       bill = new_bill :bill_name => 'Social Security (Long-term Residential Care) Amendment Bill'
       bill.url.should_not be_nil
@@ -164,7 +161,6 @@ describe Bill do
   end
 
   describe "on creation" do
-
     describe 'when has valid attributes' do
       it 'should be valid' do
         bill = new_bill
@@ -238,6 +234,7 @@ describe Bill do
         bill = new_bill :bill_name => "Copyright (New Technologies and Performers' Rights) Amendment Bill"
         bill.plain_bill_name.should == 'Copyright New Technologies and Performers Rights Amendment Bill'
       end
+
       it 'should have plain former bill name set to be bill name without parentheses, without dashes, without single quotes' do
         bill = new_bill :former_name => 'Social Security (Long-term Residential Care) Amendment Bill'
         bill.plain_former_name.should == 'Social Security Longterm Residential Care Amendment Bill'
@@ -371,8 +368,11 @@ describe Bill do
     end
   end
 
-  describe 'when finding bills from text' do
+  describe 'when asked for bill events' do
+    assert_model_has_many :bill_events
+  end
 
+  describe 'when finding bills from text' do
     def check_bills billname1, and_the, billname2
       date = mock('date')
       bill1 = mock('bill1')

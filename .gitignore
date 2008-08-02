@@ -23,3 +23,6 @@ vendor/plugins/css_graphs
 public/sitemap_*
 config/environments/production.rb
 config/rugalytics.yml
+coverage
+db/members.yml
+spec/rcov.opts

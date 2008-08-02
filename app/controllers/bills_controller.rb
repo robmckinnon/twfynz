@@ -52,7 +52,7 @@ class BillsController < ApplicationController
         @hash = params
         if @bill
           @submissions_count = Submission.count_by_business_item @bill
-          @events_by_date, @debates_by_name, @names, @votes_by_name = @bill.events_by_date_debates_by_name_names_votes_by_name
+          @bill_events, @debates_by_name, @names, @votes_by_name = @bill.events_by_date_debates_by_name_names_votes_by_name
         end
       end
     else

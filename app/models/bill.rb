@@ -10,6 +10,7 @@ class Bill < ActiveRecord::Base
   has_many :submissions, :as => :business_item
   has_many :submission_dates
   has_many :nzl_events, :as => :about
+  has_many :bill_events, :order => 'date'
 
   validates_presence_of :bill_name
   validates_presence_of :url
@@ -120,7 +121,7 @@ class Bill < ActiveRecord::Base
     end
 
     def sort_events_by_date events
-      events = events.sort do |a,b|
+      events.sort do |a,b|
         date = a[0]
         other_date = b[0]
         comparison = date <=> other_date
@@ -141,7 +142,6 @@ class Bill < ActiveRecord::Base
         end
         comparison
       end
-      events
     end
   end
 
@@ -213,18 +213,18 @@ class Bill < ActiveRecord::Base
 
   def events_by_date_debates_by_name_names_votes_by_name
     debates_by_name, names, votes_by_name = self.votes_by_name
-    events_by_date = self.events_by_date
+    bill_events = self.bill_events
 
     if debates_by_name
-      missed = debates_by_name.keys - events_by_date.collect {|e| e[1]}
+      missed = debates_by_name.keys - bill_events.collect(&:name)
       if missed.size > 0
         missed.each do |name|
-          events_by_date << [debates_by_name[name].last.date, name]
+          bill_events << BillEvent.create_from_bill_stage(self, name, debates_by_name[name].last.date)
         end
-        events_by_date = Bill::sort_events_by_date events_by_date
+        bill_events.flatten.sort
       end
     end
-    return events_by_date, debates_by_name, names, votes_by_name
+    return bill_events, debates_by_name, names, votes_by_name
   end
 
   def events_by_date
@@ -257,7 +257,7 @@ class Bill < ActiveRecord::Base
   end
 
   def strip_name name
-    name.tr("()-:/,'",'')
+    name.tr("-:/,'",'').gsub('(','').gsub(')','')
   end
 
   def expire_cached_pages
@@ -446,7 +446,7 @@ class Bill < ActiveRecord::Base
     def create_url_identifier
       if bill_name and not url
         url = bill_name.to_latin.to_s.downcase.
-            tr('(),:','').
+            tr(',:','').gsub('(','').gsub(')','').
             gsub('/ ',' ').tr('/',' ').
             gsub(/ng\S*ti/, 'ngati').
             tr("'",'').gsub(' and', '').

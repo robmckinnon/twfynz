@@ -9,17 +9,18 @@
       %th.noes Noes
       %th.abstentions Abstentions
       %th.summary
-    - bill_events.reverse.each do |date_event|
-      - date = date_event[0]
-      - name = date_event[1]
-      - debates = debates_by_name ? debates_by_name[name] : nil
-      - votes = debates_by_name ? votes_by_name[name] : nil
-      %tr
-        %td= debate_name name, debates
-        %td.date= debate_date date, debates
-        %td.ayes= vote_ayes votes, debates, date, name
-        %td.noes= vote_noes votes, debates, date, name
-        %td.abstentions= vote_abstentions votes, debates, date, name
-        %td.summary= bill_event_summary name, votes, @bill, debates
+    - bill_events.reverse.each do |bill_event|
+      - unless bill_event.source
+        - date = bill_event.date
+        - name = bill_event.name
+        - debates = debates_by_name ? debates_by_name[name] : nil
+        - votes = debates_by_name ? votes_by_name[name] : nil
+        %tr
+          %td= debate_name name, debates
+          %td.date= debate_date date, debates
+          %td.ayes= vote_ayes votes, debates, date, name
+          %td.noes= vote_noes votes, debates, date, name
+          %td.abstentions= vote_abstentions votes, debates, date, name
+          %td.summary= bill_event_summary(name, votes, @bill, debates)
   - if missing_votes? bill_events
     %p* We don't have voting data from before Nov 2005 in our database at present.

@@ -1,5 +1,6 @@
 require 'open-uri'
 require 'yaml'
+require 'hpricot'
 require 'morph'
 
 class BillProxy
@@ -9,6 +10,7 @@ class BillProxy
   attr_accessor :name, :type, :reference, :parliament_url
 
   def initialize url
+    @url = url
     puts '  downloading ' + url
     self.parliament_url = url
     text = ''
@@ -44,7 +46,21 @@ class BillProxy
     puts '    ' + attributes.inspect
 
     bill = Object.const_get(attributes[:type]).new(attributes)
-    bill.valid?
+
+    begin
+      bill.valid?
+    rescue Exception => e
+      if e.to_s[//]
+        if earliest_date.nil?
+          doc = Hpricot open('http://www.parliament.nz/en-NZ/PB/Legislation/Bills/'+url)
+          begin
+            date = Date.parse((doc/'dt[text()=Date:]/../dd').inner_text)
+          rescue Exception => x
+            raise e
+          end
+        end
+      end
+    end
     bill
   end
 
