@@ -54,6 +54,10 @@ describe Organisation, 'when finding organisation from text' do
     check_found_on_second_try 'Genesis Energy Limited', 'Genesis Energy'
   end
 
+  it 'should find organisation when text provided ends with Limted' do
+    check_found_on_second_try 'Genesis Energy Limted', 'Genesis Energy'
+  end
+
   it 'should find organisation when text starts with "The" but name does not' do
     check_found_on_second_try 'The Royal Forest and Bird Protection Society', 'Royal Forest and Bird Protection Society'
   end
@@ -84,6 +88,10 @@ describe Organisation, 'when finding organisation from text' do
 
   it 'should find organisation when name provided ends with New Zealand Limited but text does not' do
     check_found_on_third_try 'Transpower', 'Transpower Limited',  'Transpower New Zealand Limited'
+  end
+
+  it 'should find organisation when text provided ends with Limted and actual name ends in Limited' do
+    check_found 'New Zealand Steel Limted', 'New Zealand Steel Limited'
   end
 
 end

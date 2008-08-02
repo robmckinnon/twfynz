@@ -134,6 +134,10 @@ describe Mp, "from_name" do
     Mp.from_name('Mr Deputy Speaker').should == mp
   end
 
+  it 'should return nil for "Hon Member."' do
+    Mp.from_name('Hon Member.').should be_nil
+  end
+
   it 'should return nil for "Hon Member"' do
     Mp.from_name('Hon Member').should be_nil
   end

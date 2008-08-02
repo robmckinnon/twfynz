@@ -1,20 +1,21 @@
 - @javascript = 'organisations_table'
-- @title = "Organisations that have made submissions to New Zealand's Parliament"
+- @title = "Organisations mentioned by Parliament"
 %h1= @title
 %p
-  We have identified
+  Listed are
   = @organisations.size
-  organisations that have made submissions to select committees since September 2007.
+  organisations that have been mentioned in Parliament since November 2005 or have made submissions to select committees since September 2007.
   This list may be incomplete. Please email any feedback about this list to:
   %br
   %img{ :alt=>"rob at they work for you dot co dot nz", :class=>"link", :src=>"images/e.png" }
-#organisations
-  %table.organisation-table
-    %thead
-      %tr
-        %th Organisation
-        %th Submission items (count since Sept 2007)
-        %th Mentions in debates (count since Nov 2005)
-        %th Organisational Category
-    %tbody
-      = render :partial => 'organisation', :collection => @organisations
+.yui-skin-sam
+  #organisations
+    %table#organisation-table
+      %thead
+        %tr
+          %th Organisation
+          %th Submission items (count since Sept 2007)
+          %th Debates mentioned in (count since Nov 2005)
+          %th Organisational Category
+      %tbody
+        = render :partial => 'organisation', :collection => @organisations

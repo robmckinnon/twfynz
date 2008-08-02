@@ -24,6 +24,7 @@ module DebatesHelper
       bill_link = link_to(bill.bill_name, show_bill_url(:bill_url => bill.url))
       question.gsub!(bill.bill_name, bill_link)
     end
+    question
   end
 
   def format_vote_question vote
@@ -55,12 +56,12 @@ module DebatesHelper
     transcript = contribution.html
 
     if contribution.is_question?
-      opening = '\1<span class="speechtype">Question:</span> '
-      transcript.sub!(/(<p[^>]*>)[ ]?/, opening)
+      # opening = '\1<span class="speechtype">Question:</span> '
+      # transcript.sub!(/(<p[^>]*>)[ ]?/, opening)
 
     elsif contribution.is_answer?
-      opening = '\1<span class="speechtype">Answer:</span> '
-      transcript.sub!(/(<p[^>]*>)[ ]?/, opening)
+      # opening = '\1<span class="speechtype">Answer:</span> '
+      # transcript.sub!(/(<p[^>]*>)[ ]?/, opening)
 
     elsif contribution.is_a? SectionHeader
       transcript.sub!('<p>','<h3>').sub!('</p>','</h3>')

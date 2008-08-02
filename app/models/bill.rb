@@ -182,6 +182,18 @@ class Bill < ActiveRecord::Base
     events_by_date.last
   end
 
+  def last_event_date
+    last_event ? last_event[0] : nil
+  end
+
+  def last_event_name
+    last_event ? last_event[1] : nil
+  end
+
+  def party_in_charge
+    member_in_charge ? member_in_charge.party : nil
+  end
+
   def last_event_debates
     debates_by_name, names = Debate::get_debates_by_name debates
     name = last_event[1]

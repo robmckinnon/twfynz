@@ -1,13 +1,25 @@
-YAHOO.example.enhanceFromMarkup = function() {
-    this.columnHeaders = [
-        {key:"portfolio", text:"Portfolio<br /> name", sortable:true},
-        {key:"sparkline", text:"Oral Question<br /> monthly activity<br /> since Nov 2005", sortable:false},
-        {key:"count", type:"number", text:"Oral Questions<br /> asked since<br /> Nov 2005*", sortable:true, sortOptions:{defaultDir:YAHOO.widget.DataTable.CLASS_DESC}},
-    ];
-    this.columnSet = new YAHOO.widget.ColumnSet(this.columnHeaders);
-
-    var portfolios = YAHOO.util.Dom.get("portfolios");
-    this.dataTable = new YAHOO.widget.DataTable(portfolios,this.columnSet,null,{_sName:"portfolio-table"});
+var sortSparlines = function(a, b, desc) {
+  var comp = YAHOO.util.Sort.compare;
+  return comp(a.getData('count'), b.getData('count'), desc);
 };
 
-YAHOO.util.Event.onAvailable("portfolios",YAHOO.example.enhanceFromMarkup,YAHOO.example.enhanceFromMarkup,true);
+YAHOO.util.Event.addListener(window, "load", function() {
+  YAHOO.example.EnhanceFromMarkup = new function() {
+    var myColumnDefs = [
+      {key:"portfolio",  label:"Portfolio",  sortable:true},
+      {key:"sparkline", label:"Questions per month graph", sortable:true, sortOptions:{sortFunction:sortSparlines, defaultDir:YAHOO.widget.DataTable.CLASS_DESC} },
+      {key:"count",  label:"Questions count*", formatter:"number", sortable:true, sortOptions:{defaultDir:YAHOO.widget.DataTable.CLASS_DESC} }
+    ];
+    this.myDataSource = new YAHOO.util.DataSource(YAHOO.util.Dom.get("portfolio-table"));
+    this.myDataSource.responseType = YAHOO.util.DataSource.TYPE_HTMLTABLE;
+    this.myDataSource.responseSchema = {
+      fields: [{key:"portfolio"},
+              {key:"sparkline"},
+              {key:"count", parser:YAHOO.util.DataSource.parseNumber}
+      ]
+    };
+    this.myDataTable = new YAHOO.widget.DataTable("portfolios", myColumnDefs, this.myDataSource,
+      {sortedBy:{key:"portfolio",dir:"desc"}}
+    );
+  };
+});

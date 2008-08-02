@@ -22,7 +22,7 @@ describe HansardParser, "when passed Electoral Finance Bill - First Reading" do
     PARSED.clear
   end
 
-  it 'should detiermine missing question text' do
+  it 'should determine missing question text' do
     HansardParser.stub!(:load_doc).and_return Hpricot(html)
     debate = parse_debate
     voteplaceholder = debate.sub_debate.contributions.first

@@ -226,22 +226,30 @@ describe Bill do
         bill.current?.should be_true
       end
 
+      def check_plain_name name, plain_name
+        bill = new_bill :bill_name => name
+        bill.plain_bill_name.should == plain_name
+      end
+
+      def check_plain_former_name name, plain_name
+        bill = new_bill :former_name => name
+        bill.plain_former_name.should == plain_name
+      end
+
       it 'should have plain bill name set to be bill name without parentheses, without dashes, without single quotes' do
-        bill = new_bill :bill_name => 'Social Security (Long-term Residential Care) Amendment Bill'
-        bill.plain_bill_name.should == 'Social Security Longterm Residential Care Amendment Bill'
-        bill = new_bill :bill_name => 'Companies (Minority Buy-out Rights) Amendment Bill'
-        bill.plain_bill_name.should == 'Companies Minority Buyout Rights Amendment Bill'
-        bill = new_bill :bill_name => "Copyright (New Technologies and Performers' Rights) Amendment Bill"
-        bill.plain_bill_name.should == 'Copyright New Technologies and Performers Rights Amendment Bill'
+        check_plain_name 'Social Security (Long-term Residential Care) Amendment Bill', 'Social Security Longterm Residential Care Amendment Bill'
+        check_plain_name 'Companies (Minority Buy-out Rights) Amendment Bill', 'Companies Minority Buyout Rights Amendment Bill'
+        check_plain_name "Copyright (New Technologies and Performers' Rights) Amendment Bill", 'Copyright New Technologies and Performers Rights Amendment Bill'
+        check_plain_name "Arms Amendment Bill (No 3)", 'Arms Amendment Bill No 3'
+        check_plain_name "Appropriation (2008/09 Estimates) Bill", 'Appropriation 200809 Estimates Bill'
       end
 
       it 'should have plain former bill name set to be bill name without parentheses, without dashes, without single quotes' do
-        bill = new_bill :former_name => 'Social Security (Long-term Residential Care) Amendment Bill'
-        bill.plain_former_name.should == 'Social Security Longterm Residential Care Amendment Bill'
-        bill = new_bill :former_name => 'Companies (Minority Buy-out Rights) Amendment Bill'
-        bill.plain_former_name.should == 'Companies Minority Buyout Rights Amendment Bill'
-        bill = new_bill :former_name => "Copyright (New Technologies and Performers' Rights) Amendment Bill"
-        bill.plain_former_name.should == 'Copyright New Technologies and Performers Rights Amendment Bill'
+        check_plain_former_name 'Social Security (Long-term Residential Care) Amendment Bill', 'Social Security Longterm Residential Care Amendment Bill'
+        check_plain_former_name 'Companies (Minority Buy-out Rights) Amendment Bill', 'Companies Minority Buyout Rights Amendment Bill'
+        check_plain_former_name "Copyright (New Technologies and Performers' Rights) Amendment Bill", 'Copyright New Technologies and Performers Rights Amendment Bill'
+        check_plain_former_name "Arms Amendment Bill (No 3)", 'Arms Amendment Bill No 3'
+        check_plain_former_name "Appropriation (2008/09 Estimates) Bill", 'Appropriation 200809 Estimates Bill'
       end
     end
 
@@ -370,6 +378,85 @@ describe Bill do
 
   describe 'when asked for bill events' do
     assert_model_has_many :bill_events
+  end
+
+  describe 'when asked for party in charge' do
+    before do
+      @bill = Bill.new
+    end
+    describe 'and there is a member in charge' do
+      describe 'that belongs to a party' do
+        it 'should return party of member' do
+          party = mock('party', :short=>name)
+          @bill.should_receive(:member_in_charge).twice.and_return mock('member', :party=>party)
+          @bill.party_in_charge.should == party
+        end
+      end
+      describe 'that does not belong to a party' do
+        it 'should return nil' do
+          @bill.should_receive(:member_in_charge).twice.and_return mock('member', :party=>nil)
+          @bill.party_in_charge.should be_nil
+        end
+      end
+    end
+    describe 'and there is no member in charge' do
+      it 'should return nil' do
+        @bill.should_receive(:member_in_charge).and_return nil
+        @bill.party_in_charge.should be_nil
+      end
+    end
+  end
+
+  describe 'when asked for last event' do
+    before do
+      @bill = Bill.new
+      @date = mock('date')
+      @name = 'name'
+      @event = [@date, @name]
+    end
+
+    describe 'and bill has events' do
+      it 'should return last event' do
+        @bill.should_receive(:events_by_date).and_return [@event]
+        @bill.last_event.should == @event
+      end
+    end
+    describe 'and bill has no events' do
+      it 'should return nil' do
+        @bill.should_receive(:events_by_date).and_return []
+        @bill.last_event.should be_nil
+      end
+    end
+
+    describe 'date' do
+      describe 'and bill has events' do
+        it 'should return date of last event' do
+          @bill.should_receive(:last_event).twice.and_return @event
+          @bill.last_event_date.should == @date
+        end
+      end
+      describe 'and bill has no events' do
+        it 'should return nil' do
+          @bill.should_receive(:last_event).and_return nil
+          @bill.last_event_date.should be_nil
+        end
+      end
+    end
+
+    describe 'name' do
+      describe 'and bill has events' do
+        it 'should return name of last event' do
+          @bill.should_receive(:last_event).twice.and_return @event
+          @bill.last_event_name.should == @name
+        end
+      end
+      describe 'and bill has no events' do
+        it 'should return nil' do
+          @bill.should_receive(:last_event).and_return nil
+          @bill.last_event_name.should be_nil
+        end
+      end
+    end
   end
 
   describe 'when finding bills from text' do

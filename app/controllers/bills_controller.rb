@@ -7,6 +7,7 @@ class BillsController < ApplicationController
   def index
     @bills_on = true
     @bills_current = Bill.find_all_current.sort_by(&:bill_name)
+    # @bills_current_by_event = Bill.find_all_current.sort_by(&:last_event_name).in_groups_by(&:last_event_name)
     # @bills_with_debates = Bill.find_all_current.group_by &:url
     # @letter_to_bills = @bills_with_debates.keys.group_by {|b| b[0..0]}
     # View code:

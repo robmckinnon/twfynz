@@ -115,11 +115,10 @@ class NzlEvent < ActiveRecord::Base
         bill.expire_cached_pages
       end
     end
+public
 
-  public
-    def populate_about_information event
-      if event.information_type == 'bill'
-        self.about_type = 'Bill'
+    def populate_bill
+      if self.about_type == 'Bill' && about_id.nil?
         bills = Bill.find_all_by_plain_bill_name_and_year(self.title, self.year)
         bills = Bill.find_all_by_plain_bill_name_and_year(self.title, self.year + 1) if bills.empty?
 
@@ -134,6 +133,12 @@ class NzlEvent < ActiveRecord::Base
           y self.attributes
           puts "\ndidn't find Bill for event: " + self.title + ', ' + self.year.to_s + ' (' + self.publication_date.to_s + ')'
         end
+      end
+    end
+
+    def populate_about_information event
+      if event.information_type == 'bill'
+        self.about_type = 'Bill'
       end
     end
 
@@ -176,6 +181,7 @@ class NzlEvent < ActiveRecord::Base
         end
 
         populate_about_information event
+        populate_bill
         populate_version_information event
         self.link = self.link.sub('www.','')
       end
