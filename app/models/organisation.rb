@@ -43,7 +43,8 @@ class Organisation < ActiveRecord::Base
   end
 
   def self.from_name text
-    name = text[/(^.+)\s(Supp\s?\d+|Appendix(\s?\d+)?|Part\s?\d+)$/i, 1] || text
+    name = text[/(^.+)\s(Supp\s?\d+|Appendix(\s?\d+)?|Part\s?\d+|\d+)$/i, 1] || text
+    name = name[/(^.+)\s(Supp\s?|Appendix(\s?)?|Part\s?)$/i, 1] || name
     name.sub!('Limted','Limited')
     organisation = Organisation.find_by_name(name)
     unless organisation

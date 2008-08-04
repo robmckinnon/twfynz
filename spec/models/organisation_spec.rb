@@ -26,6 +26,14 @@ describe Organisation, 'when finding organisation from text' do
     check_found 'Genesis Energy Supp1', 'Genesis Energy'
   end
 
+  it 'should find organisation when text ends with 2' do
+    check_found 'Genesis Energy 2', 'Genesis Energy'
+  end
+
+  it 'should find organisation when text ends with 3' do
+    check_found 'Genesis Energy 3', 'Genesis Energy'
+  end
+
   it 'should find organisation when text ends with supp1' do
     check_found 'Genesis Energy supp1', 'Genesis Energy'
   end
