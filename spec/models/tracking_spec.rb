@@ -15,64 +15,51 @@ describe Tracking do
   end
 
   describe 'on creation' do
-    after do
-      Tracking.delete_all
-    end
-
-    def create_new
-      Tracking.new :user_id => users(:the_bob).id,
+    def create_new params={}
+      Tracking.new({:user_id => users(:the_bob).id,
         :item_id => bills(:a_bill).id,
-        :item_type => 'Bill'
+        :item_type => 'Bill'}.merge(params))
     end
 
-    it 'should have tracking_on defaulted to false' do
-      tracking = create_new
-      tracking.valid?.should be_true
-      tracking.tracking_on.should be_false
+    describe 'after validation' do
+      before do
+        @tracking = create_new
+        @tracking.valid?.should be_true
+      end
+      it 'should have tracking_on defaulted to false' do
+        @tracking.tracking_on.should be_false
+      end
+      it 'should have email_alert defaulted to false' do
+        @tracking.email_alert.should be_false
+      end
+      it 'should have include_in_feed defaulted to false' do
+        @tracking.include_in_feed.should be_false
+      end
+      it 'should have created at set automatically' do
+        @tracking.created_at.should_not be_nil
+      end
+      it 'should have item set from item id and type' do
+        @tracking.item.should_not be_nil
+      end
+      it 'should have user set from user id' do
+        @tracking.user.should_not be_nil
+      end
     end
 
-    it 'should have email_alert defaulted to false' do
-      tracking = create_new
-      tracking.valid?.should be_true
-      tracking.email_alert.should be_false
+    describe 'without user id' do
+      it 'should be invalid' do
+        tracking = create_new :user_id => nil
+        tracking.save.should be_false
+        tracking.errors.invalid?('user').should be_true
+      end
     end
 
-    it 'should have include_in_feed defaulted to false' do
-      tracking = create_new
-      tracking.valid?.should be_true
-      tracking.include_in_feed.should be_false
-    end
-
-    it 'should have created at set automatically' do
-      tracking = create_new
-      tracking.save.should be_true
-      tracking.created_at.should_not be_nil
-    end
-
-    it 'should have item set from item id and type' do
-      tracking = create_new
-      tracking.save.should be_true
-      tracking.item.should_not be_nil
-    end
-
-    it 'should have user set from user id' do
-      tracking = create_new
-      tracking.save.should be_true
-      tracking.user.should_not be_nil
-    end
-
-    it 'should be invalid without user id' do
-      tracking = Tracking.new :item_id => bills(:a_bill).id,
-        :item_type => 'Bill'
-      tracking.save.should be_false
-      tracking.errors.invalid?('user').should be_true
-    end
-
-    it 'should be invalid without item id' do
-      tracking = Tracking.new :user_id => users(:the_bob).id,
-        :item_type => 'Bill'
-      tracking.save.should be_false
-      tracking.errors.invalid?('item').should be_true
+    describe 'without item id' do
+      it 'should be invalid' do
+        tracking = create_new :item_id => nil
+        tracking.save.should be_false
+        tracking.errors.invalid?('item').should be_true
+      end
     end
 
     it 'should set item id and type from item' do
@@ -81,6 +68,7 @@ describe Tracking do
       tracking.save.should be_true
       tracking.item_id.should == bills(:a_bill).id
       tracking.item_type.should == 'Bill'
+      tracking.destroy
     end
   end
 
