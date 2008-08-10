@@ -56,7 +56,7 @@ class PortfoliosController < ApplicationController
     name = params[:portfolio_url]
     @portfolio = Portfolio.find_by_url(name, :include => :oral_answers)
     @hash = params
-    debates = Debate::remove_duplicates(@portfolio.oral_answers).sort_by(&:date)
+    debates = Debate.remove_duplicates(@portfolio.oral_answers).sort_by(&:date)
     @debates_size = debates.size
 
     if @debates_size > 10
@@ -64,12 +64,12 @@ class PortfoliosController < ApplicationController
       two_months_ago = (latest_date.to_time.at_beginning_of_month - 1).beginning_of_month.to_date
       newer_debates = debates.select { |d| d.date >= two_months_ago }
       older_debates = debates.select { |d| d.date < two_months_ago }
-      @debates_by_name, @names = Debate::get_debates_by_name newer_debates
-      @older_debates_by_name, @older_names = Debate::get_debates_by_name older_debates
+      @debates_in_groups_by_name = Debate.debates_in_groups_by_name newer_debates
+      @older_debates_in_groups_by_name = Debate.debates_in_groups_by_name older_debates
 
     elsif @debates_size > 0
-      @debates_by_name, @names = Debate::get_debates_by_name debates
-      @older_debates_by_name, @older_names = [], []
+      @debates_in_groups_by_name = Debate.debates_in_groups_by_name debates
+      @older_debates_in_groups_by_name = []
     end
   end
 

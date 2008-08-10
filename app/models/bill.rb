@@ -195,9 +195,13 @@ class Bill < ActiveRecord::Base
   end
 
   def last_event_debates
-    debates_by_name, names = Debate::get_debates_by_name debates
-    name = last_event[1]
-    debates_by_name ? debates_by_name[name] : nil
+    debates = debates_in_groups_by_name
+    if debates.blank?
+      nil
+    else
+      name = last_event.name
+      debates.select{|list| list.first.normalized_name == name}.flatten
+    end
   end
 
   def debates
@@ -216,38 +220,38 @@ class Bill < ActiveRecord::Base
     !debates.empty?
   end
 
-  def get_debates_by_name
+  def debates_in_groups_by_name
     if has_debates?
-      Debate.get_debates_by_name debates
+      Debate.debates_in_groups_by_name debates
     else
-      return nil, nil
+      []
     end
   end
 
   def votes_by_name
     if has_debates?
-      debates_by_name, names = get_debates_by_name
-      votes_by_name = get_votes_by_name names, debates_by_name
-      return debates_by_name, names, votes_by_name
+      in_groups_by_name = debates_in_groups_by_name
+      votes_by_name = get_votes_by_name in_groups_by_name
+      return in_groups_by_name, votes_by_name
     else
-      return nil, nil, nil
+      return nil, nil
     end
   end
 
   def events_by_date_debates_by_name_names_votes_by_name
-    debates_by_name, names, votes_by_name = self.votes_by_name
+    in_groups_by_name, votes_by_name = self.votes_by_name
     bill_events = self.bill_events
 
-    if debates_by_name
-      missed = debates_by_name.keys - bill_events.collect(&:name)
-      if missed.size > 0
-        missed.each do |name|
-          bill_events << BillEvent.create_from_bill_stage(self, name, debates_by_name[name].last.date)
-        end
-        bill_events.flatten.sort
-      end
+    if in_groups_by_name
+      # missed = debates_by_name.collect{|list| list.first.normalized_name} - bill_events.collect(&:name)
+      # if missed.size > 0
+        # missed.each do |name|
+          # bill_events << BillEvent.create_from_bill_stage(self, name, debates_by_name[name].last.date)
+        # end
+        # bill_events.flatten.sort
+      # end
     end
-    return bill_events, debates_by_name, names, votes_by_name
+    return bill_events, in_groups_by_name, votes_by_name
   end
 
   def events_by_date
@@ -317,9 +321,9 @@ class Bill < ActiveRecord::Base
       debate_count + debate_topics.select {|t| t.debate.publication_status == publication_status }.size
     end
 
-    def get_votes_by_name names, debates_by_name
-      names.inject({}) do |by_name, name|
-        debate = debates_by_name[name].first
+    def get_votes_by_name debates_in_groups_by_name
+      debates_in_groups_by_name.inject({}) do |by_name, list|
+        debate = list.first
         votes = debate.votes.select { |v| v and v.question.include?('be now read') }
         if votes.empty?
           votes = debate.votes.select { |v| v and v.result.include?('Bill referred') }
@@ -346,7 +350,7 @@ class Bill < ActiveRecord::Base
             end
           end
         end
-        by_name[name] = votes.empty? ? nil : votes
+        by_name[debate.normalized_name] = votes.empty? ? nil : votes
         by_name
       end
     end

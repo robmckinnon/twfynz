@@ -60,7 +60,7 @@ class BillsController < ApplicationController
     unless read_fragment(:action => 'show_bill' )
       @hash = params
       @submissions_count = Submission.count_by_business_item @bill
-      @bill_events, @debates_by_name, @names, @votes_by_name = @bill.events_by_date_debates_by_name_names_votes_by_name
+      @bill_events, @debates_in_groups_by_name, @votes_by_name = @bill.events_by_date_debates_by_name_names_votes_by_name
     end
   end
 

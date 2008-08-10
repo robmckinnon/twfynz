@@ -5,12 +5,13 @@
   %title Items tracked
   %updated
   - @tracked_items.reverse.each do |tracked_item|
-    - events_by_date, debates_by_name, names, votes_by_name = tracked_item.events_by_date_debates_by_name_names_votes_by_name
-    - date_event = events_by_date.last
-    - date = date_event[0]
-    - name = date_event[1]
-    - debates = debates_by_name ? debates_by_name[name] : nil
-    - votes = debates_by_name ? votes_by_name[name] : nil
+    - events_by_date, debates_in_groups_by_name, votes_by_name = tracked_item.events_by_date_debates_by_name_names_votes_by_name
+    - bill_event = events_by_date.last
+    - date = bill_event.date
+    - name = bill_event.name
+    - debates = debates_in_groups_by_name.blank? ? nil : debates_in_groups_by_name.select {|list| list.first.normalized_name == name}.flatten
+    - debates = nil if debates.blank?
+    - votes = votes_by_name.blank? ? nil : votes_by_name[name]
     %entry
       %id= "tag:twfy,2007-05-18T16:35:00-07:00:#{tracked_item.class.name}#{tracked_item.id.to_s}"
       %updated= (debates) ? debates.first.date.xmlschema : tracked_item.last_event[0]

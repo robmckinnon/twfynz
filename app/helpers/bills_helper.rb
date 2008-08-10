@@ -90,20 +90,16 @@ module BillsHelper
     vote ? vote.question : ''
   end
 
-  def have_votes bill_events, debates_by_name, votes_by_name
+  def have_votes bill_events, votes_by_name
     have_votes = false
     bill_events.each do |bill_event|
-      date = bill_event.date
-      name = bill_event.name
-      debates = debates_by_name ? debates_by_name[name] : nil
-      votes = debates_by_name ? votes_by_name[name] : nil
-      no_vote_info = (date < Date.new(2005,11,1) && name.include?('Reading') ) ? '&nbsp;n/a *' : nil
-      if no_vote_info || (votes && votes.size > 0)
+      votes = votes_by_name.blank? ? nil : votes_by_name[bill_event.name]
+      no_vote_info = (bill_event.date < Date.new(2005,11,1) && name.include?('Reading') ) ? '&nbsp;n/a *' : nil
+      if no_vote_info || (votes && !votes.empty?)
         have_votes = true
         break
       end
     end
-
     have_votes
   end
 

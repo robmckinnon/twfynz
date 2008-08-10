@@ -91,7 +91,7 @@ class DebatesController < ApplicationController
       debates += @about.debate_topics.collect {|t| t.debate }
     end
 
-    @debates_by_name, @names = Debate::get_debates_by_name debates unless debates.empty?
+    @debates_in_groups_by_name = Debate.debates_in_groups_by_name debates unless debates.empty?
     render :template => 'debates/show_about_debates_on_date'
   end
 
@@ -124,7 +124,7 @@ class DebatesController < ApplicationController
       debates += @about.debate_topics.collect {|t| t.debate }
     end
 
-    @debates_by_name, @names = Debate::get_debates_by_name debates
+    @debates_in_groups_by_name = Debate.debates_in_groups_by_name debates
 
     render :template => 'debates/show_about_debates_on_date'
   end

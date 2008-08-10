@@ -496,11 +496,11 @@ describe Bill do
         @bill.has_debates?.should be_true
       end
     end
-    describe 'when asked for debates by name' do
-      it 'should return debates grouped by name' do
-        debates_by_name, names = mock('debates_by_name'), mock('names')
-        Debate.should_receive(:get_debates_by_name).with(@debates).and_return [debates_by_name, names]
-        @bill.get_debates_by_name.should == [debates_by_name, names]
+    describe 'when asked for debates in groups by name' do
+      it 'should return debates in groups by name' do
+        debates_in_groups_by_name = mock('debates_in_groups_by_name')
+        Debate.should_receive(:debates_in_groups_by_name).with(@debates).and_return debates_in_groups_by_name
+        @bill.debates_in_groups_by_name.should == debates_in_groups_by_name
       end
     end
   end
@@ -515,9 +515,9 @@ describe Bill do
         @bill.has_debates?.should be_false
       end
     end
-    describe 'when asked for debates by name' do
-      it 'should return [nil, nil]' do
-        @bill.get_debates_by_name.should == [nil, nil]
+    describe 'when asked for debates in groups by name' do
+      it 'should return an empty array' do
+        @bill.debates_in_groups_by_name.should == []
       end
     end
   end

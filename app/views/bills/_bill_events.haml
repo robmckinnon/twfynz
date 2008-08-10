@@ -6,7 +6,7 @@
       %th.debate-column Event
       %th.date Date
       %th.summary
-      - have_votes = have_votes(bill_events, debates_by_name, votes_by_name)
+      - have_votes = have_votes(bill_events, votes_by_name)
       - if have_votes
         %th.ayes Ayes
         %th.noes Noes
@@ -17,8 +17,9 @@
         - is_first_event = (bill_event == bill_events.last)
         - date = bill_event.date
         - name = bill_event.name
-        - debates = debates_by_name ? debates_by_name[name] : nil
-        - votes = debates_by_name ? votes_by_name[name] : nil
+        - debates = debates_in_groups_by_name.blank? ? nil : debates_in_groups_by_name.select {|list| list.first.normalized_name == name}.flatten
+        - debates = nil if debates.blank?
+        - votes = votes_by_name.blank? ? nil : votes_by_name[name]
         - no_vote_info = (debates.nil? && date < Date.new(2005,11,1) && name.include?('Reading') ) ? 'n/a*' : nil
         %tr
           %td= debate_name name, debates

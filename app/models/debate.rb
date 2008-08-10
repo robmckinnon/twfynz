@@ -204,10 +204,10 @@ class Debate < ActiveRecord::Base
         :day => to_num_str(date.mday) }
     end
 
-    def get_debates_by_name debates
+    def debates_in_groups_by_name debates
       debates = remove_duplicates debates
-      debates_by_name = debates.group_by {|d| d.name.split('—')[0].sub('Third Readings','Third Reading')}
-      debates_by_name.values.each do |list|
+      in_groups_by_name = debates.in_groups_by(&:normalized_name)
+      in_groups_by_name.each do |list|
         list.sort! do |a,b|
           comparison = b.date <=> a.date
           if comparison == 0
@@ -217,17 +217,17 @@ class Debate < ActiveRecord::Base
         end
       end
 
-      names = debates_by_name.keys.sort do |a,b|
-        debate = debates_by_name[a]
-        other_debate = debates_by_name[b]
-        comparison = other_debate.first.date <=> debate.first.date
+      in_groups_by_name.sort! do |a, b|
+        debate = a.last
+        other_debate = b.last
+        comparison = other_debate.date <=> debate.date
         if comparison == 0
-          comparison = debate.first.id <=> other_debate.first.id
+          comparison = debate.id <=> other_debate.id
         end
         comparison
       end
 
-      return debates_by_name, names
+      in_groups_by_name
     end
 
     # expires other pages in that month
@@ -237,6 +237,10 @@ class Debate < ActiveRecord::Base
       puts 'found: '+debates.size.to_s
       debates.each { |d| d.expire_cached_pages }
     end
+  end
+
+  def normalized_name
+    name.split('—')[0].sub('Third Readings','Third Reading')
   end
 
   def is_parent_with_one_sub_debate?
