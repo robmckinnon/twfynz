@@ -213,14 +213,13 @@ class Bill < ActiveRecord::Base
   end
 
   def votes_by_name
-    debates = self.debates
-    if debates.size == 0
-      debates_by_name, names, votes_by_name = nil,nil,nil
+    if debates.empty?
+      return nil,nil,nil
     else
       debates_by_name, names = Debate::get_debates_by_name debates
       votes_by_name = get_votes_by_name names, debates_by_name
+      return debates_by_name, names, votes_by_name
     end
-    return debates_by_name, names, votes_by_name
   end
 
   def events_by_date_debates_by_name_names_votes_by_name

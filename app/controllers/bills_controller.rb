@@ -2,7 +2,9 @@ class BillsController < ApplicationController
 
   caches_action :index, :negatived, :assented
 
-  layout "bills_layout"
+  before_filter :find_bill, :only => [:show_bill, :show_bill_atom]
+
+  layout "bills_layout", :except => 'show_bill_atom'
 
   def index
     @bills_on = true
@@ -41,22 +43,30 @@ class BillsController < ApplicationController
     end
   end
 
+  def show_bill_format
+    format.html { show_bill }
+    format.atom { show_bill_atom }
+  end
+
+  def show_bill_atom
+    params[:format] = 'atom'
+    @bill_events = @bill.bill_events
+  end
+
   def show_bill
     @bills_on = true
-    name = params[:bill_url]
-    @bill = get_bill name
+    @tracking = get_tracking @bill
+    @trackings = Tracking.all_for_item(@bill, current_user)
+    unless read_fragment(:action => 'show_bill' )
+      @hash = params
+      @submissions_count = Submission.count_by_business_item @bill
+      @bill_events, @debates_by_name, @names, @votes_by_name = @bill.events_by_date_debates_by_name_names_votes_by_name
+    end
+  end
 
-    if @bill
-      @tracking = get_tracking @bill
-      @trackings = Tracking.all_for_item(@bill, current_user)
-      unless read_fragment(:action => 'show_bill' )
-        @hash = params
-        if @bill
-          @submissions_count = Submission.count_by_business_item @bill
-          @bill_events, @debates_by_name, @names, @votes_by_name = @bill.events_by_date_debates_by_name_names_votes_by_name
-        end
-      end
-    else
+  def find_bill
+    name = params[:bill_url]
+    unless (@bill = get_bill(name))
       render(:template => 'bills/invalid_bill', :status => 404)
     end
   end

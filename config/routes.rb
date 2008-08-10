@@ -103,6 +103,7 @@ ActionController::Routing::Routes.draw do |map|
     make_route 'bills/assented', bill
     make_route 'bills/negatived', bill
     make_route 'bills/:bill_url', bill
+    make_route 'bills/:bill_url.atom', bill, :show_bill_atom
     make_route 'bills/:bill_url/submissions', bill, :show_bill_submissions
   end
 

@@ -10,15 +10,25 @@ class CreateBillEvents < ActiveRecord::Migration
       t.timestamps
     end
 
+    BillEvent.record_timestamps = false
+
     NzlEvent.all.each do |nzl_event|
       event = BillEvent.create_from_nzl_event(nzl_event)
-      event.save! if event
+      if event
+        event.set_created_and_updated_at_date_to_event_date
+        event.save!
+      end
     end
 
     Bill.all.each do |bill|
       events = BillEvent.create_from_bill(bill)
-      events.each {|e| e.save!}
+      events.each do |event|
+        event.set_created_and_updated_at_date_to_event_date
+        event.save!
+      end
     end
+
+    BillEvent.record_timestamps = true
   end
 
   def self.down

@@ -12,6 +12,8 @@
     %link{ :rel=>"home", :title=>"Home", :href=>"http://www.theyworkforyou.co.nz/" }
     = stylesheet_link_tag 'default', :media => 'screen'
     = stylesheet_link_tag 'print', :media => 'print'
+    - if @atom
+      = auto_discovery_link_tag(:atom, :action => @atom)
     - if @javascript == 'feeds'
       = javascript_include_tag('jquery')
       = %Q[<script src='http://www.google.com/jsapi?key=ABQIAAAAqaIV0FrI66ZwKQCBvHVROhS4B9IOWGabz75EWBZk7jQ9CQA49BR5l_F12e50hYNKqoQbLx_HpSOnxg' type='text/javascript'></script>]

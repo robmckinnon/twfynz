@@ -29,6 +29,14 @@ describe BillEvent do
     it 'should set source_id correctly' do
       @event.source_id.should == @source_id
     end
+
+    describe 'and asked to set created_at and updated_at date to event date' do
+      it 'should set created at date and updated at date to event date' do
+        @event.set_created_and_updated_at_date_to_event_date
+        @event.created_at.should == @date.to_time.at_beginning_of_day
+        @event.updated_at.should == @date.to_time.at_beginning_of_day
+      end
+    end
   end
 
   describe 'when creating from a Bill' do

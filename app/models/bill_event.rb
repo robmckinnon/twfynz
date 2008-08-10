@@ -45,6 +45,19 @@ class BillEvent < ActiveRecord::Base
     end
   end
 
+  def set_created_and_updated_at_date_to_event_date
+    if date
+      event_date = (date.to_time + (60*60)).utc.beginning_of_day
+      if event_date <= Time.now
+        self.created_at = event_date
+        self.updated_at = event_date
+      else
+        self.created_at = Time.now.utc unless self.created_at
+        self.updated_at = Time.now.utc unless self.updated_at
+      end
+    end
+  end
+
   def <=> event
     other_date = event.date
     comparison = date <=> other_date

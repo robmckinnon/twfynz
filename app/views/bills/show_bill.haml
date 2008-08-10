@@ -1,6 +1,7 @@
 - @title = about_title(@bill)
 - is_production_env = (RAILS_ENV == 'production')
 - @javascript = 'feeds' if is_production_env
+- @atom = 'show_bill_atom' unless is_production_env
 - cache do
   #primarycontainer
     = render :partial => 'bill_description', :object => @bill
