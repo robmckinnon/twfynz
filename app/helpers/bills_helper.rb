@@ -74,10 +74,10 @@ module BillsHelper
 
   def missing_votes? events_by_date
     no_data = false
-    events_by_date.each do |date_event|
+    events_by_date.each do |bill_event|
       unless @debates_by_name
-        date = date_event[0]
-        name = date_event[1]
+        date = bill_event.date
+        name = bill_event.name
         if date < Date.parse('2005-11-01') and name.include? 'Reading'
           no_data = true
         end
