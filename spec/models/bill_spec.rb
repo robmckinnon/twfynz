@@ -315,7 +315,6 @@ describe Bill do
   end
 
   describe 'when formerly part of another bill' do
-
     assert_model_belongs_to :formerly_part_of
 
     it 'should have reference to former part of bill' do
@@ -329,7 +328,6 @@ describe Bill do
   end
 
   describe 'when divided into other bills' do
-
     assert_model_has_many :divided_into_bills
 
     it 'should have reference to divided into bills' do
@@ -344,7 +342,6 @@ describe Bill do
 
       Bill.delete_all
     end
-
   end
 
   describe "on update" do
@@ -483,6 +480,45 @@ describe Bill do
 
     it 'should ignore bills joined by "/" character' do
       check_bills = 'Judicature Amendment Bill (No 2)', ',', 'Te Ture Whenua Maori Amendment Bill (No 2) / Maori Land Amendment Bill (No 2)'
+    end
+  end
+
+  describe 'bill with debates' do
+    before do
+      @bill = Bill.new
+      @debate = mock('debate')
+      @debates = [@debate]
+      @bill.stub!(:debates).and_return @debates
+    end
+
+    describe 'when asked if it has debates' do
+      it 'should return true' do
+        @bill.has_debates?.should be_true
+      end
+    end
+    describe 'when asked for debates by name' do
+      it 'should return debates grouped by name' do
+        debates_by_name, names = mock('debates_by_name'), mock('names')
+        Debate.should_receive(:get_debates_by_name).with(@debates).and_return [debates_by_name, names]
+        @bill.get_debates_by_name.should == [debates_by_name, names]
+      end
+    end
+  end
+
+  describe 'bill without debates' do
+    before do
+      @bill = Bill.new
+      @bill.stub!(:debates).and_return []
+    end
+    describe 'when asked if it has debates' do
+      it 'should return false' do
+        @bill.has_debates?.should be_false
+      end
+    end
+    describe 'when asked for debates by name' do
+      it 'should return [nil, nil]' do
+        @bill.get_debates_by_name.should == [nil, nil]
+      end
     end
   end
 end

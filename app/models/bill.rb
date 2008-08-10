@@ -212,13 +212,25 @@ class Bill < ActiveRecord::Base
     [count_by_about('U'), count_by_about('A'), count_by_about('F')].max
   end
 
-  def votes_by_name
-    if debates.empty?
-      return nil,nil,nil
+  def has_debates?
+    !debates.empty?
+  end
+
+  def get_debates_by_name
+    if has_debates?
+      Debate.get_debates_by_name debates
     else
-      debates_by_name, names = Debate::get_debates_by_name debates
+      return nil, nil
+    end
+  end
+
+  def votes_by_name
+    if has_debates?
+      debates_by_name, names = get_debates_by_name
       votes_by_name = get_votes_by_name names, debates_by_name
       return debates_by_name, names, votes_by_name
+    else
+      return nil, nil, nil
     end
   end
 
