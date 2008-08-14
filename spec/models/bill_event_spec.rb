@@ -45,7 +45,9 @@ describe BillEvent do
       @event2 = "Royal Assent"
       @date1 = Date.new(2003,10,16)
       @date2 = Date.new(2003,10,21)
-      @bill = mock(Bill, :id=> 123, :events_by_date => [[@date1, @event1], [@date2, @event2]] )
+      @bill = mock(Bill, :id=> 123,
+          :events_by_date => [[@date1, @event1], [@date2, @event2]],
+          :debates_in_groups_by_name => [])
       @events = BillEvent.create_from_bill(@bill)
     end
 

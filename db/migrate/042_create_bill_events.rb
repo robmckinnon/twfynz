@@ -20,7 +20,9 @@ class CreateBillEvents < ActiveRecord::Migration
       end
     end
 
-    Bill.all.each do |bill|
+    bills = Bill.all
+    # bills = [Bill.find_by_url('auckland_regional_amenities_funding')]
+    bills.each do |bill|
       events = BillEvent.create_from_bill(bill)
       events.each do |event|
         event.set_created_and_updated_at_date_to_event_date

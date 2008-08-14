@@ -2,6 +2,7 @@ class BillEvent < ActiveRecord::Base
 
   belongs_to :bill
   belongs_to :source, :polymorphic => true
+  after_create :log_creation
 
   class << self
 
@@ -19,14 +20,45 @@ class BillEvent < ActiveRecord::Base
       end
     end
 
+    def refresh_events_from_bill bill
+      create_from_bill(bill).each do |event|
+        if event.source_id
+          existing = find_by_date_and_name_and_bill_id_and_source_type_and_source_id(event.date, event.name, event.bill_id, event.source_type, event.source_id)
+        else
+          existing = find_by_date_and_name_and_bill_id(event.date, event.name, event.bill_id)
+        end
+        event.save! unless existing
+      end
+    end
+
     def create_from_bill bill
       events = []
+      debates_in_groups_by_name = bill.debates_in_groups_by_name
+
       bill.events_by_date.each do |date_and_stage|
         date = date_and_stage[0]
         stage = date_and_stage[1]
-        events << create_from_bill_stage(bill, stage, date)
+
+        debates = debates_in_groups_by_name.select {|list| list.first.normalized_name == stage}.flatten
+
+        if debates.blank?
+          # puts 'creating bill event ' + stage
+          events << create_from_bill_stage(bill, stage, date)
+        else
+          # puts 'creating ' + debates.size.to_s + ' bill debate events for ' + stage
+          debates.each do |debate|
+            events << create_from_bill_debate(bill, stage, debate)
+          end
+        end
       end
       events
+    end
+
+    def create_from_bill_debate bill, stage, debate
+      event = create_from_bill_stage bill, stage, debate.date
+      event.source_type = 'Debate'
+      event.source_id = debate.id
+      event
     end
 
     def create_from_bill_stage bill, stage, date
@@ -37,12 +69,6 @@ class BillEvent < ActiveRecord::Base
       end
     end
 
-    def refresh_events_from_bill bill
-      create_from_bill(bill).each do |event|
-        existing = find_by_date_and_name_and_bill_id(event.date, event.name, event.bill_id)
-        event.save! unless existing
-      end
-    end
   end
 
   def set_created_and_updated_at_date_to_event_date
@@ -76,5 +102,9 @@ class BillEvent < ActiveRecord::Base
       end
     end
     comparison
+  end
+
+  def log_creation
+    puts "created: #{self.inspect}"
   end
 end

@@ -10,14 +10,42 @@ class BillProxy
   attr_accessor :name, :type, :reference, :parliament_url
 
   def initialize url
+    step_off = 1
+    text = obtain_text url
+    while text.nil?
+      step_off += 1
+      sleep 2 * step_off
+      text = obtain_text url
+    end
+
+    set_attributes_from_text text
+  end
+
+  def obtain_text url
     @url = url
     puts '  downloading ' + url
     self.parliament_url = url
-    text = ''
-    open('http://www.parliament.nz/en-NZ/PB/Legislation/Bills/'+url) do |f|
-      text = f.read
-    end
 
+    text = ''
+    file = url.tr('/','')
+    if File.exists? file
+      puts 'reading from cache: ' + file
+      File.open(file, 'r') {|f| text = f.read}
+    else
+      open('http://www.parliament.nz/en-NZ/PB/Legislation/Bills/'+url) do |f|
+        text = f.read
+      end
+      if text[/Oops - there has been an error/]
+        text = nil
+      else
+        puts 'caching: ' + file
+        File.open(file, 'w') {|f| f.write text}
+      end
+    end
+    text
+  end
+
+  def set_attributes_from_text text
     text.each_line do |line|
       line = line.gsub('disharged', 'discharged')
       process_line line

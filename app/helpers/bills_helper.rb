@@ -1,5 +1,27 @@
 module BillsHelper
 
+  def bill_event_description bill_event
+    # "#{bill_event.bill.bill_name}-#{bill_event.name}"
+    url = bill_event_url(bill_event)
+    case bill_event.source.class.name
+      when 'SubDebate'
+        bill_event_debate_description bill_event, url, bill_event.source
+      when 'NzlEvent'
+        bill_event_nzl_event_description bill_event, url, bill_event.source
+      else
+        "#{link_to(bill_event.name, url)} on #{format_date(bill_event.date)}."
+    end
+  end
+
+  def bill_event_debate_description bill_event, url, debate
+    link_text = "#{bill_event.name.downcase} debate on #{format_date(bill_event.date)}"
+    "The bill's #{link_to(link_text, url)} has been published."
+  end
+
+  def bill_event_nzl_event_description bill_event, url, nzl_event
+    "The bill as #{link_to(bill_event.name.sub('introduction','introduced'), url)} published at legislation.govt.nz."
+  end
+
   def submission_alert bill
     if (bill.respond_to? :submission_dates and (bill.submission_dates.size > 0))
       submission_date = bill.submission_dates[0]
@@ -199,6 +221,22 @@ module BillsHelper
       events = bill.nzl_events.select {|e| e.version_stage == 'introduction'}.sort_by(&:publication_date)
       if events.size > 0
         intro += %Q[<br/><br/>#{link_to('View the bill', events.last.link)} at introduction at the NZ Legislation website.]
+      end
+    end
+  end
+
+  def bill_event_url bill_event
+    unless bill_event.source
+      bill = bill_event.bill
+      show_bill_url(bill, :bill_url => bill.url).sub(/\d+\?bill_url=/,'')
+    else
+      case bill_event.source
+        when NzlEvent
+          bill_event.source.link
+        when Debate, SubDebate
+          get_url(bill_event.source)
+        else
+          bill_event.source.class.name
       end
     end
   end

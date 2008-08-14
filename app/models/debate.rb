@@ -4,8 +4,9 @@ class Debate < ActiveRecord::Base
 
   has_many :contributions, :foreign_key => 'spoken_in_id', :dependent => :destroy, :order => 'id'
   has_many :debate_topics, :foreign_key => 'debate_id', :dependent => :destroy
+  has_many :bill_events, :as => :source, :dependent => :destroy
 
-  after_save :expire_cached_contributor_pages, :expire_cached_pages
+  after_save :expire_cached_contributor_pages, :expire_cached_pages, :update_bill_events
 
   acts_as_slugged
 
@@ -422,6 +423,15 @@ class Debate < ActiveRecord::Base
   end
 
   CACHE_ROOT = RAILS_ROOT + '/tmp/cache/views/theyworkforyou.co.nz'
+
+  def update_bill_events
+    if hash[:bill_url]
+      bill = Bill.find_by_url(hash[:bill_url])
+      if bill
+        BillEvent.refresh_events_from_bill(bill)
+      end
+    end
+  end
 
   def expire_cached_pages
     return unless is_file_cache?

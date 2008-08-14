@@ -50,7 +50,7 @@ class BillsController < ApplicationController
 
   def show_bill_atom
     params[:format] = 'atom'
-    @bill_events = @bill.bill_events
+    @bill_events = @bill.bill_events.sort_by(&:date).reverse
   end
 
   def show_bill

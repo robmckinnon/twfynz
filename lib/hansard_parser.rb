@@ -266,15 +266,16 @@ class HansardParser
     end
 
     # New Zealand First 3 (Mark, Paraone, Peters); United Future 1 (Turner); ACT New Zealand 2; Independents: Copeland, Field.
+    # New Zealand First 3 (Mark, Paraone, Peters); United Future 1 (Turner); ACT New Zealand 2; Independent: Copeland, Field.
     def handle_party_vote_cast type, cast, node, vote, text
 
       if text.include?('Independent')
 
-        if text.include?('Independent:')
+        if text.include?('Independent:') && !text.include?(',')
           name = text.split(':')[1].strip.chomp('.').chomp('1').strip
           handle_independent_vote_cast name, cast, vote
 
-        elsif text.include?('Independents:')
+        elsif text[/Independents?:/]
           names = text.split(':')[1].chomp('.').split(',')
           names.each do |name|
             handle_independent_vote_cast name.strip, cast, vote

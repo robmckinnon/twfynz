@@ -11,9 +11,10 @@
         %th.ayes Ayes
         %th.noes Noes
         %th.abstentions Abstentions
-    - bill_events = bill_events.reverse
-    - bill_events.each do |bill_event|
-      - unless bill_event.source
+    - grouped_bill_events = bill_events.reverse.in_groups_by(&:name)
+    - grouped_bill_events.each do |bill_event_group|
+      - bill_event = bill_event_group.first
+      - unless bill_event.source && !bill_event.source.is_a?(Debate)
         - is_first_event = (bill_event == bill_events.last)
         - date = bill_event.date
         - name = bill_event.name

@@ -155,4 +155,8 @@ ActionController::Routing::Routes.draw do |map|
     make_route 'user/:user_name', user, :user_home
   end
 
+  with_controller :kawaii, map do |x|
+    index_route 'kawaii', x
+    x.connect 'kawaii/:action/:id'
+  end
 end
