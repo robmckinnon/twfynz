@@ -252,7 +252,7 @@ module BillsHelper
   def bill_event_result_summary bill_event
     if !bill_event.has_debates?
       case bill_event.name
-        when 'Introduction'
+        when /Introduction/i
           introduction bill_event
         when 'Submissions Due'
           committee_details bill_event

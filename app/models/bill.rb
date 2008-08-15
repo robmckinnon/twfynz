@@ -275,7 +275,10 @@ class Bill < ActiveRecord::Base
   end
 
   def top_level_bill_events
-    bill_events.reverse.delete_if{|e|e.source && !e.source.is_a?(Debate)}.in_groups_by(&:name).collect(&:first)
+    events = bill_events.compact # copy bill_events
+    events.delete_if {|e| e.source && !e.source.is_a?(Debate) }
+    events = bill_events if events.empty?
+    events = events.reverse.in_groups_by(&:name).collect(&:first)
   end
 
   def events_by_date
