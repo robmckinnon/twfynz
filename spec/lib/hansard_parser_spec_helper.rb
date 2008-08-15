@@ -64,6 +64,7 @@ module ParserHelperMethods
       Mp.stub!(:from_vote_name).and_return @mp
 
       @debate = parse_hansards
+      @debate.stub!(:has_bill?).and_return false
       @debate.save!
       PARSED[@file_name] = @debate
     end

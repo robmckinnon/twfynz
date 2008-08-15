@@ -228,6 +228,11 @@ class Bill < ActiveRecord::Base
     end
   end
 
+  def votes_in_groups_by_name
+    in_groups_by_name = debates_in_groups_by_name
+    get_votes_by_name in_groups_by_name
+  end
+
   def votes_by_name
     if has_debates?
       in_groups_by_name = debates_in_groups_by_name
@@ -238,20 +243,39 @@ class Bill < ActiveRecord::Base
     end
   end
 
-  def events_by_date_debates_by_name_names_votes_by_name
-    in_groups_by_name, votes_by_name = self.votes_by_name
-    bill_events = self.bill_events
-
-    if in_groups_by_name
-      # missed = debates_by_name.collect{|list| list.first.normalized_name} - bill_events.collect(&:name)
-      # if missed.size > 0
-        # missed.each do |name|
-          # bill_events << BillEvent.create_from_bill_stage(self, name, debates_by_name[name].last.date)
-        # end
-        # bill_events.flatten.sort
-      # end
+  def have_votes?
+    votes_by_name = votes_in_groups_by_name
+    have_votes = false
+    bill_events.each do |bill_event|
+      votes = votes_by_name.blank? ? nil : votes_by_name[bill_event.name]
+      have_votes = (votes && !votes.empty?) || bill_event.is_reading_before_nov_2005?
+      break if have_votes
     end
-    return bill_events, in_groups_by_name, votes_by_name
+    have_votes
+  end
+
+  def debates_by_name_names_votes_by_name
+    in_groups_by_name, votes_by_name = self.votes_by_name
+    return in_groups_by_name, votes_by_name
+  end
+
+  def is_missing_votes?
+    missing_votes = false
+    bill_events.each do |bill_event|
+      if bill_event.is_reading_before_nov_2005?
+        missing_votes = true
+        break
+      end
+    end
+    missing_votes
+  end
+
+  def is_first_bill_event? bill_event
+    bill_event == bill_events.last
+  end
+
+  def top_level_bill_events
+    bill_events.reverse.delete_if{|e|e.source && !e.source.is_a?(Debate)}.in_groups_by(&:name).collect(&:first)
   end
 
   def events_by_date

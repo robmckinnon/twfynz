@@ -1,5 +1,6 @@
 %tr
-  - bill_events, debates_in_groups_by_name, votes_by_name = tracked_item.events_by_date_debates_by_name_names_votes_by_name
+  - debates_in_groups_by_name, votes_by_name = tracked_item.debates_by_name_names_votes_by_name
+  - bill_events = tracked_item.bill_events
   - bill_event = bill_events.last
   - date = bill_event.date
   - name = bill_event.name

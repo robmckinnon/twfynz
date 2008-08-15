@@ -2,6 +2,9 @@ class BillEvent < ActiveRecord::Base
 
   belongs_to :bill
   belongs_to :source, :polymorphic => true
+
+  validates_presence_of :name
+
   after_create :log_creation
 
   class << self
@@ -22,12 +25,16 @@ class BillEvent < ActiveRecord::Base
 
     def refresh_events_from_bill bill
       create_from_bill(bill).each do |event|
-        if event.source_id
-          existing = find_by_date_and_name_and_bill_id_and_source_type_and_source_id(event.date, event.name, event.bill_id, event.source_type, event.source_id)
-        else
-          existing = find_by_date_and_name_and_bill_id(event.date, event.name, event.bill_id)
-        end
+        existing = find_existing event
         event.save! unless existing
+      end
+    end
+
+    def find_existing event
+      if event.source_id
+        find_by_date_and_name_and_bill_id_and_source_type_and_source_id(event.date, event.name, event.bill_id, event.source_type, event.source_id)
+      else
+        find_by_date_and_name_and_bill_id(event.date, event.name, event.bill_id)
       end
     end
 
@@ -68,7 +75,39 @@ class BillEvent < ActiveRecord::Base
         e.date        = date
       end
     end
+  end
 
+  def debates
+    debates_in_groups_by_name, votes_by_name = bill.debates_by_name_names_votes_by_name
+    debates = debates_in_groups_by_name.blank? ? nil : debates_in_groups_by_name.select {|list| list.first.normalized_name == self.name}.flatten
+    debates = nil if debates.blank?
+    debates
+  end
+
+  def votes
+    votes_by_name = bill.votes_in_groups_by_name
+    votes = votes_by_name.blank? ? nil : votes_by_name[self.name]
+    votes
+  end
+
+  def has_debates?
+    !debates.blank?
+  end
+
+  def has_votes?
+    !votes.blank?
+  end
+
+  def is_reading_before_nov_2005?
+    name && name.include?('Reading') && date < Date.new(2005,11,1)
+  end
+
+  def is_first_bill_event?
+    bill.is_first_bill_event? self
+  end
+
+  def was_split_at_third_reading?
+    name == 'Third Reading' && is_first_bill_event?
   end
 
   def set_created_and_updated_at_date_to_event_date

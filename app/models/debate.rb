@@ -425,11 +425,18 @@ class Debate < ActiveRecord::Base
   CACHE_ROOT = RAILS_ROOT + '/tmp/cache/views/theyworkforyou.co.nz'
 
   def update_bill_events
-    if hash[:bill_url]
-      bill = Bill.find_by_url(hash[:bill_url])
-      if bill
-        BillEvent.refresh_events_from_bill(bill)
-      end
+    if bill = find_related_bill
+      BillEvent.refresh_events_from_bill(bill)
+    end
+  end
+
+  def find_related_bill
+    if id_hash[:bill_url]
+      Bill.find_by_url(id_hash[:bill_url])
+    elsif debate_topics.empty?
+      nil
+    elsif debate_topics.first.topic.is_a?(Bill)
+      debate_topics.first.topic
     end
   end
 

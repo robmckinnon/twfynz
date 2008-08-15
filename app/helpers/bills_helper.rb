@@ -3,23 +3,42 @@ module BillsHelper
   def bill_event_description bill_event
     # "#{bill_event.bill.bill_name}-#{bill_event.name}"
     url = bill_event_url(bill_event)
+    date = format_date(bill_event.date)
+    event_name = bill_event.name
     case bill_event.source.class.name
       when 'SubDebate'
-        bill_event_debate_description bill_event, url, bill_event.source
+        bill_event_debate_description event_name, url, date, bill_event.source
       when 'NzlEvent'
-        bill_event_nzl_event_description bill_event, url, bill_event.source
+        bill_event_nzl_event_description event_name, url, bill_event.source
       else
-        "#{link_to(bill_event.name, url)} on #{format_date(bill_event.date)}."
+        bill_event_notification_description bill_event.bill.bill_name, event_name, date, url
     end
   end
 
-  def bill_event_debate_description bill_event, url, debate
-    link_text = "#{bill_event.name.downcase} debate on #{format_date(bill_event.date)}"
+  def bill_event_notification_description bill_name, event_name, date, url
+    case event_name.downcase.sub(' ','_').to_sym
+      when :introduction
+        "<p>The #{link_to bill_name, url} was introduced to parliament on #{date}.</p>"
+      when :submissions_due
+        "<p>Public submissions are now being invited on the #{link_to bill_name, url}.</p><p>Submissions are due by #{date}.</p>"
+      when :first_reading, :second_reading, :third_reading
+        "<p>The #{link_to bill_name, url} had a #{event_name.downcase} debate on #{date}.</p><p>More details will be available after Parliament publishes the debate transcript.</p>"
+      when :sc_reports
+        "<p>The select committee report on the #{link_to bill_name, url} is due on #{date}.</p>"
+      when :in_committee
+        "<p>The select committee report on the #{link_to bill_name, url} is due on #{date}.</p>"
+      else
+        "#{link_to(event_name, url)} on #{date}."
+    end
+  end
+
+  def bill_event_debate_description event_name, url, date, debate
+    link_text = "#{event_name.downcase} debate on #{date}"
     "The bill's #{link_to(link_text, url)} has been published."
   end
 
-  def bill_event_nzl_event_description bill_event, url, nzl_event
-    "The bill as #{link_to(bill_event.name.sub('introduction','introduced'), url)} published at legislation.govt.nz."
+  def bill_event_nzl_event_description event_name, url, nzl_event
+    "The bill as #{link_to(event_name.sub('introduction','introduced'), url)} published at legislation.govt.nz."
   end
 
   def submission_alert bill
@@ -37,8 +56,9 @@ module BillsHelper
     end
   end
 
-  def split_bill_details bill, event_name
+  def split_bill_details bill_event
     details = ''
+    bill = bill_event.bill
     if bill.nzl_events
       events = bill.nzl_events.select {|e| e.version_stage == 'reported' || e.version_stage == 'wip version updated' }.sort_by(&:publication_date)
       if events.size > 0
@@ -48,8 +68,9 @@ module BillsHelper
     details
   end
 
-  def committee_report_details bill, event_name
+  def committee_report_details bill_event
     details = ''
+    bill = bill_event.bill
     if bill.was_reported_by_committee?
       details = %Q[The #{link_to_committee(bill.referred_to_committee)} reported on this bill.]
     end
@@ -62,7 +83,8 @@ module BillsHelper
     details
   end
 
-  def committee_details bill, event_name
+  def committee_details bill_event
+    bill = bill_event.bill
     if bill.is_before_committee?
       %Q[The #{link_to_committee(bill.referred_to_committee)} is considering this bill.]
     end
@@ -94,65 +116,40 @@ module BillsHelper
     end.join(',<br />')
   end
 
-  def missing_votes? events_by_date
-    no_data = false
-    events_by_date.each do |bill_event|
-      unless @debates_by_name
-        date = bill_event.date
-        name = bill_event.name
-        if date < Date.parse('2005-11-01') and name.include? 'Reading'
-          no_data = true
-        end
-      end
-    end
-    no_data
-  end
-
   def vote_question vote
     vote ? vote.question : ''
   end
 
-  def have_votes bill_events, votes_by_name
-    have_votes = false
-    bill_events.each do |bill_event|
-      votes = votes_by_name.blank? ? nil : votes_by_name[bill_event.name]
-      no_vote_info = (bill_event.date < Date.new(2005,11,1) && name.include?('Reading') ) ? '&nbsp;n/a *' : nil
-      if no_vote_info || (votes && !votes.empty?)
-        have_votes = true
-        break
-      end
-    end
-    have_votes
-  end
-
-  def vote_ayes votes, debates
-    if votes and votes.size > 0
-      votes.collect { |v| (v and v.ayes_count != 0) ? v.ayes_count : '-' }.join('<br /><br />')
+  def vote_ayes bill_event
+    if bill_event.has_votes?
+      bill_event.votes.collect { |v| (v and v.ayes_count != 0) ? v.ayes_count : '-' }.join('<br /><br />')
     else
       ''
     end
   end
 
-  def vote_noes votes, debates
-    if votes and votes.size > 0
-      votes.collect { |v| (v and v.noes_count != 0) ? v.noes_count : '-' }.join('<br /><br />')
+  def vote_noes bill_event
+    if bill_event.has_votes?
+      bill_event.votes.collect { |v| (v and v.noes_count != 0) ? v.noes_count : '-' }.join('<br /><br />')
     else
       ''
     end
   end
 
-  def vote_abstentions votes, debates
-    if votes and votes.size > 0
-      votes.collect { |v| (v and v.abstentions_count != 0) ? v.abstentions_count : '-' }.join('<br /><br />')
+  def vote_abstentions bill_event
+    if bill_event.has_votes?
+      bill_event.votes.collect { |v| (v and v.abstentions_count != 0) ? v.abstentions_count : '-' }.join('<br /><br />')
     else
       ''
     end
   end
 
-  def result_from_vote debate, votes, bill=nil
-    result = votes.select {|v| v}.collect {|v| v.result}.join('<br /><br />')
+  def result_from_vote bill_event
+    votes = bill_event.votes
+    result = votes.compact.collect(&:result).join('<br /><br />')
 
     if votes.size == 1
+      debate = bill_event.debates.first
       contributions = debate.contributions
       last = contributions.last
       if last.is_procedural?
@@ -171,11 +168,13 @@ module BillsHelper
       end
     end
 
-    result = make_committee_a_link result, bill, votes
+    result = make_committee_a_link result, bill_event.bill, votes
     result
   end
 
-  def result_from_contributions debate, bill=nil
+  def result_from_contributions bill_event
+    debate = bill_event.debates.first
+    bill = bill_event.bill
     if debate.contributions.size == 0
       ''
     else
@@ -215,7 +214,8 @@ module BillsHelper
     end
   end
 
-  def introduction bill
+  def introduction bill_event
+    bill = bill_event.bill
     intro = mp_in_charge(bill)
     if bill.nzl_events
       events = bill.nzl_events.select {|e| e.version_stage == 'introduction'}.sort_by(&:publication_date)
@@ -241,34 +241,43 @@ module BillsHelper
     end
   end
 
-  def bill_event_summary name, votes, bill, debates, is_first_event
-    if debates.nil?
-      if name == 'Introduction'
-        introduction @bill
-      elsif name == 'Submissions Due'
-        committee_details @bill, name
-      elsif name == 'SC Reports'
-        committee_report_details @bill, name
-      elsif name == 'Third Reading' && is_first_event
-        split_bill_details @bill, name
-      elsif name == 'Committee of the whole House: Order of the day for committal discharged'
-        'Order of the day for committal discharged.'
-      elsif name == 'Consideration of report: Order of the day for consideration of report discharged'
-        'Order of the day for consideration of report discharged.'
-      elsif name == 'Second reading: Order of the day for second reading discharged'
-        'Order of the day for second reading discharged.'
-      elsif name == 'First reading: Order of the day for first reading discharged'
-        'Order of the day for first reading discharged.'
-      else
-        ''
+  def bill_event_name bill_event
+    debate_name bill_event.name, bill_event.debates
+  end
+
+  def bill_event_dates bill_event
+    debate_date bill_event.date, bill_event.debates
+  end
+
+  def bill_event_result_summary bill_event
+    if !bill_event.has_debates?
+      case bill_event.name
+        when 'Introduction'
+          introduction bill_event
+        when 'Submissions Due'
+          committee_details bill_event
+        when 'SC Reports'
+          committee_report_details bill_event
+        when 'Third Reading'
+          bill_event.was_split_at_third_reading? ? split_bill_details(bill_event) : ''
+        when 'Committee of the whole House: Order of the day for committal discharged'
+          'Order of the day for committal discharged.'
+        when 'Consideration of report: Order of the day for consideration of report discharged'
+          'Order of the day for consideration of report discharged.'
+        when 'Second reading: Order of the day for second reading discharged'
+          'Order of the day for second reading discharged.'
+        when 'First reading: Order of the day for first reading discharged'
+          'Order of the day for first reading discharged.'
+        else
+          ''
       end
-    elsif votes
-      view_bill = (name == 'Third Reading' && is_first_event) ? split_bill_details(@bill, name) : ''
-      result = result_from_vote(debates.first, votes, bill)
+    elsif bill_event.has_votes?
+      view_bill = bill_event.was_split_at_third_reading? ? split_bill_details(bill_event) : ''
+      result = result_from_vote(bill_event)
       result += "<br/><br/>#{view_bill}" unless view_bill.blank?
       result
     else
-      result_from_contributions debates.first, bill
+      result_from_contributions bill_event
     end
   end
 

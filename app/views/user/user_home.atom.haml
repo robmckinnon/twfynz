@@ -5,7 +5,8 @@
   %title Items tracked
   %updated
   - @tracked_items.reverse.each do |tracked_item|
-    - events_by_date, debates_in_groups_by_name, votes_by_name = tracked_item.events_by_date_debates_by_name_names_votes_by_name
+    - debates_in_groups_by_name, votes_by_name = tracked_item.debates_by_name_names_votes_by_name
+    - events_by_date = tracked_item.bill_events
     - bill_event = events_by_date.last
     - date = bill_event.date
     - name = bill_event.name

@@ -54,7 +54,7 @@ class SubDebate < Debate
   end
 
   def about_url
-    about.url
+    about ? about.url : ''
   end
 
   def index_suffix
