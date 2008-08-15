@@ -11,6 +11,7 @@ class HansardDownloader
     @base_path = download_directory
     index = 0
     doc = open_index index
+    puts "opened: #{index}"
     debates = (doc/'h4/a')
     finished = false
 

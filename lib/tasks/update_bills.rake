@@ -24,6 +24,8 @@ namespace :kiwimp do
     end
     puts '  update bill ' + bill.bill_name
     bill.update_attributes! updated_bill.attributes
+    bill.reload
+    BillEvent.refresh_events_from_bill(bill)
   end
 
   def has_changed? bill, updated_bill

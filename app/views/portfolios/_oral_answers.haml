@@ -1,13 +1,11 @@
 %ul.linklist
-  - names.each do |name|
-    - debates = debates_by_name[name]
+  - debates_in_groups_by_name.each do |debates|
     - debates = debates.reverse if (debates.size > 0 and (not debates.first.is_a? DebateAlone) and (not debates.first.about.is_a? Portfolio))
     - many = debates.size > 1
     - if many
-      - debates.each { |d| d.name = d.name.sub(d.name.split('—')[0]+'—', '') }
-    - if many
       %li
-        %span= name
+        %span= debates.first.normalized_name
+        - debates.each { |d| d.name = d.name.sub(d.name.split('—')[0]+'—', '') }
         - if debates.first.is_a?(SubDebate)
           %ul.linklist
             - debates.each do |debate|

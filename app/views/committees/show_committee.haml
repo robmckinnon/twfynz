@@ -1,21 +1,20 @@
 - @title = @committee.full_name + ' Committee: Aotearoa New Zealand Parliament'
 #primarycontainer
-  - if (not @debates_by_name and (not @bills or @bills.size == 0) and (not @bills_before_committee or @bills_before_committee.size == 0))
+  - if (@debates_in_groups_by_name.blank? and (not @bills or @bills.size == 0) and (not @bills_before_committee or @bills_before_committee.size == 0))
     .divider3
     %p No debates or bills found related to this committee.
-  - if @debates_by_name
+  - unless @debates_in_groups_by_name.blank?
     .divider3
     .debates
     %h2 Debates related to committee
     %ul.linklist
-      - @names.each do |name|
-        - debates = @debates_by_name[name]
+      - @debates_in_groups_by_name.each do |debates|
         - debates = debates.reverse if (debates.size > 0 and (not debates.first.is_a? DebateAlone) and (not debates.first.about.is_a? Portfolio))
         - many = debates.size > 1
         - if many
-          - debates.each { |d| d.name = d.name.sub(d.name.split('—')[0]+'—', '') }
           %li
-            %span= name
+            %span= debates.first.normalized_name
+            - debates.each { |d| d.name = d.name.sub(d.name.split('—')[0]+'—', '') }
             %ul.linklist
               - if debates.first.is_a? SubDebate
                 - debates.each do |debate|

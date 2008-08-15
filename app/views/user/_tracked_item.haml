@@ -1,27 +1,13 @@
 %tr
-  - events_by_date, debates_by_name, names, votes_by_name = tracked_item.events_by_date_debates_by_name_names_votes_by_name
-  - date_event = events_by_date.last
-  - date = date_event[0]
-  - name = date_event[1]
-  - debates = debates_by_name ? debates_by_name[name] : nil
-  - votes = debates_by_name ? votes_by_name[name] : nil
+  - debates_in_groups_by_name, votes_by_name = tracked_item.debates_by_name_names_votes_by_name
+  - bill_events = tracked_item.bill_events
+  - bill_event = bill_events.last
+  - date = bill_event.date
+  - name = bill_event.name
+  - debates = debates_in_groups_by_name.blank? ? nil : debates_in_groups_by_name.select {|list| list.first.normalized_name == name}.flatten
+  - debates = nil if debates.blank?
+  - votes = votes_by_name.blank? ? nil : votes_by_name[name]
   %td.item_name= link_to_bill(tracked_item)
   %td= debate_name name, debates
   %td.date= debate_last_date date, debates
-  %td= tracked_item_list tracked_item
-%tr
-  %td.item_name= link_to_bill(tracked_item)
-  - last_event = tracked_item.last_event
-  - if last_event
-    - name = last_event[1]
-    - date = last_event[0]
-    - debates = tracked_item.last_event_debates # to fix need debates_by_name
-    %td
-      = debate_name(name, debates ? [debates.first] : nil)
-      = (debates and debates.size > 1) ? ' (resumed)' : ''
-    %td.date= debate_last_date date, debates
-    - # %td= debate_date date, (debates ? [debates.last] : nil)
-  - else
-    %td.date= ''
-    %td= ''
   %td= tracked_item_list tracked_item

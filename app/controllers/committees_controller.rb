@@ -22,7 +22,7 @@ class CommitteesController < ApplicationController
       @debates = Debate.find_all_by_about_type_and_about_id(Committee.name, @committee.id)
 
       if @debates.size > 0
-        @debates_by_name, @names = Debate::get_debates_by_name @debates
+        @debates_in_groups_by_name = Debate.debates_in_groups_by_name @debates
       end
       @bills_before_committee = @committee.bills_before_committee
       @bills = @committee.reported_bills_current

@@ -10,6 +10,7 @@ class Bill < ActiveRecord::Base
   has_many :submissions, :as => :business_item
   has_many :submission_dates
   has_many :nzl_events, :as => :about
+  has_many :bill_events, :order => 'date'
 
   validates_presence_of :bill_name
   validates_presence_of :url
@@ -120,7 +121,7 @@ class Bill < ActiveRecord::Base
     end
 
     def sort_events_by_date events
-      events = events.sort do |a,b|
+      events.sort do |a,b|
         date = a[0]
         other_date = b[0]
         comparison = date <=> other_date
@@ -141,7 +142,6 @@ class Bill < ActiveRecord::Base
         end
         comparison
       end
-      events
     end
   end
 
@@ -195,9 +195,13 @@ class Bill < ActiveRecord::Base
   end
 
   def last_event_debates
-    debates_by_name, names = Debate::get_debates_by_name debates
-    name = last_event[1]
-    debates_by_name ? debates_by_name[name] : nil
+    debates = debates_in_groups_by_name
+    if debates.blank?
+      nil
+    else
+      name = last_event.name
+      debates.select{|list| list.first.normalized_name == name}.flatten
+    end
   end
 
   def debates
@@ -212,31 +216,69 @@ class Bill < ActiveRecord::Base
     [count_by_about('U'), count_by_about('A'), count_by_about('F')].max
   end
 
-  def votes_by_name
-    debates = self.debates
-    if debates.size == 0
-      debates_by_name, names, votes_by_name = nil,nil,nil
-    else
-      debates_by_name, names = Debate::get_debates_by_name debates
-      votes_by_name = get_votes_by_name names, debates_by_name
-    end
-    return debates_by_name, names, votes_by_name
+  def has_debates?
+    !debates.empty?
   end
 
-  def events_by_date_debates_by_name_names_votes_by_name
-    debates_by_name, names, votes_by_name = self.votes_by_name
-    events_by_date = self.events_by_date
+  def debates_in_groups_by_name
+    if has_debates?
+      Debate.debates_in_groups_by_name debates
+    else
+      []
+    end
+  end
 
-    if debates_by_name
-      missed = debates_by_name.keys - events_by_date.collect {|e| e[1]}
-      if missed.size > 0
-        missed.each do |name|
-          events_by_date << [debates_by_name[name].last.date, name]
-        end
-        events_by_date = Bill::sort_events_by_date events_by_date
+  def votes_in_groups_by_name
+    in_groups_by_name = debates_in_groups_by_name
+    get_votes_by_name in_groups_by_name
+  end
+
+  def votes_by_name
+    if has_debates?
+      in_groups_by_name = debates_in_groups_by_name
+      votes_by_name = get_votes_by_name in_groups_by_name
+      return in_groups_by_name, votes_by_name
+    else
+      return nil, nil
+    end
+  end
+
+  def have_votes?
+    votes_by_name = votes_in_groups_by_name
+    have_votes = false
+    bill_events.each do |bill_event|
+      votes = votes_by_name.blank? ? nil : votes_by_name[bill_event.name]
+      have_votes = (votes && !votes.empty?) || bill_event.is_reading_before_nov_2005?
+      break if have_votes
+    end
+    have_votes
+  end
+
+  def debates_by_name_names_votes_by_name
+    in_groups_by_name, votes_by_name = self.votes_by_name
+    return in_groups_by_name, votes_by_name
+  end
+
+  def is_missing_votes?
+    missing_votes = false
+    bill_events.each do |bill_event|
+      if bill_event.is_reading_before_nov_2005?
+        missing_votes = true
+        break
       end
     end
-    return events_by_date, debates_by_name, names, votes_by_name
+    missing_votes
+  end
+
+  def is_first_bill_event? bill_event
+    bill_event == bill_events.last
+  end
+
+  def top_level_bill_events
+    events = bill_events.compact # copy bill_events
+    events.delete_if {|e| e.source && !e.source.is_a?(Debate) }
+    events = bill_events if events.empty?
+    events = events.reverse.in_groups_by(&:name).collect(&:first)
   end
 
   def events_by_date
@@ -306,9 +348,9 @@ class Bill < ActiveRecord::Base
       debate_count + debate_topics.select {|t| t.debate.publication_status == publication_status }.size
     end
 
-    def get_votes_by_name names, debates_by_name
-      names.inject({}) do |by_name, name|
-        debate = debates_by_name[name].first
+    def get_votes_by_name debates_in_groups_by_name
+      debates_in_groups_by_name.inject({}) do |by_name, list|
+        debate = list.first
         votes = debate.votes.select { |v| v and v.question.include?('be now read') }
         if votes.empty?
           votes = debate.votes.select { |v| v and v.result.include?('Bill referred') }
@@ -335,7 +377,7 @@ class Bill < ActiveRecord::Base
             end
           end
         end
-        by_name[name] = votes.empty? ? nil : votes
+        by_name[debate.normalized_name] = votes.empty? ? nil : votes
         by_name
       end
     end

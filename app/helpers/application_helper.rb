@@ -520,7 +520,7 @@ module ApplicationHelper
 
   def tidy_excerpt text, term, chars
     text = excerpt text, term, chars
-    text.gsub(/\.\.\.[A-Za-z0-9,\.\?']*[ -]/, '... ').gsub(/ [A-Za-z0-9]*\.\.\./, ' ...')
+    text.gsub(/\.\.\.[A-Za-z0-9,\.\?']*[ -]/, '... ').gsub(/ [A-Za-z0-9]*\.\.\./, ' ...') # /
   end
 
   def add_term text, texts, char_count, term

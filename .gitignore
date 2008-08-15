@@ -3,6 +3,7 @@ doc
 *.log
 *.db
 *.sqlite3
+*.htm
 .DS_Store
 *~
 .autotest
@@ -23,3 +24,15 @@ vendor/plugins/css_graphs
 public/sitemap_*
 config/environments/production.rb
 config/rugalytics.yml
+coverage
+db/members.yml
+spec/rcov.opts
+config/initializers/kawaii.rb
+config/kawaii.yml
+lib/too_cute
+lib/kawaii_authentication.rb
+app/controllers/kawaii_controller.rb
+app/views/kawaii
+app/views/layouts/kawaii.html.erb
+public/javascripts/kawaii
+public/stylesheets/kawaii

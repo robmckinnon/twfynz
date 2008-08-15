@@ -3,9 +3,10 @@ class NzlEvent < ActiveRecord::Base
   belongs_to :about, :polymorphic => true
 
   before_validation_on_create :populate_publication_date, :populate_description_data
-  after_create :clean_cache
+  after_create :create_bill_event, :clean_cache
 
   class << self
+
     def create_from params
       publication_date = NzlEvent.parse_pub_date params[:pub_date]
       existing = NzlEvent.find_all_by_title(params[:title])
@@ -88,6 +89,7 @@ class NzlEvent < ActiveRecord::Base
     def pub_date
       @pub_date
     end
+
     def pub_date= pub_date
       @pub_date = pub_date
     end
@@ -102,6 +104,11 @@ class NzlEvent < ActiveRecord::Base
       Time.parse(pub_date.sub(' NZST',''))
     end
 
+    def create_bill_event
+      event = BillEvent.create_from_nzl_event(self)
+      event.save! if event
+    end
+
     def clean_cache
       if about_type == 'Bill' && about
         bill = about
@@ -109,6 +116,7 @@ class NzlEvent < ActiveRecord::Base
       end
     end
 public
+
     def populate_bill
       if self.about_type == 'Bill' && about_id.nil?
         bills = Bill.find_all_by_plain_bill_name_and_year(self.title, self.year)
@@ -138,7 +146,7 @@ public
       version = event.respond_to?(:version) ? event.version : nil
       return unless version
       if (match = /(.+)\s+from the\s+(.+)\s+on\s+(.+)/.match version)
-        self.version_stage = match[1].strip.downcase
+        self.version_stage = match[1].strip.downcase.squeeze(' ')
         committee_name = match[2].strip
         self.version_committee = committee_name
         if (committee = Committee.from_name(committee_name))

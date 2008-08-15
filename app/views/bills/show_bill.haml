@@ -1,6 +1,7 @@
 - @title = about_title(@bill)
 - is_production_env = (RAILS_ENV == 'production')
 - @javascript = 'feeds' if is_production_env
+- @atom = 'show_bill_atom' unless is_production_env
 - cache do
   #primarycontainer
     = render :partial => 'bill_description', :object => @bill
@@ -9,7 +10,7 @@
         There have been
         = link_to "#{@submissions_count} submissions", show_bill_submissions_url(:bill_url => @bill.url)
         on this bill.
-    = render :partial => 'bill_events', :object => @events_by_date, :locals => { :debates_by_name => @debates_by_name, :votes_by_name => @votes_by_name }
+    = render :partial => 'bill_events', :object => @top_level_bill_events
     - if is_production_env
       #news_feed
         .hfeed

@@ -64,7 +64,6 @@ describe Bill do
           end
         end
       end
-
     end
 
     describe 'when plain name matches' do
@@ -107,7 +106,6 @@ describe Bill do
   end
 
   describe 'with introduction date' do
-
     it 'should have date of earliest recorded activity equal to introduction date' do
       bill = new_bill
       date = bill_params[:introduction]
@@ -128,7 +126,6 @@ describe Bill do
   end
 
   describe 'unique url identifier' do
-
     it 'should be generated on create if none exists' do
       bill = new_bill :bill_name => 'Social Security (Long-term Residential Care) Amendment Bill'
       bill.url.should_not be_nil
@@ -164,7 +161,6 @@ describe Bill do
   end
 
   describe "on creation" do
-
     describe 'when has valid attributes' do
       it 'should be valid' do
         bill = new_bill
@@ -319,7 +315,6 @@ describe Bill do
   end
 
   describe 'when formerly part of another bill' do
-
     assert_model_belongs_to :formerly_part_of
 
     it 'should have reference to former part of bill' do
@@ -333,7 +328,6 @@ describe Bill do
   end
 
   describe 'when divided into other bills' do
-
     assert_model_has_many :divided_into_bills
 
     it 'should have reference to divided into bills' do
@@ -348,7 +342,6 @@ describe Bill do
 
       Bill.delete_all
     end
-
   end
 
   describe "on update" do
@@ -378,6 +371,10 @@ describe Bill do
       titles.include?(nzl_events(:two).title).should be_true
       titles.include?(nzl_events(:one).title).should be_true
     end
+  end
+
+  describe 'when asked for bill events' do
+    assert_model_has_many :bill_events
   end
 
   describe 'when asked for party in charge' do
@@ -460,7 +457,6 @@ describe Bill do
   end
 
   describe 'when finding bills from text' do
-
     def check_bills billname1, and_the, billname2
       date = mock('date')
       bill1 = mock('bill1')
@@ -484,6 +480,45 @@ describe Bill do
 
     it 'should ignore bills joined by "/" character' do
       check_bills = 'Judicature Amendment Bill (No 2)', ',', 'Te Ture Whenua Maori Amendment Bill (No 2) / Maori Land Amendment Bill (No 2)'
+    end
+  end
+
+  describe 'bill with debates' do
+    before do
+      @bill = Bill.new
+      @debate = mock('debate')
+      @debates = [@debate]
+      @bill.stub!(:debates).and_return @debates
+    end
+
+    describe 'when asked if it has debates' do
+      it 'should return true' do
+        @bill.has_debates?.should be_true
+      end
+    end
+    describe 'when asked for debates in groups by name' do
+      it 'should return debates in groups by name' do
+        debates_in_groups_by_name = mock('debates_in_groups_by_name')
+        Debate.should_receive(:debates_in_groups_by_name).with(@debates).and_return debates_in_groups_by_name
+        @bill.debates_in_groups_by_name.should == debates_in_groups_by_name
+      end
+    end
+  end
+
+  describe 'bill without debates' do
+    before do
+      @bill = Bill.new
+      @bill.stub!(:debates).and_return []
+    end
+    describe 'when asked if it has debates' do
+      it 'should return false' do
+        @bill.has_debates?.should be_false
+      end
+    end
+    describe 'when asked for debates in groups by name' do
+      it 'should return an empty array' do
+        @bill.debates_in_groups_by_name.should == []
+      end
     end
   end
 end

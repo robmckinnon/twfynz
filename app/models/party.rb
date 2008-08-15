@@ -3,7 +3,7 @@ class Party < ActiveRecord::Base
   has_many :mps, :foreign_key => 'member_of_id'
 
   has_many :vote_casts
-  has_many :votes, :through => :vote_cast
+  has_many :votes, :through => :vote_casts
 
   def self.from_vote_name name
     party = Party.find_by_vote_name(name)

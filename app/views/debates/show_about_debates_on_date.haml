@@ -3,20 +3,19 @@
   .debates
     - if (not(@date) and @about and @about.respond_to? :description)
       %p= @about.description
-    - if not @debates_by_name
+    - if not @debates_in_groups_by_name
       %p No debates found.
-    - elsif @debates_by_name.size == 0
+    - elsif @debates_in_groups_by_name.empty?
       = "<p>No #{link_to 'debates', :action => 'index'} found #{'on' if @date.day} #{'in' unless @date.day} #{@date.year}#{'-'+@date.month if @date.month}#{'-'+@date.day if @date.day}.</p>"
     - else
       %ul.linklist
-        - @names.each do |name|
-          - debates = @debates_by_name[name]
+        - @debates_in_groups_by_name.each do |debates|
           - debates = debates.reverse if (debates.size > 0 and (not debates.first.is_a? DebateAlone) and (not debates.first.about.is_a? Portfolio))
           - many = debates.size > 1
           - if many
             - debates.each { |d| d.name = d.name.sub(d.name.split('—')[0]+'—', '') }
             %li
-              %span= name
+              %span= debates.first.normalized_name
               %ul.linklist
                 - if debates.first.is_a? SubDebate
                   - debates.each do |debate|
