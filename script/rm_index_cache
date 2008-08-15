@@ -1,0 +1,5 @@
+date >> /var/www/twfynz/log/cron.log
+echo 'rm /var/www/twfynz/tmp/cache/views/theyworkforyou.co.nz/index.cache' >> /var/www/twfynz/log/cron.log
+rm /var/www/twfynz/tmp/cache/views/theyworkforyou.co.nz/index.cache
+wget http://theyworkforyou.co.nz/
+rm index.html
