@@ -318,6 +318,7 @@ class Bill < ActiveRecord::Base
     return unless ActionController::Base.perform_caching
 
     uncache "#{Debate::CACHE_ROOT}/bills/#{url}.cache"
+    uncache "#{Debate::CACHE_ROOT}/bills/#{url}.atom.atom.cache"
 
     if referred_to_committee
       uncache "#{Debate::CACHE_ROOT}/committees/#{referred_to_committee.url}.cache"
@@ -327,6 +328,7 @@ class Bill < ActiveRecord::Base
       uncache "#{Debate::CACHE_ROOT}/mps/#{member_in_charge.id_name}.cache"
     end
     uncache "#{Debate::CACHE_ROOT}/bills.cache"
+    uncache "#{Debate::CACHE_ROOT}/bills.atom.atom.cache"
   end
 
   protected

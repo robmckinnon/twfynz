@@ -6,6 +6,7 @@ class BillEvent < ActiveRecord::Base
   validates_presence_of :name
 
   after_create :log_creation
+  after_save :expire_cached_pages
 
   class << self
 
@@ -145,5 +146,9 @@ class BillEvent < ActiveRecord::Base
 
   def log_creation
     puts "created: #{self.inspect}"
+  end
+
+  def expire_cached_pages
+    bill.expire_cached_pages
   end
 end
