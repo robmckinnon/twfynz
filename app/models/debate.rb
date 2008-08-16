@@ -80,7 +80,7 @@ class Debate < ActiveRecord::Base
   COMMON_WORDS_HASH = COMMON_WORDS.inject({}) {|hash, value| hash[value] = true; hash}
 
   WORDLE_IGNORE = ['House', 'Mr', 'Dr', /[^~]Government[^~]/, /[^~]Minister[^~]/,
-    /\sbill[^a-z~]/, /[^~]Bill[^a-z~]/, /point~of~order/i, /[^~]member[^~],
+    /\sbill[^a-z~]/, /[^~]Bill[^a-z~]/, /point~of~order/i, /[^~]member[^~]/,
     /New~Zealand[^a-z~]/]
 
   class << self
