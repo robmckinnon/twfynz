@@ -9,12 +9,18 @@ class Committee < ActiveRecord::Base
 
   before_validation_on_create :default_former
 
-  def Committee::from_name name
-    name = name.gsub(' Committee', '')
-    find(:all).select do |c|
-      committee = c.committee_name
-      committee == name || committee.to_latin == name
-    end.first
+  class << self
+    def from_name name
+      name = name.gsub(' Committee', '')
+      find(:all).select do |c|
+        committee = c.committee_name
+        committee == name || committee.to_latin == name
+      end.first
+    end
+
+    def all_committee_names
+      all.collect(&:full_committee_name).sort
+    end
   end
 
   def full_name

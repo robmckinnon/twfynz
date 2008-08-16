@@ -7,6 +7,10 @@ class NzlEvent < ActiveRecord::Base
 
   class << self
 
+    def all_act_names
+      find_all_by_information_type('act').collect(&:title).compact.sort.uniq
+    end
+
     def create_from params
       publication_date = NzlEvent.parse_pub_date params[:pub_date]
       existing = NzlEvent.find_all_by_title(params[:title])

@@ -21,9 +21,131 @@ class Debate < ActiveRecord::Base
       prime_ministers_statement debate_on_budget_policy_statement offices_of_parliament
       state_opening officers_of_parliament reinstatement_of_business commission_opening_of_parliament]
 
-  MONTHS_LC = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec']
+  MONTHS_LC = %w[jan feb mar apr may jun jul aug sep oct nov dec]
+
+  WORD_JOIN = [
+      ['Prime Minister', 'Prime~Minister'],
+      ['New Zealand First Party', 'New~Zealand~First~Party'],
+      ['New Zealand First', 'New~Zealand~First'],
+      ['New Zealand', 'New~Zealand'],
+      ['Madam Speaker', 'Madam~Speaker'],
+      ['Labour Party', 'Labour~Party'],
+      ['National Party', 'National~Party'],
+      ['Māori Party', 'Māori~Party'],
+      ['Green Party', 'Green~Party'],
+      ['United Future', 'United~Future'],
+      ['point of order', 'point~of~order'],
+      ['question time', 'question~time'],
+      ['seek leave to table', 'seek~leave~to~table'],
+      ['Leave is sought to table', 'Leave~is~sought~to~table'],
+      ['There is no objection', 'There~is~no~objection'],
+      ['There is objection', 'There~is~objection'],
+      ['Is there any objection','Is~there~any~objection'],
+      ['court order','court~order'],
+      ['legal services','legal~services'],
+      ['management system','management~system'],
+      ['free-trade agreement','free-trade~agreement'],
+      ['Māori Trustee','Māori~Trustee'],
+      ['supports this legislation','supports~this~legislation'],
+      ['opposes this legislation','opposes~this~legislation'],
+      ['waste minimisation','waste~minimisation'],
+      ['climate change','climate~change'],
+      ['John Key','John~Key'],
+      ['Winston Peters','Winston~Peters'],
+      ['Ministry of ','Ministry~of~']
+  ]
+
+  COMMON_WORDS = %w[a able about absolutely ago actually after again against all
+  already also always am an and another answer any anything are around as ask asked at
+  back be because been before being believe best better between bit both but by
+  came can cannot case certainly clear come confirm could course
+  day did do does doing done down during end even every example
+  fact first for forward from further
+  get getting give given go going good got great
+  had has have having he hear heard
+  her here him his how i if important in including into is it its just
+  know knows last leave led like long look lot
+  made make making many matter matters may me might more most much must my
+  need never new next no not now number of off on one only
+  or other our out over own part particular particularly
+  person point provide put raise really received right question questions quite
+  s said same say saying says see seen select set she should since
+  so some something still such sure take taken tell than that
+  the their them then there these they thing things think this those through time to
+  today told too two under understand up us use used very
+  want was way we well were went what when where whether which
+  who why will with within work would year yes yet you your
+  te ki ka e o ko ana atu mai ia kei kia]
+
+  COMMON_WORDS_HASH = COMMON_WORDS.inject({}) {|hash, value| hash[value] = true; hash}
+
+  WORDLE_IGNORE = ['House', 'Mr', 'Dr', /[^~]Government[^~]/, /[^~]Minister[^~]/,
+    /\sbill[^a-z~]/, /[^~]Bill[^a-z~]/, /point~of~order/i, /[^~]member[^~],
+    /New~Zealand[^a-z~]/]
 
   class << self
+
+    def wordlize text
+      text.gsub(/[^A-Za-z0-9]/,' ').gsub(' ','~').squeeze('~').chomp('~')
+    end
+
+    def wordlize_list text, list
+      list.each { |item| text.gsub!(item, wordlize(item))}
+    end
+
+    def wordle_text_for_date date
+      date = Date.parse(date)
+      debates = Debate.find_all_by_date(date, :include => :contributions)
+      remove_duplicates(debates)
+      text = debates.collect(&:wordle_text).join("\n")
+      WORD_JOIN.each { |words,phrase| text.gsub!(words, phrase) }
+
+      wordlize_list text, Committee.all_committee_names
+      wordlize_list text, Minister.all_minister_titles
+      wordlize_list text, (Portfolio.all_portfolio_names << 'Social Development')
+      wordlize_list text, Bill.all_bill_names
+
+      NzlEvent.all_act_names.each do |act|
+        act_without_year = act[/([^\d]+)\s/,1]
+        text.gsub!(act, wordlize(act_without_year))
+        text.gsub!(act_without_year, wordlize(act_without_year))
+      end
+
+      WORDLE_IGNORE.each { |ignore| text.gsub!(ignore, ' ')}
+      COMMON_WORDS.each do |common|
+        text.gsub!(/\s#{common}[^a-z~]/i,' ')
+      end
+
+      text = text.split(' ').select {|word| !COMMON_WORDS_HASH[word.downcase] }.join(' ')
+      text.gsub!('’s', '')
+      text.gsub!(' ngā ',' ')
+      text.gsub!(' nā ',' ')
+      text.gsub!(' rā ',' ')
+      top_frequency = top_word_frequency(text)
+
+      text.gsub!(/\$([\d\.?]+)\s([m|b]illion)/, '$\1~\2')
+      text.gsub!(/(\d+)\s((month|year|percent|week)s?)/, '\1~\2')
+      text.gsub!(' and ',' ')
+      date_emphasis = Array.new(frequency_for_date(top_frequency), "#{date.day}~#{mm_to_mmm(date.month).capitalize}~#{date.year}").join(' ')
+      site_emphasis = Array.new(frequency_for_site_name(top_frequency), 'TheyWorkForYou.co.nz').join(' ')
+      "#{text.squeeze(' ')} #{date_emphasis} #{site_emphasis}"
+    end
+
+    def top_word_frequency text
+      words = text.to_latin.to_s.split(/[^a-zA-Z~]/)
+      freqs = Hash.new(0)
+      words.each { |word| freqs[word] += 1 unless word.blank? || COMMON_WORDS_HASH[word.downcase] }
+      freqs = freqs.sort_by {|x,y| y }.reverse
+      freqs[0][1]
+    end
+
+    def frequency_for_date top_frequency
+      (top_frequency * 0.6)
+    end
+
+    def frequency_for_site_name top_frequency
+      (top_frequency * 0.5)
+    end
 
     def recreate_url_slugs!
       find(:all).each {|d| d.url_slug = nil; d.url_category = nil; d.save!}
@@ -237,6 +359,15 @@ class Debate < ActiveRecord::Base
       debates = Debate.find_by_date date.year, date.month, nil
       puts 'found: '+debates.size.to_s
       debates.each { |d| d.expire_cached_pages }
+    end
+  end
+
+  def wordle_text
+    if contributions
+      non_procedural = contributions.select{ |c| !c.is_a? Procedural }
+      non_procedural.collect {|c| c.text.gsub(/<[^<]+>/,' ').squeeze(' ').strip }.join("\n\n")
+    else
+      ''
     end
   end
 

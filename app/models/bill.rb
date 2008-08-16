@@ -34,6 +34,10 @@ class Bill < ActiveRecord::Base
 
   class << self
 
+    def all_bill_names
+      Bill.all.collect(&:bill_name).sort.uniq.reverse
+    end
+
     def bills_from_text_and_date text, date
       bill_text = text.gsub(/(\d)\), Te/, '\1), the Te')
       bill_text = bill_text.gsub(/Bill( \([^\)]+\))? and the/,'Bill\1, and the')

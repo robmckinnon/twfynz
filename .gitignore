@@ -15,6 +15,7 @@ schema.rb
 public/stylesheets/default.css
 public/stylesheets/print.css
 data
+wordle.txt
 public/images
 mongrel_cluster.yml
 db/current_bills.yml

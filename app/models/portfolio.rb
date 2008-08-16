@@ -23,6 +23,10 @@ class Portfolio < ActiveRecord::Base
         [p.full_name, p.questions_asked_count]
       end
     end
+
+    def all_portfolio_names
+      Portfolio.all.collect(&:portfolio_name).sort
+    end
   end
 
   def full_name
