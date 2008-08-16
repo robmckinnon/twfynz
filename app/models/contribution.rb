@@ -115,7 +115,10 @@ class Contribution < ActiveRecord::Base
         end
       end
     end
+  end
 
+  def wordle_text
+    text ? text.gsub(/<[^<]+>/,' ').squeeze(' ').strip : ''
   end
 
   def first_sentence

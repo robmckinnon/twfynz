@@ -52,7 +52,9 @@ class Debate < ActiveRecord::Base
       ['climate change','climate~change'],
       ['John Key','John~Key'],
       ['Winston Peters','Winston~Peters'],
-      ['Ministry of ','Ministry~of~']
+      ['Ministry of ','Ministry~of~'],
+      ['Ministry for the ', 'Ministry~for~the~'],
+      ['State-owned enterprises','State-owned~enterprises']
   ]
 
   COMMON_WORDS = %w[a able about absolutely ago actually after again against all
@@ -64,11 +66,11 @@ class Debate < ActiveRecord::Base
   get getting give given go going good got great
   had has have having he hear heard
   her here him his how i if important in including into is it its just
-  know knows last leave led like long look lot
+  know knows last leave led like little long look lot
   made make making many matter matters may me might more most much must my
-  need never new next no not now number of off on one only
+  need never new next no not nothing now number of off on one only
   or other our out over own part particular particularly
-  person point provide put raise really received right question questions quite
+  person people point provide put raise really received right question questions quite
   s said same say saying says see seen select set she should since
   so some something still such sure take taken tell than that
   the their them then there these they thing things think this those through time to
@@ -80,8 +82,20 @@ class Debate < ActiveRecord::Base
   COMMON_WORDS_HASH = COMMON_WORDS.inject({}) {|hash, value| hash[value] = true; hash}
 
   WORDLE_IGNORE = ['House', 'Mr', 'Dr', /[^~]Government[^~]/, /[^~]Minister[^~]/,
-    /\sbill[^a-z~]/, /[^~]Bill[^a-z~]/, /point~of~order/i, /[^~]member[^~]/,
-    /New~Zealand[^a-z~]/]
+    /\sbill[^a-z~]/, /[^~]Bill[^a-z~]/, /point~of~order/i, /[^a-z~]member[^~]/,
+    /New~Zealand[^a-z~]/,
+    'New~Zealand~First~Party',
+    'New~Zealand~First',
+    'Madam~Speaker',
+    'Labour~Party',
+    'Labour',
+    'National~Party',
+    'National',
+    'Māori~Party',
+    'Green~Party',
+    'United~Future',
+    'ACT',
+    'New~Zealanders']
 
   class << self
 
@@ -98,12 +112,19 @@ class Debate < ActiveRecord::Base
       debates = Debate.find_all_by_date(date, :include => :contributions)
       remove_duplicates(debates)
       text = debates.collect(&:wordle_text).join("\n")
+      date = "#{date.day}~#{mm_to_mmm(date.month).capitalize}~#{date.year}"
+      relative_frequency = 0.6
+      wordlize_text text, date, relative_frequency
+    end
+
+    def wordlize_text text, addition=nil, relative_frequency=nil
       WORD_JOIN.each { |words,phrase| text.gsub!(words, phrase) }
 
       wordlize_list text, Committee.all_committee_names
       wordlize_list text, Minister.all_minister_titles
-      wordlize_list text, (Portfolio.all_portfolio_names << 'Social Development')
+      wordlize_list text, (Portfolio.all_portfolio_names << 'Social Development' << 'Agriculture and Forestry')
       wordlize_list text, Bill.all_bill_names
+      wordlize_list text, Mp.all_mp_names
 
       NzlEvent.all_act_names.each do |act|
         act_without_year = act[/([^\d]+)\s/,1]
@@ -126,9 +147,9 @@ class Debate < ActiveRecord::Base
       text.gsub!(/\$([\d\.?]+)\s([m|b]illion)/, '$\1~\2')
       text.gsub!(/(\d+)\s((month|year|percent|week)s?)/, '\1~\2')
       text.gsub!(' and ',' ')
-      date_emphasis = Array.new(frequency_for_date(top_frequency), "#{date.day}~#{mm_to_mmm(date.month).capitalize}~#{date.year}").join(' ')
-      site_emphasis = Array.new(frequency_for_site_name(top_frequency), 'TheyWorkForYou.co.nz').join(' ')
-      "#{text.squeeze(' ')} #{date_emphasis} #{site_emphasis}"
+      additional_emphasis = Array.new(top_frequency*relative_frequency, addition).join(' ') if addition && relative_frequency
+      site_emphasis = Array.new(frequency_for_site_name(top_frequency), 'made~by~TheyWorkForYou.co.nz').join(' ')
+      "#{text.squeeze(' ')} #{additional_emphasis} #{site_emphasis}"
     end
 
     def top_word_frequency text
@@ -136,11 +157,7 @@ class Debate < ActiveRecord::Base
       freqs = Hash.new(0)
       words.each { |word| freqs[word] += 1 unless word.blank? || COMMON_WORDS_HASH[word.downcase] }
       freqs = freqs.sort_by {|x,y| y }.reverse
-      freqs[0][1]
-    end
-
-    def frequency_for_date top_frequency
-      (top_frequency * 0.6)
+      (freqs[0][1] + freqs[1][1]) / 2
     end
 
     def frequency_for_site_name top_frequency
@@ -365,7 +382,7 @@ class Debate < ActiveRecord::Base
   def wordle_text
     if contributions
       non_procedural = contributions.select{ |c| !c.is_a? Procedural }
-      non_procedural.collect {|c| c.text.gsub(/<[^<]+>/,' ').squeeze(' ').strip }.join("\n\n")
+      non_procedural.collect(&:wordle_text).join("\n\n")
     else
       ''
     end

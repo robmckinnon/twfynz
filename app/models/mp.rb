@@ -17,6 +17,110 @@ class Mp < ActiveRecord::Base
 
   # before_save :set_wikipedia
 
+  class << self
+
+    def all_mp_names
+      all.collect {|mp| "#{mp.alt.blank? ? mp.first : mp.alt} #{mp.last}" }
+    end
+
+    def from_vote_name name
+      name = 'Roy E' if name == 'E Roy'
+      name_downcase = name.downcase.strip.gsub('’',"'")
+      mps = Mp.find(:all)
+      matching = mps.select {|mp| mp.last.downcase == name_downcase }
+      if matching.size == 0
+        matching = mps.select {|mp| (mp.last.downcase + ' ' + mp.first.downcase[0..0]) == name_downcase}
+        if matching.size == 0
+          matching = mps.select {|mp| (mp.last.downcase + mp.first.downcase[0..0]) == name_downcase}
+        end
+      end
+
+      if matching.size == 1
+        return matching[0]
+      elsif matching.empty?
+        raise 'no matching MP for vote name: ' + name
+      else
+        matching = matching.select {|mp| !mp.former}
+        if matching.size == 1
+          return matching[0]
+        else
+          raise 'more than one matching MP for vote name: ' + name
+        end
+      end
+    end
+
+    def from_name speaker_name
+      mp = nil
+      unless speaker_name.blank?
+        name = String.new speaker_name
+        TITLES.each {|t| name.gsub!(t+' ', '')}
+        name.strip!
+        speaker = name.split('(')[0].downcase.strip.gsub('’',"'")
+
+        unless speaker[/speaker|member|chairperson/]
+          Mp.find(:all).each do |m|
+            if ((m.downcase_name == speaker) or
+                (m.alt_downcase_name and m.alt_downcase_name == speaker) or
+                (m.downcase_name.gsub(' ','') == speaker) or
+                (m.alt_downcase_name and m.alt_downcase_name.sub(' ','') == speaker))
+              mp = m
+              break
+            end
+          end
+        end
+
+        if (speaker == 'madam speaker' or speaker == 'madam speaker-elect' or speaker == 'madsam speaker')
+          mp = Mp.find_by_first_and_last 'Margaret','Wilson'
+
+        elsif speaker == 'prime minister'
+          mp = Mp.find_by_first_and_last 'Helen','Clark'
+
+        elsif speaker == 'deputy prime minister'
+          mp = Mp.find_by_first_and_last 'Michael','Cullen'
+
+        elsif speaker == 'mr deputy speaker'
+          mp = Mp.find_by_first_and_last 'Clem','Simich'
+
+        elsif ((speaker == 'the assistant speaker' or
+            speaker == 'the chairperson' or
+            speaker == 'the temporary speaker') and name.include?('('))
+          mp = Mp.from_name name.split('(')[1].chop.strip
+        end
+      end
+      mp
+    end
+
+    def all_by_last
+      @mps = Mp.find(:all, :order => "last", :include => :party)
+    end
+
+    def all_by_first
+      @mps = Mp.find(:all, :order => "first", :include => :party)
+    end
+
+    def all_by_electorate
+      mps = Mp.find(:all, :order => "electorate", :include => :party)
+      list_mps = mps.select {|mp| mp.electorate == 'List'}.sort{|a,b| a.last <=> b.last}
+
+      mps = mps.select {|mp| mp.electorate? } - list_mps
+      @mps = (mps + list_mps)
+    end
+
+    def all_by_party
+      mps = Mp.find(:all, :include => :party)
+      mps = mps.select {|m| m.party}
+      mps_by_party = mps.group_by {|m| m.party.short }
+      parties = mps_by_party.keys.sort
+
+      mps = []
+      parties.each do |party|
+        mps << mps_by_party[party]
+      end
+      @mps = mps.flatten
+      # @mps = Mp.find(:all, :order => "member_of_id")
+    end
+  end
+
   def anchor(date)
     party = party_on_date(date)
     raise date.to_s + ' ' + first + ' ' + last + ' ' + former.to_s unless party
@@ -25,103 +129,6 @@ class Mp < ActiveRecord::Base
 
   def set_wikipedia
     self.wikipedia_url = "http://en.wikipedia.org/wiki/#{first}_#{last.downcase.titleize}" unless !self.wikipedia_url.blank?
-  end
-
-  def self.from_vote_name name
-    name = 'Roy E' if name == 'E Roy'
-    name_downcase = name.downcase.strip.gsub('’',"'")
-    mps = Mp.find(:all)
-    matching = mps.select {|mp| mp.last.downcase == name_downcase }
-    if matching.size == 0
-      matching = mps.select {|mp| (mp.last.downcase + ' ' + mp.first.downcase[0..0]) == name_downcase}
-      if matching.size == 0
-        matching = mps.select {|mp| (mp.last.downcase + mp.first.downcase[0..0]) == name_downcase}
-      end
-    end
-
-    if matching.size == 1
-      return matching[0]
-    elsif matching.empty?
-      raise 'no matching MP for vote name: ' + name
-    else
-      matching = matching.select {|mp| !mp.former}
-      if matching.size == 1
-        return matching[0]
-      else
-        raise 'more than one matching MP for vote name: ' + name
-      end
-    end
-  end
-
-  def self.from_name speaker_name
-    mp = nil
-    unless speaker_name.blank?
-      name = String.new speaker_name
-      TITLES.each {|t| name.gsub!(t+' ', '')}
-      name.strip!
-      speaker = name.split('(')[0].downcase.strip.gsub('’',"'")
-
-      unless speaker[/speaker|member|chairperson/]
-        Mp.find(:all).each do |m|
-          if ((m.downcase_name == speaker) or
-              (m.alt_downcase_name and m.alt_downcase_name == speaker) or
-              (m.downcase_name.gsub(' ','') == speaker) or
-              (m.alt_downcase_name and m.alt_downcase_name.sub(' ','') == speaker))
-            mp = m
-            break
-          end
-        end
-      end
-
-      if (speaker == 'madam speaker' or speaker == 'madam speaker-elect' or speaker == 'madsam speaker')
-        mp = Mp.find_by_first_and_last 'Margaret','Wilson'
-
-      elsif speaker == 'prime minister'
-        mp = Mp.find_by_first_and_last 'Helen','Clark'
-
-      elsif speaker == 'deputy prime minister'
-        mp = Mp.find_by_first_and_last 'Michael','Cullen'
-
-      elsif speaker == 'mr deputy speaker'
-        mp = Mp.find_by_first_and_last 'Clem','Simich'
-
-      elsif ((speaker == 'the assistant speaker' or
-          speaker == 'the chairperson' or
-          speaker == 'the temporary speaker') and name.include?('('))
-        mp = Mp.from_name name.split('(')[1].chop.strip
-      end
-    end
-    mp
-  end
-
-  def self.all_by_last
-    @mps = Mp.find(:all, :order => "last", :include => :party)
-  end
-
-  def self.all_by_first
-    @mps = Mp.find(:all, :order => "first", :include => :party)
-  end
-
-  def self.all_by_electorate
-    mps = Mp.find(:all, :order => "electorate", :include => :party)
-    list_mps = mps.select {|mp| mp.electorate == 'List'}.sort{|a,b| a.last <=> b.last}
-
-    mps = mps.select {|mp| mp.electorate? } - list_mps
-    @mps = (mps + list_mps)
-  end
-
-  def self.all_by_party
-    mps = Mp.find(:all, :include => :party)
-    mps = mps.select {|m| m.party}
-    mps_by_party = mps.group_by {|m| m.party.short }
-    parties = mps_by_party.keys.sort
-
-    mps = []
-    parties.each do |party|
-      mps << mps_by_party[party]
-    end
-    @mps = mps.flatten
-    # @mps = Mp.find(:all, :order => "member_of_id")
   end
 
   def full_name
@@ -160,6 +167,17 @@ class Mp < ActiveRecord::Base
 
   def bills_in_charge_of
     bills.select { |b| b.current? }
+  end
+
+  def wordle_text
+    name = "#{alt.blank? ? first : alt}~#{last} in~Parliament~says"
+    Debate.wordlize_text unique_contributions.collect(&:wordle_text).join("\n"), name, 1.2
+  end
+
+  def unique_contributions
+    debates = contributions.collect(&:debate).uniq.compact.sort { |a,b| b.date <=> a.date }
+    debates = Debate::remove_duplicates(debates)
+    contributions.select {|c| debates.include? c.debate }
   end
 
   def recent_contributions
