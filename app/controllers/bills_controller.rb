@@ -2,9 +2,9 @@ class BillsController < ApplicationController
 
   caches_action :index, :negatived, :assented, :show_bill, :show_bill_atom
 
-  before_filter :find_bill, :only => [:show_bill, :show_bill_atom]
-
   layout "bills_layout", :except => 'show_bill_atom'
+
+  before_filter :find_bill, :only => [:show_bill, :show_bill_atom]
 
   def index
     @bills_on = true
