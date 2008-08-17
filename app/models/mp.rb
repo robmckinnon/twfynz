@@ -170,7 +170,7 @@ class Mp < ActiveRecord::Base
   end
 
   def wordle_text
-    name = "#{alt.blank? ? first : alt}~#{last} in~Parliament~says"
+    name = "#{alt.blank? ? first : alt}~#{last}~words"
     Debate.wordlize_text unique_contributions.collect(&:wordle_text).join("\n"), name, 1.2
   end
 

@@ -46,6 +46,17 @@ class Debate < ActiveRecord::Base
       ['management system','management~system'],
       ['free-trade agreement','free-trade~agreement'],
       ['Māori Trustee','Māori~Trustee'],
+      ['Federation of Māori Authorities','Federation~of~Māori~Authorities'],
+      ['New Zealand Māori Council','New~Zealand~Māori~Council'],
+      ['Māori Council','Māori~Council'],
+      ['Māori and Pasifika','Māori~and~Pasifika'],
+      ['Māori or Pasifika','Māori~or~Pasifika'],
+      ['Māori Land Court','Māori~Land~Court'],
+      ['Māori Language Act','Māori~Language~Act'],
+      ['Māori Deaf',' Māori~Deaf'],
+      ['Māori Television','Māori~Television'],
+      ['Māori King','Māori~King'],
+      ['Treaty of Waitangi','Treaty~of~Waitangi'],
       ['supports this legislation','supports~this~legislation'],
       ['opposes this legislation','opposes~this~legislation'],
       ['waste minimisation','waste~minimisation'],
@@ -100,7 +111,7 @@ class Debate < ActiveRecord::Base
   class << self
 
     def wordlize text
-      text.gsub(/[^A-Za-z0-9]/,' ').gsub(' ','~').squeeze('~').chomp('~')
+      text.gsub(/[^A-Za-z0-9]/,' ').gsub(' ','~').squeeze('~').chomp('~').sub('M~ori','Māori')
     end
 
     def wordlize_list text, list
@@ -148,7 +159,7 @@ class Debate < ActiveRecord::Base
       text.gsub!(/(\d+)\s((month|year|percent|week)s?)/, '\1~\2')
       text.gsub!(' and ',' ')
       additional_emphasis = Array.new(top_frequency*relative_frequency, addition).join(' ') if addition && relative_frequency
-      site_emphasis = Array.new(frequency_for_site_name(top_frequency), 'made~by~TheyWorkForYou.co.nz').join(' ')
+      site_emphasis = Array.new(frequency_for_site_name(top_frequency), 'data~from~TheyWorkForYou.co.nz').join(' ')
       "#{text.squeeze(' ')} #{additional_emphasis} #{site_emphasis}"
     end
 

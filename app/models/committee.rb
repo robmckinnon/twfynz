@@ -19,7 +19,7 @@ class Committee < ActiveRecord::Base
     end
 
     def all_committee_names
-      all.collect(&:full_committee_name).sort
+      all.collect(&:full_committee_name).sort.collect{|name| name.sub('Maori','Māori')}
     end
   end
 
