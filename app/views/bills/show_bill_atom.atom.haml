@@ -1,0 +1,23 @@
+= %Q|<?xml version="1.0" encoding="UTF-8"?>|
+%feed{ "xml:lang".to_sym => "en-NZ", :xmlns=>"http://www.w3.org/2005/Atom" }
+  %title= "#{@bill.bill_name} | TheyWorkForYou.co.nz"
+  %subtitle= "Track the #{@bill.bill_name}'s progress through New Zealand's Parliament via TheyWorkForYou.co.nz."
+  %id= show_bill_uri(@bill)
+  %link{:rel=>"alternate", :type=>"text/html", :href=>show_bill_uri(@bill)}
+  %link{:rel=>"self", :type=>"application/atom+xml", :href=>"#{show_bill_uri(@bill)}.atom"}
+  %author
+    %name TheyWorkForYou.co.nz
+    %uri http://theyworkforyou.co.nz/
+
+  %rights Creative Commons Attribution-Noncommercial-Share Alike 3.0 New Zealand
+  %link{ :rel=>"license", :type=>"application/rdf+xml", :href=>"http://creativecommons.org/licenses/by-nc-sa/3.0/nz/rdf" }
+  %updated= @bill_events.empty? ? Time.now : @bill_events.first.created_at.xmlschema
+
+  = @bill_events.each do |bill_event|
+    %entry
+      %id= bill_event_atom_id bill_event
+      %published= bill_event.created_at.xmlschema
+      %updated= bill_event.updated_at.xmlschema
+      %link{ :type=>"text/html", :rel=>"alternate", :href=>bill_event_url(bill_event) }
+      %title= "#{@bill.bill_name}-#{bill_event.name}"
+      %content{ :type=>"html" }= h(bill_event_description(bill_event))

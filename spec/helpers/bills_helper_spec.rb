@@ -16,18 +16,18 @@ describe BillsHelper do
       end
 
       def self.reading_description reading
-        %Q|<p>The <a href="url">Web Bill</a> had a #{reading} debate on date.</p><p>More details will be available after Parliament publishes the debate transcript.</p>|
+        %Q|<p>date: The <a href="url">Web Bill</a> had a #{reading} debate.</p><p>More details will be available after Parliament publishes the debate transcript.</p>|
       end
 
       check_notification_description 'Introduction',
-          '<p>The <a href="url">Web Bill</a> was introduced to parliament on date.</p>'
+          '<p>date: The <a href="url">Web Bill</a> was introduced to parliament.</p>'
       check_notification_description 'First Reading', reading_description('first reading')
       check_notification_description 'Second Reading', reading_description('second reading')
       check_notification_description 'Third Reading', reading_description('third reading')
 
-      check_notification_description 'SC Reports', '<p>The select committee report on the <a href="url">Web Bill</a> is due on date.</p>'
+      check_notification_description 'SC Reports', '<p>The select committee report due on date for the <a href="url">Web Bill</a>.</p>'
       check_notification_description 'Submissions Due',
-          '<p>Public submissions are now being invited on the <a href="url">Web Bill</a>.</p><p>Submissions are due by date.</p>'
+          '<p>Public submissions are due by date for the <a href="url">Web Bill</a>.</p>'
     end
 
     describe 'sourced from NZL event' do

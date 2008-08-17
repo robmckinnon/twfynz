@@ -335,6 +335,10 @@ class Bill < ActiveRecord::Base
     uncache "#{Debate::CACHE_ROOT}/bills.atom.atom.cache"
   end
 
+  def id_hash
+    { :bill_url => url }
+  end
+
   protected
 
     def uncache path

@@ -18,17 +18,17 @@ module BillsHelper
   def bill_event_notification_description bill_name, event_name, date, url
     case event_name.downcase.sub(' ','_').to_sym
       when :introduction
-        "<p>The #{link_to bill_name, url} was introduced to parliament on #{date}.</p>"
+        "<p>#{date}: The #{link_to bill_name, url} was introduced to parliament.</p>"
       when :submissions_due
-        "<p>Public submissions are now being invited on the #{link_to bill_name, url}.</p><p>Submissions are due by #{date}.</p>"
+      "<p>Public submissions are due by #{date} for the #{link_to bill_name, url}.</p>"
       when :first_reading, :second_reading, :third_reading
-        "<p>The #{link_to bill_name, url} had a #{event_name.downcase} debate on #{date}.</p><p>More details will be available after Parliament publishes the debate transcript.</p>"
+        "<p>#{date}: The #{link_to bill_name, url} had a #{event_name.downcase} debate.</p><p>More details will be available after Parliament publishes the debate transcript.</p>"
       when :sc_reports
-        "<p>The select committee report on the #{link_to bill_name, url} is due on #{date}.</p>"
+        "<p>The select committee report due on #{date} for the #{link_to bill_name, url}.</p>"
       when :in_committee
-        "<p>The select committee report on the #{link_to bill_name, url} is due on #{date}.</p>"
+        "<p>The select committee report due on #{date} for the #{link_to bill_name, url}.</p>"
       else
-        "#{link_to(event_name, url)} on #{date}."
+        "<p>#{link_to(event_name, url)} on #{date}.</p>"
     end
   end
 
@@ -225,10 +225,32 @@ module BillsHelper
     end
   end
 
+  def make_atom_id_tag bill_event, part=nil
+    "tag:theyworkforyou.co.nz,#{bill_event.date}:#{bill_event.bill.url}/#{part.to_s}#{bill_event.name.downcase.gsub(' ','_')}"
+  end
+
+  def bill_event_atom_id bill_event
+    unless bill_event.source
+      make_atom_id_tag bill_event, 'parliament/'
+    else
+      case bill_event.source
+        when NzlEvent
+          make_atom_id_tag bill_event, 'legislation/'
+        when Debate, SubDebate
+          get_url(bill_event.source)
+        else
+          make_atom_id_tag bill_event
+      end
+    end
+  end
+
+  def show_bill_uri bill
+    show_bill_url(bill, :bill_url => bill.url).sub(/\d+\?bill_url=/,'')
+  end
+
   def bill_event_url bill_event
     unless bill_event.source
-      bill = bill_event.bill
-      show_bill_url(bill, :bill_url => bill.url).sub(/\d+\?bill_url=/,'')
+      show_bill_uri bill_event.bill
     else
       case bill_event.source
         when NzlEvent
