@@ -84,10 +84,11 @@
       #content
         = @content_for_layout
 
-      #elections
-        %p{ :style=>'float:right; margin:2em; margin-right: 2.5em;' }
-          %a{ :href=>"https://secure.elections.org.nz/app/enrol/" }
-            %img{ :src=>"http://www.elections.org.nz/files/elector-hot-button-v2.gif" }
+      - unless @bill
+        #elections
+          %p{ :style=>'float:right; margin:2em; margin-right: 2.5em;' }
+            %a{ :href=>"https://secure.elections.org.nz/app/enrol/" }
+              %img{ :src=>"http://www.elections.org.nz/files/elector-hot-button-v2.gif" }
       #footer
         - if not @home
           - spacer = ' <span class="spacer">|</span> '
