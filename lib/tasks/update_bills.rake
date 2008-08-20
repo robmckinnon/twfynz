@@ -133,8 +133,14 @@ namespace :kiwimp do
   end
 
   def update_bills update_existing=true
-    names, types, refs, urls = get_bill_list
-
+    names, types, refs, urls = [], [], [], []
+    while urls.empty?
+      begin
+        names, types, refs, urls = get_bill_list
+      rescue Exception => e
+        puts 'problem ... trying again'
+      end
+    end
     urls.each_with_index do |url, i|
       name = names[i]
       bill_no = refs[i]

@@ -5,34 +5,41 @@ class Party < ActiveRecord::Base
   has_many :vote_casts
   has_many :votes, :through => :vote_casts
 
-  def self.from_vote_name name
-    party = Party.find_by_vote_name(name)
-    unless party
-      party = Party.find_by_short(name)
+  class << self
+    def from_vote_name name
+      party = find_by_vote_name(name)
+      unless party
+        party = find_by_short(name)
+      end
+      party
     end
-    party
-  end
 
-  def self.all_size_ordered
-    Party.find(:all, :include => :mps).sort {|a,b| b.mps.size <=> a.mps.size}
-  end
+    def all_size_ordered
+      find(:all, :include => :mps).sort {|a,b| b.mps.size <=> a.mps.size}
+    end
 
-  def self.get_party name
-    Party.find(:all, :include => {:mps=>:bills}).select {|p| p.id_name == name}.first
-  end
+    def get_party name
+      find(:all, :include => {:mps=>:bills}).select {|p| p.id_name == name}.first
+    end
 
-  def self.find_all_sorted
-    Party.find(:all).sort{|a,b| b.mp_count <=> a.mp_count}
-  end
+    def find_all_sorted
+      find(:all).sort{|a,b| b.mp_count <=> a.mp_count}
+    end
 
-  def self.mp_count
-    Party.find_all_sorted.collect do |party|
-      [party.short, party.mp_count]
+    def mp_count
+      find_all_sorted.collect do |party|
+        [party.short, party.mp_count]
+      end
+    end
+
+    def colours
+      find_all_sorted.collect {|p| '#'+p.colour}
     end
   end
 
-  def self.colours
-    Party.find_all_sorted.collect {|p| '#'+p.colour}
+  def wordle_text
+    name = "#{short}~words"
+    Debate.wordlize_text mps.collect{|mp| mp.unique_contributions.collect(&:wordle_text)}.flatten.join("\n"), name, 1.1
   end
 
   def mp_count

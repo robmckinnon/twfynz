@@ -106,7 +106,10 @@ class Debate < ActiveRecord::Base
     'Green~Party',
     'United~Future',
     'ACT',
-    'New~Zealanders']
+    'New~Zealanders',
+    'support','public','legislation']
+
+  WORDLE_IGNORE_HASH = WORDLE_IGNORE.inject({}) {|hash, value| hash[value] = true; hash}
 
   class << self
 
@@ -128,16 +131,23 @@ class Debate < ActiveRecord::Base
       wordlize_text text, date, relative_frequency
     end
 
+    COMMITEE_NAMES = Committee.all_committee_names
+    MINISTER_NAMES = Minister.all_minister_titles
+    PORTFOLIO_NAMES = (Portfolio.all_portfolio_names << 'Social Development' << 'Agriculture and Forestry')
+    BILL_NAMES = Bill.all_bill_names
+    ACT_NAMES = NzlEvent.all_act_names
+    MP_NAMES = Mp.all_mp_names
+
     def wordlize_text text, addition=nil, relative_frequency=nil
       WORD_JOIN.each { |words,phrase| text.gsub!(words, phrase) }
 
-      wordlize_list text, Committee.all_committee_names
-      wordlize_list text, Minister.all_minister_titles
-      wordlize_list text, (Portfolio.all_portfolio_names << 'Social Development' << 'Agriculture and Forestry')
-      wordlize_list text, Bill.all_bill_names
-      wordlize_list text, Mp.all_mp_names
+      wordlize_list text, COMMITEE_NAMES
+      wordlize_list text, MINISTER_NAMES
+      wordlize_list text, PORTFOLIO_NAMES
+      wordlize_list text, BILL_NAMES
+      wordlize_list text, MP_NAMES
 
-      NzlEvent.all_act_names.each do |act|
+      ACT_NAMES.each do |act|
         act_without_year = act[/([^\d]+)\s/,1]
         text.gsub!(act, wordlize(act_without_year))
         text.gsub!(act_without_year, wordlize(act_without_year))
@@ -166,7 +176,11 @@ class Debate < ActiveRecord::Base
     def top_word_frequency text
       words = text.to_latin.to_s.split(/[^a-zA-Z~]/)
       freqs = Hash.new(0)
-      words.each { |word| freqs[word] += 1 unless word.blank? || COMMON_WORDS_HASH[word.downcase] }
+      words.each do |word|
+        downcase = word.downcase
+        ignore = word.blank? || COMMON_WORDS_HASH[downcase] || WORDLE_IGNORE_HASH[downcase]
+        freqs[word] += 1 unless ignore
+      end
       freqs = freqs.sort_by {|x,y| y }.reverse
       (freqs[0][1] + freqs[1][1]) / 2
     end
