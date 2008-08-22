@@ -83,8 +83,7 @@
       #menubottom
       #content
         = @content_for_layout
-
-      - unless @bill
+      - unless @bill || @home || @organisation
         #elections
           %p{ :style=>'float:right; margin:2em; margin-right: 2.5em;' }
             %a{ :href=>"https://secure.elections.org.nz/app/enrol/" }
