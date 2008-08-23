@@ -447,6 +447,8 @@ class Debate < ActiveRecord::Base
       end
       duplicate
     end unless slug_text.blank? || self.url_slug
+
+    self.url_slug = 'lange_luxton_falloon_donald' if self.url_slug == 'rt_hon_david_russell_lange_onz_ch_john'
   end
 
   def description

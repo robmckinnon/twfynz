@@ -19,6 +19,8 @@ class DebatesController < ApplicationController
               :redirect_show_bill_debate, :redirect_show_portfolio_debate, :redirect_show_committee_debate,
               :show_portfolio_debates_on_date, :show_committee_debates_on_date, :show_bill_debates_on_date]
 
+  before_filter :redirect_if_required, :only => [:show_debate]
+
   def index
     @recent_bill_debates = BillDebate.recent_grouped
     @recent_debates = Debate.recent
@@ -208,6 +210,14 @@ class DebatesController < ApplicationController
     def load_organisations
       @organisations = Organisation.find(:all)
       @organisation_names = @organisations.collect(&:search_names)
+    end
+
+    def redirect_if_required
+      if params[:url_category] == 'obituaries'
+        if %w[rt_hon_david_russell_lange_onz_ch john_finlay_luxton_qso hon_john_howard_falloon_cnzm rod_david_donald].include?(params[:url_slug])
+          redirect_to get_url_from_hash(params.merge(:url_slug => 'lange_luxton_falloon_donald')), :status => :moved_permanently
+        end
+      end
     end
 
     def validate_date
