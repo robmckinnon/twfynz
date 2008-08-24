@@ -5,9 +5,11 @@
   %h1= %Q[Search results for: #{ @term }#{ result_summary @match_pages, @matches, @count }]
 - if @matches and @matches.length > 0
   - pagination_line = pagination_links(@match_pages, :params => params)
+  - unless pagination_line.blank?
+    %p.pagination_links= pagination_line
   = render :partial => 'debate_match', :collection => @debate_ids, :locals => { :expand => 'false', :debates => @debates, :by_debate => @by_debate, :term => @term.gsub('"','').gsub("'",'') }
   - unless pagination_line.blank?
-    %p= pagination_line
+    %p.pagination_links= pagination_line
 - else
   #debate_search
     - form_tag({:controller => 'debates', :action => :search}, {:method=>"get"}) do

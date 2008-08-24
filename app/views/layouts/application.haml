@@ -57,13 +57,19 @@
       - if @home
         #search-home
           - form_tag({:controller => 'debates', :action => :debate_search}, {:method=>"get"}) do
-            = text_field_tag(:search_term, '', :maxlength=>"100", :size=>"12")
+            - if @term
+              = text_field_tag(:search_term, '', :maxlength=>"100", :size=>"12", :value => @term)
+            - else
+              = text_field_tag(:search_term, '', :maxlength=>"100", :size=>"12")
             = submit_tag "Search", :class => 'submit'
         #headerpic
       - else
         #search
           - form_tag({:controller => 'debates', :action => :debate_search}, {:method=>"get"}) do
-            = text_field_tag(:search_term, '', :maxlength=>"100", :size=>"12")
+            - if @term
+              = text_field_tag(:search_term, '', :maxlength=>"100", :size=>"12", :value => @term)
+            - else
+              = text_field_tag(:search_term, '', :maxlength=>"100", :size=>"12")
             = submit_tag "Search", :class => 'submit'
       #menu
         %ul
@@ -83,11 +89,12 @@
       #menubottom
       #content
         = @content_for_layout
-      - unless @bill || @home || @organisation
-        #elections
-          %p{ :style=>'float:right; margin:2em; margin-right: 2.5em;' }
-            %a{ :href=>"https://secure.elections.org.nz/app/enrol/" }
-              %img{ :src=>"http://www.elections.org.nz/files/elector-hot-button-v2.gif" }
+      - if RAILS_ENV == 'production'
+        - unless @bill || @home || @organisation
+          #elections
+            %p{ :style=>'float:right; margin:2em; margin-right: 2.5em;' }
+              %a{ :href=>"https://secure.elections.org.nz/app/enrol/" }
+                %img{ :src=>"http://www.elections.org.nz/files/elector-hot-button-v2.gif" }
       #footer
         - if not @home
           - spacer = ' <span class="spacer">|</span> '

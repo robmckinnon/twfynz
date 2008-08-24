@@ -6,6 +6,7 @@ class Contribution < ActiveRecord::Base
   belongs_to :mp, :foreign_key => 'spoken_by_id'
 
   before_validation_on_create :populate_spoken_by_id
+  before_validation :populate_date
 
   # acts_as_solr :fields => [:text]
 
@@ -20,11 +21,9 @@ class Contribution < ActiveRecord::Base
 
     def match_by_term term, match_pages
       condition = create_condition(term)
-      sql = 'SELECT * FROM contributions WHERE ' + condition
-      sql += ' ORDER BY spoken_in_id DESC, ' + condition + ' DESC'
-      sql += ' LIMIT ' + match_pages.current.offset.to_s + ',' + match_pages.items_per_page.to_s
-
-      find_by_sql(sql)
+      find(:all, :conditions=> condition, :order=>'date DESC, spoken_in_id DESC',
+          :limit => match_pages.items_per_page.to_s,
+          :offset => match_pages.current.offset)
     end
 
     def search_by_term term
@@ -277,6 +276,10 @@ class Contribution < ActiveRecord::Base
     # Override if needed
     def party_makes_sense? mp
       true
+    end
+
+    def populate_date
+      self.date = spoken_in.date if spoken_in
     end
 
     def populate_spoken_by_id
