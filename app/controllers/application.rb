@@ -38,7 +38,8 @@ class ApplicationController < ActionController::Base
 
   def home
     if is_parlywords_request?
-      render :template => 'parlywords', :layout => 'parlywords'
+      # render :template => 'parlywords', :layout => 'parlywords'
+      render :text => 'coming soon', :layout => false
     else
       begin
         # @months_top_pages = top_content 30
