@@ -11,8 +11,8 @@ describe BillsHelper do
     describe 'sourced from parliament bill page' do
       def self.check_notification_description event_name, expected
         eval %Q|it 'should describe #{event_name} correctly' do
-        bill_event_notification_description(@bill_name, '#{event_name}', @date, @url).should == %Q[#{expected}]
-        end|
+                  helper.bill_event_notification_description(@bill_name, '#{event_name}', @date, @url).should == %Q[#{expected}]
+                end|
       end
 
       def self.reading_description reading

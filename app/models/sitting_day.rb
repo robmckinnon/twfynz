@@ -6,6 +6,10 @@ class SittingDay < ActiveRecord::Base
     Date::today >= last_sitting_date_in_month
   end
 
+  def SittingDay::has_parlywords? date
+    false
+  end
+
   protected
     def SittingDay::last_sitting_date_in_month
       date = Date::today

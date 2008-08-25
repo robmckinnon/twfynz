@@ -1,0 +1,7 @@
+!!! Strict
+- @title = "Parly Words on #{@date_label}"
+- @description = "What was said in New Zealand's Parliament on #{@date_label}?"
+%h1= @title
+
+= image_tag("parlywords/#{@date}_w600_h464.png", :size => '600x464', :class => 'parlywords', :alt => "#{@title}.")
+

@@ -1,0 +1,15 @@
+!!! Strict
+%html
+  %head
+    %meta{ 'http-equiv'.to_sym => "content-type", :content=>"text/html; charset=utf-8" }
+    %title= "#{@title}#{@home ? '' : ' | ParlyWords.org.nz'}"
+    %meta{ :name=>"description", :content=> @description ? @description : "ParlyWords.org.nz, fresh from Aotearoa New Zealand's Parliament debates to your screen." }
+    - if @home
+      %meta{ :name=>"keywords", :content=>"NZ, New Zealand, Parliament, Hansard, MP, Member of Parliament, MPs, government, house of representatives, Aotearoa" }
+    - else
+      %meta{ :name=>"keywords", :content=> @title }
+    %link{ :rel=>"home", :title=>"Home", :href=>"http://parlywords.org.nz/" }
+    = stylesheet_link_tag 'parlywords', :media => 'screen'
+  %body
+    #outer
+      = @content_for_layout

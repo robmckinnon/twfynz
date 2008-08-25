@@ -18,17 +18,39 @@ class ApplicationController < ActionController::Base
 
   layout "application"
 
-  def home
-    begin
-      # @months_top_pages = top_content 30
-      @weeks_top_pages = top_content 7
-      @days_top_pages = top_content 1
-    rescue Exception => e
-      @weeks_top_pages = nil
-      @days_top_pages = nil
+  def is_parlywords_request?
+    request.host == 'parlywords.org.nz'
+  end
+
+  def show_single_date
+    if is_parlywords_request?
+      @date = params[:date]
+      the_date = Date.parse(@date)
+
+      if SittingDay.has_parlywords? the_date
+        @date_label = the_date.to_s(:rfc822).strip
+        render :template => 'parlywords_on_date', :layout => 'parlywords'
+      else
+        render(:text => 'no parly words on date', :status => 404)
+      end
     end
-    @submission_dates = SubmissionDate.find_live_bill_submissions
-    render :template => 'home'
+  end
+
+  def home
+    if is_parlywords_request?
+      render :template => 'parlywords', :layout => 'parlywords'
+    else
+      begin
+        # @months_top_pages = top_content 30
+        @weeks_top_pages = top_content 7
+        @days_top_pages = top_content 1
+      rescue Exception => e
+        @weeks_top_pages = nil
+        @days_top_pages = nil
+      end
+      @submission_dates = SubmissionDate.find_live_bill_submissions
+      render :template => 'home'
+    end
   end
 
   def about

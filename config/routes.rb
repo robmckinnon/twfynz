@@ -21,6 +21,10 @@ end
 
 ActionController::Routing::Routes.draw do |map|
 
+  single_date_format = { :date => /(19|20)\d\d-[0-1]?\d-[0-3]?\d/ }
+  single_date_options = { :requirements => single_date_format }
+  single_date_path = ':date'
+
   date_format = { :year => /(19|20)\d\d/,
                   :month => /(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|[01]?\d|january|february|march|april|may|june|july|august|september|november|december)/,
                   :day => /[0-3]?\d/ }
@@ -44,6 +48,10 @@ ActionController::Routing::Routes.draw do |map|
     make_route '', application, :home
     make_route 'about', application
     make_route 'contact', application
+
+    application.with_options(single_date_options) do |single_date|
+      make_route single_date_path, single_date, :show_single_date
+    end
   end
 
   with_controller :places, map do |place|

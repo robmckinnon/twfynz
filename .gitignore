@@ -14,6 +14,7 @@ development_structure.sql
 schema.rb
 public/stylesheets/default.css
 public/stylesheets/print.css
+public/stylesheets/parlywords.css
 data
 wordle.txt
 public/images
