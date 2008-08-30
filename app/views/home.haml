@@ -31,12 +31,12 @@
           %h2 Popular yesterday
           %ul
             - @days_top_pages.each do |item|
-              %li= link_to("#{item.page_title}", item.url) + " <span class='page_views'>(#{item.unique_page_views})</span>"
+              %li= link_to("#{item.page_title}", item.url) + " <span class='page_views'>(#{item.unique_pageviews})</span>"
       #popular_last_week
         - if @weeks_top_pages
           .popular_last_week
             %h2 Popular over last week
             %ul
               - @weeks_top_pages.each do |item|
-                %li= link_to("#{item.page_title}", item.url) + " <span class='page_views'>(#{item.unique_page_views})</span>"
+                %li= link_to("#{item.page_title}", item.url) + " <span class='page_views'>(#{item.unique_pageviews})</span>"
 = render :partial => 'calendar.haml'

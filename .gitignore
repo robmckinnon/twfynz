@@ -36,5 +36,6 @@ lib/kawaii_authentication.rb
 app/controllers/kawaii_controller.rb
 app/views/kawaii
 app/views/layouts/kawaii.html.erb
+public/parlywords
 public/javascripts/kawaii
 public/stylesheets/kawaii
