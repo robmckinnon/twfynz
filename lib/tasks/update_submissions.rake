@@ -14,7 +14,7 @@ namespace :kiwimp do
     SubmissionsDownloader.submission_download
   end
 
-  def update
+  def get_submissions
     doc = Hpricot open('http://www.parliament.nz/en-NZ/SC/SubmCalled/Default.htm?ps=0')
     submissions = Hash.new {|h,k| h[k] = OpenStruct.new}
     (doc/"table.listing/tbody/tr").each do |row| # /
@@ -22,7 +22,7 @@ namespace :kiwimp do
         url = t.attributes['href']
         submission = submissions[url]
         submission.url = url.sub('/en-NZ/SC/SubmCalled','')
-        submission.about = t.innerHTML
+        submission.about = t.innerHTML.strip
 
         details_node = t.parent.next_node.next_node
         date_node = t.parent.parent.next_node.next_node
@@ -31,7 +31,11 @@ namespace :kiwimp do
         submission.date = date_node.innerHTML
       end
     end
+    submissions
+  end
 
+  def update
+    submissions = get_submissions
     submissions.each_value do |submission|
       if (match = /The (.*) Committee/.match submission.details)
         name = match[1]
