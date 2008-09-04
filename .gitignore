@@ -29,6 +29,7 @@ config/rugalytics.yml
 coverage
 db/members.yml
 spec/rcov.opts
+vendor/plugins/acts_as_xapian
 config/initializers/kawaii.rb
 config/kawaii.yml
 lib/too_cute
