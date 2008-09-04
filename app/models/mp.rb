@@ -20,7 +20,8 @@ class Mp < ActiveRecord::Base
   class << self
 
     def all_mp_names
-      all.collect {|mp| "#{mp.alt.blank? ? mp.first : mp.alt} #{mp.last}" }
+      @all_mp_names = all.collect {|mp| "#{mp.alt.blank? ? mp.first : mp.alt} #{mp.last}" } unless @all_mp_names
+      @all_mp_names
     end
 
     def from_vote_name name

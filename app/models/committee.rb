@@ -19,7 +19,8 @@ class Committee < ActiveRecord::Base
     end
 
     def all_committee_names
-      all.collect(&:full_committee_name).sort.collect{|name| name.sub('Maori','Māori')}
+      @all_committee_names = all.collect(&:full_committee_name).sort.collect{|name| name.sub('Maori','Māori')} unless @all_committee_names
+      @all_committee_names
     end
   end
 

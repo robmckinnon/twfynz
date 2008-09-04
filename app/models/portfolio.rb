@@ -25,7 +25,8 @@ class Portfolio < ActiveRecord::Base
     end
 
     def all_portfolio_names
-      Portfolio.all.collect(&:portfolio_name).sort.collect{|name| name.sub('Maori','Māori')}
+      @all_portfolio_names = Portfolio.all.collect(&:portfolio_name).sort.collect{|name| name.sub('Maori','Māori')} unless @all_portfolio_names
+      @all_portfolio_names
     end
   end
 

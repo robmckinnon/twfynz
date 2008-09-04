@@ -8,7 +8,8 @@ class NzlEvent < ActiveRecord::Base
   class << self
 
     def all_act_names
-      find_all_by_information_type('act').collect(&:title).compact.sort.uniq
+      @all_act_names = find_all_by_information_type('act').collect(&:title).compact.sort.uniq unless @all_act_names
+      @all_act_names
     end
 
     def create_from params

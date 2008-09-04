@@ -35,7 +35,8 @@ class Bill < ActiveRecord::Base
   class << self
 
     def all_bill_names
-      Bill.all.collect(&:bill_name).sort.uniq.reverse
+      @all_bill_names = Bill.all.collect(&:bill_name).sort.uniq.reverse unless @all_bill_names
+      @all_bill_names
     end
 
     def bills_from_text_and_date text, date

@@ -9,7 +9,8 @@ class Minister < ActiveRecord::Base
     end
 
     def all_minister_titles
-      all.collect(&:title).sort
+      @all_minister_titles = all.collect(&:title).sort unless @all_minister_titles
+      @all_minister_titles
     end
   end
 end

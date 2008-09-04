@@ -28,7 +28,8 @@ describe ApplicationController do
       end
       it 'should render parlywords template' do
         do_get
-        response.should render_template('parlywords')
+        # response.should render_template('parlywords')
+        response.body.should == 'coming soon'
       end
     end
     describe 'when asked for single_date' do

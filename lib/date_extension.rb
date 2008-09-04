@@ -1,5 +1,9 @@
 class Date
 
+  def utc
+    to_time.utc
+  end
+
   def is_sitting_day?
     SittingDay.exists? :date => self
   end

@@ -8,6 +8,10 @@ class Contribution < ActiveRecord::Base
   before_validation_on_create :populate_spoken_by_id
   before_validation :populate_date
 
+  acts_as_xapian :texts => [ :text ],
+      :values => [ [ :date, 0, "date", :date ] ],
+      :terms => [ ]
+
   # acts_as_solr :fields => [:text]
 
   composed_of :speaker_name, :class_name => 'SpeakerName', :mapping => [ %w(speaker name) ]
@@ -15,15 +19,24 @@ class Contribution < ActiveRecord::Base
   class << self
 
     def count_by_term term
-      sql = 'SELECT COUNT(*) FROM contributions WHERE ' + create_condition(term)
-      count_by_sql(sql)
+      # sql = 'SELECT COUNT(*) FROM contributions WHERE ' + create_condition(term)
+      # count_by_sql(sql)
+      models = [Answer, Clause, ClauseAlone, ClauseDescription, ClauseHeading, ClauseIndent1, ClauseIndent2, ClauseIndent3, ClauseModel, ClauseOutline, ClauseParagraph, ClausePart, ClauseSubClause, ClauseSubParagraph, ContinueAnswer, ContinueIntervention, ContinueQuestion, ContinueSpeech, Interjection, Intervention, Procedural, Question, Quotation, SectionHeader, Speech, SubsAnswer, SubsQuestion, SupAnswer, SupQuestion, Translation, VotePlaceholder]
+      search = ActsAsXapian::Search.new(models, term, :limit => 1)
+      return search.matches_estimated
     end
 
-    def match_by_term term, match_pages
-      condition = create_condition(term)
-      find(:all, :conditions=> condition, :order=>'date DESC, spoken_in_id DESC',
-          :limit => match_pages.items_per_page.to_s,
-          :offset => match_pages.current.offset)
+    def match_by_term term, limit, offset
+      # condition = create_condition(term)
+      # find(:all, :conditions=> condition, :order=>'date DESC, spoken_in_id DESC',
+          # :limit => match_pages.items_per_page.to_s,
+          # :offset => match_pages.current.offset)
+      models = [Answer, Clause, ClauseAlone, ClauseDescription, ClauseHeading, ClauseIndent1, ClauseIndent2, ClauseIndent3, ClauseModel, ClauseOutline, ClauseParagraph, ClausePart, ClauseSubClause, ClauseSubParagraph, ContinueAnswer, ContinueIntervention, ContinueQuestion, ContinueSpeech, Interjection, Intervention, Procedural, Question, Quotation, SectionHeader, Speech, SubsAnswer, SubsQuestion, SupAnswer, SupQuestion, Translation, VotePlaceholder]
+      search = ActsAsXapian::Search.new(models, term,
+          :limit => limit,
+          :offset => offset,
+          :sort_by_prefix => 'date')
+      return search.results.collect{|h| h[:model]}, search.matches_estimated
     end
 
     def search_by_term term
