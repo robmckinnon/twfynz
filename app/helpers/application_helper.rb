@@ -479,6 +479,9 @@ module ApplicationHelper
     elsif text.include? term.titlecase
       text = tidy_excerpt(text, term.titlecase, 120)
       excerpts = highlight(text, term.titlecase)
+    elsif text.include? term.upcase
+      text = tidy_excerpt(text, term.upcase, 120)
+      excerpts = highlight(text, term.titlecase)
     elsif (latin = text.to_latin.to_s) && latin.include?(term)
       index = latin.chars.index(term)
       unicode = text.chars[index, term.length]
