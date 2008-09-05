@@ -4,7 +4,8 @@
 - if @term
   %h1= %Q[Search results for: #{ @term }#{ result_summary @match_pages, @matches, @count }]
 - if @matches and @matches.length > 0
-  - pagination_line = pagination_links(@match_pages, :params => params)
+  - params.delete(:commit)
+  - pagination_line = pagination_links(@match_pages, :params => params).gsub(/page=(\d+)&amp;q=([^"]+)"/,'q=\2&amp;page=\1"')
   - unless pagination_line.blank?
     %p.pagination_links= pagination_line
   = render :partial => 'debates/debate_match', :collection => @debate_ids, :locals => { :expand => 'false', :debates => @debates, :by_debate => @by_debate, :term => @term.gsub('"','').gsub("'",'') }
