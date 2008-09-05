@@ -62,6 +62,43 @@ class ApplicationController < ActionController::Base
     render :template => 'contact'
   end
 
+  def search
+    @term = params[:q]
+    render :template => 'debates/search' and return if @term == nil
+
+    if params['page']
+      @count = Contribution.count_by_term @term
+      @match_pages = Paginator.new self, @count, 10, params['page']
+      limit = @match_pages.items_per_page.to_s.to_i
+      offset = @match_pages.current.offset
+      @matches, @count = Contribution.match_by_term(@term, limit, offset)
+    else
+      @matches, @count = Contribution.match_by_term(@term, 10, 0)
+      @match_pages = Paginator.new self, @count, 10, nil
+    end
+
+    unless @matches.empty?
+      @debate_ids = @matches.collect {|m| m.spoken_in_id}.uniq
+      @by_debate = @matches.group_by {|m| m.spoken_in_id}
+
+      debates = []
+      @debate_ids.each_with_index {|id,i| debates[i] = Debate.find(id)}
+
+      debates = Debate::remove_duplicates debates
+      debates.sort! { |a,b| b.date <=> a.date }
+
+      @debate_ids = debates.collect { |d| d.id }
+
+      @debates = {}
+      @debate_ids.each_with_index {|id,i| @debates[id] = debates[i]}
+
+      render :template => 'debates/search'
+    else
+      flash[:term] = @term
+      render :template => 'debates/search_form'
+    end
+  end
+
   def logged_in
     if current_user
       true

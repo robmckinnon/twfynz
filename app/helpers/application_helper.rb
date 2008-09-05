@@ -385,7 +385,7 @@ module ApplicationHelper
     link_to_remote(text,
         :update => contribution.id,
         :method => 'get',
-        :url => {:action => 'contribution_match', :id => contribution.id, :term => term.to_s, :expand => expand})
+        :url => {:controller => 'debates', :action => 'contribution_match', :id => contribution.id, :term => term.to_s, :expand => expand})
   end
 
   def contribution_title_link contribution

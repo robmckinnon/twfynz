@@ -3,4 +3,4 @@
 .searchresult
   %div
     %h3= link_to("#{debate.full_name}, #{format_date debate.date}", get_url(debate))
-  = render(:partial => 'contribution_match', :collection => by_debate[debate_id], :locals => {:term => term, :expand => expand})
+  = render(:partial => 'debates/contribution_match', :collection => by_debate[debate_id], :locals => {:term => term, :expand => expand})

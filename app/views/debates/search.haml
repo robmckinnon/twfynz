@@ -7,7 +7,7 @@
   - pagination_line = pagination_links(@match_pages, :params => params)
   - unless pagination_line.blank?
     %p.pagination_links= pagination_line
-  = render :partial => 'debate_match', :collection => @debate_ids, :locals => { :expand => 'false', :debates => @debates, :by_debate => @by_debate, :term => @term.gsub('"','').gsub("'",'') }
+  = render :partial => 'debates/debate_match', :collection => @debate_ids, :locals => { :expand => 'false', :debates => @debates, :by_debate => @by_debate, :term => @term.gsub('"','').gsub("'",'') }
   - unless pagination_line.blank?
     %p.pagination_links= pagination_line
 - else

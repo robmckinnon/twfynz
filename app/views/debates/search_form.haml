@@ -10,8 +10,8 @@
       %p
         no match found for:
         = h term
-      - form_tag({:controller => 'debates', :action => :debate_search }, {:method=>"get"}) do
+      - form_tag({:controller => 'application', :action => :search }, {:method=>"get"}) do
         %p
           Search NZ's Parliamentary Debates:
-          = text_field_tag(:search_term, (term ? term : ''), :maxlength=>"100", :size=>"12")
+          = text_field_tag(:q, (term ? term : ''), :maxlength=>"100", :size=>"12")
           = submit_tag "go", :class => 'submit'
