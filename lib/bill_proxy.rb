@@ -57,10 +57,10 @@ class BillProxy
   def create_bill
     attributes = {
       :bill_name => data_title,
-      :bill_no => data_bill_no,
       :parliament_url => parliament_url
     }
 
+    attributes[:bill_no] = data_bill_no if respond_to? :data_bill_no
     attributes[:type] = data_type_of_bill.gsub("'",'')+'Bill'
 
     attributes[:description] = data_info if respond_to? :data_info
