@@ -73,22 +73,20 @@ class BillProxy
 
     puts '    ' + attributes.inspect
 
-    bill = Object.const_get(attributes[:type]).new(attributes)
+    attributes.delete(:sc_reports_interim_report_interim_report) # temp fix
 
-    begin
-      bill.valid?
-    rescue Exception => e
-      if e.to_s[//]
-        if earliest_date.nil?
-          doc = Hpricot open('http://www.parliament.nz/en-NZ/PB/Legislation/Bills/'+url)
-          begin
-            date = Date.parse((doc/'dt[text()=Date:]/../dd').inner_text)
-          rescue Exception => x
-            raise e
-          end
-        end
+    bill = Object.const_get(attributes[:type]).new(attributes)
+    bill.reset_earliest_date
+
+    if bill.earliest_date.nil? && respond_to?(:nzgls_date)
+      if bill.bill_change.nil?
+        bill.earliest_date = nzgls_date[0..9]
+      else
+        bill.earliest_date = nzgls_date[0..9]
       end
     end
+
+    bill.valid?
     bill
   end
 
