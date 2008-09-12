@@ -436,11 +436,11 @@ class Bill < ActiveRecord::Base
     def bill_change= change
       @bill_change = change
     end
-
+  public
     def bill_change
       @bill_change
     end
-
+  protected
     def populate_former_name
       if bill_change and not(bill_change.include? 'Formerly part of') and (bill_change.include? 'Formerly ')
         self.former_name = bill_change.gsub('(Formerly ','').chomp(')')
@@ -488,6 +488,7 @@ class Bill < ActiveRecord::Base
       end
     end
 
+  public
     def reset_earliest_date
       self.introduction = '2008-07-02' if bill_name == 'Privacy (Cross-border Information) Amendment Bill'
 
@@ -502,7 +503,7 @@ class Bill < ActiveRecord::Base
         end
       end
     end
-
+  protected
     def default_negatived
       self.first_reading_negatived = 0 unless self.first_reading_negatived
       self.second_reading_negatived = 0 unless self.second_reading_negatived

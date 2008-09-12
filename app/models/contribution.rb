@@ -9,8 +9,8 @@ class Contribution < ActiveRecord::Base
   before_validation :populate_date
 
   acts_as_xapian :texts => [ :text ],
-      :values => [ [ :date, 0, "date", :date ] ],
-      :terms => [ ]
+      :values => [ [ :date, 0, "debate_date", :date ] ],
+      :terms => [ [ :date_int, 'D', "date" ] ]
 
   # acts_as_solr :fields => [:text]
 
@@ -35,7 +35,7 @@ class Contribution < ActiveRecord::Base
       search = ActsAsXapian::Search.new(models, term,
           :limit => limit,
           :offset => offset,
-          :sort_by_prefix => 'date')
+          :sort_by_prefix => 'debate_date')
       return search.results.collect{|h| h[:model]}, search.matches_estimated
     end
 
@@ -293,6 +293,7 @@ class Contribution < ActiveRecord::Base
 
     def populate_date
       self.date = spoken_in.date if spoken_in
+      self.date_int = spoken_in.date.to_s.tr('-','').to_i if spoken_in
     end
 
     def populate_spoken_by_id
