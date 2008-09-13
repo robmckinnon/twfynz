@@ -3,7 +3,9 @@ class AddDateIntToContributions < ActiveRecord::Migration
     add_column :contributions, :date_int, :integer
 
     Contribution.find(:all, :include => :spoken_in).each do |contribution|
-      contribution.save! # populates date in before_validation filter
+      if contribution.spoken_in
+        contribution.update_attribue('date_int', contribution.spoken_in.date.to_s.tr('-','').to_i)
+      end
     end
   end
 
