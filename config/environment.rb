@@ -16,6 +16,7 @@ Rails::Initializer.run do |config|
   config.gem 'morph'
   config.gem 'rugalytics'
   config.gem 'twitter'
+  config.gem 'ar-extensions'
 
   # Only load the plugins named here, by default all plugins in vendor/plugins are loaded
   # config.plugins = %W( exception_notification ssl_requirement )
