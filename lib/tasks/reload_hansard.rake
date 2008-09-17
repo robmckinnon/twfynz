@@ -91,6 +91,7 @@ namespace :kiwimp do
 
   def delete_debates date, publication_status
     debates = Debate.find_all_by_date_and_publication_status(date, publication_status)
+    puts "found: #{debates.size} for #{date} #{publication_status}"
     puts 'destroying ' + debates.size.to_s + ' debates' if debates
     debates.each { |debate| debate.destroy }
   end
