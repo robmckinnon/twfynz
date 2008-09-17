@@ -12,6 +12,7 @@ tmp/**/*
 database.yml
 development_structure.sql
 schema.rb
+public/stylesheets/datatable.css
 public/stylesheets/default.css
 public/stylesheets/print.css
 public/stylesheets/parlywords.css
