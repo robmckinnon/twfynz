@@ -21,6 +21,7 @@ class PortfoliosController < ApplicationController
     @portfolios_with_debates = @portfolios_with_debates.group_by {|p| p.url}
     @letter_to_portfolios = @portfolios_with_debates.keys.group_by {|p| p[0..0]}
     @portfolios_without_debates = Portfolio.find_all_without_debates.group_by {|b| b.url}
+=begin
     @portfolios_image_map_areas = [
       Area.new('425,106,540,122','Prime Minister'),
       Area.new('425,60,500,78','Health'),
@@ -38,12 +39,14 @@ class PortfoliosController < ApplicationController
       Area.new('142,229,235,239','Maori Affairs'),
       Area.new('425,198,543,213','Other Porfolios', '#portfolios')
     ]
+=end
   end
 
   def activity_sparkline
     logger.info('request.request_uri: ' + request.request_uri)
     counts = Portfolio::questions_asked_count_by_month params['portfolio_url']
-    params = { :type => 'smooth', :height => (counts.max * 0.5), :step => 3, :line_color => '#333333', :background_color => 'transparent' }
+    # , :background_color => 'transparent'
+    params = { :type => 'smooth', :height => (counts.max * 0.5), :step => 3, :line_color => '#333333' }
 
     send_data(Sparklines.plot(counts, params),
           :disposition => 'inline',

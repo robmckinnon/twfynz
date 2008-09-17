@@ -240,6 +240,12 @@ module ApplicationHelper
     "http://chart.apis.google.com/chart?cht=p&chco=ffebcc,ff9900&chs=#{size}&chd=t:#{counts.join(',')}&chl=#{names.join('|')}&chtt=#{title}"
   end
 
+
+  # .portfolio_pie_chart
+    # %map{ :name=>"portfolios_image_map" }
+      # - @portfolios_image_map_areas.each do |area|
+        # %area{ :shape=>"rect", :coords => area.coords, :href => area.url, :alt => area.alt }
+    # = portfolio_pie_chart
   def portfolio_pie_chart
     size = '660x240'
     title = "Oral Questions to Ministers — November 2005 to #{Date.today.strftime "%B %Y"} |[source: TheyWorkForYou.co.nz]"
