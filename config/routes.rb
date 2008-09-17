@@ -145,6 +145,7 @@ ActionController::Routing::Routes.draw do |map|
 
   with_controller :organisations, map do |organisation|
     index_route 'organisations', organisation
+    make_route 'organisations/find', organisation, :find_organisation
     make_route 'organisations/:name', organisation
     make_route 'organisations/edit', organisation, :edit_organisations
     make_route 'organisations/:name/mentions', organisation, :show_organisation_mentions

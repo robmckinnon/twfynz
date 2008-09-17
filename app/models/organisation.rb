@@ -26,49 +26,52 @@ class Organisation < ActiveRecord::Base
   before_save :populate_count_of_mentions
   after_save :expire_cached_pages
 
-  def self.education_domains
-    %w[ac.nz school.nz]
-  end
+  class << self
+    def education_domains
+      %w[ac.nz school.nz]
+    end
 
-  def self.commerical_domains
-    %w[co.nz com com.au]
-  end
+    def commerical_domains
+      %w[co.nz com com.au]
+    end
 
-  def self.government_domains
-    %w[govt.nz www.nelsoncitycouncil.co.nz www.franklindistrict.co.nz www.hamilton.co.nz]
-  end
+    def government_domains
+      %w[govt.nz www.nelsoncitycouncil.co.nz www.franklindistrict.co.nz www.hamilton.co.nz]
+    end
 
-  def self.other_domains
-    %w[org.nz net.nz org info asn.au www.ncwnz.co.nz]
-  end
+    def other_domains
+      %w[org.nz net.nz org info asn.au www.ncwnz.co.nz]
+    end
 
-  def self.from_name text
-    name = text[/(^.+)\s(Supp\s?\d+|Appendix(\s?\d+)?|Part\s?\d+|\d+)$/i, 1] || text
-    name = name[/(^.+)\s(Supp\s?|Appendix(\s?)?|Part\s?)$/i, 1] || name
-    name = name[/(^.+)\s(Appendix\s.)$/i, 1] || name
-    name.sub!('Limted','Limited')
-    name.sub!('Manufactures','Manufacturers')
-    organisation = Organisation.find_by_name(name)
-    unless organisation
-      second_try = name[/(^.+)\s(Limited|Inc)$/i, 1] ||
-          (name[/Incorporated/] ? name.sub('Incorporated', 'Inc') :
-            (name[/^The /] ? name.sub(/^The /, '') :
-              (name[/New Zealand/] ? name.sub('New Zealand', 'NZ') :
-                (name[/NZ/] ? name.sub('NZ','New Zealand') : "#{name.strip} Limited")
+    def from_name text
+      name = text[/(^.+)\s(Supp\s?\d+|Appendix(\s?\d+)?|Part\s?\d+|\d+)$/i, 1] || text
+      name = name[/(^.+)\s(Supp\s?|Appendix(\s?)?|Part\s?)$/i, 1] || name
+      name = name[/(^.+)\s(Appendix\s.)$/i, 1] || name
+      name.sub!('Limted','Limited')
+      name.sub!('Manufactures','Manufacturers')
+      organisation = find_by_name(name)
+      unless organisation
+        second_try = name[/(^.+)\s(Limited|Inc)$/i, 1] ||
+            (name[/Incorporated/] ? name.sub('Incorporated', 'Inc') :
+              (name[/^The /] ? name.sub(/^The /, '') :
+                (name[/New Zealand/] ? name.sub('New Zealand', 'NZ') :
+                  (name[/NZ/] ? name.sub('NZ','New Zealand') : "#{name.strip} Limited")
+                )
               )
             )
-          )
 
-      organisation = Organisation.find_by_name(second_try) if second_try != name
+        organisation = find_by_name(second_try) if second_try != name
 
-      unless organisation
-        third_try = nil
-        third_try = "#{name.sub(/^The /, '')} of New Zealand" if name[/^The /]
-        third_try = "#{name} New Zealand Limited" unless name[/^The /] || name[/Limited$/]
-        organisation = Organisation.find_by_name(third_try) if third_try
+        unless organisation
+          third_try = nil
+          third_try = "#{name.sub(/^The /, '')} of New Zealand" if name[/^The /]
+          third_try = "#{name} New Zealand Limited" unless name[/^The /] || name[/Limited$/]
+          organisation = find_by_name(third_try) if third_try
+        end
       end
+      organisation
     end
-    organisation
+
   end
 
   def category

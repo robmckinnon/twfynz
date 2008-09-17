@@ -11,6 +11,16 @@ class OrganisationsController < ApplicationController
     @organisations = Organisation.find(:all).sort_by(&:count_of_mentions).reverse
   end
 
+  def find_organisation
+    name = params[:q]
+    organisation = Organisation.from_name(name) if name
+    if organisation
+      render :text => organisation.url
+    else
+      render :text => ''
+    end
+  end
+
   def edit_organisations
     if admin?
       @organisations = Organisation.find(:all).sort_by { |o| o.name.downcase }
