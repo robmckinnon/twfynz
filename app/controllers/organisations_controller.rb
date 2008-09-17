@@ -15,7 +15,7 @@ class OrganisationsController < ApplicationController
     name = params[:q]
     organisation = Organisation.from_name(name) if name
     if organisation
-      render :text => organisation.url
+      render :text => '<a href="http://theyworkforyou.co.nz/organisations/'+organisation.slug+'">'+organisation.name+'</a>'
     else
       render :text => ''
     end
