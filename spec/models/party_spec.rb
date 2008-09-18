@@ -21,6 +21,8 @@ end
 
 describe Party, 'in general' do
 
+  assert_model_has_many :donations
+
   it 'should have mps' do
     party = Party.new party_params
     party.save!

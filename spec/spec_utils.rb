@@ -1,4 +1,12 @@
 
+# e.g. assert_model_has_many :questions
+def assert_model_has_one(association_name)
+  eval %Q|it 'should have one #{association_name.to_s}' do
+    model = self.class.description.split.first.constantize
+    assert_association_exists model, :has_one, association_name
+  end|
+end
+
 # e.g. assert_model_has_many Answer, :questions
 def assert_model_has_many(association_name)
   eval %Q|it 'should have many #{association_name.to_s}' do

@@ -2,6 +2,8 @@ class Party < ActiveRecord::Base
 
   has_many :mps, :foreign_key => 'member_of_id'
 
+  has_many :donations
+
   has_many :vote_casts
   has_many :votes, :through => :vote_casts
 
@@ -35,6 +37,10 @@ class Party < ActiveRecord::Base
     def colours
       find_all_sorted.collect {|p| '#'+p.colour}
     end
+  end
+
+  def donations_total
+    donations.collect(&:amount).sum
   end
 
   def wordle_text
