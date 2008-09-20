@@ -23,6 +23,7 @@ class DonationsController < ApplicationController
           params[:donation][:organisation_id] = organisation.id
           @donation.update_attributes(params[:donation])
           @donation.reload
+          organisation.expire_cached_pages
         end
       end
       render :partial => 'donations/donation', :object => @donation

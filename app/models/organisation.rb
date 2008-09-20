@@ -221,6 +221,17 @@ class Organisation < ActiveRecord::Base
       end
     end
   end
+
+  def expire_cached_pages
+    return unless ActionController::Base.perform_caching
+
+    organisation_path = "#{Debate::CACHE_ROOT}/organisations/#{slug}"
+
+    uncache "#{organisation_path}/mentions.cache"
+    uncache "#{organisation_path}.cache"
+    uncache "#{Debate::CACHE_ROOT}/organisations.cache"
+  end
+
   protected
 
     def uncache path
@@ -228,16 +239,6 @@ class Organisation < ActiveRecord::Base
         puts 'deleting: ' + path.sub(Debate::CACHE_ROOT, '')
         File.delete(path)
       end
-    end
-
-    def expire_cached_pages
-      return unless ActionController::Base.perform_caching
-
-      organisation_path = "#{Debate::CACHE_ROOT}/organisations/#{slug}"
-
-      uncache "#{organisation_path}/mentions.cache"
-      uncache "#{organisation_path}.cache"
-      uncache "#{Debate::CACHE_ROOT}/organisations.cache"
     end
 
     def default_alternative_names_to_blank
