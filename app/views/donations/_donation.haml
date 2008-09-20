@@ -4,7 +4,14 @@
     = donation.party.short
   - else
     = ''
-%td= donation.donor_name
+%td
+  - if donation.organisation
+    %b= donation.donor_name
+  - else
+    %b= link_to donation.donor_name, new_organisation_url(:name => donation.donor_name)
+  %br
+  = donation.donor_address.to_s
+%td= number_with_delimiter(donation.amount)
 %td
   - if donation.organisation
     = donation.organisation.name

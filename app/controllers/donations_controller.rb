@@ -1,7 +1,12 @@
 class DonationsController < ApplicationController
 
   def index
-    @donations = Donation.paginate :page => params[:page], :order => 'donor_name asc'
+    if admin?
+      @is_admin = true
+      @donations = Donation.paginate :page => params[:page], :order => 'donor_name asc'
+    else
+      render :text => ''
+    end
   end
 
   def update_donation

@@ -32,16 +32,11 @@ class OrganisationsController < ApplicationController
   def show_organisation
     name = params[:name]
     @organisation = Organisation.find_by_slug(name)
-
-    @business_item_name_to_submissions = @organisation.submissions.group_by do |submission|
-      if submission.business_item
-        submission.business_item.bill_name
-      else
-        submission.business_item_name
-      end
-    end
-
-    unless @organisation
+    if @organisation
+      @business_item_name_to_submissions = @organisation.business_item_name_to_submissions
+      @count_of_mentions = @organisation.count_of_mentions
+      @donations_total = @organisation.donations_total
+    else
       render :template => 'organisations/no_organisation_found'
     end
   end
@@ -50,6 +45,31 @@ class OrganisationsController < ApplicationController
     name = params[:name]
     @organisation = Organisation.find_by_slug(name)
     @contribution_in_groups_by_debate = @organisation.find_mentions
+  end
+
+  def new_organisation
+    if admin?
+      @organisation = Organisation.new :name => params[:name]
+    else
+      render :text => ''
+    end
+  end
+
+  def create_organisation
+    if admin?
+      if params[:organisation][:url].blank?
+        params[:organisation][:url] = nil
+      end
+      @organisation = Organisation.new(params[:organisation])
+      if @organisation.save
+        flash[:notice] = 'Organisation was successfully created.'
+        redirect_to(show_organisation_url(:name => @organisation.slug))
+      else
+        render :action => "new_organisation"
+      end
+    else
+      render :text => ''
+    end
   end
 
 end

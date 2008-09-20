@@ -1,0 +1,38 @@
+- @title= "New organisation"
+
+= error_messages_for :organisation
+
+- form_for(@organisation) do |f|
+  %p
+    = link_to 'Cancel', organisations_path
+    = f.submit "Create"
+  %table
+    %tr
+      %td
+        %label Name
+      %td
+        = f.text_field :name, :size => 60
+    %tr
+      %td
+        %label Alternate names
+      %td
+        = f.text_field :alternate_names, :size => 60
+    %tr
+      %td
+        %label Url
+      %td
+        = f.text_field :url, :size => 60
+    %tr
+      %td
+        %label Wikipedia url
+      %td
+        = f.text_field :wikipedia_url, :size => 60
+    %tr
+      %td
+        %label Slug
+      %td
+        = f.text_field :slug
+
+  %p
+    = link_to 'Cancel', organisations_path
+    = f.submit "Create"

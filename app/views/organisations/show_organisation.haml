@@ -5,7 +5,12 @@
   is an
   = link_to 'organisation', {:controller => 'organisations'}
   - if @business_item_name_to_submissions.empty?
-    that has been mentioned in Parliament.
+    - if @count_of_mentions > 0
+      that has been mentioned in Parliament.
+    - elsif @donations_total > 0
+      - if @organisation.name.include?('Trust')
+        or trust
+      that has made political donations.
   - else
     that has made one or more submissions to select committees of New Zealand's Parliament.
 - unless @business_item_name_to_submissions.empty?
@@ -17,15 +22,15 @@
         %th Evidence submitted
       %tbody
         = render :partial => 'business_item_submission', :collection => @business_item_name_to_submissions.keys, :locals => {:business_item_name_to_submissions => @business_item_name_to_submissions}
-- count = @organisation.count_of_mentions
-- if count > 0
+
+- if @count_of_mentions > 0
   #mentions_in_parliament
     %h2 Mentions in Parliament
     %p
       = "#{@organisation.name} has been "
-      = link_to("mentioned in #{count} parliamentary #{count == 1 ? 'debate' : 'debates'}", %Q[/organisations/#{@organisation.slug}/mentions]) + " since November 2005."
+      = link_to("mentioned in #{@count_of_mentions} parliamentary #{@count_of_mentions == 1 ? 'debate' : 'debates'}", %Q[/organisations/#{@organisation.slug}/mentions]) + " since November 2005."
 - unless @organisation.donations.empty?
-  #submissions
+  #donations
     %h2 Donations to political parties
     %table
       %tbody
@@ -34,22 +39,23 @@
           %td
           %td
           %td Total
-          %td= number_with_delimiter(@organisation.donations_total)
+          %td.donation= "$#{number_with_delimiter(@organisation.donations_total)}"
     %p.source
-      Source:
+      Data source:
       = link_to 'www.elections.org.nz', 'http://www.elections.org.nz/record/donations/donations-summary.html'
 - if @organisation.name == 'Corporate Taxpayers Group'
   = render :partial => 'ctg', :object => @organisation
 - else
-  #external_links
-    %h2 External links
-    %ul.linklist
-      - unless @organisation.wikipedia_url.blank?
-        %li
-          = link_to('Wikipedia page on ' + @organisation.name, @organisation.wikipedia_url, :rel=>"nofollow")
-      - if @organisation.url
-        %li
-          = link_to('Website of ' + @organisation.name, 'http://'+@organisation.url+'/', :rel=>"nofollow")
-      - if @organisation.url && File.exist?(@organisation.thumbnail)
-        %li
-          = link_to(image_tag(@organisation.thumbnail_path), 'http://'+@organisation.url+'/', :rel=>"nofollow")
+  - unless @organisation.wikipedia_url.blank? && @organisation.url.blank?
+    #external_links
+      %h2 External links
+      %ul.linklist
+        - unless @organisation.wikipedia_url.blank?
+          %li
+            = link_to('Wikipedia page on ' + @organisation.name, @organisation.wikipedia_url, :rel=>"nofollow")
+        - if @organisation.url
+          %li
+            = link_to('Website of ' + @organisation.name, 'http://'+@organisation.url+'/', :rel=>"nofollow")
+        - if @organisation.url && File.exist?(@organisation.thumbnail)
+          %li
+            = link_to(image_tag(@organisation.thumbnail_path), 'http://'+@organisation.url+'/', :rel=>"nofollow")

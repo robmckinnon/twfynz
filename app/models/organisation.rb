@@ -164,6 +164,21 @@ class Organisation < ActiveRecord::Base
     Contribution.find_mentions search_names
   end
 
+  def business_item_name_to_submissions
+    if submissions
+      business_item_name_to_submissions = submissions.group_by do |submission|
+        if submission.business_item
+          submission.business_item.bill_name
+        else
+          submission.business_item_name
+        end
+      end
+      business_item_name_to_submissions
+    else
+      []
+    end
+  end
+
   def response host, path
     resp = nil
     Net::HTTP.start(host) do |http|
