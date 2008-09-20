@@ -5,6 +5,18 @@ class Donation < ActiveRecord::Base
 
   before_validation_on_create :populate_party
 
+  class << self
+    def per_page
+      50
+    end
+  end
+
+  attr_accessor :is_from_organisation
+
+  def organisation_slug
+    @organisation_slug ? @organisation_slug : '______'
+  end
+
   protected
     def populate_party
       if party_name

@@ -24,6 +24,20 @@
     %p
       = "#{@organisation.name} has been "
       = link_to("mentioned in #{count} parliamentary #{count == 1 ? 'debate' : 'debates'}", %Q[/organisations/#{@organisation.slug}/mentions]) + " since November 2005."
+- unless @organisation.donations.empty?
+  #submissions
+    %h2 Donations to political parties
+    %table
+      %tbody
+        = render :partial => 'donation', :collection => @organisation.donations
+        %tr
+          %td
+          %td
+          %td Total
+          %td= number_with_delimiter(@organisation.donations_total)
+    %p.source
+      Source:
+      = link_to 'www.elections.org.nz', 'http://www.elections.org.nz/record/donations/donations-summary.html'
 - if @organisation.name == 'Corporate Taxpayers Group'
   = render :partial => 'ctg', :object => @organisation
 - else

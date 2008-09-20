@@ -6,6 +6,7 @@ require 'uri'
 class Organisation < ActiveRecord::Base
 
   has_many :submissions, :as => :submitter
+  has_many :donations
 
   validates_presence_of :name
   # validates_presence_of :url
@@ -72,6 +73,10 @@ class Organisation < ActiveRecord::Base
       organisation
     end
 
+  end
+
+  def donations_total
+    donations.empty? ? 0 : donations.collect(&:amount).sum
   end
 
   def category

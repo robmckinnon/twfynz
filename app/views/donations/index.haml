@@ -1,0 +1,11 @@
+- @javascript = :defaults
+- @title = 'Listing donations'
+%h1= @title
+= will_paginate @donations
+
+%table
+  %tbody
+    - @donations.each do |donation|
+      - donation_id = "donation_#{donation.id}".to_sym
+      %tr{ :id => donation_id }
+        = render(:partial => 'donation', :object => donation)

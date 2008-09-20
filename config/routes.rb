@@ -125,6 +125,12 @@ ActionController::Routing::Routes.draw do |map|
     make_route 'mps/:name', mp
   end
 
+  with_controller :donations, map do |donation|
+    make_route 'donations/set_donation_organisation_slug/:id', donation, :set_donation_organisation_slug
+    index_route 'donations', donation
+    make_route 'donations/update/:id', donation, :update_donation
+  end
+
   with_controller :committees, map do |committee|
     index_route 'committees', committee
     make_route 'committees/:committee_url', committee

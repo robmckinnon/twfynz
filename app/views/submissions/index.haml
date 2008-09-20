@@ -15,7 +15,7 @@
       Org?
     %th
       Url?
-  - for submission in @submissions
+  - @submissions.each do |submission|
     - submission_id = "submission_#{submission.id}".to_sym
     %tr{ :id => submission_id }
       = render(:partial => 'submission', :object => submission)

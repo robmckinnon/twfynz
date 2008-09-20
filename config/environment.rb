@@ -17,6 +17,7 @@ Rails::Initializer.run do |config|
   config.gem 'rugalytics'
   config.gem 'twitter'
   config.gem 'ar-extensions'
+  config.gem 'will_paginate'
 
   # Only load the plugins named here, by default all plugins in vendor/plugins are loaded
   # config.plugins = %W( exception_notification ssl_requirement )
