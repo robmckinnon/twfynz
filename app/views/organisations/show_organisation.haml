@@ -5,11 +5,11 @@
   is an
   = link_to 'organisation', {:controller => 'organisations'}
   - if @business_item_name_to_submissions.empty?
+    - if @donations_total > 0 && @organisation.name.include?('Trust')
+      or trust
     - if @count_of_mentions > 0
       that has been mentioned in Parliament.
     - elsif @donations_total > 0
-      - if @organisation.name.include?('Trust')
-        or trust
       that has made political donations.
   - else
     that has made one or more submissions to select committees of New Zealand's Parliament.
