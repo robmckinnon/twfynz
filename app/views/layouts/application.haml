@@ -90,7 +90,7 @@
       #content
         = @content_for_layout
       - if RAILS_ENV == 'production'
-        - unless @bill || @home || @organisation
+        - unless @bill || @home || @organisation || @organisations
           #elections
             %p{ :style=>'float:right; margin:2em; margin-right: 2.5em;' }
               %a{ :href=>"https://secure.elections.org.nz/app/enrol/" }
