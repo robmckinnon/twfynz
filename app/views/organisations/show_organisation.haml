@@ -41,8 +41,12 @@
           %td Total
           %td.donation= "$#{number_with_delimiter(@organisation.donations_total)}"
     %p.source
-      Data source:
-      = link_to 'www.elections.org.nz', 'http://www.elections.org.nz/record/donations/donations-summary.html'
+      - if @organisation.name == 'Exclusive Brethren'
+        Amount source:
+        = link_to 'email to Don Brash', 'http://img.scoop.co.nz/stories/images/0611/099b562bb6d6ecd06187.jpeg'
+      - else
+        Data source:
+        = link_to 'www.elections.org.nz', 'http://www.elections.org.nz/record/donations/donations-summary.html'
 - if @organisation.name == 'Corporate Taxpayers Group'
   = render :partial => 'ctg', :object => @organisation
 - else
