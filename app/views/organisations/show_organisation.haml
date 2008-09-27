@@ -4,6 +4,10 @@
   - unless @organisation.donations.empty?
     %p
       = "Anonymous dononations to #{@organisation.donations.first.party.short}."
+- elsif @organisation.name.include? 'Donors, individuals'
+  - unless @organisation.donations.empty?
+    %p
+      = "Individuals dononations to #{@organisation.donations.first.party.short}."
 - else
   %p
     = @organisation.name
