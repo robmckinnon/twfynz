@@ -1,18 +1,23 @@
 - @title = @organisation.name
 %h1= @title
-%p
-  = @organisation.name
-  is an
-  = link_to 'organisation', {:controller => 'organisations'}
-  - if @business_item_name_to_submissions.empty?
-    - if @donations_total > 0 && @organisation.name.include?('Trust')
-      or trust
-    - if @count_of_mentions > 0
-      that has been mentioned in Parliament.
-    - elsif @donations_total > 0
-      that has made political donations.
-  - else
-    that has made one or more submissions to select committees of New Zealand's Parliament.
+- if @organisation.name.include? 'Donors, anonymous'
+  - unless @organisation.donations.empty?
+    %p
+      = "Anonymous dononations to #{@organisation.donations.first.party.short}."
+- else
+  %p
+    = @organisation.name
+    is an
+    = link_to 'organisation', {:controller => 'organisations'}
+    - if @business_item_name_to_submissions.empty?
+      - if @donations_total > 0 && @organisation.name.include?('Trust')
+        or trust
+      - if @count_of_mentions > 0
+        that has been mentioned in Parliament.
+      - elsif @donations_total > 0
+        that has made political donations.
+    - else
+      that has made one or more submissions to select committees of New Zealand's Parliament.
 - unless @business_item_name_to_submissions.empty?
   #submissions
     %h2 Submissions to Select Committees
