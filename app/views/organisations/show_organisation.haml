@@ -36,7 +36,10 @@
   #mentions_in_parliament
     %h2 Mentions in Parliament
     %p
-      = "#{@organisation.name} has been "
+      - if @organisation.name.include? 'Donors, anonymous'
+        = "Anonymous dononations to #{@organisation.donations.first.party.short} have been "
+      - else
+        = "#{@organisation.name} has been "
       = link_to("mentioned in #{@count_of_mentions} parliamentary #{@count_of_mentions == 1 ? 'debate' : 'debates'}", %Q[/organisations/#{@organisation.slug}/mentions]) + " since November 2005."
 - unless @organisation.donations.empty?
   #donations
