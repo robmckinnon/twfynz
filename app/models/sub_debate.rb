@@ -9,6 +9,10 @@ class SubDebate < Debate
     a.collect{|i| (i.size > 9 && i.first[/Question No/].nil?) ? ((i.size / o.size.to_f)*100).to_s + ' ' + i.first : nil }.compact
   end
 
+  def bill
+    about.is_a?(Bill) ? about : nil
+  end
+
   def major_name
     name.split('—').first
   end

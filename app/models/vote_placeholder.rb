@@ -6,6 +6,10 @@ class VotePlaceholder < Contribution
   alias_method :original_is_vote?, :is_vote?
   alias_method :original_populate_spoken_by_id, :populate_spoken_by_id
 
+  def bill
+    debate.bill
+  end
+
   def is_vote?
     true
   end

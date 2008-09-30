@@ -3,5 +3,4 @@
   %tr
     %td= link_to_party party
     %td.count= party.mp_count
-    %td.percentage= percentage party.mp_count, total_mps
-    %td= party.name if party.name
+    %td= party.name.blank? ? 'n/a' : party.name

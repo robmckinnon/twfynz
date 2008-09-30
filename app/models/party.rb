@@ -8,6 +8,29 @@ class Party < ActiveRecord::Base
   has_many :votes, :through => :vote_casts
 
   class << self
+    def party_matrix
+      act = from_vote_name "ACT New Zealand"
+      green = from_vote_name "Green Party"
+      labour = from_vote_name "New Zealand Labour"
+      maori = from_vote_name "Māori Party"
+      national = from_vote_name "New Zealand National"
+      nz_first = from_vote_name "New Zealand First"
+      progressive = from_vote_name "Progressive"
+      united_future = from_vote_name "United Future"
+      independent = from_vote_name "Independent"
+
+      matrix = [
+[	[labour , labour, 0], 	[labour , national, 0], 	[labour , green, 0], 	[labour , nz_first, 0], 	[labour , maori, 0], 	[labour , act, 0], 	[labour , united_future, 0], 	[labour , progressive, 0], 	],
+[	[progressive, labour, 0], 	[progressive, national, 0], 	[progressive, green, 0], 	[progressive, nz_first, 0], 	[progressive, maori, 0], 	[progressive, act, 0], 	[progressive, united_future, 0], 	[progressive, progressive, 0], 	],
+[	[nz_first, labour, 0], 	[nz_first, national, 0], 	[nz_first, green, 0], 	[nz_first, nz_first, 0], 	[nz_first, maori, 0], 	[nz_first, act, 0], 	[nz_first, united_future, 0], 	[nz_first, progressive, 0], 	],
+[	[united_future, labour, 0], 	[united_future, national, 0], 	[united_future, green, 0], 	[united_future, nz_first, 0], 	[united_future, maori, 0], 	[united_future, act, 0], 	[united_future, united_future, 0], 	[united_future, progressive, 0], 	],
+[	[green , labour, 0], 	[green , national, 0], 	[green , green, 0], 	[green , nz_first, 0], 	[green , maori, 0], 	[green , act, 0], 	[green , united_future, 0], 	[green , progressive, 0], 	],
+[	[maori , labour, 0], 	[maori , national, 0], 	[maori , green, 0], 	[maori , nz_first, 0], 	[maori , maori, 0], 	[maori , act, 0], 	[maori , united_future, 0], 	[maori , progressive, 0], 	],
+[	[national, labour, 0], 	[national, national, 0], 	[national, green, 0], 	[national, nz_first, 0], 	[national, maori, 0], 	[national, act, 0], 	[national, united_future, 0], 	[national, progressive, 0], 	],
+[	[act , labour, 0], 	[act , national, 0], 	[act , green, 0], 	[act , nz_first, 0], 	[act , maori, 0], 	[act , act, 0], 	[act , united_future, 0], 	[act , progressive, 0], 	]
+      ]
+    end
+
     def from_vote_name name
       party = find_by_vote_name(name)
       unless party

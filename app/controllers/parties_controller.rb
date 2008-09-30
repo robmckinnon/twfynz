@@ -8,6 +8,7 @@ class PartiesController < ApplicationController
     @parties = Party.all_size_ordered
     @title = "Parties in Aotearoa New Zealand's Parliament"
     @total_mps = @parties.inject(0) {|count, p| count + p.mps.size }
+    @third_reading_matrix = Vote.third_reading_matrix
   end
 
   def show_party

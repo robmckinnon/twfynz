@@ -4,34 +4,36 @@ class BillDebate < ParentDebate
 
   before_create :populate_about_index
 
-  def self.recent
-    debates = find(:all,
-        :order => "debates.`date` DESC",
-        :limit => 20,
-        :include => :sub_debates)
-    debates = Debate::remove_duplicates debates, false
-    debates.collect {|d| d.sub_debates}.flatten.sort {|a,b| b.date <=> a.date}
-  end
+  class << self
+    def recent
+      debates = find(:all,
+          :order => "debates.`date` DESC",
+          :limit => 20,
+          :include => :sub_debates)
+      debates = Debate::remove_duplicates debates, false
+      debates.collect {|d| d.sub_debates}.flatten.sort {|a,b| b.date <=> a.date}
+    end
 
-  def self.recent_grouped
-    debates = find(:all,
-        :order => "debates.`date` DESC",
-        :limit => 20,
-        :include => :sub_debates)
-    debates = Debate::remove_duplicates debates, false
-    debates = debates.sort_by(&:name)
-    groups = debates.in_groups_by{|d| (d.sub_debate and d.sub_debate.about) ? d.sub_debate.about : d.name}
-    groups.each do |group|
-      group.sort! do |debate, other|
-        comp = debate.date <=> other.date
-        if comp == 0
-          debate.sub_about_index <=> other.sub_about_index
-        else
-          comp
+    def recent_grouped
+      debates = find(:all,
+          :order => "debates.`date` DESC",
+          :limit => 20,
+          :include => :sub_debates)
+      debates = Debate::remove_duplicates debates, false
+      debates = debates.sort_by(&:name)
+      groups = debates.in_groups_by{|d| (d.sub_debate and d.sub_debate.about) ? d.sub_debate.about : d.name}
+      groups.each do |group|
+        group.sort! do |debate, other|
+          comp = debate.date <=> other.date
+          if comp == 0
+            debate.sub_about_index <=> other.sub_about_index
+          else
+            comp
+          end
         end
       end
+      groups
     end
-    groups
   end
 
   def sub_about_index
@@ -40,6 +42,9 @@ class BillDebate < ParentDebate
 
   def category
     'bill debate'
+  end
+
+  def bill
   end
 
   protected

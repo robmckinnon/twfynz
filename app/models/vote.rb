@@ -13,6 +13,72 @@ class Vote < ActiveRecord::Base
 
   before_validation_on_create :default_vote_tallies
 
+  class << self
+    def voted_same_way(party, other_party, vote_parties)
+      vote_parties.include?(party) && vote_parties.include?(other_party)
+    end
+
+    def third_reading_matrix
+      votes = third_reading_votes
+      count = votes.size.to_f
+      matrix = Party.party_matrix
+
+      matrix.each do |row|
+        row.each do |cell|
+          unless cell.empty?
+            party = cell[0]
+            other_party = cell[1]
+
+            votes.each do |vote|
+              ayes, casts = vote.ayes_by_party
+              if voted_same_way(party, other_party, ayes)
+                cell[2] = cell[2].next
+              else
+                noes, casts = vote.noes_by_party
+                if voted_same_way(party, other_party, noes)
+                  cell[2] = cell[2].next
+                else
+                  abstentions, casts = vote.abstentions_by_party
+                  if voted_same_way(party, other_party, abstentions)
+                    cell[2] = cell[2].next
+                  end
+                end
+              end
+            end
+          end
+        end
+      end
+
+      matrix.each do |row|
+        row.each do |cell|
+          unless cell.empty?
+            cell[0] = cell[0].short
+            cell[1] = cell[1].short
+            cell[2] = (cell[2] / count) * 100
+          end
+        end
+      end
+
+      matrix
+    end
+
+    def third_reading_votes
+      votes = find(:all, :conditions => 'vote_question like "%third%"', :include => {:contribution => :spoken_in})
+      debates = votes.collect(&:debate)
+      debates = Debate::remove_duplicates(debates)
+      votes.delete_if {|v| !debates.include?(v.debate)}
+      votes
+    end
+  end
+
+  def debate
+    contribution.debate
+  end
+
+  def bill
+    debate.bill
+  end
+
   def reason
     %Q[A #{self.class.to_s.sub('Vote','').downcase} vote was called for on the question, ]
   end

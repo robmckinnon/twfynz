@@ -6,15 +6,15 @@
       %thead
         %th Party
         %th MPs &nbsp;
-        %th % of MPs
         %th Registered name
       %tbody
         =render(:partial => 'party_summary', :collection => @parties, :locals => {:total_mps => @total_mps})
         %tr
           %td &nbsp;
           %td
-          %td
         %tr
           %td TOTAL MPS
           %td.count= @total_mps
-          %td.percentage 100%
+    %h2 Percentage of Third Reading Votes Parties Voted Together
+    =render(:partial => 'vote_matrix', :object => @third_reading_matrix)
+
