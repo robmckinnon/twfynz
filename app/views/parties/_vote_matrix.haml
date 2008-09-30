@@ -1,0 +1,24 @@
+%table
+  %thead
+    %tr
+      %th
+      %th{:style=>"text-align: center"}= 'Labour'
+      %th{:style=>"text-align: center"}= 'Progressive'.sub('Progressive','Progres- sive')
+      %th{:style=>"text-align: center"}= 'NZ First'
+      %th{:style=>"text-align: center"}= 'United Future'
+      %th{:style=>"text-align: center"}= 'Green'
+      %th{:style=>"text-align: center"}= 'Maori Party'.sub('Maori','Māori')
+      %th{:style=>"text-align: center"}= 'National'
+      %th{:style=>"text-align: center"}= 'ACT'
+  %tbody
+    - vote_matrix.each do |row|
+      %tr
+        %th{:style=>"width: 6em;"}= row[0][0].sub('Maori Party','Māori').sub('Progressive','Progres.').sub('United Future','United F.')
+        = render :partial => 'vote_cell', :object => row.rassoc('Labour')
+        = render :partial => 'vote_cell', :object => row.rassoc('Progressive')
+        = render :partial => 'vote_cell', :object => row.rassoc('NZ First')
+        = render :partial => 'vote_cell', :object => row.rassoc('United Future')
+        = render :partial => 'vote_cell', :object => row.rassoc('Green')
+        = render :partial => 'vote_cell', :object => row.rassoc('Maori Party')
+        = render :partial => 'vote_cell', :object => row.rassoc('National')
+        = render :partial => 'vote_cell', :object => row.rassoc('ACT')
