@@ -30,15 +30,15 @@ class Vote < ActiveRecord::Base
             other_party = cell[1]
 
             votes.each do |vote|
-              ayes, casts = vote.ayes_by_party
+              ayes = vote.ayes.collect(&:party).uniq
               if voted_same_way(party, other_party, ayes)
                 cell[2] = cell[2].next
               else
-                noes, casts = vote.noes_by_party
+                noes = vote.noes.collect(&:party).uniq
                 if voted_same_way(party, other_party, noes)
                   cell[2] = cell[2].next
                 else
-                  abstentions, casts = vote.abstentions_by_party
+                  abstentions = vote.abstentions.collect(&:party).uniq
                   if voted_same_way(party, other_party, abstentions)
                     cell[2] = cell[2].next
                   end
