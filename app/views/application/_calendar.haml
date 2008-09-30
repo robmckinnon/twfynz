@@ -2,7 +2,7 @@
   #login_form
     = '' # render :partial => 'login_form'
   %div
-    = calendar_nav Date::today, 'Debates in '
+    = calendar_nav Date.new(2008,9,30), 'Debates in '
   - if @previous_months
     %p= '&nbsp;'
     %div
