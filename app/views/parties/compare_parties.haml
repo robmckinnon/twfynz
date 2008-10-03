@@ -1,0 +1,13 @@
+- @title = %Q[#{@party.name}: Party in Aotearoa New Zealand's Parliament]
+#normalcontent
+  %h1= @party.short + ' vs ' + @other_party.short
+  .divider2
+  %h2 Voted together on third readings of these bills
+  - @votes_together.each do |vote|
+    - if vote.bill_name == 'no bill'
+      %p= 'no bill ' + vote.bill_names
+    - else
+      %p= vote.bill_name
+  %h2 Voted differently on third readings of these bills
+  .divider2
+

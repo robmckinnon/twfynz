@@ -397,6 +397,15 @@ class Debate < ActiveRecord::Base
     end
   end
 
+  def formerly_about_bill
+    bills = debate_topics.collect(&:formerly_part_of_bill).compact.uniq
+    if bills && bills.size == 1
+      bills.first
+    else
+      nil
+    end
+  end
+
   def wordle_text
     if contributions
       non_procedural = contributions.select{ |c| !c.is_a? Procedural }

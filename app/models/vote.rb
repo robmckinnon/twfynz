@@ -18,11 +18,7 @@ class Vote < ActiveRecord::Base
       vote_parties.include?(party) && vote_parties.include?(other_party)
     end
 
-    def third_reading_matrix
-      votes = third_reading_votes
-      count = votes.size.to_f
-      matrix = Party.party_matrix
-
+    def add_to_matrix matrix, votes, cast
       matrix.each do |row|
         row.each do |cell|
           unless cell.empty?
@@ -30,30 +26,30 @@ class Vote < ActiveRecord::Base
             other_party = cell[1]
 
             votes.each do |vote|
-              ayes = vote.ayes.collect(&:party).uniq
-              if voted_same_way(party, other_party, ayes)
+              parties_cast = vote.send(cast).collect(&:party).uniq
+              if voted_same_way(party, other_party, parties_cast)
                 cell[2] = cell[2].next
-              else
-                noes = vote.noes.collect(&:party).uniq
-                if voted_same_way(party, other_party, noes)
-                  cell[2] = cell[2].next
-                else
-                  abstentions = vote.abstentions.collect(&:party).uniq
-                  if voted_same_way(party, other_party, abstentions)
-                    cell[2] = cell[2].next
-                  end
-                end
+                cell[3] << vote
               end
             end
           end
         end
       end
+    end
 
+    def third_reading_matrix cast=nil
+      votes = third_reading_votes
+      matrix = Party.party_matrix
+      add_to_matrix matrix, votes, :ayes if !cast || cast == :ayes
+      add_to_matrix matrix, votes, :noes if !cast || cast == :noes
+      add_to_matrix matrix, votes, :abstentions if !cast || cast == :abstentions
+
+      count = votes.size.to_f
       matrix.each do |row|
         row.each do |cell|
           unless cell.empty?
-            cell[0] = cell[0].short
-            cell[1] = cell[1].short
+            # cell[0] = cell[0].short
+            # cell[1] = cell[1].short
             cell[2] = (cell[2] / count) * 100
           end
         end
@@ -76,7 +72,15 @@ class Vote < ActiveRecord::Base
   end
 
   def bill
-    debate.bill
+    contribution.bill
+  end
+
+  def bill_name
+    bill ? bill.bill_name : 'no bill'
+  end
+
+  def bill_names
+    debate.debate_topics.collect(&:bill_name).join(', ')
   end
 
   def reason

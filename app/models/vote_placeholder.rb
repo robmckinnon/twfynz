@@ -7,7 +7,11 @@ class VotePlaceholder < Contribution
   alias_method :original_populate_spoken_by_id, :populate_spoken_by_id
 
   def bill
-    debate.bill
+    bill = debate.bill
+    if !bill && debate.is_a?(SubDebate)
+      bill = debate.formerly_about_bill
+    end
+    bill
   end
 
   def is_vote?

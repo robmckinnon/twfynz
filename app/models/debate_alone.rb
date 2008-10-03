@@ -3,12 +3,7 @@ class DebateAlone < Debate
   belongs_to :about, :polymorphic => true
 
   def bill
-    bills = debate_topics.collect(&:formerly_part_of_bill).uniq
-    if bills && bills.size == 1
-      bills.first
-    else
-      nil
-    end
+    formerly_about_bill
   end
 
   def full_name

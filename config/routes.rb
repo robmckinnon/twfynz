@@ -139,6 +139,7 @@ ActionController::Routing::Routes.draw do |map|
   with_controller :parties, map do |party|
     index_route 'parties', party
     make_route 'parties/:name', party
+    make_route 'parties/:name/:other_name', party, :compare_parties
   end
 
   map.resources :trackings

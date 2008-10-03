@@ -2,7 +2,7 @@ namespace :kiwimp do
 
   desc "corrects topic of third readings"
   task :correct_third_readings => :environment do
-    debates = Debate.find_by_sql('select * from debates where name like "%Third Readings%";')
+    debates = Debate.find(:all, :conditions => 'name like "%Third Readings%"')
 
     contributions = debates.inject([]) do |all, debate|
       if debate.debate_topics.blank?

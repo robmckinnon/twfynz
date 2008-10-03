@@ -9,6 +9,14 @@ class PartiesController < ApplicationController
     @title = "Parties in Aotearoa New Zealand's Parliament"
     @total_mps = @parties.inject(0) {|count, p| count + p.mps.size }
     @third_reading_matrix = Vote.third_reading_matrix
+    @ayes_third_reading_matrix = Vote.third_reading_matrix :ayes
+    @noes_third_reading_matrix = Vote.third_reading_matrix :noes
+  end
+
+  def compare_parties
+    @party = Party::get_party params[:name]
+    @other_party = Party::get_party params[:other_name]
+    @votes_together = @party.votes_together(@other_party)
   end
 
   def show_party
