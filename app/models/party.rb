@@ -8,6 +8,18 @@ class Party < ActiveRecord::Base
   has_many :votes, :through => :vote_casts
 
   class << self
+    def party_list
+      act = Party.from_vote_name "ACT New Zealand"
+      green = Party.from_vote_name "Green Party"
+      labour = Party.from_vote_name "New Zealand Labour"
+      maori = Party.from_vote_name "Maori Party"
+      national = Party.from_vote_name "New Zealand National"
+      nz_first = Party.from_vote_name "New Zealand First"
+      progressive = Party.from_vote_name "Progressive"
+      united_future = Party.from_vote_name "United Future"
+      [act, green, labour, maori, national, nz_first, progressive, united_future]
+    end
+
     def party_matrix
       act = from_vote_name "ACT New Zealand"
       green = from_vote_name "Green Party"
@@ -63,8 +75,16 @@ class Party < ActiveRecord::Base
 
   end
 
-  def votes_together other_party
-    third_reading_matrix = Vote.third_reading_matrix
+  def aye_votes_together other_party
+    votes_together other_party, :ayes
+  end
+
+  def noe_votes_together other_party
+    votes_together other_party, :noes
+  end
+
+  def votes_together other_party, cast
+    third_reading_matrix = Vote.third_reading_matrix cast
     votes_together = nil
 
     third_reading_matrix.each do |row|

@@ -4,6 +4,7 @@ doc
 *.db
 *.sqlite3
 *.htm
+*.csv
 .DS_Store
 *~
 .autotest
@@ -17,6 +18,7 @@ public/stylesheets/default.css
 public/stylesheets/print.css
 public/stylesheets/parlywords.css
 data
+pca.rb
 wordle.txt
 public/images
 mongrel_cluster.yml

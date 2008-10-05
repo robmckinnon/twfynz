@@ -14,6 +14,32 @@ class Vote < ActiveRecord::Base
   before_validation_on_create :default_vote_tallies
 
   class << self
+    def vote_vectors
+      parties = Party.party_list
+      votes = Vote.third_reading_votes
+      vectors = []
+      parties.each do |party|
+        values = [party.short]
+        votes.each do |vote|
+          x, by_party = vote.votes_by_party
+          vote_cast = by_party.assoc(party)
+          if vote_cast
+            if vote_cast[1].first.cast == 'aye'
+              values << '1'
+            elsif vote_cast[1].first.cast == 'noe'
+              values << '-1'
+            else
+              values << '0'
+            end
+          else
+            values << '0'
+          end
+        end
+        vectors << values.join(",")
+      end
+      vectors
+    end
+
     def voted_same_way(party, other_party, vote_parties)
       vote_parties.include?(party) && vote_parties.include?(other_party)
     end
@@ -76,7 +102,11 @@ class Vote < ActiveRecord::Base
   end
 
   def bill_name
-    bill ? bill.bill_name : 'no bill'
+    if vote_question[/That the (.+) be now read a third time/] && !$1.include?('Bill, ') && !$1.include?('Bill and')
+      $1
+    else
+      bill ? bill.bill_name : ('no bill ' + vote.debate.date.to_s + ' ' + vote.bill_names)
+    end
   end
 
   def bill_names
