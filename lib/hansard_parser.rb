@@ -195,11 +195,13 @@ class HansardParser
     end
 
     def handle_h1_h2_h3 node, debate
+      title_h = @title_is_h2 ? 'h2' : 'h1'
+
       text = node.inner_html.to_clean_s
       type = node.name
       if (debate.name.include?(text) and not(@speaker_recalled))
         # it's part of the debate title, ignore
-      elsif (type == 'h2' and text == 'Speaker Recalled')
+      elsif (type == title_h and text == 'Speaker Recalled')
         @speaker_recalled = true
         header = SectionHeader.new :text => text
         debate.contributions << header
@@ -218,12 +220,12 @@ class HansardParser
           # it's part of the debate title, ignore
         elsif is_date_text(text)
           # it's just the debate date, we'll ignore
-        elsif type == 'h2'
+        elsif type == title_h
           sub_debates = debate.debate.sub_debates
           next_index = sub_debates.index(debate) + 1
-          raise 'expected more sub-debates than: ' + sub_debates.size.to_s + " (hit h2: #{node.to_s} in debate: #{debate.name}, parent debate: #{debate.debate.name})" if (sub_debates.size < (next_index+1))
+          raise 'expected more sub-debates than: ' + sub_debates.size.to_s + " (hit #{title_h}: #{node.to_s} in debate: #{debate.name}, parent debate: #{debate.debate.name})" if (sub_debates.size < (next_index+1))
           debate = sub_debates[next_index]
-          raise 'expected sub_debate for h2: ' + node.to_s + ', but found: ' + debate.name unless (debate.name == text)
+          raise "expected sub_debate for #{title_h}: " + node.to_s + ', but found: ' + debate.name unless (debate.name == text)
         else
           raise 'found '+type+' not in debate name ' + debate.name + ': ' + node.to_s
         end
@@ -892,12 +894,14 @@ class HansardParser
           name = (@doc/'.BillDebate/h2[2]/text()')[0].to_clean_s
         end
         sub_name = (@doc/'.SubDebate/h3[1]/text()')[0].to_clean_s
+        @title_is_h2 = true
       else
         name = (@doc/'.BillDebate/h1[1]/text()')[0].to_clean_s
         if is_date_text(name)
           name = (@doc/'.BillDebate/h1[2]/text()')[0].to_clean_s
         end
         sub_name = (@doc/'.SubDebate/h2[1]/text()')[0].to_clean_s
+        @title_is_h2 = false
       end
       make_bill_debate name, sub_name, debate_index, 'BillDebate', 'billdebate'
     end
