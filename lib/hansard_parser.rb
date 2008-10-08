@@ -628,7 +628,7 @@ class HansardParser
           elsif name == 'ul'
             proceduals = handle_procedural node
             proceduals.each {|procedual| debate.contributions << procedual}
-          elsif (name == 'h1' or name == 'h2' or name == 'h3')
+          elsif (name == 'h1' or name == 'h2' or (!@title_is_h2 && name == 'h3'))
             debate = handle_h1_h2_h3 node, debate
           elsif name == 'div'
             handle_div node, debate
