@@ -885,11 +885,20 @@ class HansardParser
     end
 
     def create_bill_debate debate_index
-      name = (@doc/'.BillDebate/h2[1]/text()')[0].to_clean_s
-      if is_date_text(name)
-        name = (@doc/'.BillDebate/h2[2]/text()')[0].to_clean_s
+      text = (@doc/'.BillDebate/h2[1]/text()')[0]
+      if text
+        name = text.to_clean_s
+        if is_date_text(name)
+          name = (@doc/'.BillDebate/h2[2]/text()')[0].to_clean_s
+        end
+        sub_name = (@doc/'.SubDebate/h3[1]/text()')[0].to_clean_s
+      else
+        name = (@doc/'.BillDebate/h1[1]/text()')[0].to_clean_s
+        if is_date_text(name)
+          name = (@doc/'.BillDebate/h1[2]/text()')[0].to_clean_s
+        end
+        sub_name = (@doc/'.SubDebate/h2[1]/text()')[0].to_clean_s
       end
-      sub_name = (@doc/'.SubDebate/h3[1]/text()')[0].to_clean_s
       make_bill_debate name, sub_name, debate_index, 'BillDebate', 'billdebate'
     end
 
