@@ -830,7 +830,11 @@ class HansardParser
     end
 
     def add_sub_heading sub_debate, sub_names
-      sub_heading = (sub_debate/'h3[1]/text()')
+      if @title_is_h2
+        sub_heading = (sub_debate/'h3[1]/text()')
+      else
+        sub_heading = (sub_debate/'h2[1]/text()')
+      end
       if sub_heading.size > 0
         sub_names << sub_heading[0].to_clean_s
       else
