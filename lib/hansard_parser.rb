@@ -45,6 +45,8 @@ class HansardParser
       @page = split[1].split(':').last.chomp(']').to_i
     end
 
+    @title_is_h2 = true
+
     if type == 'QOA'
       create_oral_answers debate_index
 
@@ -628,7 +630,7 @@ class HansardParser
           elsif name == 'ul'
             proceduals = handle_procedural node
             proceduals.each {|procedual| debate.contributions << procedual}
-          elsif (name == 'h1' or name == 'h2' or (!@title_is_h2 && name == 'h3'))
+          elsif (name == 'h1' or name == 'h2' or name == 'h3')
             debate = handle_h1_h2_h3 node, debate
           elsif name == 'div'
             handle_div node, debate
@@ -815,7 +817,7 @@ class HansardParser
     end
 
     def create_debate_alone debate_index
-      name = (((@doc/'.DebateAlone/h2').last)/'text()')[0].to_clean_s
+      name = (((@doc/'.DebateAlone/h2').last) / 'text()')[0].to_clean_s
       debate = DebateAlone.new :name => name,
           :date => get_date,
           :publication_status => publication_status,
@@ -894,7 +896,6 @@ class HansardParser
           name = (@doc/'.BillDebate/h2[2]/text()')[0].to_clean_s
         end
         sub_name = (@doc/'.SubDebate/h3[1]/text()')[0].to_clean_s
-        @title_is_h2 = true
       else
         name = (@doc/'.BillDebate/h1[1]/text()')[0].to_clean_s
         if is_date_text(name)
