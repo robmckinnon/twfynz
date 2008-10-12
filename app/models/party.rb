@@ -75,6 +75,10 @@ class Party < ActiveRecord::Base
 
   end
 
+  def split_party_votes
+    PartyVote.all_unique.select {|p| p.noes_by_party[0].include?(self) && p.ayes_by_party[0].include?(self)}
+  end
+
   def aye_votes_together other_party
     votes_together other_party, :ayes
   end

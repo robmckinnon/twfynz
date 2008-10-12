@@ -14,26 +14,37 @@ class Vote < ActiveRecord::Base
   before_validation_on_create :default_vote_tallies
 
   class << self
+    def value_for_votes votes_cast
+      if votes_cast && votes_cast.size == 1
+        case votes_cast.first.cast
+          when 'aye'
+            '1'
+          when 'noe'
+            '-1'
+          else
+            '0'
+        end
+      elsif votes_cast && votes_cast.size > 1
+        total = votes_cast.size.to_f
+        ayes = votes_cast.select{|v| v.cast == 'aye'}.size
+        noes = votes_cast.select{|v| v.cast == 'noe'}.size
+        value = (((ayes - noes) / total) * 100).to_i / 100.to_f
+        value.to_s
+      else
+        '0'
+      end
+    end
+
     def vote_vectors
       parties = Party.party_list
-      votes = Vote.third_reading_votes
+      votes = third_reading_votes
       vectors = []
       parties.each do |party|
         values = [party.short]
         votes.each do |vote|
           x, by_party = vote.votes_by_party
-          vote_cast = by_party.assoc(party)
-          if vote_cast
-            if vote_cast[1].first.cast == 'aye'
-              values << '1'
-            elsif vote_cast[1].first.cast == 'noe'
-              values << '-1'
-            else
-              values << '0'
-            end
-          else
-            values << '0'
-          end
+          votes_cast = by_party[party]
+          values << value_for_votes(votes_cast)
         end
         vectors << values.join(",")
       end
@@ -86,6 +97,14 @@ class Vote < ActiveRecord::Base
 
     def third_reading_votes
       votes = find(:all, :conditions => 'vote_question like "%third%"', :include => {:contribution => :spoken_in})
+      remove_duplicates(votes)
+    end
+
+    def all_unique
+      remove_duplicates(find(:all, :include => {:contribution => :spoken_in}))
+    end
+
+    def remove_duplicates votes
       debates = votes.collect(&:debate)
       debates = Debate::remove_duplicates(debates)
       votes.delete_if {|v| !debates.include?(v.debate)}
