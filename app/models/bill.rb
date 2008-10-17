@@ -122,7 +122,9 @@ class Bill < ActiveRecord::Base
     end
 
     def find_all_assented
-      find_all_with_debates.select(&:assented?)
+      assented = find_all_with_debates.select(&:assented?)
+      assented = assented.collect {|b| b.formerly_part_of_id ? b.formerly_part_of : b}.uniq
+      assented
     end
 
     def sort_events_by_date events

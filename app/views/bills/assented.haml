@@ -4,7 +4,7 @@
   .divider3
   .contentarea
     %p
-      %span Bills that have received Royal Assent during the 48th Parliament.
+      %span Bills that received Royal Assent during the 48th Parliament.
       %span.right= %Q[See also: #{ link_to ('Negatived Bills', negatived_url) } | #{ link_to ('Current Bills', bills_url) }]
     %p= render(:partial => 'bill_group_link', :collection => @letter_to_assented.keys.sort, :locals => {:prefix => ''})
     %table

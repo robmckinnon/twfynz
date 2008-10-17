@@ -8,27 +8,28 @@ class Party < ActiveRecord::Base
   has_many :votes, :through => :vote_casts
 
   class << self
+    def act; from_vote_name "ACT New Zealand"; end
+    def green; from_vote_name "Green Party"; end
+    def labour; from_vote_name "New Zealand Labour"; end
+    def maori; from_vote_name "Maori Party"; end
+    def national; from_vote_name "New Zealand National"; end
+    def nz_first; from_vote_name "New Zealand First"; end
+    def progressive; from_vote_name "Progressive"; end
+    def united_future; from_vote_name "United Future"; end
+
     def party_list
-      act = Party.from_vote_name "ACT New Zealand"
-      green = Party.from_vote_name "Green Party"
-      labour = Party.from_vote_name "New Zealand Labour"
-      maori = Party.from_vote_name "Maori Party"
-      national = Party.from_vote_name "New Zealand National"
-      nz_first = Party.from_vote_name "New Zealand First"
-      progressive = Party.from_vote_name "Progressive"
-      united_future = Party.from_vote_name "United Future"
       [act, green, labour, maori, national, nz_first, progressive, united_future]
     end
 
     def party_matrix
-      act = from_vote_name "ACT New Zealand"
-      green = from_vote_name "Green Party"
-      labour = from_vote_name "New Zealand Labour"
-      maori = from_vote_name "Māori Party"
-      national = from_vote_name "New Zealand National"
-      nz_first = from_vote_name "New Zealand First"
-      progressive = from_vote_name "Progressive"
-      united_future = from_vote_name "United Future"
+      act = Party.act
+      green = Party.green
+      labour = Party.labour
+      maori = Party.maori
+      national = Party.national
+      nz_first = Party.nz_first
+      progressive = Party.progressive
+      united_future = Party.united_future
       independent = from_vote_name "Independent"
 
       matrix = [
@@ -45,9 +46,7 @@ class Party < ActiveRecord::Base
 
     def from_vote_name name
       party = find_by_vote_name(name)
-      unless party
-        party = find_by_short(name)
-      end
+      party = find_by_short(name) unless party
       party
     end
 
@@ -72,11 +71,46 @@ class Party < ActiveRecord::Base
     def colours
       find_all_sorted.collect {|p| '#'+p.colour}
     end
-
   end
 
   def split_party_votes
     PartyVote.all_unique.select {|p| p.noes_by_party[0].include?(self) && p.ayes_by_party[0].include?(self)}
+  end
+
+  def compare_with other, another
+    ayes, noes, abstentions = third_reading_ayes_noes_abstentions
+    other_ayes, other_noes, other_abstentions = other.third_reading_ayes_noes_abstentions
+    another_ayes, another_noes, another_abstentions = another.third_reading_ayes_noes_abstentions
+
+    only_ayes = ayes - other_ayes - another_ayes
+    only_noes = noes - other_noes - another_noes
+    only_abstentions = abstentions - other_abstentions - another_abstentions
+
+    ayes_with_other = (ayes - only_ayes) - another_ayes
+    noes_with_other = (noes - only_noes) - another_noes
+    abstentions_with_other = (abstentions - only_abstentions) - another_abstentions
+
+    ayes_with_another = (ayes - only_ayes) - other_ayes
+    noes_with_another = (noes - only_noes) - other_noes
+    abstentions_with_another = (abstentions - only_abstentions) - other_abstentions
+
+    ayes_with_both = (ayes - only_ayes - ayes_with_other - ayes_with_another)
+    noes_with_both = (noes - only_noes - noes_with_other - noes_with_another)
+    abstentions_with_both = (abstentions - only_abstentions - abstentions_with_other - abstentions_with_another)
+
+    only = (only_ayes + only_noes + only_abstentions)
+    with_other = (ayes_with_other + noes_with_other + abstentions_with_other)
+    with_another = (ayes_with_another + noes_with_another + abstentions_with_another)
+    with_both = (ayes_with_both + noes_with_both + abstentions_with_both)
+    return [only, with_other, with_another, with_both]
+  end
+
+  def third_reading_ayes_noes_abstentions
+    votes = PartyVote.third_reading_votes
+    ayes = votes.select        {|p| p.ayes_by_party[0].include?(self)}
+    noes = votes.select        {|p| p.noes_by_party[0].include?(self)}
+    abstentions = votes.select {|p| p.abstentions_by_party[0].include?(self)}
+    return [ayes, noes, abstentions]
   end
 
   def aye_votes_together other_party
@@ -88,7 +122,7 @@ class Party < ActiveRecord::Base
   end
 
   def votes_together other_party, cast
-    third_reading_matrix = Vote.third_reading_matrix cast
+    third_reading_matrix = cast
     votes_together = nil
 
     third_reading_matrix.each do |row|
