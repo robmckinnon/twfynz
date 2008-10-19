@@ -85,7 +85,19 @@ class Bill < ActiveRecord::Base
       bills = send(method, name.gsub('’',"'").chomp(')').sub(')',') ').sub('(',' (').squeeze(' ').sub('RateAmendments','Rate Amendments')) if bills.empty?
       bills = send(method, name.gsub('’',"'").chomp(')').sub(')',') ').sub('(',' (').squeeze(' ').sub('andAsure','and Asure')) if bills.empty?
       bills = bills.select {|b| b.royal_assent.nil? || (b.royal_assent > date) }
-      bills = bills.select {|b| b.introduction.nil? || (b.introduction <= date) }
+      bills = bills.select do |b|
+        if b.introduction.nil? && b.earliest_date.nil?
+          true
+        elsif b.introduction.nil?
+          b.earliest_date <= date ? true : false
+        elsif b.earliest_date.nil?
+          b.introduction <= date ? true : false
+        elsif b.earliest_date <= date || b.introduction <= date
+          true
+        else
+          false
+        end
+      end
 
       if bills.size == 1
         bills[0]
