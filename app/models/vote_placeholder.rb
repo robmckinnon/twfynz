@@ -14,6 +14,28 @@ class VotePlaceholder < Contribution
     bill
   end
 
+  def prefixed_anchor
+    if debate.votes.size == 1
+      anchor_prefix
+    else
+      super
+    end
+  end
+
+  def anchor_prefix
+    if vote
+      if vote.is_a?(PartyVote)
+        'party_vote'
+      elsif vote.is_a?(PersonalVote)
+        'personal_vote'
+      else
+        nil
+      end
+    else
+      nil
+    end
+  end
+
   def is_vote?
     true
   end

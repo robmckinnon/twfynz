@@ -144,27 +144,47 @@ module BillsHelper
     end
   end
 
+  def strip_tags text
+    text.gsub(/<[pi]>/, '').gsub(/<\/[pi]>/,'')
+  end
+
+  def motion_agreed_to? text
+    strip_tags(text) == 'Motion agreed to.'
+  end
+
+  def bill_reading? text
+    strip_tags(text)[/Bills? read a (first|second|third) time\.?/]
+  end
+
   def result_from_vote bill_event
     votes = bill_event.votes
-    result = votes.compact.collect(&:result).join('<br /><br />')
+    result = votes.compact.collect do |vote|
+      result = vote.result
+      if bill_reading?(result)
+        result = link_to_contribution(result,vote.contribution)
+      end
+      result
+    end.join('<br /><br />')
 
     if votes.size == 1
       debate = bill_event.debates.first
       contributions = debate.contributions
       last = contributions.last
       if last.is_procedural?
-        if last.text.gsub(/<[pi]>/, '').gsub(/<\/[pi]>/,'') == 'Motion agreed to.'
-          result += '<br /><br />' + last.text.gsub(/<[pi]>/, '').gsub(/<\/[pi]>/,'').chomp('.') + ':<br />'
+        if motion_agreed_to? last.text
+          result += '<br /><br />' + strip_tags(last.text).chomp('.') + ':<br />'
           if (contributions.size > 1 and contributions[contributions.size-2].is_speech?)
             if match = contributions[contributions.size-2].text.match(/That the .*/)
-              result += match[0].gsub(/<[pi]>/, '').gsub(/<\/[pi]>/,'')
+              result += strip_tags(match[0])
             end
           end
+        elsif bill_reading? last.text
+          result += '<br /><br />' + strip_tags(last.text)
         else
-          result += '<br /><br />' + last.text.gsub(/<[pi]>/, '').gsub(/<\/[pi]>/,'')
+          result += '<br /><br />' + strip_tags(last.text)
         end
       elsif (contributions.size > 1 and contributions[contributions.size-2].is_procedural?)
-        result += '<br /><br />' + contributions[contributions.size-2].text.gsub(/<[pi]>/, '').gsub(/<\/[pi]>/,'')
+        result += '<br /><br />' + strip_tags(contributions[contributions.size-2].text)
       end
     end
 
@@ -183,25 +203,30 @@ module BillsHelper
       statement = contributions[i]
       results = []
 
-      if statement.text.gsub(/<[pi]>/, '').gsub(/<\/[pi]>/,'') == 'Motion agreed to.'
-        result = statement.text.gsub(/<[pi]>/, '').gsub(/<\/[pi]>/,'').chomp('.') + ':<br />'
+      if motion_agreed_to? statement.text
+        result = strip_tags(statement.text).chomp('.') + ':<br />'
 
         if (contributions.size > 1 and contributions[1].is_speech?)
           if match = contributions[1].text.match(/That the .*/)
-            result += match[0].gsub(/<[pi]>/, '').gsub(/<\/[pi]>/,'').gsub('</i>','')
+            result += strip_tags(match[0]).gsub('</i>','')
           end
         end
 
         if (contributions.size > 2 and contributions[2].is_procedural?)
           if contributions[2].text.include? 'Bill read'
-            result = contributions[2].text.gsub(/<[pi]>/, '').gsub(/<\/[pi]>/,'') + '<br /><br />' + result
+            result = strip_tags(contributions[2].text) + '<br /><br />' + result
           end
         end
 
         result.sub!(':<br />','.') if result.ends_with?(':<br />')
       else
         while (statement and statement.is_procedural?)
-          results << statement.text.gsub(/<[pi]>/, '').gsub(/<\/[pi]>/,'') unless statement.text[/(Waiata|Sitting suspended)/]
+          text = strip_tags(statement.text)
+          if bill_reading? text
+            results << link_to_contribution(text, statement)
+          else
+            results << text unless statement.text[/(Waiata|Sitting suspended)/]
+          end
           i = i.next
           statement = (i != contributions.size) ? contributions[i] : nil
           statement = nil if (statement and statement.text.include? 'House resumed')

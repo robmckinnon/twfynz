@@ -1,5 +1,6 @@
 %div{ :id=>anchor_in_debate, :class=> vote.type.to_s.downcase }
-  %p.votereason= vote.reason
+  = vote.question[/That the amendment/] ? '' : link_to_this_contribution(vote.contribution)
+  %p.votereason{ :id=> vote.contribution.prefixed_anchor}= vote.reason
   %p.votequestion= format_vote_question vote
   - if vote.ayes?
     %p.voteayes= 'Ayes ' + vote.ayes_count.to_s

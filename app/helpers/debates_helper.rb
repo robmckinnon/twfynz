@@ -66,7 +66,7 @@ module DebatesHelper
     elsif contribution.is_a? SectionHeader
       transcript.sub!('<p>','<h3>').sub!('</p>','</h3>')
 
-    elsif contribution.is_procedural? && (match = /Debate resumed from ([^.]*)\./.match transcript) && contribution.debate.about
+    elsif contribution.is_procedural? && (match = /Debate resumed from ([^.]*)\./.match(transcript)) && contribution.debate.about
       date = Date.parse(match[1])
       debate_date = contribution.debate.date
       if date > debate_date
@@ -93,6 +93,11 @@ module DebatesHelper
           organisation = organisations[index]
           transcript.sub!(name, '<a href="/organisations/'+organisation.slug+'">'+name+'</a>')
         end
+      end
+    end
+    if contribution.is_procedural?
+      if transcript.starts_with?('<p>The question was put') || transcript[/^<p>Bills? read a/]
+        transcript = link_to_this_contribution(contribution) + transcript
       end
     end
     transcript

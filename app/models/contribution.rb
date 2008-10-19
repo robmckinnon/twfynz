@@ -149,12 +149,16 @@ class Contribution < ActiveRecord::Base
     end
   end
 
-  def speaker_anchor
+  def debate
+    debate = spoken_in
+  end
+
+  def anchor_prefix
     speaker ? speaker_name.anchor(debate.date) : nil
   end
 
-  def debate
-    debate = spoken_in
+  def prefixed_anchor
+    anchor_prefix ? anchor_prefix+'_'+anchor : anchor
   end
 
   def anchor
