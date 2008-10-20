@@ -138,7 +138,7 @@ ActionController::Routing::Routes.draw do |map|
 
   with_controller :parties, map do |party|
     index_route 'parties', party
-    make_route 'parties/third_reading_votes.:format', party, :third_reading_votes
+    make_route 'parties/third_reading_and_negatived_votes.:format', party, :third_reading_and_negatived_votes
     make_route 'parties/:name', party
     make_route 'parties/:name/:other_name', party, :compare_parties
   end

@@ -37,7 +37,7 @@ class Vote < ActiveRecord::Base
 
     def vote_vectors
       parties = Party.party_list
-      votes = third_reading_votes
+      votes = third_reading_and_negatived_votes
       vectors = []
       parties.each do |party|
         values = [party.short]
@@ -93,6 +93,14 @@ class Vote < ActiveRecord::Base
       end
 
       matrix
+    end
+
+    def third_reading_and_negatived_votes
+      third_reading_votes + negatived_party_votes
+    end
+
+    def negatived_party_votes
+      Bill.find_all_negatived.collect{|b| b.debates.sort_by(&:date).last.votes.last}.compact.select{|v| v.type == 'PartyVote'}
     end
 
     def third_reading_votes
