@@ -259,6 +259,13 @@ module ApplicationHelper
     link_to mp.full_name, url_for_mp(mp)
   end
 
+  def party_logo party
+    if party.logo
+      image_tag('parties/'+party.logo, :class => 'logo', :alt => "Logo for #{party.name}")
+    else
+      ''
+    end
+  end
   def link_to_party party
     if party.short == 'Independent'
       'Independent'

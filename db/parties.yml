@@ -1,0 +1,118 @@
+--- 
+- !ruby/object:Party 
+  attributes: 
+    vote_name: ACT New Zealand
+    name: ACT New Zealand
+    registered: "1995-02-17"
+    abbreviation: ""
+    logo: 
+    url: http://www.act.org.nz/
+    colour: 0070af
+    id: "1"
+    short: ACT
+  attributes_cache: {}
+
+- !ruby/object:Party 
+  attributes: 
+    vote_name: Green Party
+    name: The Greens, The Green Party of Aotearoa New Zealand
+    registered: "1995-08-17"
+    abbreviation: Green Party
+    logo: 
+    url: http://www.greens.org.nz/
+    colour: "065222"
+    id: "2"
+    short: Green
+  attributes_cache: {}
+
+- !ruby/object:Party 
+  attributes: 
+    vote_name: New Zealand Labour
+    name: New Zealand Labour Party
+    registered: "1995-02-17"
+    abbreviation: Labour Party
+    logo: 
+    url: http://www.labour.org.nz/
+    colour: cc0111
+    id: "3"
+    short: Labour
+  attributes_cache: {}
+
+- !ruby/object:Party 
+  attributes: 
+    vote_name: "M\xC4\x81ori Party"
+    name: Maori Party
+    registered: "2004-07-09"
+    abbreviation: ""
+    logo: 
+    url: http://www.maoriparty.com/
+    colour: 99000a
+    id: "4"
+    short: Maori Party
+  attributes_cache: {}
+
+- !ruby/object:Party 
+  attributes: 
+    vote_name: New Zealand National
+    name: The New Zealand National Party
+    registered: "1994-12-02"
+    abbreviation: National Party
+    logo: 
+    url: http://www.national.org.nz/
+    colour: 014e9d
+    id: "5"
+    short: National
+  attributes_cache: {}
+
+- !ruby/object:Party 
+  attributes: 
+    vote_name: New Zealand First
+    name: New Zealand First Party
+    registered: "1994-12-20"
+    abbreviation: NZ First
+    logo: 
+    url: http://www.nzfirst.org.nz/
+    colour: "030303"
+    id: "6"
+    short: NZ First
+  attributes_cache: {}
+
+- !ruby/object:Party 
+  attributes: 
+    vote_name: Progressive
+    name: Jim Anderton's Progressive
+    registered: "2002-06-24"
+    abbreviation: Progressive
+    logo: 
+    url: http://www.progressive.org.nz/
+    colour: b60026
+    id: "7"
+    short: Progressive
+  attributes_cache: {}
+
+- !ruby/object:Party 
+  attributes: 
+    vote_name: United Future
+    name: United Future New Zealand
+    registered: "2001-12-13"
+    abbreviation: United Future
+    logo: 
+    url: http://www.unitedfuture.org.nz/
+    colour: "322152"
+    id: "8"
+    short: United Future
+  attributes_cache: {}
+
+- !ruby/object:Party 
+  attributes: 
+    vote_name: Independent
+    name: ""
+    registered: 
+    abbreviation: Independent
+    logo: 
+    url: 
+    colour: "999999"
+    id: "9"
+    short: Independent
+  attributes_cache: {}
+

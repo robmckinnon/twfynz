@@ -51,7 +51,7 @@ class Party < ActiveRecord::Base
     end
 
     def all_size_ordered
-      find(:all, :include => :mps).sort {|a,b| b.mps.size <=> a.mps.size}
+      find(:all, :include => :mps).select{|p| p.mps.size > 0}.sort_by {|p| p.mps.size }.reverse
     end
 
     def get_party name
@@ -122,7 +122,7 @@ class Party < ActiveRecord::Base
   end
 
   def votes_together other_party, cast
-    third_reading_matrix = cast
+    third_reading_matrix = Vote.third_reading_matrix(cast)
     votes_together = nil
 
     third_reading_matrix.each do |row|
