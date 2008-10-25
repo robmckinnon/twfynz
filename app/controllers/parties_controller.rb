@@ -1,6 +1,6 @@
 class PartiesController < ApplicationController
 
-  caches_action :index, :party, :third_reading_and_negatived_votes
+  caches_action :index, :show_party, :third_reading_and_negatived_votes
 
   layout "parties_layout"
 
