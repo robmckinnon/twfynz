@@ -1,6 +1,6 @@
 class BillsController < ApplicationController
 
-  caches_action :index, :negatived, :assented, :show_bill_atom
+  caches_action :index, :negatived, :assented, :show_bill_atom, :show_bill
 
   layout "bills_layout", :except => 'show_bill_atom'
 
