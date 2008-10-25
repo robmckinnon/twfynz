@@ -5,6 +5,37 @@ require 'uri'
 
 module PartyDownloader
 
+  def self.set_wikipedia_url
+    urls = {
+      "ACT" => "http://en.wikipedia.org/wiki/ACT_New_Zealand",
+      "Green" => "http://en.wikipedia.org/wiki/Green_Party_of_Aotearoa_New_Zealand",
+      "Labour" => "http://en.wikipedia.org/wiki/New_Zealand_Labour_Party",
+      "Maori Party" => "http://en.wikipedia.org/wiki/Māori_Party",
+      "National" => "http://en.wikipedia.org/wiki/New_Zealand_National_Party",
+      "NZ First" => "http://en.wikipedia.org/wiki/New_Zealand_First",
+      "Progressive" => "http://en.wikipedia.org/wiki/New_Zealand_Progressive_Party",
+      "United Future" => "http://en.wikipedia.org/wiki/United_Future_New_Zealand",
+      "Aotearoa Legalise Cannabis" => "http://en.wikipedia.org/wiki/Aotearoa_Legalise_Cannabis_Party",
+      "Direct Democracy Party" => "http://en.wikipedia.org/wiki/Direct_Democracy_Party_of_New_Zealand",
+      "Libertarianz" => "http://en.wikipedia.org/wiki/Libertarianz",
+      "New World Order" => "http://en.wikipedia.org/wiki/New_World_Order_Party",
+      "NZ Pacific Party" => "http://en.wikipedia.org/wiki/New_Zealand_Pacific_Party",
+      "Residents Action Movement" => "http://en.wikipedia.org/wiki/Residents_Action_Movement",
+      "Alliance" => "http://en.wikipedia.org/wiki/Alliance_(New_Zealand_political_party)",
+      "Bill and Ben Party" => "http://en.wikipedia.org/wiki/Bill_and_Ben_Party",
+      "Family Party" => "http://en.wikipedia.org/wiki/Family_Party",
+      "Kiwi Party" => "http://en.wikipedia.org/wiki/The_Kiwi_Party",
+      "Democrats for social credit" => "http://en.wikipedia.org/wiki/New_Zealand_Democratic_Party",
+      "Republic of NZ Party" => "http://en.wikipedia.org/wiki/The_Republic_of_New_Zealand_Party",
+      "Workers Party" => "http://en.wikipedia.org/wiki/Workers_Party_of_New_Zealand"
+    }
+    urls.each do |party, url|
+      party = Party.find_by_short(party)
+      party.wikipedia_url = url
+      party.save
+    end
+  end
+
   def self.response host, path
     resp = nil
     Net::HTTP.start(host) do |http|

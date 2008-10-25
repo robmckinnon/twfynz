@@ -75,7 +75,7 @@ class Vote < ActiveRecord::Base
     end
 
     def third_reading_matrix cast=nil
-      votes = third_reading_votes
+      votes = third_reading_and_negatived_votes
       matrix = Party.party_matrix
       add_to_matrix matrix, votes, :ayes if !cast || cast == :ayes
       add_to_matrix matrix, votes, :noes if !cast || cast == :noes
@@ -115,7 +115,7 @@ class Vote < ActiveRecord::Base
     def remove_duplicates votes
       debates = votes.collect(&:debate)
       debates = Debate::remove_duplicates(debates)
-      votes.delete_if {|v| !debates.include?(v.debate)}
+      votes.delete_if {|v| (v.debate.publication_status != 'F') && !debates.include?(v.debate)}
       votes
     end
   end

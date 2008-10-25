@@ -3,14 +3,25 @@
 #normalcontent
   %h1= party_logo(@party) + @name.sub(', ',',<br />')
   .divider3
-  %ul.linklist
-    -if @bills_in_charge_of.size > 0
-      %li
-        %a{ :href=>"#bills_in_charge_of" } Bills in charge of
-  .divider2
+  %p
+    - if @party.mp_count == 0
+      Registered political party with no MPs in Parliament.
+    - else
+      = "Registered political party with #{pluralize(@party.mp_count,'MP')} in the 48th New Zealand Parliament."
+  .divider3
   - if @bills_in_charge_of.size > 0
     %div{ :class=>"post", :id=>"bills_in_charge_of" }
       %h3 Bills in charge of
       .contentarea
         %ul.linklist
           = render :partial => 'bill_link', :collection => @bills_in_charge_of
+  .divider3
+  %div{ :class=>"post", :id=>"external_links" }
+    %h3 External links
+    .contentarea
+      %ul.linklist
+        %li#wikipedia= link_to('Wikipedia entry on ' + @party.short, @party.wikipedia_url)
+        - if @party.url
+          %li#party_website
+            = link_to('Website for ' + @party.short, @party.url, :rel=>"nofollow")
+

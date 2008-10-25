@@ -66,6 +66,7 @@ end
 
 #require 'htmlentities'
 require 'acts_as_slugged'
+require 'acts_as_wikipedia'
 require 'string_extensions_for_maori'
 require 'date_extension'
 require 'in_groups_by'

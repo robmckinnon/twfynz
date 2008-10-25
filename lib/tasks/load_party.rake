@@ -6,4 +6,8 @@ namespace :kiwimp do
   task :add_new_parties => :environment do
     PartyDownloader.add_new_parties
   end
+
+  task :set_wikipedia_url => :environment do
+    PartyDownloader.set_wikipedia_url
+  end
 end

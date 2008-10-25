@@ -1,9 +1,9 @@
 require 'rubygems'
-require 'open-uri'
 require 'hpricot'
-require 'uri'
 
 class Organisation < ActiveRecord::Base
+
+  acts_as_wikipedia
 
   has_many :submissions, :as => :submitter
   has_many :donations
@@ -125,23 +125,6 @@ class Organisation < ActiveRecord::Base
 
   def id_hash
     { :name => slug }
-  end
-
-  def populate_wikipedia_url
-    unless wikipedia_url
-      encoded_name = URI.encode name
-      url = "http://www.google.com/search?&q=%22#{encoded_name}%22%20site%3Aen.wikipedia.org"
-      results = (Hpricot(open(url)) / 'h2.r/a')
-      if results.size > 0
-        self.wikipedia_url = results.first.attributes['href']
-      else
-        url = "http://www.google.com/search?&q=#{encoded_name}%20site%3Aen.wikipedia.org"
-        results = (Hpricot(open(url)) / 'h2.r/a')
-        if results.size > 0
-          self.wikipedia_url = results.first.attributes['href']
-        end
-      end
-    end
   end
 
   def populate_count_of_mentions

@@ -1,11 +1,13 @@
 class Party < ActiveRecord::Base
 
+  acts_as_wikipedia
+
   has_many :mps, :foreign_key => 'member_of_id'
 
   has_many :donations
 
   has_many :vote_casts
-  has_many :votes, :through => :vote_casts
+  has_many :votes, :through => :vote_casts, :include => {:contribution => :spoken_in}
 
   class << self
     def act; from_vote_name "ACT New Zealand"; end
@@ -71,6 +73,10 @@ class Party < ActiveRecord::Base
     def colours
       find_all_sorted.collect {|p| '#'+p.colour}
     end
+  end
+
+  def party_votes
+    Vote.remove_duplicates( Party.labour.votes )
   end
 
   def split_party_votes

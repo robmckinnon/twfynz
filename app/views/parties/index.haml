@@ -4,16 +4,17 @@
     %p Parties in the 48th New Zealand Parliament.
     %table
       %thead
-        %th Logo
+        %th
         %th Party
-        %th MPs &nbsp;
-        %th Registered name
+        %th MPs
       %tbody
         =render(:partial => 'party_summary', :collection => @parties, :locals => {:total_mps => @total_mps})
         %tr
+          %td
           %td &nbsp;
           %td
         %tr
+          %td
           %td TOTAL MPS
           %td.count= @total_mps
     %h2 Percentage of Third Reading Votes Parties Voted Together

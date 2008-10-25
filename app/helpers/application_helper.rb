@@ -266,11 +266,13 @@ module ApplicationHelper
       ''
     end
   end
-  def link_to_party party
+
+  def link_to_party party, name=nil
     if party.short == 'Independent'
       'Independent'
     else
-      link_to party.short, url_for_party(party)
+      name = party.short unless name
+      link_to name, url_for_party(party)
     end
   end
 
