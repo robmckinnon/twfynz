@@ -32,6 +32,14 @@ class PartiesController < ApplicationController
       # @portfolios_answered_about = []
       @bills_in_charge_of = party.bills_in_charge_of
 
+      @total_party_votes_size = PartyVote.all_unique.size
+      @party_votes_size = party.party_votes.size
+      @party_vote_percent = @party_votes_size * 100.0 / @total_party_votes_size
+
+      @total_bill_votes_size = Vote.third_reading_and_negatived_votes.size
+      @bill_votes_size = party.bill_third_reading_and_negatived_votes.size
+      @bill_vote_percent = @bill_votes_size * 100.0 / @total_bill_votes_size
+
       @party = party
     else
       render(:template => 'parties/invalid_party', :status => 404)

@@ -75,8 +75,24 @@ class Party < ActiveRecord::Base
     end
   end
 
+  def display_name
+    if short == 'Green'
+      'The Greens'
+    elsif short == 'Maori Party'
+      'The Māori Party'
+    else
+      short
+    end
+  end
+
+  def bill_third_reading_and_negatived_votes
+    party_votes_set = Set.new(party_votes)
+    party_votes_set.&(Vote.third_reading_and_negatived_votes).to_a
+  end
+
   def party_votes
-    Vote.remove_duplicates( Party.labour.votes )
+    @party_votes ||= Vote.remove_duplicates( votes )
+    @party_votes
   end
 
   def split_party_votes
