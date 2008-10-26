@@ -25,20 +25,15 @@ class PartiesController < ApplicationController
 
     if party
       @name = party.name
-      # @recent_contributions = party.recent_contributions
-      # @subjects_asked_about = []
-      # @subjects_answered_about = []
-      # @portfolios_asked_about = []
-      # @portfolios_answered_about = []
       @bills_in_charge_of = party.bills_in_charge_of
 
-      @total_party_votes_size = PartyVote.all_unique.size
-      @party_votes_size = party.party_votes.size
-      @party_vote_percent = @party_votes_size * 100.0 / @total_party_votes_size
+      @total_party_votes_size = 0 # PartyVote.all_unique.size
+      @party_votes_size = 0 # party.party_votes.size
+      @party_vote_percent = 0 # @party_votes_size * 100.0 / @total_party_votes_size
 
-      @total_bill_votes_size = Vote.third_reading_and_negatived_votes.size
-      @bill_votes_size = party.bill_third_reading_and_negatived_votes.size
-      @bill_vote_percent = @bill_votes_size * 100.0 / @total_bill_votes_size
+      @total_bill_votes_size = 0 # Vote.third_reading_and_negatived_votes.size
+      @bill_votes_size = 0 # party.bill_third_reading_and_negatived_votes.size
+      @bill_vote_percent = 0 # @bill_votes_size * 100.0 / @total_bill_votes_size
 
       @party = party
     else
