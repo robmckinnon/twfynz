@@ -116,7 +116,9 @@ class Vote < ActiveRecord::Base
     def remove_duplicates votes
       debates = votes.collect(&:debate)
       debates = Debate::remove_duplicates(debates)
-      votes.delete_if {|v| (v.debate.publication_status != 'F') && !debates.include?(v.debate)}
+      debate_ids = {}
+      debates.each {|d| debate_ids[d.id] = true}
+      votes.delete_if {|v| (v.debate.publication_status != 'F') && !debate_ids[v.debate.id] }
       votes
     end
   end
