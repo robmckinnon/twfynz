@@ -2,6 +2,7 @@ class Party < ActiveRecord::Base
 
   acts_as_wikipedia
 
+  has_many :parliament_parties
   has_many :mps, :foreign_key => 'member_of_id'
 
   has_many :donations
@@ -125,6 +126,10 @@ class Party < ActiveRecord::Base
     with_another = (ayes_with_another + noes_with_another + abstentions_with_another)
     with_both = (ayes_with_both + noes_with_both + abstentions_with_both)
     return [only, with_other, with_another, with_both]
+  end
+
+  def in_parliament number
+    parliament_parties.select {|p| p.parliament_id == number}.first
   end
 
   def third_reading_ayes_noes_abstentions

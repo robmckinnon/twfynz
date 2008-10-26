@@ -27,12 +27,15 @@ class PartiesController < ApplicationController
       @name = party.name
       @bills_in_charge_of = party.bills_in_charge_of
 
-      @total_party_votes_size = PartyVote.all_unique.size
-      @party_votes_size = party.party_votes.size
+      parliament = Parliament.find(48)
+      party_in_parliament = party.in_parliament(48)
+
+      @total_party_votes_size = parliament.party_votes_count
+      @party_votes_size = party_in_parliament.party_votes_count
       @party_vote_percent = @party_votes_size * 100.0 / @total_party_votes_size
 
-      @total_bill_votes_size = Vote.third_reading_and_negatived_votes.size
-      @bill_votes_size = party.bill_third_reading_and_negatived_votes.size
+      @total_bill_votes_size = parliament.bill_final_reading_party_votes_count
+      @bill_votes_size = party_in_parliament.bill_final_reading_party_votes_count
       @bill_vote_percent = @bill_votes_size * 100.0 / @total_bill_votes_size
 
       @party = party

@@ -1,13 +1,14 @@
 - @javascript = "prototype"
 - @title = %Q[#{@party.name}: Party in Aotearoa New Zealand's Parliament]
+- if @party.mp_count == 0
+  - description = 'registered political party with no MPs in Parliament.'
+- else
+  - description = "registered political party with #{pluralize(@party.mp_count,'MP')} in the 48th New Zealand Parliament."
+- @description = %Q[#{@party.name} are a #{description.sub('Reg','reg')}]
 #normalcontent
   %h1= party_logo(@party) + @name.sub(', ',',<br />')
   .divider3
-  %p
-    - if @party.mp_count == 0
-      Registered political party with no MPs in Parliament.
-    - else
-      = "Registered political party with #{pluralize(@party.mp_count,'MP')} in the 48th New Zealand Parliament."
+  %p= @description
   - if false # @party_votes_size > 0
     %table
       %tr

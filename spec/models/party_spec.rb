@@ -22,6 +22,7 @@ end
 describe Party, 'in general' do
 
   assert_model_has_many :donations
+  assert_model_has_many :parliament_parties
 
   it 'should have mps' do
     party = Party.new party_params
