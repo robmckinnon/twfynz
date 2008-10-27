@@ -1,6 +1,6 @@
 - unless party_summary.nil?
   - party = party_summary
   %tr.party
-    %td= party_logo party
+    %td= party_logo_small party
     %td= link_to_party(party, party.name)
     %td.count= party.mp_count

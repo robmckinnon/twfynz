@@ -11,14 +11,14 @@ class Party < ActiveRecord::Base
   has_many :votes, :through => :vote_casts, :include => {:contribution => :spoken_in}
 
   class << self
-    def act; from_vote_name "ACT New Zealand"; end
-    def green; from_vote_name "Green Party"; end
-    def labour; from_vote_name "New Zealand Labour"; end
-    def maori; from_vote_name "Maori Party"; end
-    def national; from_vote_name "New Zealand National"; end
-    def nz_first; from_vote_name "New Zealand First"; end
-    def progressive; from_vote_name "Progressive"; end
-    def united_future; from_vote_name "United Future"; end
+    def act; @act ||= from_vote_name("ACT New Zealand"); end
+    def green; @green ||= from_vote_name("Green Party"); end
+    def labour; @labour ||= from_vote_name("New Zealand Labour"); end
+    def maori; @maori ||= from_vote_name("Maori Party"); end
+    def national; @national ||= from_vote_name("New Zealand National"); end
+    def nz_first; @nz_first ||= from_vote_name("New Zealand First"); end
+    def progressive; @progressive ||= from_vote_name("Progressive"); end
+    def united_future; @united_future ||= from_vote_name("United Future"); end
 
     def party_list
       [act, green, labour, maori, national, nz_first, progressive, united_future]
@@ -36,14 +36,14 @@ class Party < ActiveRecord::Base
       independent = from_vote_name "Independent"
 
       matrix = [
-[	[labour , labour, 0, []], 	[labour , national, 0, []], 	[labour , green, 0, []], 	[labour , nz_first, 0, []], 	[labour , maori, 0, []], 	[labour , act, 0, []], 	[labour , united_future, 0, []], 	[labour , progressive, 0, []] 	],
-[	[progressive, labour, 0, []], 	[progressive, national, 0, []], 	[progressive, green, 0, []], 	[progressive, nz_first, 0, []], 	[progressive, maori, 0, []], 	[progressive, act, 0, []], 	[progressive, united_future, 0, []], 	[progressive, progressive, 0, []] 	],
-[	[nz_first, labour, 0, []], 	[nz_first, national, 0, []], 	[nz_first, green, 0, []], 	[nz_first, nz_first, 0, []], 	[nz_first, maori, 0, []], 	[nz_first, act, 0, []], 	[nz_first, united_future, 0, []], 	[nz_first, progressive, 0, []] 	],
-[	[united_future, labour, 0, []], 	[united_future, national, 0, []], 	[united_future, green, 0, []], 	[united_future, nz_first, 0, []], 	[united_future, maori, 0, []], 	[united_future, act, 0, []], 	[united_future, united_future, 0, []], 	[united_future, progressive, 0, []] 	],
-[	[green , labour, 0, []], 	[green , national, 0, []], 	[green , green, 0, []], 	[green , nz_first, 0, []], 	[green , maori, 0, []], 	[green , act, 0, []], 	[green , united_future, 0, []], 	[green , progressive, 0, []] 	],
-[	[maori , labour, 0, []], 	[maori , national, 0, []], 	[maori , green, 0, []], 	[maori , nz_first, 0, []], 	[maori , maori, 0, []], 	[maori , act, 0, []], 	[maori , united_future, 0, []], 	[maori , progressive, 0, []] 	],
-[	[national, labour, 0, []], 	[national, national, 0, []], 	[national, green, 0, []], 	[national, nz_first, 0, []], 	[national, maori, 0, []], 	[national, act, 0, []], 	[national, united_future, 0, []], 	[national, progressive, 0, []] 	],
-[	[act , labour, 0, []], 	[act , national, 0, []], 	[act , green, 0, []], 	[act , nz_first, 0, []], 	[act , maori, 0, []], 	[act , act, 0, []], 	[act , united_future, 0, []], 	[act , progressive, 0, []] 	]
+[	[labour , labour, 0, {}], 	[labour , national, 0, {}], 	[labour , green, 0, {}], 	[labour , nz_first, 0, {}], 	[labour , maori, 0, {}], 	[labour , act, 0, {}], 	[labour , united_future, 0, {}], 	[labour , progressive, 0, {}] 	],
+[	[progressive, labour, 0, {}], 	[progressive, national, 0, {}], 	[progressive, green, 0, {}], 	[progressive, nz_first, 0, {}], 	[progressive, maori, 0, {}], 	[progressive, act, 0, {}], 	[progressive, united_future, 0, {}], 	[progressive, progressive, 0, {}] 	],
+[	[nz_first, labour, 0, {}], 	[nz_first, national, 0, {}], 	[nz_first, green, 0, {}], 	[nz_first, nz_first, 0, {}], 	[nz_first, maori, 0, {}], 	[nz_first, act, 0, {}], 	[nz_first, united_future, 0, {}], 	[nz_first, progressive, 0, {}] 	],
+[	[united_future, labour, 0, {}], 	[united_future, national, 0, {}], 	[united_future, green, 0, {}], 	[united_future, nz_first, 0, {}], 	[united_future, maori, 0, {}], 	[united_future, act, 0, {}], 	[united_future, united_future, 0, {}], 	[united_future, progressive, 0, {}] 	],
+[	[green , labour, 0, {}], 	[green , national, 0, {}], 	[green , green, 0, {}], 	[green , nz_first, 0, {}], 	[green , maori, 0, {}], 	[green , act, 0, {}], 	[green , united_future, 0, {}], 	[green , progressive, 0, {}] 	],
+[	[maori , labour, 0, {}], 	[maori , national, 0, {}], 	[maori , green, 0, {}], 	[maori , nz_first, 0, {}], 	[maori , maori, 0, {}], 	[maori , act, 0, {}], 	[maori , united_future, 0, {}], 	[maori , progressive, 0, {}] 	],
+[	[national, labour, 0, {}], 	[national, national, 0, {}], 	[national, green, 0, {}], 	[national, nz_first, 0, {}], 	[national, maori, 0, {}], 	[national, act, 0, {}], 	[national, united_future, 0, {}], 	[national, progressive, 0, {}] 	],
+[	[act , labour, 0, {}], 	[act , national, 0, {}], 	[act , green, 0, {}], 	[act , nz_first, 0, {}], 	[act , maori, 0, {}], 	[act , act, 0, {}], 	[act , united_future, 0, {}], 	[act , progressive, 0, {}] 	]
       ]
     end
 
@@ -78,7 +78,7 @@ class Party < ActiveRecord::Base
 
   def display_name
     if short == 'Green'
-      'The Greens'
+      'The Green Party'
     elsif short == 'Maori Party'
       'The Māori Party'
     else
@@ -87,8 +87,12 @@ class Party < ActiveRecord::Base
   end
 
   def bill_third_reading_and_negatived_votes
-    party_votes_set = Set.new(party_votes)
-    party_votes_set.&(Vote.third_reading_and_negatived_votes).to_a
+    @bill_third_reading_and_negatived_votes ||= Set.new(party_votes).&(Vote.third_reading_and_negatived_votes).to_a
+    @bill_third_reading_and_negatived_votes
+  end
+
+  def split_bill_third_reading_and_negatived_votes
+    bill_third_reading_and_negatived_votes.select {|p| p.noes_by_party[1].key?(self) && p.ayes_by_party[1].key?(self)}
   end
 
   def party_votes
@@ -97,7 +101,7 @@ class Party < ActiveRecord::Base
   end
 
   def split_party_votes
-    PartyVote.all_unique.select {|p| p.noes_by_party[0].include?(self) && p.ayes_by_party[0].include?(self)}
+    party_votes.select {|p| p.noes_by_party[1].key?(self) && p.ayes_by_party[1].key?(self)}
   end
 
   def compare_with other, another
@@ -159,7 +163,93 @@ class Party < ActiveRecord::Base
         break
       end
     end
-    votes_together.sort_by(&:bill_name)
+    votes_together.keys.sort_by(&:bill_name)
+  end
+
+  def votes_comparison other_party
+    votes = Vote.third_reading_and_negatived_votes
+
+    ayes_ayes = []
+    noes_noes = []
+    abstentions_abstentions = []
+    novote_novote = []
+
+    ayes_noes = []
+    noes_ayes = []
+
+    ayes_abstentions = []
+    noes_abstentions = []
+
+    ayes_novote = []
+    noes_novote = []
+
+    abstentions_ayes = []
+    abstentions_noes = []
+    abstentions_novote = []
+
+    novote_ayes = []
+    novote_noes = []
+    novote_abstentions = []
+
+    votes.each do |vote|
+      ayes = vote.ayes_cast_by_party
+      noes = vote.noes_cast_by_party
+      abstentions = vote.abstentions_cast_by_party
+
+      if ayes.key?(self) && ayes.key?(other_party)
+        ayes_ayes << vote
+      elsif noes.key?(self) && noes.key?(other_party)
+        noes_noes << vote
+      elsif ayes.key?(self) && noes.key?(other_party)
+        ayes_noes << vote
+      elsif noes.key?(self) && ayes.key?(other_party)
+        noes_ayes << vote
+      elsif noes.key?(self) && noes.key?(other_party)
+        noes_noes << vote
+      elsif abstentions.key?(self) && abstentions.key?(other_party)
+        abstentions_abstentions << vote
+      elsif ayes.key?(self) && abstentions.key?(other_party)
+        ayes_abstentions << vote
+      elsif noes.key?(self) && abstentions.key?(other_party)
+        noes_abstentions << vote
+      elsif abstentions.key?(self) && ayes.key?(other_party)
+        abstentions_ayes << vote
+      elsif abstentions.key?(self) && noes.key?(other_party)
+        abstentions_noes << vote
+      elsif !ayes.key?(self) && !noes.key?(self) && !abstentions.key?(self)
+        if ayes.key?(other_party)
+          novote_ayes << vote
+        elsif noes.key?(other_party)
+          novote_noes << vote
+        elsif abstentions.key?(other_party)
+          novote_abstentions << vote
+        else
+          novote_novote << vote
+        end
+      elsif !ayes.key?(other_party) && !noes.key?(other_party) && !abstentions.key?(other_party)
+        if ayes.key?(self)
+          ayes_novote << vote
+        elsif noes.key?(self)
+          noes_novote << vote
+        elsif abstentions.key?(self)
+          abstentions_novote << vote
+        else
+          raise 'unexpected ' + vote.inspect
+        end
+      end
+    end
+    return [ayes_ayes.sort_by(&:bill_name), noes_noes.sort_by(&:bill_name), ayes_noes.sort_by(&:bill_name), noes_ayes.sort_by(&:bill_name),
+    abstentions_abstentions.sort_by(&:bill_name), ayes_abstentions.sort_by(&:bill_name), noes_abstentions.sort_by(&:bill_name),
+    abstentions_ayes.sort_by(&:bill_name), abstentions_noes.sort_by(&:bill_name),
+
+    novote_novote.sort_by(&:bill_name),
+    ayes_novote.sort_by(&:bill_name),
+    noes_novote.sort_by(&:bill_name),
+    abstentions_novote.sort_by(&:bill_name),
+    novote_ayes.sort_by(&:bill_name),
+    novote_noes.sort_by(&:bill_name),
+    novote_abstentions.sort_by(&:bill_name)
+    ]
   end
 
   def url_name

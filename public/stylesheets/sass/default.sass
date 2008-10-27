@@ -37,6 +37,20 @@ a:visited
 a:visited.link_to_contribution
   :color grey
 
+a.high_vote_correlation
+  :color #111
+  :text-decoration none
+  :font-weight bold
+a.moderate_vote_correlation
+  :color #333
+  :text-decoration none
+a.low_vote_correlation
+  :color #666
+  :text-decoration none
+a.minimumal_vote_correlation
+  :color #999
+  :text-decoration none
+
 #ni_map
   a
     :text-decoration none
@@ -545,7 +559,8 @@ span.right
 
 table
   :margin-bottom 1em
-
+table.bill_votes tbody tr td
+  :width 50%
 #submissions table
   :margin-bottom 0em
 
@@ -649,7 +664,7 @@ th.debate-column
   :margin-top 0.3em
 
 tr.party
-  :height 60px
+  :height 30px
 
 #party_of_mp_in_charge
   :width 2em

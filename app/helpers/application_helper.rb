@@ -259,9 +259,17 @@ module ApplicationHelper
     link_to mp.full_name, url_for_mp(mp)
   end
 
+  def party_logo_small party
+    if party.logo
+      image_tag('parties/'+party.logo, :class => 'logo', :alt => "Logo for #{party.name}", :size=>'60x30')
+    else
+      ''
+    end
+  end
+
   def party_logo party
     if party.logo
-      image_tag('parties/'+party.logo, :class => 'logo', :alt => "Logo for #{party.name}")
+      image_tag('parties/'+party.logo, :class => 'logo', :alt => "Logo for #{party.name}", :size=>'120x60')
     else
       ''
     end

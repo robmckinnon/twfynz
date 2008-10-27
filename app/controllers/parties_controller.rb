@@ -1,6 +1,6 @@
 class PartiesController < ApplicationController
 
-  caches_action :index, :show_party, :third_reading_and_negatived_votes
+  caches_action :index, :show_party, :third_reading_and_negatived_votes, :compare_parties
 
   layout "parties_layout"
 
@@ -9,15 +9,14 @@ class PartiesController < ApplicationController
     @title = "Parties in Aotearoa New Zealand's Parliament"
     @total_mps = @parties.inject(0) {|count, p| count + p.mps.size }
     @third_reading_matrix = Vote.third_reading_matrix
-    # @ayes_third_reading_matrix = Vote.third_reading_matrix :ayes
-    # @noes_third_reading_matrix = Vote.third_reading_matrix :noes
   end
 
   def compare_parties
     @party = Party::get_party params[:name]
     @other_party = Party::get_party params[:other_name]
-    @aye_votes_together = @party.aye_votes_together(@other_party)
-    @noe_votes_together = @party.noe_votes_together(@other_party)
+    # @aye_votes_together = @party.aye_votes_together(@other_party)
+    # @noe_votes_together = @party.noe_votes_together(@other_party)
+    @aye_votes_together, @noe_votes_together, @ayes_noes, @noes_ayes, @abstentions_abstentions, @ayes_abstentions, @noes_abstentions, @abstentions_ayes, @abstentions_noes, @novote_novote, @ayes_novote, @noes_novote, @abstentions_novote, @novote_ayes, @novote_noes, @novote_abstentions = @party.votes_comparison(@other_party)
   end
 
   def show_party

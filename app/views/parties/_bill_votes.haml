@@ -1,0 +1,31 @@
+.divider3
+%table.bill_votes
+  %thead
+    %tr
+      %th
+        - if votes.size > 0
+          = party_logo_small(@party)
+          = @party.display_name
+          = party_vote == 'no vote' ? "didn't vote" : " voted: #{party_vote}"
+          %br
+          = party_logo_small(@other_party)
+          = @other_party.display_name
+          = other_party_vote == 'no vote' ? "didn't vote" : " voted: #{other_party_vote}"
+      - if party_vote2 && votes2.size > 0
+        %th
+          = party_logo_small(@party)
+          = @party.display_name
+          = party_vote2 == 'no vote' ? "didn't vote" : " voted: #{party_vote2}"
+          %br
+          = party_logo_small(@other_party)
+          = @other_party.display_name
+          = other_party_vote2 == 'no vote' ? "didn't vote" : " voted: #{other_party_vote2}"
+  %tbody
+    - row_count = party_vote2 ? [votes.size, votes2.size].max : votes.size
+    - 0.upto(row_count -1) do |index|
+      %tr
+        %td
+          %small= index < votes.size ? (votes[index].bill_name || 'no bill ' + vote.debate.date.to_s + vote.bill_names) : ''
+        - if party_vote2
+          %td
+            %small= index < votes2.size ? (votes2[index].bill_name || 'no bill ' + vote.debate.date.to_s + vote.bill_names) : ''

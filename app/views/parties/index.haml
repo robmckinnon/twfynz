@@ -17,10 +17,6 @@
           %td
           %td TOTAL MPS
           %td.count= @total_mps
-    %h2 Percentage of Third Reading Votes Parties Voted Together
+    %h2 Parties voting together on final bill readings
     =render(:partial => 'vote_matrix', :object => @third_reading_matrix)
-    - # %h2 Percentage of Third Reading Votes Parties Voted Aye Together
-    - # =render(:partial => 'vote_matrix', :object => @ayes_third_reading_matrix)
-    - # %h2 Percentage of Third Reading Votes Parties Voted Noe Together
-    - # =render(:partial => 'vote_matrix', :object => @noes_third_reading_matrix)
 

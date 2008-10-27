@@ -1,6 +1,6 @@
 class CreateParliamentParties < ActiveRecord::Migration
   def self.up
-    create_table :parliament_parties do |t|
+    create_table :parliament_parties, :options => 'default charset=utf8' do |t|
       t.integer :parliament_id
       t.integer :party_id
       t.text :parliament_description

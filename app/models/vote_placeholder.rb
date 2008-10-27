@@ -1,7 +1,7 @@
 class VotePlaceholder < Contribution
 
   before_destroy :destroy_vote
-  belongs_to :vote
+  belongs_to :vote, :include => {:vote_casts => :party}
 
   alias_method :original_is_vote?, :is_vote?
   alias_method :original_populate_spoken_by_id, :populate_spoken_by_id

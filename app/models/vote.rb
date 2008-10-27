@@ -52,22 +52,54 @@ class Vote < ActiveRecord::Base
     end
 
     def voted_same_way(party, other_party, vote_parties)
-      vote_parties.include?(party) && vote_parties.include?(other_party)
+      vote_parties.key?(party) && vote_parties.key?(other_party)
     end
 
     def add_to_matrix matrix, votes, cast
+      cell_hash = {}
+
       matrix.each do |row|
         row.each do |cell|
           unless cell.empty?
             party = cell[0]
             other_party = cell[1]
 
-            votes.each do |vote|
-              parties_cast = vote.send(cast).collect(&:party).uniq
-              if voted_same_way(party, other_party, parties_cast)
-                cell[2] = cell[2].next
-                cell[3] << vote
+            if party == other_party
+              # ignore as not a comparison
+            else
+              if cell_hash[[other_party, party]]
+                # ignore as we have data in diagonal opposite cell
+              else
+                cell_hash[[party, other_party]] = cell
+                votes.each do |vote|
+                  parties_cast = {}
+                  vote.send(cast).collect{ |c| parties_cast[c.party] = true }
+                  if voted_same_way(party, other_party, parties_cast)
+                    cell[2] = cell[2].next
+                    cell[3][vote] = true
+                  end
+                end
               end
+            end
+          end
+        end
+      end
+    end
+
+    def full_matrix matrix
+      cell_hash = {}
+
+      matrix.each do |row|
+        row.each do |cell|
+          unless cell.empty?
+            party = cell[0]
+            other_party = cell[1]
+
+            if party != other_party && (diagonal_opposite = cell_hash[[other_party, party]])
+              cell[2] = diagonal_opposite[2]
+              cell[3] = diagonal_opposite[3]
+            else
+              cell_hash[[party, other_party]] = cell
             end
           end
         end
@@ -77,16 +109,19 @@ class Vote < ActiveRecord::Base
     def third_reading_matrix cast=nil
       votes = third_reading_and_negatived_votes
       matrix = Party.party_matrix
-      add_to_matrix matrix, votes, :ayes if !cast || cast == :ayes
-      add_to_matrix matrix, votes, :noes if !cast || cast == :noes
-      add_to_matrix matrix, votes, :abstentions if !cast || cast == :abstentions
-
+      add_to_matrix matrix, votes, :ayes_cast if !cast || cast == :ayes
+      add_to_matrix matrix, votes, :noes_cast if !cast || cast == :noes
+      add_to_matrix matrix, votes, :abstentions_cast if !cast || cast == :abstentions
+      full_matrix matrix
       count = votes.size.to_f
       matrix.each do |row|
         row.each do |cell|
           unless cell.empty?
-            # cell[0] = cell[0].short
-            # cell[1] = cell[1].short
+            # if cell[0] == cell[1]
+              # party = cell[0]
+              # split_votes = party.split_bill_third_reading_and_negatived_votes
+              # cell[2] = cell[2] - split_votes.size
+            # end
             cell[2] = (cell[2] / count) * 100
           end
         end
@@ -101,11 +136,13 @@ class Vote < ActiveRecord::Base
     end
 
     def negatived_party_votes
-      Bill.find_all_negatived.collect{|b| b.debates.sort_by(&:date).last.votes.last}.compact.select{|v| v.type == 'PartyVote'}
+      negatived_bills = Bill.find_all_negatived
+      last_debate_votes = negatived_bills.collect{|b| b.debates.sort_by(&:date).last.votes.last}.compact
+      last_debate_votes.select{|v| v.type == 'PartyVote'}
     end
 
     def third_reading_votes
-      votes = find(:all, :conditions => 'vote_question like "%third%"', :include => {:contribution => :spoken_in})
+      votes = find(:all, :conditions => 'vote_question like "%third%"', :include => [{:vote_casts => :party}, {:contribution => :spoken_in}])
       remove_duplicates(votes)
     end
 
@@ -182,15 +219,15 @@ class Vote < ActiveRecord::Base
   end
 
   def ayes_by_party
-    party_and_votes ayes
+    party_and_votes ayes_cast
   end
 
   def noes_by_party
-    party_and_votes noes
+    party_and_votes noes_cast
   end
 
   def abstentions_by_party
-    party_and_votes abstentions
+    party_and_votes abstentions_cast
   end
 
   def ayes?
@@ -203,6 +240,30 @@ class Vote < ActiveRecord::Base
 
   def abstentions?
     abstentions.size > 0
+  end
+
+  def ayes_cast_by_party
+    ayes_cast.group_by {|v| v.party}.to_hash
+  end
+
+  def noes_cast_by_party
+    noes_cast.group_by {|v| v.party}.to_hash
+  end
+
+  def abstentions_cast_by_party
+    abstentions_cast.group_by {|v| v.party}.to_hash
+  end
+
+  def ayes_cast
+    vote_casts.select {|c| c.cast == "aye"}
+  end
+
+  def noes_cast
+    vote_casts.select {|c| c.cast == "noe"}
+  end
+
+  def abstentions_cast
+    vote_casts.select {|c| c.cast == "abstention"}
   end
 
   def votes_count
@@ -275,7 +336,7 @@ class Vote < ActiveRecord::Base
           cast_count(votes[y]) <=> cast_count(votes[x])
         end
       end
-      return parties, votes
+      return parties, votes.to_hash
     end
 
 end
