@@ -47,8 +47,11 @@ module DebatesHelper
   def format_bill_in_contribution transcript, text, date
     bills = Bill.bills_from_text_and_date text, date
     bills.compact.each do |bill|
-      bill_link = link_to(bill.bill_name, show_bill_url(:bill_url => bill.url))
-      transcript.gsub!(bill.bill_name, bill_link)
+      bill_name = bill.bill_name
+      bill_link = link_to(bill_name, show_bill_url(:bill_url => bill.url))
+      transcript.gsub!(bill_name, bill_link)
+
+      transcript.gsub!(bill_name.gsub("'","’"), bill_link) if bill_name.include?("'")
     end
   end
 

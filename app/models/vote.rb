@@ -266,6 +266,26 @@ class Vote < ActiveRecord::Base
     vote_casts.select {|c| c.cast == "abstention"}
   end
 
+  def passed_third_reading?
+    vote_question.include?('third') && ayes_have_it?
+  end
+
+  def ayes_have_it?
+    ayes_cast_count > noes_cast_count
+  end
+
+  def ayes_cast_count
+    cast_count ayes_cast
+  end
+
+  def noes_cast_count
+    cast_count noes_cast
+  end
+
+  def abstentions_cast_count
+    cast_count abstentions_cast
+  end
+
   def votes_count
     cast_count vote_casts
   end
@@ -319,8 +339,8 @@ class Vote < ActiveRecord::Base
       self.abstentions_tally = 0 if self.abstentions_tally.nil?
     end
 
-    def cast_count votes
-      votes.inject(0) {|count, vote| count += vote.cast_count}
+    def cast_count vote_casts
+      vote_casts.inject(0) {|count, vote| count += vote.cast_count}
     end
 
     def party_and_votes votes

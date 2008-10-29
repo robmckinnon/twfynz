@@ -34,6 +34,15 @@ class Bill < ActiveRecord::Base
 
   class << self
 
+    def passed_third_reading_no_vote
+      readings = BillEvent.find(:all, :conditions => 'name like "%Third%"'); nil
+      readings = Parliament.find(48).in_parliament(readings); nil
+      no_vote_readings = readings.select {|x| !x.has_votes?}; nil
+      bills = no_vote_readings.collect(&:bill).uniq; nil
+      parent_bills = bills.collect {|b| b.formerly_part_of_id ? b.formerly_part_of : b}.uniq; nil
+      parent_bills
+    end
+
     def all_bill_names
       @all_bill_names = Bill.all.collect(&:bill_name).sort.uniq.reverse unless @all_bill_names
       @all_bill_names

@@ -261,7 +261,7 @@ module ApplicationHelper
 
   def party_logo_small party
     if party.logo
-      image_tag('parties/'+party.logo, :class => 'logo', :alt => "Logo for #{party.name}", :size=>'60x30')
+      image_tag('parties/'+party.logo, :class => 'logo_small', :alt => "Logo for #{party.name}", :size=>'60x30')
     else
       ''
     end
@@ -594,6 +594,31 @@ module ApplicationHelper
       date.to_s
     else
       debates.first.date.to_s
+    end
+  end
+
+  def vote_cast_by_party_text party, votes_cast, use_short_name=false
+    if votes_cast[0].mp
+      if votes_cast[0].vote.is_a? PartyVote
+        party_name = party.short == 'Independent' ? party.short : link_to(party.short, show_party_url(:name => party.id_name), :class=>'vote_caster')
+        cast_count = votes_cast.inject(0) {|count,vote| count += vote.cast_count}
+        if use_short_name
+          party_name = party_name.sub('Independent','indep.')
+          names = votes_cast.collect(&:vote_label).join(', ')
+        else
+          names = (render :partial => 'debates/party_vote_cast', :collection => votes_cast).chomp("\n").chomp(",")
+        end
+        %Q[#{party_name} #{cast_count} (#{names})]
+      else
+        link_to(votes_cast[0].vote_label, show_mp_url(:name => votes_cast[0].mp.id_name))
+      end
+    else
+      if use_short_name
+        party_name = party.short.sub(' Party','').sub('Progressive','Progres.').sub('Future','F.')
+      else
+        party_name = party.short == 'Independent' ? party.short : link_to(votes_cast[0].vote_label, show_party_url(:name => party.id_name), :class=>'vote_caster')
+      end
+      %Q[#{party_name} #{votes_cast[0].cast_count.to_s}]
     end
   end
 

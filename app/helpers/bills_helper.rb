@@ -120,28 +120,36 @@ module BillsHelper
     vote ? vote.question : ''
   end
 
-  def vote_ayes bill_event
+  def vote_casts_summary cast, bill_event
     if bill_event.has_votes?
-      bill_event.votes.collect { |v| (v and v.ayes_count != 0) ? v.ayes_count : '-' }.join('<br /><br />')
+      if bill_event.votes.size == 1 && bill_event.votes.first.is_a?(PartyVote)
+        vote = bill_event.votes.first
+        cast_count = vote.send("#{cast}_count".to_sym)
+        if cast_count == 0
+          '-'
+        else
+          parties, vote_casts = vote.send("#{cast}_by_party".to_sym)
+          casts = parties.collect {|p| '<small>'+vote_cast_by_party_text(p, vote_casts[p],use_short_name=true)+'</small>'}
+          "#{cast.capitalize} #{cast_count}<br/> #{casts.join('<br/>')}"
+        end
+      else
+        bill_event.votes.collect { |v| (v and v.send("#{cast}_count".to_sym) != 0) ? v.send("#{cast}_count".to_sym) : '-' }.join('<br /><br />')
+      end
     else
       ''
     end
+  end
+
+  def vote_ayes bill_event
+    vote_casts_summary 'ayes', bill_event
   end
 
   def vote_noes bill_event
-    if bill_event.has_votes?
-      bill_event.votes.collect { |v| (v and v.noes_count != 0) ? v.noes_count : '-' }.join('<br /><br />')
-    else
-      ''
-    end
+    vote_casts_summary 'noes', bill_event
   end
 
   def vote_abstentions bill_event
-    if bill_event.has_votes?
-      bill_event.votes.collect { |v| (v and v.abstentions_count != 0) ? v.abstentions_count : '-' }.join('<br /><br />')
-    else
-      ''
-    end
+    vote_casts_summary 'abstentions', bill_event
   end
 
   def strip_tags text

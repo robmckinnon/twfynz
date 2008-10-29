@@ -454,13 +454,17 @@ class Debate < ActiveRecord::Base
   end
 
   def description
-    description = contributions.first.first_sentence
-    index = 1
-    while (!description || description.starts_with?('Debate resumed')) && index < contributions.size
-      description = contributions[index].first_sentence
-      index = index.next
+    if contributions.size > 0
+      description = contributions.first.first_sentence
+      index = 1
+      while (!description || description.starts_with?('Debate resumed')) && index < contributions.size
+        description = contributions[index].first_sentence
+        index = index.next
+      end
+      description
+    else
+      ''
     end
-    description
   end
 
   def is_uncorrected?

@@ -62,7 +62,7 @@
             - else
               = text_field_tag(:q, '', :maxlength=>"100", :size=>"12")
             = submit_tag "Search", :class => 'submit'
-        #headerpic
+        - #headerpic
       - else
         #search
           - form_tag({:controller => 'application', :action => :search}, {:method=>"get"}) do
@@ -96,7 +96,7 @@
               %a{ :href=>"https://secure.elections.org.nz/app/enrol/" }
                 %img{ :src=>"http://www.elections.org.nz/files/elector-hot-button-v2.gif" }
       #footer
-        - if not @home
+        - if true # if not @home
           - spacer = ' <span class="spacer">|</span> '
           .left
             - links = link_to "Home", {:controller=>'application', :action=>'home'}, :title=>'The front page of the site', :class=>(something_else_on ? nil : 'active')

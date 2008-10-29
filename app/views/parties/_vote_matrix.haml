@@ -1,4 +1,4 @@
-%table
+%table.votematrix
   %thead
     %tr
       %th
@@ -13,12 +13,13 @@
   %tbody
     - vote_matrix.each do |row|
       %tr
-        %th{:style=>"width: 6em;"}= row[0][0].short.sub('Maori Party','Māori').sub('Progressive','Progres.').sub('United Future','United F.')
-        = render :partial => 'vote_cell', :object => row.rassoc(Party.labour)
-        = render :partial => 'vote_cell', :object => row.rassoc(Party.progressive)
-        = render :partial => 'vote_cell', :object => row.rassoc(Party.nz_first)
-        = render :partial => 'vote_cell', :object => row.rassoc(Party.united_future)
-        = render :partial => 'vote_cell', :object => row.rassoc(Party.green)
-        = render :partial => 'vote_cell', :object => row.rassoc(Party.maori)
-        = render :partial => 'vote_cell', :object => row.rassoc(Party.national)
-        = render :partial => 'vote_cell', :object => row.rassoc(Party.act)
+        - %Q|%th{:style=>"width: 6em;"}= row[0][0].short.sub('Maori Party','Māori').sub('Progressive','Progres.').sub('United Future','United F.')|
+        %td.logo= party_logo_small(row[0][0])
+        = render :partial => 'parties/vote_cell', :object => row.rassoc(Party.labour)
+        = render :partial => 'parties/vote_cell', :object => row.rassoc(Party.progressive)
+        = render :partial => 'parties/vote_cell', :object => row.rassoc(Party.nz_first)
+        = render :partial => 'parties/vote_cell', :object => row.rassoc(Party.united_future)
+        = render :partial => 'parties/vote_cell', :object => row.rassoc(Party.green)
+        = render :partial => 'parties/vote_cell', :object => row.rassoc(Party.maori)
+        = render :partial => 'parties/vote_cell', :object => row.rassoc(Party.national)
+        = render :partial => 'parties/vote_cell', :object => row.rassoc(Party.act)

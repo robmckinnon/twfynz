@@ -2,19 +2,19 @@
 - @home = true
 - @script = "Event.observe(window, 'load', function() { if ($('user_login')) $('user_login').focus(); } );"
 #normalcontent
-  %h1 Find out what your elected representatives are doing in Aotearoa New Zealand's Parliament.
+  - "%h1 Find out what your elected representatives are doing in Aotearoa New Zealand's Parliament."
+  %h1 New Zealand's Election is on 8th November 2008
+  %p
+    New Zealanders now is your last chance to <a href="http://www.elections.org.nz/enrolment/enrol-by.html">enrol to vote</a>.
+    You can find out <a href="http://www.elections.org.nz/news/where-to-vote.html">where to vote</a> now.
+    Kiwis living overseas can <a href="http://www.elections.org.nz/voting/votingsub/how-vote-overseas.html">vote from overseas</a> from now until 7th November.
+  %h2#compare_parties Compare parties' bill votes from the 48th Parliament
+  =render(:partial => 'parties/vote_matrix', :object => @third_reading_matrix)
 #primarycontainer
   #primarycontent
-    #project_summary
-      %p
-        On this site you can browse parliamentary debates going back to November 2005, grouped by their relationship to
-        = link_to("Bills", {:controller=>'bills'}, :title=>'Bill debates and Questions about Bills') + ', '
-        = link_to("Ministerial Portfolios", {:controller=>'portfolios'}, :title=>'Questions to Ministers') + ', '
-        -# = link_to("Committees", {:controller=>'committees'}, :title=>'Questions about Committees') + ', and '
-        = link_to("MPs", {:controller=>'mps'}, :title=>'List of all MPs') + ' or '
-        = link_to("organisations", {:controller=>'organisations'}, :title=>'List of organisations') + '.'
-        You can also view an
-        = link_to('index of recent debates', {:controller=>'debates'}, :title=>'List of recent debates') + '.'
+    =render(:partial => 'parties/vote_matrix_explaination')
+  - #project_summary
+  -   #render :partial => 'project_summary'
   - unless @submission_dates.nil? || @submission_dates.empty?
     #public_bill_submissions
       %h2 Bills open for public submissions
@@ -39,4 +39,4 @@
             %ul
               - @weeks_top_pages.each do |item|
                 %li= link_to("#{item.page_title}", item.url) + " <span class='page_views'>(#{item.unique_pageviews})</span>"
-= render :partial => 'calendar.haml'
+- #render :partial => 'calendar.haml'

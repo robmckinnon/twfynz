@@ -49,6 +49,7 @@ class ApplicationController < ActionController::Base
         @weeks_top_pages = nil
         @days_top_pages = nil
       end
+      @third_reading_matrix = Vote.third_reading_matrix
       @submission_dates = SubmissionDate.find_live_bill_submissions
       render :template => 'home'
     end

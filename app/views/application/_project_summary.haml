@@ -1,0 +1,10 @@
+%p
+  This site hosts parliamentary debates of the 48th Parliament, which was in term between 7 November 2005 and 3 October 2008.
+  The debates are grouped by their relationship to
+  = link_to("bills", {:controller=>'bills'}, :title=>'Bill debates and Questions about Bills') + ', '
+  = link_to("ministerial portfolios", {:controller=>'portfolios'}, :title=>'Questions to Ministers') + ', '
+  -# = link_to("Committees", {:controller=>'committees'}, :title=>'Questions about Committees') + ', and '
+  = link_to("MPs", {:controller=>'mps'}, :title=>'List of all MPs') + ' or '
+  = link_to("organisations", {:controller=>'organisations'}, :title=>'List of organisations') + '.'
+  -# You can also view an
+  -# = link_to('index of recent debates', {:controller=>'debates'}, :title=>'List of recent debates') + '.'

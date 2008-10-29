@@ -176,9 +176,10 @@ img.left, img.portrait
   :position relative
   :float left
   :margin 0em 1.8em 1.4em 0em
-img.logo
+img.logo, img.logo_small
   :border-width 0px
   :vertical-align middle
+img.logo
   :margin-right 1em
   :margin-bottom 1em
 img.right
@@ -559,8 +560,27 @@ span.right
 
 table
   :margin-bottom 1em
+
 table.bill_votes tbody tr td
   :width 50%
+
+table.votematrix
+  :padding-top 1em
+  :padding-bottom 1em
+
+table.votematrix thead tr th
+  :font-weight normal
+
+table.votematrix tbody tr td
+  :padding-right 0em
+
+table.votematrix tbody tr td.logo
+  :padding 0.25em 0.6em 0.25em 0.6em
+
+p.faq
+  :font-weight bold
+  :margin-bottom 0.5em
+
 #submissions table
   :margin-bottom 0em
 
@@ -627,8 +647,13 @@ th.date, td.date, td.yui-dt-date
   :text-align center
 
 .bill-table
+  th.ayes, th.noes, th.abstentions
+    :text-align center
+
+.bill-table
   td.ayes, td.noes, td.abstentions
     :text-align center
+    :width 5em
 
 th.debate-column
   :width 9em
@@ -691,3 +716,9 @@ td.bill
   :padding-top 0.3em
 td.split_bill
   :padding-left 2em
+
+.assented_bill, .negatived_bill
+  :font-size 0.8em
+
+.assented_bill
+  :font-weight bold

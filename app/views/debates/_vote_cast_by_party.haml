@@ -1,13 +1,3 @@
 - party = vote_cast_by_party
 - votes_cast = votes[party]
-- if votes_cast[0].mp
-  - if votes_cast[0].vote.is_a? PartyVote
-    - party_name = party.short == 'Independent' ? party.short : link_to(party.short, show_party_url(:name => party.id_name), :class=>'vote_caster')
-    - cast_count = votes_cast.inject(0) {|count,vote| count += vote.cast_count}
-    - names = (render :partial => 'party_vote_cast', :collection => votes_cast).chomp("\n").chomp(",")
-    %li= %Q[#{party_name} #{cast_count} (#{names})]
-  - else
-    %li= link_to(votes_cast[0].vote_label, show_mp_url(:name => votes_cast[0].mp.id_name))
-- else
-  - party_name = party.short == 'Independent' ? party.short : link_to(votes_cast[0].vote_label, show_party_url(:name => party.id_name), :class=>'vote_caster')
-  %li= %Q[#{party_name} #{votes_cast[0].cast_count.to_s}]
+%li= vote_cast_by_party_text(party, votes_cast)
