@@ -187,7 +187,7 @@ module BillsHelper
   def result_from_vote bill_event
     votes = bill_event.votes
     result = votes.compact.collect do |vote|
-      result = vote.result + ' ' + vote.debate.id.to_s
+      result = vote.result
       if bill_reading?(result)
         result = link_to_contribution(result,vote.contribution)
       end
