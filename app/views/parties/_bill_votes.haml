@@ -42,7 +42,7 @@
             - if index < votes2.size
               - vote = votes2[index]
               - bill_name = (vote.bill_name || 'no bill ' + vote.debate.date.to_s + vote.bill_names)
-              - bill = Bill.find_by_bill_name(bill_name)
+              - bill = vote.bill
               - if vote.passed_third_reading?
                 %span.assented_bill=  bill ? link_to_bill(bill) : bill_name
               - else
