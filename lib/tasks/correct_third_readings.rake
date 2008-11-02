@@ -15,7 +15,6 @@ namespace :kiwimp do
 
     debate_to_bills = contributions.inject({}) do |debate_bills, contribution|
       bill_text = contribution.text.match(/That the (.*)be now read/)[1].gsub('Bill and the','Bill, and the')
-
       bills = bill_text.split(/,( and)? the/)
       bills = bills.select { |b| b.match(/[a-z ]*(.*)/)[1].length > 0 }
       bills = bills.collect { |b| b.match(/[a-z ]*(.*)/)[1].chomp(', ') }
@@ -24,15 +23,18 @@ namespace :kiwimp do
     end
 
     debate_to_bills.each_pair { |k,v| puts k.id.to_s + " " + v.join(' ') }
-
     puts ''
     puts 'unknown bills:'
     debate_to_bills.each_pair do |debate, bills|
-      bills.each {|name| puts debate.date.to_s + ' ' + name if Bill.find_by_bill_name(name).nil? }
+      bills.each do |name|
+        puts debate.date.to_s + ' ' + name if Bill.from_name_and_date(name, debate.date).nil?
+      end
     end
 
     debate_to_bill_ids = debate_to_bills.keys.inject({}) do |debate_bill_ids, debate|
-      bills = debate_to_bills[debate].collect {|name| Bill.find_by_bill_name(name) }.compact
+      bills = debate_to_bills[debate].collect do |name|
+        Bill.from_name_and_date(name, debate.date)
+      end.compact
       debate_bill_ids[debate]= bills.collect {|b| b.id}
       debate_bill_ids
     end
