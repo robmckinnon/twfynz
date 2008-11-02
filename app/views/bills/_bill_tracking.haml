@@ -1,0 +1,15 @@
+#tracking_details
+  - form_for(:tracking, @tracking, :html => {:id => 'new_tracking'}) do |f|
+    #tracking
+      = f.radio_button :tracking_on, true
+      %label{ :for => 'tracking_tracking_on_true' } I'm tracking
+    #not_tracking
+      = f.radio_button :tracking_on, false
+      %label{ :for => 'tracking_tracking_on_false' } I'm not tracking
+    = f.hidden_field :item_type
+    = f.hidden_field :item_id
+  = observe_form :new_tracking, :url => { :controller => 'trackings', :action => 'create' }, :update => "trackers_list", :frequency => "0.25"
+  #trackers
+    %h3 Tracking this bill
+    %p#trackers_list
+      = tracker_list @trackings

@@ -173,6 +173,7 @@ class DebatesController < ApplicationController
 
   def show_debate
     begin
+      @admin = admin?
       debate = Debate.find_by_url_category_and_url_slug(@date, params[:url_category], params[:url_slug])
       debate ? render_debate(debate) : render_debate_not_found
     rescue ActiveRecord::RecordNotFound

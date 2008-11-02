@@ -78,6 +78,11 @@ class BillEvent < ActiveRecord::Base
     end
   end
 
+  def date_method
+    method = name.downcase.gsub(' ','_').to_sym
+    (method == :in_committee) ? :committee_of_the_whole_house : method
+  end
+
   def debates
     debates_in_groups_by_name, votes_by_name = bill.debates_by_name_names_votes_by_name
     debates = debates_in_groups_by_name.blank? ? nil : debates_in_groups_by_name.select {|list| list.first.normalized_name == self.name}.flatten
@@ -88,6 +93,21 @@ class BillEvent < ActiveRecord::Base
   def votes
     votes_by_name = bill.votes_in_groups_by_name
     votes = votes_by_name.blank? ? nil : votes_by_name[self.name]
+    votes = votes.compact.uniq if votes
+
+    votes = votes.select do |vote|
+      bill_name = vote.bill_name
+      if bill_name
+        if bill.bill_name == bill_name || bill.bill_name == bill_name.gsub('’',"'")
+          true
+        else
+          false
+        end
+      else
+        true
+      end
+    end if votes
+
     votes
   end
 

@@ -1,5 +1,6 @@
 #bill_events
   %h2 Bill Events
+  %p
   %table.bill-table
     %tbody
     %tr
@@ -10,9 +11,9 @@
         %th.ayes Ayes
         %th.noes Noes
         %th.abstentions Abstentions
-    - bill_events.each do |bill_event|
+    - bill_events.each_with_index do |bill_event, i|
       %tr
-        %td= bill_event_name bill_event
+        %td= bill_event_name(bill_event)
         %td.date= bill_event_dates bill_event
         %td.summary= bill_event_result_summary bill_event
         - if @have_votes

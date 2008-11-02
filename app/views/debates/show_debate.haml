@@ -5,5 +5,12 @@
       - @debate.sub_debates.each do |subdebate|
         %div{ :class=> subdebate.css_class }
           = render :partial => 'debate', :object => subdebate
+  - if @admin
+    - @debate.bill_events.each do |e|
+      %p
+        = h e.inspect
+        - if e.bill
+          = link_to_bill(e.bill)
+
 #secondarycontent
   = render :partial => 'debate_nav', :object => @debate

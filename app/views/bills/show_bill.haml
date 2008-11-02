@@ -10,31 +10,12 @@
         There have been
         = link_to "#{@submissions_count} submissions", show_bill_submissions_url(:bill_url => @bill.url)
         on this bill.
+    - if @admin
+      %p= h @bill.inspect
+      - @bill.bill_events.each do |e|
+        %p= h e.inspect
     = render :partial => 'bill_events', :object => @top_level_bill_events
     - if is_production_env
-      #news_feed
-        .hfeed
-          %h2.feed-title News coverage
-          .entries
-            %p loading...
-      #blog_feed
-        .hfeed
-          %h2.feed-title Blog coverage
-          .entries
-            %p loading...
+      = render :partial => 'news_feeds'
 - if current_user
-  #tracking_details
-    - form_for(:tracking, @tracking, :html => {:id => 'new_tracking'}) do |f|
-      #tracking
-        = f.radio_button :tracking_on, true
-        %label{ :for => 'tracking_tracking_on_true' } I'm tracking
-      #not_tracking
-        = f.radio_button :tracking_on, false
-        %label{ :for => 'tracking_tracking_on_false' } I'm not tracking
-      = f.hidden_field :item_type
-      = f.hidden_field :item_id
-    = observe_form :new_tracking, :url => { :controller => 'trackings', :action => 'create' }, :update => "trackers_list", :frequency => "0.25"
-    #trackers
-      %h3 Tracking this bill
-      %p#trackers_list
-        = tracker_list @trackings
+  = render :partial => 'bill_tracking'

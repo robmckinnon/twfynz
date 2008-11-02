@@ -140,6 +140,26 @@ module BillsHelper
     end
   end
 
+  def vote_casts_summary cast, bill_event
+    if bill_event.has_votes?
+      if bill_event.votes.size == 1 && bill_event.votes.first.is_a?(PartyVote)
+        vote = bill_event.votes.first
+        cast_count = vote.send("#{cast}_count".to_sym)
+        if cast_count == 0
+          '-'
+        else
+          parties, vote_casts = vote.send("#{cast}_by_party".to_sym)
+          casts = parties.collect {|p| '<small>'+vote_cast_by_party_text(p, vote_casts[p],use_short_name=true)+'</small>'}
+          "#{cast.capitalize} #{cast_count}<br/> #{casts.join('<br/>')}"
+        end
+      else
+        bill_event.votes.collect { |v| (v and v.send("#{cast}_count".to_sym) != 0) ? v.send("#{cast}_count".to_sym) : '-' }.join('<br /><br />')
+      end
+    else
+      ''
+    end
+  end
+
   def vote_ayes bill_event
     vote_casts_summary 'ayes', bill_event
   end
@@ -167,7 +187,7 @@ module BillsHelper
   def result_from_vote bill_event
     votes = bill_event.votes
     result = votes.compact.collect do |vote|
-      result = vote.result
+      result = vote.result + ' ' + vote.debate.id.to_s
       if bill_reading?(result)
         result = link_to_contribution(result,vote.contribution)
       end

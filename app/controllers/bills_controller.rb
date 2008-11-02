@@ -54,6 +54,7 @@ class BillsController < ApplicationController
   end
 
   def show_bill
+    @admin = admin?
     @bills_on = true
     @tracking = get_tracking @bill
     @trackings = Tracking.all_for_item(@bill, current_user)

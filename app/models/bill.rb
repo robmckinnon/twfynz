@@ -173,6 +173,40 @@ class Bill < ActiveRecord::Base
     end
   end
 
+  def fix_bill_events
+    unmatched = unmatched_bill_events
+    if unmatched.size > 0
+      bills = Bill.find_all_by_bill_name(self.bill_name)
+      other_bill = bills.detect {|b| b.id != self.id}
+
+      unmatched.each do |event|
+        if other_bill.send(event.date_method) == event.date
+          puts 'found match for: ' + event.name + ' ' + other_bill.bill_name
+          event.bill_id = other_bill.id
+          event.save
+        end
+      end
+    end
+  end
+
+  def unmatched_bill_events
+    events = []
+    if Bill.find_all_by_bill_name(self.bill_name).size == 2
+      dates = [introduction, first_reading, second_reading,
+            committee_of_the_whole_house, third_reading, royal_assent].compact.sort
+      events = bill_events.select {|e| e.source_type == 'Debate'}
+      events = events.select {|e| !dates.include?(e.date)}
+      events = events.select do |e|
+        if date = self.send(e.date_method)
+          e.date > date
+        else
+          true
+        end
+      end
+    end
+    events
+  end
+
   def probably_not_divided?
     year = Date.today.year
     divided_into_bills.empty? or (divided_into_bills.size > 0 and (last_event and last_event[0].year == year))
