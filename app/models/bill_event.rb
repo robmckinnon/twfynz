@@ -102,6 +102,8 @@ class BillEvent < ActiveRecord::Base
           true
         elsif bill_name.include?(bill.bill_name)
           true
+        elsif bill_name.include?(bill.bill_name.sub(' Bill',''))
+          true
         else
           false
         end
