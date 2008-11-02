@@ -173,6 +173,46 @@ class Bill < ActiveRecord::Base
     end
   end
 
+  def fix_debate_topics
+    topics = unmatched_debate_topics
+    if topics.size > 0
+      bills = Bill.find_all_by_bill_name(self.bill_name)
+      other_bill = bills.detect {|b| b.id != self.id}
+      topics.each do |topic|
+        if other_bill.send(:third_reading) == topic.debate.date
+          puts 'found match for: ' + topic.debate.name + ' ' + other_bill.bill_name
+          topic.topic_id = other_bill.id
+          topic.save
+        else
+          puts 'no match for: ' + topic.debate.name + ' ' + other_bill.bill_name
+        end
+      end
+    end
+  end
+
+  def unmatched_debate_topics
+    topics = []
+    if Bill.find_all_by_bill_name(self.bill_name).size == 2
+      debate_topics.each do |topic|
+        debate = topic.debate
+        if debate.name.include?('Third')
+          if third_reading != debate.date
+            begin
+              days = (debate.date - third_reading)
+              if days > 5
+                topics << topic
+              end
+            rescue
+              dates = third_reading.to_s + ' ' + debate.date.to_s
+              # puts 'found match for: ' + debate.name + ' ' + self.bill_name + ' ' + dates
+            end
+          end
+        end
+      end
+    end
+    topics
+  end
+
   def fix_bill_events
     unmatched = unmatched_bill_events
     if unmatched.size > 0
