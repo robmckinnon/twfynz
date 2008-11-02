@@ -100,6 +100,8 @@ class BillEvent < ActiveRecord::Base
       if bill_name
         if bill.bill_name == bill_name || bill.bill_name == bill_name.gsub('’',"'") || bill.bill_name.tr('()','') == bill_name.tr('()','')
           true
+        elsif bill_name.include?(bill.bill_name)
+          true
         else
           false
         end
