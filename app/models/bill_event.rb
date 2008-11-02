@@ -98,7 +98,7 @@ class BillEvent < ActiveRecord::Base
     votes = votes.select do |vote|
       bill_name = vote.bill_name
       if bill_name
-        if bill.bill_name == bill_name || bill.bill_name == bill_name.gsub('’',"'")
+        if bill.bill_name == bill_name || bill.bill_name == bill_name.gsub('’',"'") || bill.bill_name.tr('()','') == bill_name.tr('()','')
           true
         else
           false
