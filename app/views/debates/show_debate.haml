@@ -11,6 +11,11 @@
         = h e.inspect
         - if e.bill
           = link_to_bill(e.bill)
+    - @debate.debate_topics.each do |d|
+      %p
+        = h d.inspect
+        - if d.topic
+          = link_to_bill(d.topic)
 
 #secondarycontent
   = render :partial => 'debate_nav', :object => @debate

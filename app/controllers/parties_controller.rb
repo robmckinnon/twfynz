@@ -62,7 +62,7 @@ class PartiesController < ApplicationController
 
   def third_reading_and_negatived_votes
     respond_to do |format|
-      header = %Q|"#{Vote.third_reading_and_negatived_votes.collect(&:bill_name).join('","')}"|
+      header = %Q|"#{Vote.third_reading_and_negatived_votes.collect(&:bill).collect(&:bill_name).join('","')}"|
       format.csv { render :text => header + "\n" + Vote.vote_vectors.collect(&:to_s).join("\n") }
     end
   end
