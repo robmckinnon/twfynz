@@ -93,6 +93,10 @@ class Bill < ActiveRecord::Base
       bills = send(method, name.gsub('’',"'").chomp(')').sub(')',') ').sub('(',' (').squeeze(' ').sub('Appropriations','Appropriation')) if bills.empty?
       bills = send(method, name.gsub('’',"'").chomp(')').sub(')',') ').sub('(',' (').squeeze(' ').sub('RateAmendments','Rate Amendments')) if bills.empty?
       bills = send(method, name.gsub('’',"'").chomp(')').sub(')',') ').sub('(',' (').squeeze(' ').sub('andAsure','and Asure')) if bills.empty?
+      bills = send(method, name.gsub('Appropriation (2005/06) Supplementary Estimates Bill', 'Appropriation (2005/06 Supplementary Estimates) Bill')) if bills.empty?
+      bills = send(method, name.gsub('Limited Partnerships Bill be now read a third time and the Taxation (Limited Partnerships) Bill', 'Limited Partnerships Bill')) if bills.empty?
+      bills = send(method, name.gsub('Public Transport Amendment Bill', 'Public Transport Management Bill')) if bills.empty?
+      bills = send(method, name.gsub('Social Security (Entitlement Cards) Amendment', 'Social Security (Entitlement Cards) Amendment Bill')) if bills.empty?
       bills = bills.select {|b| b.royal_assent.nil? || (b.royal_assent > date) }
       bills = bills.select do |b|
         if b.introduction.nil? && b.earliest_date.nil?
