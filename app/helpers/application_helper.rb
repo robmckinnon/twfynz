@@ -259,9 +259,20 @@ module ApplicationHelper
     link_to mp.full_name, url_for_mp(mp)
   end
 
-  def party_logo_small party
+  def party_logo_small party, polls=nil
     if party.logo
-      image_tag('parties/'+party.logo, :class => 'logo_small', :alt => "Logo for #{party.name}", :size=>'60x30')
+      if polls
+        factor = polls * 7.5
+        height = [30 * factor, 30].min.to_i
+        if height < 5
+          ''
+        else
+          width = [60 * factor, 60].min.to_i
+          image_tag('parties/'+party.logo, :class => 'logo_small', :alt => "Logo for #{party.name}", :size=>"#{width}x#{height}")
+        end
+      else
+        image_tag('parties/'+party.logo, :class => 'logo_small', :alt => "Logo for #{party.name}", :size=>'60x30')
+      end
     else
       ''
     end

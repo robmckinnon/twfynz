@@ -3,19 +3,22 @@
 - party = vote_cell[0]
 - other_party = vote_cell[1]
 - colour = party.short == 'Maori Party' ? Color::RGB::Brown.html : party.colour
+- colour = party.short == 'NZ First' ? Color::RGB::Black.lighten_by(90).html : colour
 - if opacity > 75
   - color = Color::RGB.from_html(colour).adjust_brightness(40).lighten_by(40).mix_with(Color::RGB::White, 100).html
 - else
   - color = Color::RGB.from_html(colour).adjust_brightness(40).lighten_by(40).mix_with(Color::RGB::White, opacity).html
 
+- width = 15 * polls[other_party]
 - if percentage == 0
-  %td{:style=>"margin-right: 0; width: 5em; background: #{color}; text-align: center"}
+  %td{:style=>"margin-right: 0; width: #{width}em; background: #{color}; text-align: center"}
 - else
   - if false
     - color = color.lighten_by(lighten).html # .from_percentage(color_percent, color_percent, color_percent).html
   - elsif false
     - color = color.darken_by(-1 * lighten).html
-  %td{:style=>"margin-right: 0; width: 5em; background: #{color}; text-align: center"}
+  - fontsize = [1 * polls[party] * 6.5, 1, 1 * polls[other_party] * 5].min
+  %td{:style=>"margin-right: 0; width: #{width}em; background: #{color}; text-align: center; font-size:#{fontsize}em;"}
     - text = number_to_percentage(percentage, :precision => 0)
     - url = show_party_url(:name => party.url_name)
     - url += '/'+other_party.url_name if party != other_party

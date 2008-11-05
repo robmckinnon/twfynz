@@ -89,12 +89,12 @@
       #menubottom
       #content
         = @content_for_layout
-      - if RAILS_ENV == 'production'
-        - unless @bill || @home || @organisation || @organisations
-          #elections
-            %p{ :style=>'float:right; margin:2em; margin-right: 2.5em;' }
-              %a{ :href=>"https://secure.elections.org.nz/app/enrol/" }
-                %img{ :src=>"http://www.elections.org.nz/files/elector-hot-button-v2.gif" }
+      - unless (@bill || @home || @organisation)
+        #elections
+          %p{ :style=>'float:right; margin:2em; margin-right: 2.5em;' }
+            Compare
+            = link_to "party's bill voting", 'http://theyworkforyou.co.nz/#compare_parties'
+            before Saturday's election!
       #footer
         - if true # if not @home
           - spacer = ' <span class="spacer">|</span> '
