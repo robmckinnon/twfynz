@@ -87,6 +87,12 @@
             %a{ :href=>"http://blog.theyworkforyou.co.nz/", :title=>"TheyWorkForYou.co.nz developers' blog" } Blog
           %li= link_to "About", {:controller=>'application', :action=>'about'}, :title=>'About TheyWorkForYou.co.nz', :class=>(@about_on ? 'active' : nil)
       #menubottom
+      - unless (@bill || @home || @organisation)
+        #election_message
+          %p
+            Before Saturday's election
+            = link_to "compare party bill voting", 'http://theyworkforyou.co.nz/#compare_parties'
+
       #content
         = @content_for_layout
       - unless (@bill || @home || @organisation)

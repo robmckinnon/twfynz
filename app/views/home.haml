@@ -3,16 +3,17 @@
 - @script = "Event.observe(window, 'load', function() { if ($('user_login')) $('user_login').focus(); } );"
 #normalcontent
   - "%h1 Find out what your elected representatives are doing in Aotearoa New Zealand's Parliament."
-  %h1 New Zealand's Election is on 8th November 2008
+  %h1 New Zealand's General Election is on Saturday!
   %p
     New Zealanders now is your last chance to <a href="http://www.elections.org.nz/enrolment/how-to-enrol/how-to-enrol-to-vote.html">enrol to vote</a>.
     You can find out <a href="http://www.elections.org.nz/news/where-to-vote.html">where to vote</a> now.
     Kiwis living overseas can <a href="http://www.elections.org.nz/voting/votingsub/how-vote-overseas.html">vote from overseas</a> from now until 7th November.
-  %h2#compare_parties Compare party bill voting in the 48th New Zealand Parliament
-  =render(:partial => 'parties/vote_matrix', :object => @third_reading_matrix)
+    %h2#compare_parties Differences between Parties
+    =render(:partial => 'parties/principal_components_explanation')
+    %h2#party_voting Comparison of Party Bill Voting
+    =render(:partial => 'parties/vote_matrix_explaination')
 #primarycontainer
   #primarycontent
-    =render(:partial => 'parties/vote_matrix_explaination')
   - #project_summary
   -   #render :partial => 'project_summary'
   - unless @submission_dates.nil? || @submission_dates.empty?
