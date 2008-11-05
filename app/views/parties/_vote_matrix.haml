@@ -15,10 +15,10 @@
     - order = [Party.labour, Party.progressive, Party.green, Party.maori, Party.nz_first, Party.united_future, Party.act, Party.national]
     - vote_matrix.sort_by{|r| order.index(r[0][0])}.each do |row|
       - party = row[0][0]
-      - height = 15 * polls[party]
+      - height = 20 * polls[party]
       %tr{:style => "height: #{height}em;"}
         - %Q|%th{:style=>"width: 6em;"}= row[0][0].short.sub('Maori Party','Māori').sub('Progressive','Progres.').sub('United Future','United F.')|
-        %td{:style=>"height: #{height}em;"}= party_logo_small(party, polls[party])
+        %td= party_logo_small(party, polls[party])
         - # %td
         = render :partial => 'parties/vote_cell', :object => row.rassoc(Party.labour), :locals => {:polls=>polls, :other_party => Party.labour}
         = render :partial => 'parties/vote_cell', :object => row.rassoc(Party.progressive), :locals => {:polls=>polls, :other_party => Party.progressive}

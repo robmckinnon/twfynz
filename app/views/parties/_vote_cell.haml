@@ -9,7 +9,7 @@
 - else
   - color = Color::RGB.from_html(colour).adjust_brightness(40).lighten_by(40).mix_with(Color::RGB::White, opacity).html
 
-- width = 15 * polls[other_party]
+- width = 20 * polls[other_party]
 - if percentage == 0
   %td{:style=>"margin-right: 0; width: #{width}em; background: #{color}; text-align: center"}
 - else
@@ -17,7 +17,7 @@
     - color = color.lighten_by(lighten).html # .from_percentage(color_percent, color_percent, color_percent).html
   - elsif false
     - color = color.darken_by(-1 * lighten).html
-  - fontsize = [1 * polls[party] * 6.5, 1, 1 * polls[other_party] * 5].min
+  - fontsize = [1 * polls[party] * 6.5, 1, 1 * polls[other_party] * 4.5].min
   %td{:style=>"margin-right: 0; width: #{width}em; background: #{color}; text-align: center; font-size:#{fontsize}em;"}
     - text = number_to_percentage(percentage, :precision => 0)
     - url = show_party_url(:name => party.url_name)
