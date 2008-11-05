@@ -1,0 +1,26 @@
+- vote_cell = unscaled_vote_cell
+- percentage = vote_cell[2]
+- opacity = percentage == 0 ? 100 : percentage
+- party = vote_cell[0]
+- other_party = vote_cell[1]
+- colour = party.short == 'Maori Party' ? Color::RGB::Brown.html : party.colour
+- colour = party.short == 'NZ First' ? Color::RGB::Black.lighten_by(90).html : colour
+- if opacity > 75
+  - color = Color::RGB.from_html(colour).adjust_brightness(40).lighten_by(40).mix_with(Color::RGB::White, 100).html
+- else
+  - color = Color::RGB.from_html(colour).adjust_brightness(40).lighten_by(40).mix_with(Color::RGB::White, opacity).html
+
+- if percentage == 0
+  %td{:style=>"margin-right: 0; width: 5em; background: #{color}; text-align: center"}
+- else
+  - if false
+    - color = color.lighten_by(lighten).html # .from_percentage(color_percent, color_percent, color_percent).html
+  - elsif false
+    - color = color.darken_by(-1 * lighten).html
+  %td{:style=>"margin-right: 0; width: 5.2em; background: #{color}; text-align: center;"}
+    - text = number_to_percentage(percentage, :precision => 0)
+    - url = show_party_url(:name => party.url_name)
+    - url += '/'+other_party.url_name if party != other_party
+    - class_name = (percentage > 75 ? 'high_vote_correlation' : percentage > 50 ? 'moderate_vote_correlation' : percentage > 25 ? 'low_vote_correlation' : 'minimumal_vote_correlation')
+    - desc = "#{party.display_name} and #{other_party.display_name} voted the same way on #{vote_cell[3].size} bills"
+    = link_to text, url, :class => class_name, :title => desc
