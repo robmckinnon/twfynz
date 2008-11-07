@@ -3,11 +3,12 @@
 - @script = "Event.observe(window, 'load', function() { if ($('user_login')) $('user_login').focus(); } );"
 #normalcontent
   - "%h1 Find out what your elected representatives are doing in Aotearoa New Zealand's Parliament."
-  %h1 New Zealand's General Election is on Saturday!
+  %h1 New Zealand's Election is today!
   %p
-    New Zealanders now is your last chance to <a href="http://www.elections.org.nz/enrolment/how-to-enrol/how-to-enrol-to-vote.html">enrol to vote</a>.
-    You can find out <a href="http://www.elections.org.nz/news/where-to-vote.html">where to vote</a> now.
-    Kiwis living overseas can <a href="http://www.elections.org.nz/voting/votingsub/how-vote-overseas.html">vote from overseas</a> from now until 7th November.
+    If you haven't voted yet, find out <a href="http://www.elections.org.nz/news/where-to-vote.html">where to vote</a> and go to it!
+    %h2#election_results Election Results
+    %p
+      The <a href="http://www.electionresults.govt.nz/">preliminary election results</a> will become available progressively from 7pm.
     %h2#compare_parties Differences between Parties
     =render(:partial => 'parties/principal_components_explanation')
     %h2#party_voting Comparison of Party Bill Voting
