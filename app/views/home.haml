@@ -3,16 +3,14 @@
 - @script = "Event.observe(window, 'load', function() { if ($('user_login')) $('user_login').focus(); } );"
 #normalcontent
   - "%h1 Find out what your elected representatives are doing in Aotearoa New Zealand's Parliament."
-  %h1 New Zealand's Election is today!
+  %h1 New Zealand's Election Results
   %p
-    If you haven't voted yet, find out <a href="http://www.elections.org.nz/news/where-to-vote.html">where to vote</a> and go to it!
-    %h2#election_results Election Results
-    %p
-      The <a href="http://www.electionresults.govt.nz/">preliminary election results</a> will become available progressively from 7pm.
-    %h2#compare_parties Differences between Parties
-    =render(:partial => 'parties/principal_components_explanation')
-    %h2#party_voting Comparison of Party Bill Voting
-    =render(:partial => 'parties/vote_matrix_explaination')
+    The <a href="http://www.electionresults.govt.nz/">preliminary election results</a> are now available.
+
+  %h2#compare_parties Differences between Parties
+  =render(:partial => 'parties/principal_components_explanation')
+  %h2#party_voting Comparison of Party Bill Voting
+  =render(:partial => 'parties/vote_matrix_explaination')
 #primarycontainer
   #primarycontent
   - #project_summary
