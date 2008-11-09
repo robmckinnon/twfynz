@@ -88,19 +88,9 @@
           %li= link_to "About", {:controller=>'application', :action=>'about'}, :title=>'About TheyWorkForYou.co.nz', :class=>(@about_on ? 'active' : nil)
       #menubottom
       - unless (@bill || @home || @organisation)
-        #election_message
-          %p
-            Before Saturday's election
-            = link_to "compare party bill voting", 'http://theyworkforyou.co.nz/#compare_parties'
-
+        = ''
       #content
         = @content_for_layout
-      - unless (@bill || @home || @organisation)
-        #elections
-          %p{ :style=>'float:right; margin:2em; margin-right: 2.5em;' }
-            Compare
-            = link_to "party's bill voting", 'http://theyworkforyou.co.nz/#compare_parties'
-            before Saturday's election!
       #footer
         - if true # if not @home
           - spacer = ' <span class="spacer">|</span> '
