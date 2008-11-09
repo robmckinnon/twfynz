@@ -54,7 +54,7 @@ class Party < ActiveRecord::Base
     end
 
     def all_size_ordered
-      find(:all, :include => :mps).select{|p| p.mps.size > 0}.sort_by {|p| p.mps.size }.reverse
+      find(:all, :include => :mps).select{|p| p.mps.size > 0}.sort_by {|p| p.new_mp_count }.reverse
     end
 
     def get_party name
@@ -267,6 +267,20 @@ class Party < ActiveRecord::Base
 
   def mp_count
     mps.size
+  end
+
+  def new_mp_count
+    hash = {
+      Party.national => 59,
+      Party.labour => 43,
+      Party.green => 8,
+      Party.act => 5,
+      Party.maori => 5,
+      Party.progressive => 1,
+      Party.united_future => 1,
+      Party.nz_first => 0
+    }
+    hash[self] || 0
   end
 
   def id_name

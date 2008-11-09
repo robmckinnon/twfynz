@@ -1,12 +1,12 @@
 #normalcontent
   %h1 Political Parties
   .contentarea
-    %p Parties in the 48th New Zealand Parliament.
     %table
       %thead
         %th
         %th Party
-        %th MPs
+        %th{:style=>'text-align:center;'} Provisional MPs<br/> in 49th Parliament
+        %th{:style=>'text-align:center;'} MPs in 48th Parliament
       %tbody
         =render(:partial => 'party_summary', :collection => @parties, :locals => {:total_mps => @total_mps})
         %tr
@@ -16,6 +16,5 @@
         %tr
           %td
           %td TOTAL MPS
+          %td.count= 122
           %td.count= @total_mps
-    %h2 Compare party bill voting in the 48th Parliament
-    =render(:partial => 'vote_matrix', :object => @third_reading_matrix)
