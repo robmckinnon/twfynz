@@ -96,14 +96,20 @@ class BillEvent < ActiveRecord::Base
     votes = votes.compact.uniq if votes
 
     votes = votes.select do |vote|
-      bill_name = vote.bill_name
-      if bill_name
-        if bill.bill_name == bill_name || bill.bill_name == bill_name.gsub('’',"'") || bill.bill_name.tr('()','') == bill_name.tr('()','')
+      bill_name = bill.bill_name
+      if vote_bill_name = vote.bill_name
+        if bill_name == vote_bill_name || bill_name == vote_bill_name.gsub('’',"'") || bill_name.tr('()','') == vote_bill_name.tr('()','')
           true
-        elsif bill_name.include?(bill.bill_name)
+        elsif vote_bill_name.include?(bill_name)
           true
-        elsif bill_name.include?(bill.bill_name.sub(' Bill',''))
+        elsif vote_bill_name.include?(bill_name.sub(' Bill',''))
           true
+        elsif vote_bill_names = vote.bill_names
+          if vote_bill_names.include?(bill_name)
+            true
+          else
+            false
+          end
         else
           false
         end
