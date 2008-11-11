@@ -22,6 +22,9 @@ class PartiesController < ApplicationController
       @aye_votes_together, @noe_votes_together, @ayes_noes, @noes_ayes, @abstentions_abstentions, @ayes_abstentions, @noes_abstentions, @abstentions_ayes, @abstentions_noes, @novote_novote, @ayes_novote, @noes_novote, @abstentions_novote, @novote_ayes, @novote_noes, @novote_abstentions = @party.votes_comparison(@other_party)
       @voted_same_way_count = @aye_votes_together.size + @noe_votes_together.size + @abstentions_abstentions.size + @novote_novote.size
       @voted_different_way_count = @ayes_noes.size + @noes_ayes.size + @ayes_abstentions.size + @noes_abstentions.size + @abstentions_ayes.size + @abstentions_noes.size + @ayes_novote.size + @noes_novote.size + @abstentions_novote.size + @novote_ayes.size + @novote_noes.size + @novote_abstentions.size
+      @total_count = @voted_same_way_count + @voted_different_way_count
+      @voted_same_way_percent = @voted_same_way_count / @total_count.to_f * 100
+      @voted_different_way_percent = @voted_different_way_count / @total_count.to_f * 100
     else
       redirect_to :controller=>'application', :action=>'home'
     end
