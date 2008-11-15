@@ -41,6 +41,9 @@ lib/kawaii_authentication.rb
 app/controllers/kawaii_controller.rb
 app/views/kawaii
 app/views/layouts/kawaii.html.erb
+app/models/kawaii_snippet.rb
+db/migrate/20081115213910_create_kawaii_snippets.rb
+lib/kawaii_snippets.rb
 public/parlywords
 public/javascripts/kawaii
 public/stylesheets/kawaii

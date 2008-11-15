@@ -2,6 +2,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe Member do
 
+  assert_model_belongs_to :parliament
   assert_model_belongs_to :party
   assert_model_belongs_to :person
   assert_model_belongs_to :replaced_by

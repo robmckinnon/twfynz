@@ -1,5 +1,6 @@
 class Member < ActiveRecord::Base
 
+  belongs_to :parliament
   belongs_to :party
   belongs_to :person, :class_name => 'Mp'
   belongs_to :replaced_by, :class_name => 'Mp'
