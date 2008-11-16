@@ -21,6 +21,16 @@ class Member < ActiveRecord::Base
     valedictory_statement_url ? date_from_url(valedictory_statement_url) : nil
   end
 
+  def in_parliament? parliament_id
+    if parliament_id != self.parliament_id
+      false
+    elsif parliament.dissolution_date
+      to_date >= parliament.dissolution_date
+    else
+      true
+    end
+  end
+
   def is_active_on date
     if from_date == nil
       false

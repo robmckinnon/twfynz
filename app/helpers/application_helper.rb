@@ -85,11 +85,15 @@ module ApplicationHelper
 
   def portrait mp
     if mp.image.blank?
-      src = mp.img
+      if mp.img.blank?
+        src = nil
+      else
+        src = mp.img
+      end
     else
       src = mp.image
     end
-    image_tag('mps/'+src, :size => '49x59', :class => 'portrait', :alt => mp.last)
+    src ? image_tag('mps/'+src, :size => '49x59', :class => 'portrait', :alt => mp.last) : ''
   end
 
   def link_to_recent_debate debate, include_date=false

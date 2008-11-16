@@ -6,7 +6,7 @@
     = portrait(@mp)
     %h1= @name
     - if @former_mp
-      %p Not a member of the current Parliament
+      %p Not a member of the 49th Parliament
     - else
       %h2= @role_description
   #primarycontent
@@ -58,13 +58,14 @@
           %ul.linklist
             = render :partial => 'bill_link', :collection => @bills_in_charge_of
       .divider3
-    %div{ :class=>"post", :id=>"recent_appearences" }
-      %h3 Most recent appearances in parliament
-      .contentarea
-        %p
-          %em If this MP has contributed more than once to a debate, only one speech is shown.
-        %dl
-          = render :partial => 'recent_contribution', :collection => @recent_contributions, :locals => {:expand => 'false'}
+    - unless @recent_contributions.empty?
+      %div{ :class=>"post", :id=>"recent_appearences" }
+        %h3 Most recent appearances in parliament
+        .contentarea
+          %p
+            %em If this MP has contributed more than once to a debate, only one speech is shown.
+          %dl
+            = render :partial => 'recent_contribution', :collection => @recent_contributions, :locals => {:expand => 'false'}
     - unless @pecuniary_interests_by_category.empty?
       .divider3
       %div{ :class=>"post", :id=>"pecuniary_interests" }

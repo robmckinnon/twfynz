@@ -4,7 +4,8 @@ class Mp < ActiveRecord::Base
   validates_presence_of :first
   validates_presence_of :elected
   validates_presence_of :id_name
-  validates_presence_of :img
+  validates_uniqueness_of :id_name
+  # validates_presence_of :img
 
   belongs_to :party, :foreign_key => 'member_of_id'
 
@@ -92,23 +93,26 @@ class Mp < ActiveRecord::Base
     end
 
     def all_by_last
-      @mps = Mp.find(:all, :order => "last", :include => :party)
+      @mps = Mp.find(:all, :order => "last", :include => [:party,:members])
+      @mps.select{|mp| mp.member_on_date(Date.today)}
     end
 
     def all_by_first
-      @mps = Mp.find(:all, :order => "first", :include => :party)
+      @mps = Mp.find(:all, :order => "first", :include => [:party,:members])
+      @mps.select{|mp| mp.member_on_date(Date.today)}
     end
 
     def all_by_electorate
-      mps = Mp.find(:all, :order => "electorate", :include => :party)
+      mps = Mp.find(:all, :order => "electorate", :include => [:party,:members])
       list_mps = mps.select {|mp| mp.electorate == 'List'}.sort{|a,b| a.last <=> b.last}
 
       mps = mps.select {|mp| mp.electorate? } - list_mps
       @mps = (mps + list_mps)
+      @mps.select{|mp| mp.member_on_date(Date.today)}
     end
 
     def all_by_party
-      mps = Mp.find(:all, :include => :party)
+      mps = Mp.find(:all, :include => [:party,:members])
       mps = mps.select {|m| m.party}
       mps_by_party = mps.group_by {|m| m.party.short }
       parties = mps_by_party.keys.sort
@@ -118,7 +122,7 @@ class Mp < ActiveRecord::Base
         mps << mps_by_party[party]
       end
       @mps = mps.flatten
-      # @mps = Mp.find(:all, :order => "member_of_id")
+      @mps.select{|mp| mp.member_on_date(Date.today)}
     end
   end
 
@@ -159,10 +163,10 @@ class Mp < ActiveRecord::Base
   end
 
   def is_former?
-    if former.is_a? String
-      former.to_s == "\001"
+    if member_on_date(Date.today)
+      false
     else
-      former
+      true
     end
   end
 

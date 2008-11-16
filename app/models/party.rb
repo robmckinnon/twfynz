@@ -4,6 +4,7 @@ class Party < ActiveRecord::Base
 
   has_many :parliament_parties
   has_many :mps, :foreign_key => 'member_of_id'
+  has_many :members
 
   has_many :donations
 
@@ -265,22 +266,8 @@ class Party < ActiveRecord::Base
     Debate.wordlize_text mps.collect{|mp| mp.unique_contributions.collect(&:wordle_text)}.flatten.join("\n"), name, 1.1
   end
 
-  def mp_count
-    mps.size
-  end
-
-  def new_mp_count
-    hash = {
-      Party.national => 59,
-      Party.labour => 43,
-      Party.green => 8,
-      Party.act => 5,
-      Party.maori => 5,
-      Party.progressive => 1,
-      Party.united_future => 1,
-      Party.nz_first => 0
-    }
-    hash[self] || 0
+  def mp_count parliament_id=48
+    members.select { |m| m.in_parliament?(parliament_id) }.size
   end
 
   def id_name

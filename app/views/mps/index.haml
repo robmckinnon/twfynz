@@ -3,7 +3,7 @@
 #normalcontent
   %h1 MPs
   .contentarea
-    %p MPs in the previous 48th New Zealand Parliament.
+    %p MPs in the 49th New Zealand Parliament.
     - first = @by_first ? 'First name' : link_to('First name', {:action=>'by_first'})
     - last = @by_last   ? 'Last name'  : link_to('Last name', {:controller=>'mps'})
     - party = @by_party ? 'Party'      : link_to('Party', {:action=>'by_party'})
