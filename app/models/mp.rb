@@ -94,35 +94,38 @@ class Mp < ActiveRecord::Base
 
     def all_by_last
       @mps = Mp.find(:all, :order => "last", :include => [:party,:members])
-      @mps.select{|mp| mp.member_on_date(Date.today)}
+      @mps.delete_if{|mp| mp.is_former?}
     end
 
     def all_by_first
       @mps = Mp.find(:all, :order => "first", :include => [:party,:members])
-      @mps.select{|mp| mp.member_on_date(Date.today)}
+      @mps.delete_if{|mp| mp.is_former?}
     end
 
     def all_by_electorate
-      mps = Mp.find(:all, :order => "electorate", :include => [:party,:members])
-      list_mps = mps.select {|mp| mp.electorate == 'List'}.sort{|a,b| a.last <=> b.last}
+      mps = Mp.find(:all, :include => [:party,:members])
+      members = mps.collect{|mp| mp.member}.compact
+      list_members = members.select {|m| m.electorate == 'List'}
+      electorate_members = members.select {|m| m.electorate != 'List'}.sort_by(&:electorate)
 
-      mps = mps.select {|mp| mp.electorate? } - list_mps
-      @mps = (mps + list_mps)
-      @mps.select{|mp| mp.member_on_date(Date.today)}
+      list_mps = list_members.collect(&:person).sort{|a,b| a.first <=> b.first}
+      electorate_mps = electorate_members.collect(&:person)
+
+      @mps = (electorate_mps + list_mps)
     end
 
     def all_by_party
       mps = Mp.find(:all, :include => [:party,:members])
-      mps = mps.select {|m| m.party}
-      mps_by_party = mps.group_by {|m| m.party.short }
-      parties = mps_by_party.keys.sort
+      members = mps.collect{|mp| mp.member}.compact
+      members = members.select {|m| m.party}
+      members_by_party = members.group_by {|m| m.party.short }
+      parties = members_by_party.keys.sort
 
       mps = []
       parties.each do |party|
-        mps << mps_by_party[party]
+        mps << members_by_party[party].sort{|a,b| a.person.first <=> b.person.first}
       end
-      @mps = mps.flatten
-      @mps.select{|mp| mp.member_on_date(Date.today)}
+      @mps = mps.flatten.collect(&:person)
     end
   end
 
@@ -157,17 +160,20 @@ class Mp < ActiveRecord::Base
     members.detect { |m| m.is_active_on(date) }
   end
 
+  def member
+    @member ||= member_on_date(Date.today)
+  end
+
+  def electorate
+    member ? member.electorate : nil
+  end
+
   def party_on_date date
-    member = member_on_date(date)
-    member ? member.party : nil
+    member_on_date(date) ? member_on_date(date).party : nil
   end
 
   def is_former?
-    if member_on_date(Date.today)
-      false
-    else
-      true
-    end
+    member ? false : true
   end
 
   def bills_in_charge_of
@@ -190,7 +196,7 @@ class Mp < ActiveRecord::Base
   end
 
   def list_mp?
-    return electorate == 'List'
+    member ? member.electorate == 'List' : false
   end
 
   def pecuniary_interests_by_category

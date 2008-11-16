@@ -5,5 +5,5 @@
   - mp_name = @by_last ? %Q[#{mp.last}, #{mp.first}] : %Q[#{mp.first} #{mp.last}]
   %tr
     %td{ :class=>row }= link_to(mp_name, show_mp_url(:name => mp.id_name) )
-    %td{ :class=>row }= mp.party.abbreviated if mp.party
-    %td{ :class=>row }= mp.electorate
+    %td{ :class=>row }= mp.member_on_date(Date.today).party.abbreviated if mp.member_on_date(Date.today).party
+    %td{ :class=>row }= mp.member_on_date(Date.today).electorate
