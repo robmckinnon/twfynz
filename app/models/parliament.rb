@@ -3,6 +3,16 @@ class Parliament < ActiveRecord::Base
   has_many :members, :include => [:person, :party]
   belongs_to :commission_opening_debate, :class_name=>'Debate', :foreign_key=>'commission_opening_debate_id'
 
+  class << self
+    def dissolution_date parliament_id
+      @dissolution_dates ||= []
+      unless @dissolution_dates[parliament_id]
+        @dissolution_dates[parliament_id] = Parliament.find(parliament_id).dissolution_date
+      end
+      @dissolution_dates[parliament_id]
+    end
+  end
+
   def in_parliament list
     list.select {|item| item.date >= commission_opening_date && item.date <= dissolution_date}
   end

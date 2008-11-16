@@ -24,8 +24,8 @@ class Member < ActiveRecord::Base
   def in_parliament? parliament_id
     if parliament_id != self.parliament_id
       false
-    elsif parliament.dissolution_date
-      to_date >= parliament.dissolution_date
+    elsif Parliament.dissolution_date(parliament_id)
+      to_date >= Parliament.dissolution_date(parliament_id)
     else
       true
     end

@@ -266,8 +266,13 @@ class Party < ActiveRecord::Base
     Debate.wordlize_text mps.collect{|mp| mp.unique_contributions.collect(&:wordle_text)}.flatten.join("\n"), name, 1.1
   end
 
-  def mp_count parliament_id=48
-    members.select { |m| m.in_parliament?(parliament_id) }.size
+  def mp_count parliament_id=49
+    @mp_count_hash ||= {}
+    unless @mp_count_hash[parliament_id]
+      count = members.select { |m| m.in_parliament?(parliament_id) }.size
+      @mp_count_hash[parliament_id] = count
+    end
+    @mp_count_hash[parliament_id]
   end
 
   def id_name
