@@ -16,6 +16,17 @@ module ParliamentLoader
     parliament.save
   end
 
+  def self.add_49th_parliament
+    parliament = Parliament.new :ordinal => '49th',
+      :commission_opening_date => nil,
+      # :commission_opening_debate_id => Debate.find(:first, :conditions => 'name = "Commission Opening of Parliament" and year(date) = 2005').id,
+      :dissolution_date => nil,
+      :wikipedia_url => 'http://en.wikipedia.org/wiki/49th_New_Zealand_Parliament'
+
+    parliament.id = 49
+    parliament.save
+  end
+
 
   def self.add_48th_parliament_parties
     ParliamentParty.create :parliament_id => 48,
