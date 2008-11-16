@@ -55,7 +55,7 @@ class Party < ActiveRecord::Base
     end
 
     def all_size_ordered
-      find(:all, :include => :mps).select{|p| p.mps.size > 0}.sort_by {|p| p.new_mp_count }.reverse
+      find(:all, :include => :mps).select{|p| p.mps.size > 0}.sort_by {|p| p.mp_count(49) }.reverse
     end
 
     def get_party name
