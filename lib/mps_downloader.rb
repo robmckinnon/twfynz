@@ -20,7 +20,7 @@ class MpsDownloader
           member = person.member
           unless member.image
             name = name.downcase.gsub(' ','_')
-            save_to = "/Users/x/apps/kiwimp/twfynz_search/public/images/mps/2008/#{name}_lg.jpg"
+            save_to = "/var/www/twfynz/public/images/mps/2008/#{name}_lg.jpg"
 
 
             img_src = "/images/people/#{id}_Large.jpg"
