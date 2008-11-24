@@ -1,5 +1,10 @@
 namespace :kiwimp do
 
+  task :download_nats => :environment do
+    require File.dirname(__FILE__) + '/../mps_downloader.rb'
+    MpsDownloader.download_nats
+  end
+
   desc 'download mp page urls from parliament.nz'
   task :download_mps => :environment do
     require File.dirname(__FILE__) + '/../mps_downloader.rb'

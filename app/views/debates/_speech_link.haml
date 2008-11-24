@@ -1,0 +1,24 @@
+- contribution = speech_link
+- if contribution.is_speech?
+  - unless contribution.is_point_of_order? || contribution.is_motion?
+    %li
+      = "#{contribution.speaker_name.role} - "
+      = link_to contribution.mp.full_name, contribution_url(contribution)
+- elsif contribution.is_a?(SectionHeader) && !contribution.text.include?('agreed to')
+  %li
+    = contribution.text
+- elsif contribution.is_vote?
+  %li
+    - if contribution.vote.is_a? PartyVote
+      Party vote:
+    - elsif contribution.vote.is_a? PersonalVote
+      Personal vote:
+    - result = contribution.vote.vote_result.split('.').first
+    = link_to result, contribution_url(contribution)
+- elsif contribution.is_procedural?
+  - if contribution.include?(/((Report adopted)|(Bill (to be reported|read)))/)
+    %li
+      = link_to contribution.text, contribution_url(contribution)
+  - elsif contribution.include?('Debate interrupted.')
+    %li
+      = contribution.text

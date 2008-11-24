@@ -204,6 +204,26 @@ class Contribution < ActiveRecord::Base
     false
   end
 
+  def include? phrase
+    if phrase.is_a? String
+      text && text.include?(phrase)
+    else
+      text && text[phrase]
+    end
+  end
+
+  def starts_with? phrase
+    text && text.starts_with?("<p>#{phrase}")
+  end
+
+  def is_point_of_order?
+    starts_with?('I raise a point of order')
+  end
+
+  def is_motion?
+    starts_with?('I move that')
+  end
+
   def is_interjection?
     false
   end

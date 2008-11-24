@@ -83,10 +83,14 @@ module ApplicationHelper
     end
   end
 
-  def portrait mp
+  def portrait mp, new=false
     if mp.image.blank?
       if mp.img.blank?
-        src = nil
+        if mp.member && mp.member.image
+          src = mp.member.image
+        else
+          src = nil
+        end
       else
         src = mp.img
       end
@@ -129,13 +133,17 @@ module ApplicationHelper
     link_to(text, url) + publication_status + date
   end
 
+  def contribution_url contribution, term=nil
+    anchor_name = if term
+                    paragraph_id(contribution.html, term, contribution.prefixed_anchor)
+                  else
+                    contribution.prefixed_anchor
+                  end
+    get_url(contribution.debate)+'#'+anchor_name
+  end
+
   def link_to_contribution text, contribution, term=nil, class_name=nil
-    unless term
-      link_to(text, get_url(contribution.debate)+'#'+contribution.prefixed_anchor, :class=>class_name)
-    else
-      paragraph_key = paragraph_id(contribution.html, term, contribution.prefixed_anchor)
-      link_to(text, get_url(contribution.debate)+'#'+paragraph_key, :class=>class_name)
-    end
+    link_to(text, contribution_url(contribution, term), :class=>class_name)
   end
 
   def link_to_about hash, about, about_type
@@ -459,6 +467,8 @@ module ApplicationHelper
     else
       text += %Q[: "#{ first_paragraph }"]
     end
+    text.gsub!('<em>','')
+    text.gsub!('</em>','')
     text += '</p>'
   end
 
@@ -483,9 +493,12 @@ module ApplicationHelper
 
     paragraphs.each do |p|
       if p.include?(term) || p.include?(titlecase)
-        id = p.slice(1, p.index('>') - 2)
-        match = true
-        break
+        index = p.index('>')
+        if index
+          id = p.slice(1, index - 2)
+          match = true
+          break
+        end
       end
     end
 

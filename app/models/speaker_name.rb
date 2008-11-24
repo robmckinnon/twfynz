@@ -21,6 +21,19 @@ class SpeakerName
     @remaining.chomp!(')') if @remaining
   end
 
+  def role
+    if remaining
+      if remaining.include?('—')
+        parts = remaining.split('—')
+        parts[0][/(Leader|Whip)/] ? parts[1] : parts[0]
+      else
+        remaining
+      end
+    else
+      nil
+    end
+  end
+
   def anchor date
     case name
       when /^The /

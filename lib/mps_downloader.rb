@@ -13,12 +13,31 @@ class MpsDownloader
       bio_page = mp['href']
       id = bio_page.split('=')[1]
       if id
-        image = "http://www.national.org.nz/images/people/#{id}_Large.jpg"
-        bio_page = "http://www.national.org.nz/MP.aspx?Id=#{id}"
-        name = name.sub('Hon ','').sub('Dr ','').sub('Mr ','').sub(' QSO','').sub(' ONZM','').downcase.gsub(' ','_')
-        save_to = "/Users/x/apps/kiwimp/twfynz_search/public/images/mps/2008/#{name}_lg.jpg"
+        name = name.sub('Hon ','').sub('Dr ','').sub('Mr ','').sub(' QSO','').sub(' ONZM','')
+        person = Mp.from_name name
 
-        puts name + ' ' + bio_page + ' ' + image
+        if person
+          member = person.member
+          unless member.image
+            name = name.downcase.gsub(' ','_')
+            save_to = "/Users/x/apps/kiwimp/twfynz_search/public/images/mps/2008/#{name}_lg.jpg"
+
+
+            img_src = "/images/people/#{id}_Large.jpg"
+            puts 'downloading: ' + img_src
+            self.download_image save_to, "www.national.org.nz", img_src
+
+            bio_page = "http://www.national.org.nz/MP.aspx?Id=#{id}"
+            member.image = "2008/#{name}.jpg"
+            puts 'setting member image: ' + member.image
+            member.save!
+            person.party_bio_url = bio_page
+            puts 'setting person bio: ' + bio_page
+            person.save!
+          end
+        else
+          raise 'unknown: ' + name
+        end
       end
     end; nil
   end
@@ -40,15 +59,17 @@ class MpsDownloader
     end; nil
   end
 
-  def self.download_image image_file, img_host, img_src
+  def self.download_image image_file, img_host, img_src, mp=nil
     unless File.exist?(image_file)
       resp = response img_host, img_src
       if resp.code == "200"
         File.open(image_file, 'w') do |f|
           f.write resp.body
-          mp.alt_image = mp.img unless mp.alt_image
-          mp.image = image_path.split('/').last + '/' + img_name
-          mp.save!
+          if mp
+            mp.alt_image = mp.img unless mp.alt_image
+            mp.image = image_path.split('/').last + '/' + img_name
+            mp.save!
+          end
         end
       end
       puts img_src

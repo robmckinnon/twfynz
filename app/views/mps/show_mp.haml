@@ -85,6 +85,9 @@
           - if @mp.parliament_url
             %li#parliament_bio
               = link_to('Parliament page on ' + @mp.full_name, @mp.parliament_url, :rel=>"nofollow")
+          - if @mp.party_bio_url
+            %li#party_bio
+              = link_to("#{@party} page on #{@mp.full_name}", @mp.party_bio_url, :rel=>"nofollow")
 #questions_section
   - if @subjects_answered_about.size > 0
     .box

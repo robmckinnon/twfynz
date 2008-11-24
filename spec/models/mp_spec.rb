@@ -97,10 +97,6 @@ describe Mp, 'on validation' do
     mp_invalid_without :id_name
   end
 
-  it 'should be invalid without image' do
-    mp_invalid_without :img
-  end
-
 end
 
 describe Mp, "from_name" do

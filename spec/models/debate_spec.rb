@@ -10,6 +10,15 @@ end
 
 describe Debate, "when being destroyed" do
 
+  before(:all) do
+    Debate.delete_all
+    DebateTopic.delete_all
+    Contribution.delete_all
+    Vote.delete_all
+    VoteCast.delete_all
+    Bill.delete_all
+  end
+
   it 'should destroy child sub-debates, contributions, debate topics, votes, and vote casts' do
     date = Date.new(2007,8,29)
     debate = ParentDebate.new :name => 'Dummy', :sub_name => 'Dummier', :debate_index => 1, :date => date, :publication_status => 'F', :css_class => 'debate'

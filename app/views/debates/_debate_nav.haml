@@ -7,6 +7,12 @@
         %li= '&laquo; ' + link_to("Previous", get_url_from_hash(debate.prev_debate_id_hash)) + ' on day'
       - if debate.next_debate_id_hash
         %li= '&raquo; ' + link_to("Next", get_url_from_hash(debate.next_debate_id_hash)) + ' on day'
+- if debate.name.include?('General Debate') || (debate.is_a?(SubDebate) && debate.parent && debate.parent.kind_of?(BillDebate) && ( (debate.contributions.select(&:is_speech?).size > 1) || (debate.contributions.select(&:is_vote?).size > 0) ) )
+  .box
+    .contentarea
+      %h4 Speeches
+      %ul.linklist
+        = render :partial => 'speech_link', :collection => debate.contributions
 - if @about and @about_type.to_s == 'Bill'
   .box
     .contentarea

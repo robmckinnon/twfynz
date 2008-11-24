@@ -168,8 +168,11 @@ class ApplicationController < ActionController::Base
   private
 
     def top_content days
-      report = Rugalytics.default_profile.top_content_report(:from=>(Date.today - days) )
-      items = report.items.delete_if{|i| (i.path[/\d\d\d\d/].nil? && !i.path[/bills\//]) || i.path[/search\?/] }.sort_by{|i| i.unique_pageviews.to_i}.reverse
+      profile = Rugalytics.default_profile
+      previous_date = Date.today - days
+      report = profile.top_content_report :from => previous_date
+      items = report.items.delete_if{|i| (i.path[/\d\d\d\d/].nil? && !i.path[/bills\//]) || i.path[/search\?/] }
+      items = items.sort_by{|i| i.unique_pageviews.to_i}.reverse
       items = items[0..9] if items.size > 10
       items.each do |item|
         item.path.sub!('mori','maori')

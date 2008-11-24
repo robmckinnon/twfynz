@@ -169,7 +169,7 @@ class Mp < ActiveRecord::Base
   end
 
   def party_on_date date
-    member_on_date(date) ? member_on_date(date).party : nil
+    (member = member_on_date(date)) ? member.party : nil
   end
 
   def is_former?

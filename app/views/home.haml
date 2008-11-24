@@ -38,5 +38,8 @@
             %h2 Popular over last week
             %ul
               - @weeks_top_pages.each do |item|
-                %li= link_to("#{item.page_title}", item.url) + " <span class='page_views'>(#{item.unique_pageviews})</span>"
+                %li
+                  = link_to(item.page_title, item.url)
+                  %span.page_views
+                    ="(#{item.unique_pageviews})"
 - #render :partial => 'calendar.haml'

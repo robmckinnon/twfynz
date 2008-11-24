@@ -32,7 +32,7 @@ class MpsController < ApplicationController
     mp = Mp.find_by_id_name name
 
     if mp
-      party = mp.party.abbreviated if mp.party
+      @party = mp.party.abbreviated if mp.party
       @name = %Q[#{mp.first} #{mp.last}]
       @former_mp = mp.is_former?
       @electorate = mp.electorate
@@ -52,9 +52,9 @@ class MpsController < ApplicationController
       if mp.is_former?
         @role_description = 'Former MP'
       elsif @electorate != 'List'
-        @role_description = "Member for #{@electorate}, #{party}"
+        @role_description = "Member for #{@electorate}, #{@party}"
       else
-        @role_description = %Q[List member, #{party}]
+        @role_description = %Q[List member, #{@party}]
       end
       @mp = mp
       @member_role = mp.member_on_date(Date.today)
