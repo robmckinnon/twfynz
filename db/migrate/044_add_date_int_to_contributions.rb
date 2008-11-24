@@ -1,22 +1,22 @@
 class AddDateIntToContributions < ActiveRecord::Migration
   def self.up
-    # add_column :contributions, :date_int, :integer
-#
-    # count = Contribution.count.to_f
-    # group_size = 100
-    # index = 0
-#
-    # start_timing
-#
-    # while (offset = index * group_size) < count
-      # log_duration(offset / count) if index > 0
-      # contributions = Contribution.find(:all, :offset=>offset, :limit=>group_size, :select=>'date, id')
-      # contributions.each do |contribution|
-        # contribution.update_attribute('date_int', contribution.date.to_s.tr('-','').to_i) if contribution.date
-      # end
-      # index = index.next
-    # end
-#
+    add_column :contributions, :date_int, :integer
+
+    count = Contribution.count.to_f
+    group_size = 100
+    index = 0
+
+    start_timing
+
+    while (offset = index * group_size) < count
+      log_duration(offset / count) if index > 0
+      contributions = Contribution.find(:all, :offset=>offset, :limit=>group_size, :select=>'date, id')
+      contributions.each do |contribution|
+        contribution.update_attribute('date_int', contribution.date.to_s.tr('-','').to_i) if contribution.date
+      end
+      index = index.next
+    end
+
   end
 
   def self.down

@@ -1,6 +1,6 @@
 class AddIndexToMpsIdName < ActiveRecord::Migration
   def self.up
-    # add_index :mps, :id_name
+    add_index :mps, :id_name
   end
 
   def self.down
