@@ -24,6 +24,11 @@ wordle.txt
 public/images
 mongrel_cluster.yml
 db/current_bills.yml
+db/committee_chairs.yml
+db/committees.yml
+db/ministers.yml
+db/mps.yml
+db/portfolios.yml
 google*.html
 public/portfolios
 vendor/plugins/css_graphs
