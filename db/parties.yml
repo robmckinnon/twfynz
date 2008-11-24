@@ -1,11 +1,12 @@
 --- 
 - !ruby/object:Party 
   attributes: 
+    wikipedia_url: http://en.wikipedia.org/wiki/ACT_New_Zealand
     vote_name: ACT New Zealand
     name: ACT New Zealand
     registered: "1995-02-17"
-    abbreviation: ""
-    logo: 
+    abbreviation: The ACT Party
+    logo: act_nz.gif
     url: http://www.act.org.nz/
     colour: 0070af
     id: "1"
@@ -14,11 +15,12 @@
 
 - !ruby/object:Party 
   attributes: 
+    wikipedia_url: http://en.wikipedia.org/wiki/Green_Party_of_Aotearoa_New_Zealand
     vote_name: Green Party
-    name: The Greens, The Green Party of Aotearoa New Zealand
+    name: The Greens, The Green Party of Aotearoa/New Zealand
     registered: "1995-08-17"
     abbreviation: Green Party
-    logo: 
+    logo: greens.jpg
     url: http://www.greens.org.nz/
     colour: "065222"
     id: "2"
@@ -27,11 +29,12 @@
 
 - !ruby/object:Party 
   attributes: 
+    wikipedia_url: http://en.wikipedia.org/wiki/New_Zealand_Labour_Party
     vote_name: New Zealand Labour
     name: New Zealand Labour Party
     registered: "1995-02-17"
     abbreviation: Labour Party
-    logo: 
+    logo: nz_labour_party.gif
     url: http://www.labour.org.nz/
     colour: cc0111
     id: "3"
@@ -40,11 +43,12 @@
 
 - !ruby/object:Party 
   attributes: 
+    wikipedia_url: "http://en.wikipedia.org/wiki/M\xC4\x81ori_Party"
     vote_name: "M\xC4\x81ori Party"
-    name: Maori Party
+    name: "M\xC4\x81ori Party"
     registered: "2004-07-09"
     abbreviation: ""
-    logo: 
+    logo: maori_party.gif
     url: http://www.maoriparty.com/
     colour: 99000a
     id: "4"
@@ -53,11 +57,12 @@
 
 - !ruby/object:Party 
   attributes: 
+    wikipedia_url: http://en.wikipedia.org/wiki/New_Zealand_National_Party
     vote_name: New Zealand National
     name: The New Zealand National Party
     registered: "1994-12-02"
     abbreviation: National Party
-    logo: 
+    logo: nz_national_party.gif
     url: http://www.national.org.nz/
     colour: 014e9d
     id: "5"
@@ -66,12 +71,13 @@
 
 - !ruby/object:Party 
   attributes: 
+    wikipedia_url: http://en.wikipedia.org/wiki/New_Zealand_First
     vote_name: New Zealand First
     name: New Zealand First Party
     registered: "1994-12-20"
     abbreviation: NZ First
-    logo: 
-    url: http://www.nzfirst.org.nz/
+    logo: nz_first_party.gif
+    url: http://www.nzfirst.org.nz/index.php
     colour: "030303"
     id: "6"
     short: NZ First
@@ -79,11 +85,12 @@
 
 - !ruby/object:Party 
   attributes: 
+    wikipedia_url: http://en.wikipedia.org/wiki/New_Zealand_Progressive_Party
     vote_name: Progressive
     name: Jim Anderton's Progressive
     registered: "2002-06-24"
     abbreviation: Progressive
-    logo: 
+    logo: progressive.gif
     url: http://www.progressive.org.nz/
     colour: b60026
     id: "7"
@@ -92,11 +99,12 @@
 
 - !ruby/object:Party 
   attributes: 
+    wikipedia_url: http://en.wikipedia.org/wiki/United_Future_New_Zealand
     vote_name: United Future
     name: United Future New Zealand
     registered: "2001-12-13"
-    abbreviation: United Future
-    logo: 
+    abbreviation: UNITED FUTURE
+    logo: united_future_nz.jpg
     url: http://www.unitedfuture.org.nz/
     colour: "322152"
     id: "8"
@@ -105,6 +113,7 @@
 
 - !ruby/object:Party 
   attributes: 
+    wikipedia_url: 
     vote_name: Independent
     name: ""
     registered: 
@@ -114,5 +123,187 @@
     colour: "999999"
     id: "9"
     short: Independent
+  attributes_cache: {}
+
+- !ruby/object:Party 
+  attributes: 
+    wikipedia_url: http://en.wikipedia.org/wiki/Aotearoa_Legalise_Cannabis_Party
+    vote_name: 
+    name: Aotearoa Legalise Cannabis Party
+    registered: 
+    abbreviation: ALCP
+    logo: aotearoa_legalise_cannabis_party.jpg
+    url: http://www.alcp.org.nz/
+    colour: 
+    id: "10"
+    short: Aotearoa Legalise Cannabis
+  attributes_cache: {}
+
+- !ruby/object:Party 
+  attributes: 
+    wikipedia_url: http://en.wikipedia.org/wiki/Direct_Democracy_Party_of_New_Zealand
+    vote_name: 
+    name: Direct Democracy Party
+    registered: 
+    abbreviation: 
+    logo: direct_democracy_party.gif
+    url: http://www.ddp.co.nz
+    colour: 
+    id: "11"
+    short: Direct Democracy Party
+  attributes_cache: {}
+
+- !ruby/object:Party 
+  attributes: 
+    wikipedia_url: http://en.wikipedia.org/wiki/Libertarianz
+    vote_name: 
+    name: Libertarianz
+    registered: 
+    abbreviation: 
+    logo: libertarianz.gif
+    url: http://www.libertarianz.org.nz/
+    colour: 
+    id: "12"
+    short: Libertarianz
+  attributes_cache: {}
+
+- !ruby/object:Party 
+  attributes: 
+    wikipedia_url: http://en.wikipedia.org/wiki/New_World_Order_Party
+    vote_name: 
+    name: New World Order
+    registered: 
+    abbreviation: N W O
+    logo: 
+    url: 
+    colour: 
+    id: "13"
+    short: New World Order
+  attributes_cache: {}
+
+- !ruby/object:Party 
+  attributes: 
+    wikipedia_url: http://en.wikipedia.org/wiki/New_Zealand_Pacific_Party
+    vote_name: 
+    name: New Zealand Pacific Party
+    registered: 
+    abbreviation: 
+    logo: nz_pacific_party.jpg
+    url: 
+    colour: 
+    id: "14"
+    short: NZ Pacific Party
+  attributes_cache: {}
+
+- !ruby/object:Party 
+  attributes: 
+    wikipedia_url: http://en.wikipedia.org/wiki/Residents_Action_Movement
+    vote_name: 
+    name: RAM - Residents Action Movement
+    registered: 
+    abbreviation: 
+    logo: residents_action_movement.jpg
+    url: http://www.ram.org.nz
+    colour: 
+    id: "15"
+    short: Residents Action Movement
+  attributes_cache: {}
+
+- !ruby/object:Party 
+  attributes: 
+    wikipedia_url: http://en.wikipedia.org/wiki/Alliance_(New_Zealand_political_party)
+    vote_name: 
+    name: The Alliance
+    registered: 
+    abbreviation: Alliance
+    logo: alliance.jpg
+    url: http://www.alliance.org.nz/
+    colour: 
+    id: "16"
+    short: Alliance
+  attributes_cache: {}
+
+- !ruby/object:Party 
+  attributes: 
+    wikipedia_url: http://en.wikipedia.org/wiki/Bill_and_Ben_Party
+    vote_name: 
+    name: The Bill and Ben Party
+    registered: 
+    abbreviation: B&B
+    logo: bill_and_ben_party.jpg
+    url: 
+    colour: 
+    id: "17"
+    short: Bill and Ben Party
+  attributes_cache: {}
+
+- !ruby/object:Party 
+  attributes: 
+    wikipedia_url: http://en.wikipedia.org/wiki/Family_Party
+    vote_name: 
+    name: The Family Party
+    registered: 
+    abbreviation: Family Party
+    logo: family_party.jpg
+    url: http://www.thefamilyparty.org.nz/
+    colour: 
+    id: "18"
+    short: Family Party
+  attributes_cache: {}
+
+- !ruby/object:Party 
+  attributes: 
+    wikipedia_url: http://en.wikipedia.org/wiki/The_Kiwi_Party
+    vote_name: 
+    name: The Kiwi Party
+    registered: 
+    abbreviation: Kiwi Party
+    logo: kiwi_party.jpg
+    url: http://www.thekiwiparty.org.nz
+    colour: 
+    id: "19"
+    short: Kiwi Party
+  attributes_cache: {}
+
+- !ruby/object:Party 
+  attributes: 
+    wikipedia_url: http://en.wikipedia.org/wiki/New_Zealand_Democratic_Party
+    vote_name: 
+    name: The New Zealand Democratic Party for Social Credit
+    registered: 
+    abbreviation: Democrats for social credit
+    logo: nz_democratic_party_for_social_credit.jpg
+    url: http://www.democrats.org.nz/
+    colour: 
+    id: "20"
+    short: Democrats for social credit
+  attributes_cache: {}
+
+- !ruby/object:Party 
+  attributes: 
+    wikipedia_url: http://en.wikipedia.org/wiki/The_Republic_of_New_Zealand_Party
+    vote_name: 
+    name: The Republic of New Zealand Party
+    registered: 
+    abbreviation: RONZP
+    logo: republic_of_nz_party.gif
+    url: http://www.republicans.org.nz/
+    colour: 
+    id: "21"
+    short: Republic of NZ Party
+  attributes_cache: {}
+
+- !ruby/object:Party 
+  attributes: 
+    wikipedia_url: http://en.wikipedia.org/wiki/Workers_Party_of_New_Zealand
+    vote_name: 
+    name: Workers Party of New Zealand
+    registered: 
+    abbreviation: Workers Party
+    logo: workers_party_of_nz.jpg
+    url: http://www.workersparty.org.nz
+    colour: 
+    id: "22"
+    short: Workers Party
   attributes_cache: {}
 
