@@ -95,6 +95,30 @@ class GetsContract
     if self.purchaser_organisation
       self.purchaser_organisation = normalize(self.purchaser_organisation, self.class.corrections)
     end
+
+    if self.contract_value_range
+      self.contract_value_min, self.contract_value_max = values(self.contract_value_range)
+    end
+  end
+
+  def values text
+    low = high = nil
+
+    unless (text.blank? || text == "Not Stated")
+      magnitude_change = text.include?('$')
+      range = String.new(text).sub('$',' ').squeeze(' ').sub(' - ',' to ').strip
+      million = 1000000
+      thousand = 1000
+      if range[/(.+) to (.+) M/]
+        low = $1.to_f * (magnitude_change ? thousand : million)
+        high = $2.to_f * million
+      elsif range[/(.+) to (.+) K/]
+        low = $1.to_f * (magnitude_change ? 1 : thousand)
+        high = $2.to_f * thousand
+      end
+    end
+
+    [low.to_i,high.to_i]
   end
 
   def normalize text, corrections
