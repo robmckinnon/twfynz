@@ -11,6 +11,7 @@ doc
 log/[^.]*
 tmp/**/*
 database.yml
+contracts.yml
 development_structure.sql
 schema.rb
 public/stylesheets/datatable.css
