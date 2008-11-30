@@ -97,18 +97,17 @@ class GetsContract
     end
 
     if self.contract_value_range
-      self.contract_value_min, self.contract_value_max = values(self.contract_value_range)
+      self.contract_value_min, self.contract_value_max = values(self.contract_value_range, self.or_if_over_50_m)
     end
   end
 
-  def values text
+  def values value_range, over_50m
     low = high = nil
-
-    unless (text.blank? || text == "Not Stated")
-      magnitude_change = text.include?('$')
-      range = String.new(text).sub('$',' ').squeeze(' ').sub(' - ',' to ').strip
-      million = 1000000
-      thousand = 1000
+    million = 1000000
+    thousand = 1000
+    unless (value_range.blank? || value_range == "Not Stated")
+      magnitude_change = value_range.include?('$')
+      range = String.new(value_range).sub('$',' ').squeeze(' ').sub(' - ',' to ').strip
       if range[/(.+) to (.+) M/]
         low = $1.to_f * (magnitude_change ? thousand : million)
         high = $2.to_f * million
@@ -118,7 +117,26 @@ class GetsContract
       end
     end
 
-    [low.to_i,high.to_i]
+    if !over_50m.blank? && !over_50m.downcase[/(n\/a|estimate|^-$|various)/]
+      text = over_50m.gsub(',','').gsub('$','').downcase.strip
+      if text[/(\d+) - (\d+)/]
+        low = $1.to_i
+        high = $2.to_i
+      elsif text[/(\d+)k - (\d+)k/]
+        low = $1.to_f * thousand
+        high = $2.to_f * thousand
+      elsif text[/depending on more than ([\d|\.]+)m/]
+        low = $1.to_f * million
+        high = $1.to_f * million
+      elsif text[/^([\d|\.]+)\s?m$/]
+        low = $1.to_f * million
+        high = $1.to_f * million
+      else
+        puts 'cannot parse over_50m: ' + over_50m
+      end
+    end
+
+    low ? [low.to_i, high.to_i] : [nil, nil]
   end
 
   def normalize text, corrections
