@@ -4,8 +4,8 @@
   - row = %Q[row-#{(link_to_mp_counter % 2) + 1}]
   - mp_name = @by_last ? %Q[#{mp.last}, #{mp.first}] : %Q[#{mp.first} #{mp.last}]
   %tr
-    - #%td{ :class=>row }= mp.member.image ? image_tag('mps/'+mp.member.image, :size => '49x59', :class => 'portrait', :alt => mp.last) : ''
-    - #%td{ :class=>row }= mp.member.image && (mp.image.blank? || mp.img.blank?) ? portrait(@mp) : ''
+    %td{ :class=>row }= mp.member.image && (mp.image.blank? || mp.img.blank?) ? '' : link_to(portrait(@mp), show_mp_url(:name => mp.id_name) )
+    %td{ :class=>row }= mp.member.image && (mp.image.blank? || mp.img.blank?) ? link_to(portrait(@mp), show_mp_url(:name => mp.id_name) ) : ''
     %td{ :class=>row }= link_to(mp_name, show_mp_url(:name => mp.id_name) )
     %td{ :class=>row }= mp.member_on_date(Date.today).party.abbreviated if mp.member_on_date(Date.today).party
     %td{ :class=>row }= mp.member_on_date(Date.today).electorate
