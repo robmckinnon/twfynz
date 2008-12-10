@@ -14,7 +14,7 @@ class ApplicationController < ActionController::Base
   # prevent any field that matches /password/ from being logged
   filter_parameter_logging "password"
 
-  caches_action :home, :about, :contact
+  caches_action :home, :about, :contact, :parliament
 
   layout "application"
 
