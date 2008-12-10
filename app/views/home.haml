@@ -2,19 +2,15 @@
 - @home = true
 - @script = "Event.observe(window, 'load', function() { if ($('user_login')) $('user_login').focus(); } );"
 #normalcontent
-  - "%h1 Find out what your elected representatives are doing in Aotearoa New Zealand's Parliament."
-  %h1 New Zealand's Election Results
-  %p
-    The <a href="http://www.electionresults.govt.nz/">preliminary election results</a> are now available.
-
-  %h2#compare_parties Differences between Parties
-  =render(:partial => 'parties/principal_components_explanation')
-  %h2#party_voting Comparison of Party Bill Voting
-  =render(:partial => 'parties/vote_matrix_explaination')
+  %h1 Find out what your elected representatives are doing in Aotearoa New Zealand's Parliament.
+  #project_summary
+    =render :partial => 'project_summary'
+  %p Debates from the 49th Parliament will be available soon.
+  %p#compare_parties
+    = link_to 'Compare party voting', {:controller=>'application', :action=>'parliament', :id=>48}
+    in the 48th Parliament.
 #primarycontainer
   #primarycontent
-  - #project_summary
-  -   #render :partial => 'project_summary'
   - unless @submission_dates.nil? || @submission_dates.empty?
     #public_bill_submissions
       %h2 Bills open for public submissions

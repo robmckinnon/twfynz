@@ -830,11 +830,9 @@ class HansardParser
     end
 
     def add_sub_heading sub_debate, sub_names
-      if @title_is_h2
-        sub_heading = (sub_debate/'h3[1]/text()')
-      else
-        sub_heading = (sub_debate/'h2[1]/text()')
-      end
+      h_element = @title_is_h2 ? 'h3' : 'h2'
+      sub_heading = (sub_debate/"#{h_element}[1]/text()")
+
       if sub_heading.size > 0
         sub_names << sub_heading[0].to_clean_s
       else
@@ -842,34 +840,31 @@ class HansardParser
       end
     end
 
-    def create_debate debate_index, type
-      debate_h2 = '.'+type+'/h2'
-      name = (@doc/debate_h2).last.at('text()').to_clean_s
+    def debate_h2_headings(type)
+      (@doc/".#{type}/h2")
+    end
+
+    def find_name_and_sub_names type
       sub_names = []
-      sub_debates = (@doc/'.SubDebate')
+      headings = debate_h2_headings(type)
+      if headings.size > 1
+        name = headings.first.at('text()').to_clean_s
+        sub_names << headings[1].at('text()').to_clean_s
 
-      if sub_debates.size == 0
-        headings = (@doc/debate_h2)
-        if headings.size > 1
-          name = headings.first.at('text()').to_clean_s
-          sub_names << headings[1].at('text()').to_clean_s
-
-          sibling = headings[1].next_sibling
-          while sibling
-            if (sibling.elem? and sibling.name == 'h2')
-              sub_names << sibling.inner_html.to_clean_s
-            end
-            sibling = sibling.next_sibling
+        sibling = headings[1].next_sibling
+        while sibling
+          if (sibling.elem? and sibling.name == 'h2')
+            sub_names << sibling.inner_html.to_clean_s
           end
-        else
-          raise "can't find sub heading"
+          sibling = sibling.next_sibling
         end
-      elsif sub_debates.size > 0
-        sub_debates.each do |sub_debate|
-          add_sub_heading sub_debate, sub_names
-        end
+        return name, sub_names
+      else
+        raise "can't find sub heading"
       end
+    end
 
+    def make_parent_debate name, debate_index, sub_names
       debate = ParentDebate.new :name => name,
           :date => get_date,
           :publication_status => publication_status,
@@ -880,16 +875,59 @@ class HansardParser
           :sub_names => sub_names
 
       debate.valid?
-      debate.sub_debates.each {|sub_debate| sub_debate.debate = debate}
-
-      if sub_debates.size == 0
-        handle_contributions @doc.at('.'+type), debate.sub_debates[0]
-      else
-        sub_debates.each_with_index do |sub_debate, index|
-          handle_contributions sub_debate, debate.sub_debates[index]
-        end
-      end
+      debate.sub_debates.each { |sub_debate| sub_debate.debate = debate }
       debate
+    end
+
+    def make_when_sub_debates_empty debate_index, type
+      name, sub_names = find_name_and_sub_names(type)
+      debate = make_parent_debate(name, debate_index, sub_names)
+      handle_contributions @doc.at('.'+type), debate.sub_debates[0]
+      debate
+    end
+
+    def remove_empty_sub_debate empty_sub_debates, debate
+      headings = empty_sub_debates.collect(&:name).join(', ')
+      sub_debates = debate.sub_debates
+      empty_sub_debates.each do |empty_sub_debate|
+        sub_debates.delete(empty_sub_debate)
+        empty_sub_debate.debate = nil
+      end
+
+      raise "expected there to be a single sub_debate, but got: #{sub_debates.size}" unless sub_debates.size == 1
+      raise "expected there to be a single empty sub_debate, but got: #{empty_sub_debates.size}" unless empty_sub_debates.size == 1
+
+      sub_debate = sub_debates.first
+      sub_debate.debate_index = debate.debate_index + 1
+      sub_debate.sub_name = sub_debate.name
+      sub_debate.name = "#{empty_sub_debates.first.name}, #{sub_debate.name}"
+      debate.sub_debates = sub_debates
+    end
+
+    def make_when_sub_debates_not_empty debate_index, type, sub_debates
+      name = debate_h2_headings(type).last.at('text()').to_clean_s
+      sub_names = []
+      sub_debates.each { |sub_debate| add_sub_heading(sub_debate, sub_names) }
+
+      debate = make_parent_debate(name, debate_index, sub_names)
+
+      sub_debates.each_with_index do |sub_debate, index|
+        handle_contributions sub_debate, debate.sub_debates[index]
+      end
+
+      empty_sub_debates = debate.sub_debates.select {|sub_debate| sub_debate.contributions.empty?}
+      remove_empty_sub_debate(empty_sub_debates, debate) unless empty_sub_debates.empty?
+
+      debate
+    end
+
+    def create_debate debate_index, type
+      sub_debates = (@doc/'.SubDebate')
+      if sub_debates.empty?
+        make_when_sub_debates_empty debate_index, type
+      else
+        make_when_sub_debates_not_empty debate_index, type, sub_debates
+      end
     end
 
     def create_bill_debate debate_index
@@ -938,9 +976,7 @@ class HansardParser
 
       if sub_debates.size > 0
         sub_names = []
-        sub_debates.each do |sub_debate|
-          add_sub_heading sub_debate, sub_names
-        end
+        sub_debates.each { |sub_debate| add_sub_heading(sub_debate, sub_names) }
 
         sibling = sub_debates.last.next_sibling
         while sibling

@@ -169,9 +169,19 @@ describe HansardParser, "when passed Points-of-Order with two subdebates" do
       <h2>Points of Order</h2>
       <div class="SubDebate">
         <h3>Auditor-General—Officers of Parliament Committee</h3>
+        <div class="Speech">
+          <p class="Speech">
+            <strong>PETER BROWN (Whip—NZ First)</strong>
+            <strong>:</strong> I say.</p>
+        </div>
       </div>
       <div class="SubDebate">
         <h3>Select Committees—Official Business</h3>
+        <div class="Speech">
+          <p class="Speech">
+            <strong>PETER BROWN (Whip—NZ First)</strong>
+            <strong>:</strong> I say again.</p>
+        </div>
       </div>
     </div>
   </div>
@@ -514,6 +524,11 @@ describe HansardParser, "when passed Points of Order — Reserve Bank (Amending 
       <h2>Points of Order</h2>
       <div class="SubDebate">
         <h3>Reserve Bank (Amending Primary Function of Bank) Amendment Bill—Leave to Introduce</h3>
+        <div class="Speech">
+          <p class="Speech">
+            <strong>PETER BROWN (Whip—NZ First)</strong>
+            <strong>:</strong> I say.</p>
+        </div>
       </div>
     </div>
   </div>

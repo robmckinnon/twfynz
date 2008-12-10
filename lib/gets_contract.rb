@@ -93,7 +93,8 @@ class GetsContract
     end
 
     if self.purchaser_organisation
-      self.purchaser_organisation = normalize(self.purchaser_organisation, self.class.corrections)
+      self.purchaser_name = self.purchaser_organisation
+      self.purchaser_organisation = normalize(self.purchaser_name, self.class.corrections)
     end
 
     if self.contract_value_range

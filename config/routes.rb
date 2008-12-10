@@ -49,6 +49,7 @@ ActionController::Routing::Routes.draw do |map|
     make_route 'about', application
     make_route 'contact', application
     make_route 'search', application
+    make_route 'parliaments/:id', application, :parliament
 
     application.with_options(single_date_options) do |single_date|
       make_route single_date_path, single_date, :show_single_date

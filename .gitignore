@@ -19,6 +19,7 @@ public/stylesheets/default.css
 public/stylesheets/print.css
 public/stylesheets/parlywords.css
 data
+lib/oe_votes.rb
 R Console.txt
 pca.rb
 wordle.txt

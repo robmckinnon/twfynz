@@ -55,6 +55,15 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def parliament
+    if params[:id] == '48'
+      @third_reading_matrix = Vote.third_reading_matrix
+      render :template => 'parliaments/48'
+    else
+      render(:text => 'not found', :status => 404)
+    end
+  end
+
   def about
     render :template => 'about'
   end

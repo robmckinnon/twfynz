@@ -98,6 +98,13 @@ class SubDebate < Debate
     self.url_slug
   end
 
+  def sub_name= text
+    unless text[/.*Consideration of.*Report.*/]
+      @sub_name = text
+      create_url_slug
+    end
+  end
+
   protected
 
     def find_by_candidate_slug candidate_slug
@@ -139,7 +146,13 @@ class SubDebate < Debate
         if parent.name[/Amended Answers to Oral Questions/i]
           'amended_answers'
         elsif url_category
-          name.split('—').first
+          if @sub_name
+            text = @sub_name.split('—').first
+            @sub_name = nil
+            text
+          else
+            name.split('—').first
+          end
         else
           parent_name.split('—').first
         end
