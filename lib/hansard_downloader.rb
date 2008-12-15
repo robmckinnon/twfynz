@@ -88,6 +88,10 @@ class HansardDownloader
       url = 'http://www.parliament.nz'+debate.attributes['href']
       date = get_date debate
 
+      if date <= Date.new(2008,12,1)
+        return false
+      end
+
       if @download_date
         if date > @download_date
           # puts "we're continuing until we find date"
@@ -124,7 +128,7 @@ class HansardDownloader
         open(url) { |io| page = io.read }
 
         if page.include? 'Server Error'
-          record = PersistedFile.new ({
+          record = PersistedFile.new({
               :debate_date => date,
               :downloaded => false,
               :oral_answer => @downloading_uncorrected,
@@ -144,7 +148,7 @@ class HansardDownloader
         if File.exists? filename
           check_persisted_files filename, date, parliament_name, url
         else
-          record = PersistedFile.new ({
+          record = PersistedFile.new({
               :debate_date => date,
               :publication_status => publication_status(filename),
               :oral_answer => @downloading_uncorrected,
