@@ -144,19 +144,19 @@ module OralQuestionHelperMethods
       @asking_mp = mock(Mp)
       @asking_mp.stub!(:party).and_return nil
       @asking_mp.should_receive(:id).any_number_of_times.and_return @asking_mp_id
-      Mp.should_receive(:from_name).with(@asking_mp_name).and_return @asking_mp
+      Mp.should_receive(:from_name).with(@asking_mp_name, @date).and_return @asking_mp
 
       @answering_mp = mock(Mp)
       @answering_mp.stub!(:party).and_return nil
       @answering_mp.should_receive(:id).any_number_of_times.and_return @answering_mp_id
-      Mp.should_receive(:from_name).with(@answering_mp_name).and_return @answering_mp
-      Mp.should_receive(:from_name).with(@supplimentary_answerer_name).any_number_of_times.and_return @answering_mp
+      Mp.should_receive(:from_name).with(@answering_mp_name, @date).and_return @answering_mp
+      Mp.should_receive(:from_name).with(@supplimentary_answerer_name, @date).any_number_of_times.and_return @answering_mp
 
       @supplimentary_questioners = []
       @supplimentary_questioners_names.each_with_index do |name, index|
         @supplimentary_questioners << mock(Mp)
         @supplimentary_questioners.last.should_receive(:id).any_number_of_times.and_return @supplimentary_questioners_ids[index]
-        Mp.should_receive(:from_name).with(name).any_number_of_times.and_return @supplimentary_questioners.last
+        Mp.should_receive(:from_name).with(name, @date).any_number_of_times.and_return @supplimentary_questioners.last
       end
 
       @interjecters = []
@@ -164,7 +164,7 @@ module OralQuestionHelperMethods
         @interjecters << mock(Mp)
         @interjecters.last.stub!(:party).and_return nil
         @interjecters.last.should_receive(:id).any_number_of_times.and_return @interjecter_ids[index]
-        Mp.should_receive(:from_name).with(name).any_number_of_times.and_return @interjecters.last
+        Mp.should_receive(:from_name).with(name, @date).any_number_of_times.and_return @interjecters.last
       end
 
       if @interjecter_names.size > 0
