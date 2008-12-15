@@ -833,7 +833,7 @@ class HansardParser
       h_element = @title_is_h2 ? 'h3' : 'h2'
       sub_heading = (sub_debate/"#{h_element}[1]/text()")
 
-      if sub_heading.size > 0
+      if sub_heading.size > 0 || (sub_heading = (sub_debate/"h2[1]/text()") ).size > 0
         sub_names << sub_heading[0].to_clean_s
       else
         raise "can't find sub heading"
