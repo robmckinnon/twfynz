@@ -338,7 +338,8 @@ class Contribution < ActiveRecord::Base
     end
 
     def populate_spoken_by_id_from_mp speaker
-      if mp = Mp::from_name(speaker)
+      populate_date # to ensure date is set
+      if mp = Mp.from_name(speaker, date)
         if party_makes_sense? mp
           self.spoken_by_id = mp.id
         else

@@ -14,7 +14,7 @@ class MpsDownloader
       id = bio_page.split('=')[1]
       if id
         name = name.sub('Hon ','').sub('Dr ','').sub('Mr ','').sub(' QSO','').sub(' ONZM','')
-        person = Mp.from_name name
+        person = Mp.from_name name, Date.today
 
         if person
           member = person.member
@@ -108,7 +108,7 @@ class MpsDownloader
       first = names[1].strip
       name = first + ' ' + last
 
-      person = Mp.from_name name
+      person = Mp.from_name name, Date.today
       party_name, electorate = link.at('..').next_sibling.inner_text.split(',')
       party_name.sub!(' Party','') unless party_name.include?('Maori')
       party_name.strip!

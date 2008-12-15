@@ -1,11 +1,11 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-def mp_from_name_correct downcase_name, lookup_name, alt_downcase_name=nil
+def mp_from_name_correct date, downcase_name, lookup_name, alt_downcase_name=nil
   mp = mock(Mp)
   mp.should_receive(:downcase_name).and_return(downcase_name)
   mp.should_receive(:alt_downcase_name).twice.and_return(alt_downcase_name) if alt_downcase_name
   Mp.should_receive(:find).with(:all).and_return([mp])
-  Mp.from_name(lookup_name).should == mp
+  Mp.from_name(lookup_name, date).should == mp
 end
 
 def mp_params
@@ -101,94 +101,139 @@ end
 
 describe Mp, "from_name" do
 
-  it 'should return Margaret Wilson for "Madam Speaker"' do
-    mp = mock(Mp)
-    Mp.should_receive(:find_by_first_and_last).twice.with('Margaret','Wilson').and_return(mp)
+  describe 'when date is in 48th Parliament' do
+    before do
+      @date = mock(Date)
+      Parliament.stub!(:date_within?).with(48,@date).and_return true
+    end
 
-    Mp.from_name('Madam Speaker').should == mp
-    Mp.from_name('Madam Speaker-elect').should == mp
+    it 'should return Margaret Wilson for "Madam Speaker"' do
+      mp = mock(Mp)
+      Mp.should_receive(:find_by_first_and_last).twice.with('Margaret','Wilson').and_return(mp)
+
+      Mp.from_name('Madam Speaker', @date).should == mp
+      Mp.from_name('Madam Speaker-elect', @date).should == mp
+    end
+
+    it 'should return Helen Clark for "Prime Minister"' do
+      mp = mock(Mp)
+      Mp.should_receive(:find_by_first_and_last).with('Helen','Clark').and_return(mp)
+
+      Mp.from_name('Prime Minister', @date).should == mp
+    end
+
+    it 'should return Michael Cullen for "Deputy Prime Minister"' do
+      mp = mock(Mp)
+      Mp.should_receive(:find_by_first_and_last).with('Michael','Cullen').and_return(mp)
+
+      Mp.from_name('Deputy Prime Minister', @date).should == mp
+    end
+
+    it 'should return Clem Simich for "Mr Deputy Speaker"' do
+      mp = mock(Mp)
+      Mp.should_receive(:find_by_first_and_last).with('Clem','Simich').and_return(mp)
+
+      Mp.from_name('Mr Deputy Speaker', @date).should == mp
+    end
+
+    it 'should return nil for "Hon Member."' do
+      Mp.from_name('Hon Member.', @date).should be_nil
+    end
+
+    it 'should return nil for "Hon Member"' do
+      Mp.from_name('Hon Member', @date).should be_nil
+    end
+
+    it 'should return nil for "Hon Members"' do
+      Mp.from_name('Hon Member', @date).should be_nil
+    end
+
+    it 'should return nil for "The CHAIRPERSON"' do
+      Mp.from_name('The CHAIRPERSON', @date).should be_nil
+    end
+
+    it 'should return Hone Harawira for "Hone Harawira"' do
+      mp_from_name_correct @date, 'hone harawira', 'Hone Harawira'
+    end
+
+    it 'should return Lockwood Smith for "Dr the Hon Lockwood Smith"' do
+      mp_from_name_correct @date, 'lockwood smith', 'Dr the Hon Lockwood Smith'
+    end
+
+    it 'should return Helen Clark for "Rt Hon HELEN CLARK"' do
+      mp_from_name_correct @date, 'helen clark', 'Rt Hon HELEN CLARK'
+    end
+
+    it 'should return Michael Cullen for "Hon Dr MICHAEL CULLEN"' do
+      mp_from_name_correct @date, 'michael cullen', 'Hon Dr MICHAEL CULLEN'
+    end
+
+    it 'should return Michael Cullen for "Hon Dr MICHAEL CULLEN (Leader of the House)"' do
+      mp_from_name_correct @date, 'michael cullen', 'Hon Dr MICHAEL CULLEN (Leader of the House)'
+    end
+
+    it 'should return Parekura Horomia for "Hon Parekura Horomia"' do
+      mp_from_name_correct @date, 'parekura horomia', 'Hon Parekura Horomia'
+    end
+
+    it 'should return Pita Sharples for "Dr Pita Sharples"' do
+      mp_from_name_correct @date, 'pita sharples', 'Dr Pita Sharples'
+    end
+
+    it 'should return Ann Hartley for "The ASSISTANT SPEAKER (Ann Hartley)"' do
+      mp_from_name_correct @date, 'ann hartley', 'The ASSISTANT SPEAKER (Ann Hartley)'
+    end
+
+    it 'should return H V Ross Robertson for "The CHAIRPERSON (H V Ross Robertson)"' do
+      mp_from_name_correct @date, 'ross robertson', 'The CHAIRPERSON (H V Ross Robertson)', 'h v ross robertson'
+    end
+
+    it 'should return Jill Pettis for "The TEMPORARY SPEAKER (Jill Pettis)"' do
+      mp_from_name_correct @date, 'jill pettis', 'The TEMPORARY SPEAKER (Jill Pettis)'
+    end
+
+    it 'should return Damien O\'Connor (Minister of Corrections) for "Hon DAMIEN O’CONNOR (Minister of Corrections)"' do
+      mp_from_name_correct @date, "damien o'connor", 'Hon DAMIEN O’CONNOR (Minister of Corrections)'
+    end
+
   end
 
-  it 'should return Helen Clark for "Prime Minister"' do
-    mp = mock(Mp)
-    Mp.should_receive(:find_by_first_and_last).with('Helen','Clark').and_return(mp)
+  describe 'when date is in 49th Parliament' do
+    before do
+      Parliament.stub!(:date_within?).with(48,@date).and_return false
+      Parliament.stub!(:date_within?).with(49,@date).and_return true
+    end
 
-    Mp.from_name('Prime Minister').should == mp
+    it 'should return Lockwood Smith for "Mr Speaker"' do
+      mp = mock(Mp)
+      Mp.should_receive(:find_by_first_and_last).twice.with('Lockwood','Smith').and_return(mp)
+
+      Mp.from_name('Mr SPEAKER', @date).should == mp
+      Mp.from_name('Mr SPEAKER-ELECT', @date).should == mp
+    end
+
+    it 'should return John Key for "Prime Minister"' do
+      mp = mock(Mp)
+      Mp.should_receive(:find_by_first_and_last).with('John','Key').and_return(mp)
+
+      Mp.from_name('Prime Minister', @date).should == mp
+    end
+
+    it 'should return Bill English for "Deputy Prime Minister"' do
+      mp = mock(Mp)
+      Mp.should_receive(:find_by_first_and_last).with('Bill','English').and_return(mp)
+
+      Mp.from_name('Deputy Prime Minister', @date).should == mp
+    end
+
+    it 'should return Lindsay Tisch for "Mr Deputy Speaker"' do
+      mp = mock(Mp)
+      Mp.should_receive(:find_by_first_and_last).with('Lindsay','Tisch').and_return(mp)
+
+      Mp.from_name('Mr Deputy Speaker', @date).should == mp
+    end
   end
 
-  it 'should return Michael Cullen for "Deputy Prime Minister"' do
-    mp = mock(Mp)
-    Mp.should_receive(:find_by_first_and_last).with('Michael','Cullen').and_return(mp)
-
-    Mp.from_name('Deputy Prime Minister').should == mp
-  end
-
-  it 'should return Clem Simich for "Mr Deputy Speaker"' do
-    mp = mock(Mp)
-    Mp.should_receive(:find_by_first_and_last).with('Clem','Simich').and_return(mp)
-
-    Mp.from_name('Mr Deputy Speaker').should == mp
-  end
-
-  it 'should return nil for "Hon Member."' do
-    Mp.from_name('Hon Member.').should be_nil
-  end
-
-  it 'should return nil for "Hon Member"' do
-    Mp.from_name('Hon Member').should be_nil
-  end
-
-  it 'should return nil for "Hon Members"' do
-    Mp.from_name('Hon Member').should be_nil
-  end
-
-  it 'should return nil for "The CHAIRPERSON"' do
-    Mp.from_name('The CHAIRPERSON').should be_nil
-  end
-
-  it 'should return Hone Harawira for "Hone Harawira"' do
-    mp_from_name_correct 'hone harawira', 'Hone Harawira'
-  end
-
-  it 'should return Lockwood Smith for "Dr the Hon Lockwood Smith"' do
-    mp_from_name_correct 'lockwood smith', 'Dr the Hon Lockwood Smith'
-  end
-
-  it 'should return Helen Clark for "Rt Hon HELEN CLARK"' do
-    mp_from_name_correct 'helen clark', 'Rt Hon HELEN CLARK'
-  end
-
-  it 'should return Michael Cullen for "Hon Dr MICHAEL CULLEN"' do
-    mp_from_name_correct 'michael cullen', 'Hon Dr MICHAEL CULLEN'
-  end
-
-  it 'should return Michael Cullen for "Hon Dr MICHAEL CULLEN (Leader of the House)"' do
-    mp_from_name_correct 'michael cullen', 'Hon Dr MICHAEL CULLEN (Leader of the House)'
-  end
-
-  it 'should return Parekura Horomia for "Hon Parekura Horomia"' do
-    mp_from_name_correct 'parekura horomia', 'Hon Parekura Horomia'
-  end
-
-  it 'should return Pita Sharples for "Dr Pita Sharples"' do
-    mp_from_name_correct 'pita sharples', 'Dr Pita Sharples'
-  end
-
-  it 'should return Ann Hartley for "The ASSISTANT SPEAKER (Ann Hartley)"' do
-    mp_from_name_correct 'ann hartley', 'The ASSISTANT SPEAKER (Ann Hartley)'
-  end
-
-  it 'should return H V Ross Robertson for "The CHAIRPERSON (H V Ross Robertson)"' do
-    mp_from_name_correct 'ross robertson', 'The CHAIRPERSON (H V Ross Robertson)', 'h v ross robertson'
-  end
-
-  it 'should return Jill Pettis for "The TEMPORARY SPEAKER (Jill Pettis)"' do
-    mp_from_name_correct 'jill pettis', 'The TEMPORARY SPEAKER (Jill Pettis)'
-  end
-
-  it 'should return Damien O\'Connor (Minister of Corrections) for "Hon DAMIEN O’CONNOR (Minister of Corrections)"' do
-    mp_from_name_correct "damien o'connor", 'Hon DAMIEN O’CONNOR (Minister of Corrections)'
-  end
 end
 
 describe Mp, 'if current' do

@@ -51,7 +51,7 @@ class Mp < ActiveRecord::Base
       end
     end
 
-    def from_name speaker_name
+    def from_name speaker_name, date
       mp = nil
       unless speaker_name.blank?
         name = String.new speaker_name
@@ -72,21 +72,41 @@ class Mp < ActiveRecord::Base
         end
 
         if (speaker == 'madam speaker' or speaker == 'madam speaker-elect' or speaker == 'madsam speaker')
-          mp = Mp.find_by_first_and_last 'Margaret','Wilson'
+          if Parliament.date_within?(48, date)
+            mp = Mp.find_by_first_and_last 'Margaret','Wilson'
+          end
+
+        elsif (speaker == 'mr speaker' or speaker == 'mr speaker-elect')
+          if Parliament.date_within?(49, date)
+            mp = Mp.find_by_first_and_last 'Lockwood','Smith'
+          end
 
         elsif speaker == 'prime minister'
-          mp = Mp.find_by_first_and_last 'Helen','Clark'
+          if Parliament.date_within?(48, date)
+            mp = Mp.find_by_first_and_last 'Helen','Clark'
+          elsif Parliament.date_within?(49, date)
+            mp = Mp.find_by_first_and_last 'John','Key'
+          end
 
         elsif speaker == 'deputy prime minister'
-          mp = Mp.find_by_first_and_last 'Michael','Cullen'
+          if Parliament.date_within?(48, date)
+            mp = Mp.find_by_first_and_last 'Michael','Cullen'
+          elsif Parliament.date_within?(49, date)
+            mp = Mp.find_by_first_and_last 'Bill','English'
+          end
 
         elsif speaker == 'mr deputy speaker'
-          mp = Mp.find_by_first_and_last 'Clem','Simich'
+          if Parliament.date_within?(48, date)
+            mp = Mp.find_by_first_and_last 'Clem','Simich'
+          elsif Parliament.date_within?(49, date)
+            mp = Mp.find_by_first_and_last 'Lindsay','Tisch'
+          end
 
         elsif ((speaker == 'the assistant speaker' or
             speaker == 'the chairperson' or
             speaker == 'the temporary speaker') and name.include?('('))
-          mp = Mp.from_name name.split('(')[1].chop.strip
+          sub_name = name.split('(')[1].chop.strip
+          mp = Mp.from_name sub_name, date
         end
       end
       mp

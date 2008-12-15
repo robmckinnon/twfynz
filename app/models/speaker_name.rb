@@ -50,7 +50,7 @@ class SpeakerName
         if remaining
           anchor = anchor_from_remaining
           if anchor == 'independent'
-            mp = Mp::from_name(name)
+            mp = Mp.from_name(name, date)
             anchor = mp ? mp.anchor(date) : nil
           end
           @@name_to_anchor[name.downcase] = anchor
@@ -58,7 +58,7 @@ class SpeakerName
         else
           anchor = @@name_to_anchor[name.downcase]
           unless anchor
-            mp = Mp::from_name(name)
+            mp = Mp.from_name(name, date)
             anchor = mp.anchor(date) if mp
           end
           anchor

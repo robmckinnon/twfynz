@@ -577,7 +577,7 @@ class Bill < ActiveRecord::Base
     def populate_member_in_charge
       if member_in_charge_id.blank?
         if mp_name
-          mp = Mp::from_name(mp_name)
+          mp = Mp.from_name(mp_name, Date.today)
           if mp
             self.member_in_charge_id = mp.id
           else

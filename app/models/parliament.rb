@@ -11,6 +11,10 @@ class Parliament < ActiveRecord::Base
       end
       @dissolution_dates[parliament_id]
     end
+
+    def date_within? parliament_id, date
+      find(parliament_id).date_within? date
+    end
   end
 
   def in_parliament list
@@ -20,6 +24,20 @@ class Parliament < ActiveRecord::Base
   def populate_party_vote_counts
     self.bill_final_reading_party_votes_count = Vote.third_reading_and_negatived_votes.size
     self.party_votes_count = PartyVote.all_unique.size
+  end
+
+  def date_within? date
+    if commission_opening_date && dissolution_date
+      if commission_opening_date <= date && date <= dissolution_date
+        true
+      else
+        false
+      end
+    elsif commission_opening_date && commission_opening_date <= date
+      true
+    else
+      false
+    end
   end
 
   def populate_48th_members
