@@ -65,7 +65,7 @@ namespace :kiwimp do
 
     if (bill.formerly_part_of_id)
       matching_field = 'formerly_part_of_id'
-      old_bills = Bill.find_all_by_bill_name_and_formerly_part_of_id(name, bill.formerly_part_of_id)
+      old_bills = Bill.find_all_by_bill_name_and_formerly_part_of_id_and_royal_assent(name, bill.formerly_part_of_id, bill.royal_assent)
     end
 
     if (old_bills.size == 0 and bill.introduction)
