@@ -311,7 +311,7 @@ class Contribution < ActiveRecord::Base
     end
 
     # Override if needed
-    def party_makes_sense? mp
+    def party_makes_sense? mp, date
       true
     end
 
@@ -340,7 +340,7 @@ class Contribution < ActiveRecord::Base
     def populate_spoken_by_id_from_mp speaker
       populate_date # to ensure date is set
       if mp = Mp.from_name(speaker, date)
-        if party_makes_sense? mp
+        if party_makes_sense?(mp, date)
           self.spoken_by_id = mp.id
         else
           raise "Validation failed: #{mp.last}, #{mp.party.short} shouldn't be making #{self.class.name} in #{debate.name}"

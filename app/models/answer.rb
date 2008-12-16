@@ -6,12 +6,18 @@ class Answer < Contribution
     true
   end
 
-  def party_makes_sense? mp
+  def party_makes_sense? mp, date
     if mp.party
       party = mp.party.short
-      if debate.about && debate.about.is_a?(Portfolio) &&
-          (party == 'National' || party == 'Green' || party == 'Maori Party' || party == 'ACT')
-        false
+      if debate.about && debate.about.is_a?(Portfolio)
+
+        if Parliament.date_within?(48, date) && (party == 'National' || party == 'Green' || party == 'Maori Party' || party == 'ACT')
+          false
+        elsif Parliament.date_within?(49, date) && (party == 'Labour' || party == 'Green'  || party == 'Progressive')
+          false
+        else
+          true
+        end
       else
         true
       end
