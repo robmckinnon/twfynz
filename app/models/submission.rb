@@ -11,6 +11,8 @@ class Submission < ActiveRecord::Base
 
   after_save :expire_cached_pages
 
+  include ExpireCache
+
   class << self
     def count_by_business_item item
       item.is_a?(Bill) ? count_by_sql("SELECT COUNT(*) FROM submissions WHERE business_item_id = #{item.id} and business_item_type = 'Bill'") : 0
@@ -41,17 +43,10 @@ class Submission < ActiveRecord::Base
 
   protected
 
-    def uncache path
-      if File.exist?(path)
-        puts 'deleting: ' + path.sub(Debate::CACHE_ROOT, '')
-        File.delete(path)
-      end
-    end
-
     def expire_cached_pages
-      return unless ActionController::Base.perform_caching
-      uncache "#{Debate::CACHE_ROOT}/organisations/#{submitter.slug}.cache" if submitter
-      uncache "#{Debate::CACHE_ROOT}/organisations.cache"
+      return unless is_file_cache?
+      uncache "/organisations/#{submitter.slug}.cache" if submitter
+      uncache "/organisations.cache"
     end
 
     def create_submitter_if_is_from_organisation

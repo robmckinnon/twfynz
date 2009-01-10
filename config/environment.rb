@@ -72,6 +72,7 @@ require 'date_extension'
 require 'in_groups_by'
 require 'route_helper'
 require 'sitemap'
+require 'expire_cache'
 
 module Twfynz
   def self.twitter_update message

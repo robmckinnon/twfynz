@@ -1,0 +1,17 @@
+module ExpireCache
+
+  CACHE_ROOT = RAILS_ROOT + '/tmp/cache/views/theyworkforyou.co.nz'
+
+  private
+    def uncache sub_path
+      path = "#{ExpireCache::CACHE_ROOT}#{sub_path}"
+      if File.exist?(path)
+        puts 'deleting: ' + sub_path
+        File.delete(path)
+      end
+    end
+
+    def is_file_cache?
+      ActionController::Base.cache_store.is_a?(ActiveSupport::Cache::FileStore)
+    end
+end

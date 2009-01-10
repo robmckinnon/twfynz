@@ -32,6 +32,8 @@ class Bill < ActiveRecord::Base
 
   after_save :expire_cached_pages
 
+  include ExpireCache
+
   class << self
 
     def passed_third_reading_no_vote
@@ -421,20 +423,20 @@ class Bill < ActiveRecord::Base
   end
 
   def expire_cached_pages
-    return unless ActionController::Base.perform_caching
+    return unless is_file_cache?
 
-    uncache "#{Debate::CACHE_ROOT}/bills/#{url}.cache"
-    uncache "#{Debate::CACHE_ROOT}/bills/#{url}.atom.atom.cache"
+    uncache "/bills/#{url}.cache"
+    uncache "/bills/#{url}.atom.atom.cache"
 
     if referred_to_committee
-      uncache "#{Debate::CACHE_ROOT}/committees/#{referred_to_committee.url}.cache"
+      uncache "/committees/#{referred_to_committee.url}.cache"
     end
 
     if member_in_charge
-      uncache "#{Debate::CACHE_ROOT}/mps/#{member_in_charge.id_name}.cache"
+      uncache "/mps/#{member_in_charge.id_name}.cache"
     end
-    uncache "#{Debate::CACHE_ROOT}/bills.cache"
-    uncache "#{Debate::CACHE_ROOT}/bills.atom.atom.cache"
+    uncache "/bills.cache"
+    uncache "/bills.atom.atom.cache"
   end
 
   def id_hash
@@ -442,13 +444,6 @@ class Bill < ActiveRecord::Base
   end
 
   protected
-
-    def uncache path
-      if File.exist?(path)
-        puts 'deleting: ' + path.sub(Debate::CACHE_ROOT, '')
-        File.delete(path)
-      end
-    end
 
     def self.find_all_with_debates
       bills = find(:all, :include => [:sub_debates, {:debate_topics => :debate}])

@@ -16,6 +16,8 @@ class Mp < ActiveRecord::Base
 
   TITLES = ['Dr the Hon', 'Rt Hon', 'Hon Dr', 'Hon', 'Dr', 'Sir']
 
+  include ExpireCache
+
   # before_save :set_wikipedia
 
   class << self
@@ -271,6 +273,10 @@ class Mp < ActiveRecord::Base
   def answer_debates
     @answer_debates = oral_answer_debates SubsAnswer, SupAnswer unless @answer_debates
     @answer_debates
+  end
+
+  def expire_page
+    uncache "/mps/#{mp.id_name}.cache" if is_file_cache?
   end
 
   private

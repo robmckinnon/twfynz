@@ -88,6 +88,7 @@ class ApplicationController < ActionController::Base
     end
 
     unless @matches.empty?
+      @matches = @matches.compact
       @debate_ids = @matches.collect {|m| m.spoken_in_id}.uniq
       @by_debate = @matches.group_by {|m| m.spoken_in_id}
 

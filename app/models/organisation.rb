@@ -27,6 +27,8 @@ class Organisation < ActiveRecord::Base
   before_save :populate_count_of_mentions
   after_save :expire_cached_pages
 
+  include ExpireCache
+
   class << self
     def education_domains
       %w[ac.nz school.nz]
@@ -206,23 +208,16 @@ class Organisation < ActiveRecord::Base
   end
 
   def expire_cached_pages
-    return unless ActionController::Base.perform_caching
+    return unless is_file_cache?
 
-    organisation_path = "#{Debate::CACHE_ROOT}/organisations/#{slug}"
+    organisation_path = "/organisations/#{slug}"
 
     uncache "#{organisation_path}/mentions.cache"
     uncache "#{organisation_path}.cache"
-    uncache "#{Debate::CACHE_ROOT}/organisations.cache"
+    uncache "/organisations.cache"
   end
 
   protected
-
-    def uncache path
-      if File.exist?(path)
-        puts 'deleting: ' + path.sub(Debate::CACHE_ROOT, '')
-        File.delete(path)
-      end
-    end
 
     def default_alternative_names_to_blank
       unless alternate_names
