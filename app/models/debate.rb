@@ -679,7 +679,7 @@ class Debate < ActiveRecord::Base
     def expire_cached_contributor_pages
       contributions.each do |contribution|
         if (mp = contribution.mp)
-          mp.expire_page
+          mp.expire_cached_page
         end
       end if is_file_cache?
     end
