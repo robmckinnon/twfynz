@@ -278,7 +278,7 @@ class Mp < ActiveRecord::Base
   end
 
   def expire_cached_page
-    uncache "/mps/#{mp.id_name}.cache" if is_file_cache?
+    uncache "/mps/#{id_name}.cache" if is_file_cache?
   end
 
   private
