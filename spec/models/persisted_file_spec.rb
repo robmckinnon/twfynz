@@ -30,4 +30,26 @@ describe PersistedFile, 'the class' do
     files[0].should == @file
   end
 
+  it 'should set indexes on date for a given date' do
+    PersistedFile.set_indexes_on_date @first_date, 'U'
+    file = PersistedFile.find(@file.id)
+    file.index_on_date.should == 1
+  end
+
+  it 'should return normalized name correctly for oral question' do
+    name = '2007/08/15/uncorrected/48HansQ_20070815_00000071-1-Electoral-Finance-Bill-Select-Committee.htm'
+    file = PersistedFile.new :file_name => name, :index_on_date => 1
+    file.normalized_name.should == '2007/08/15/Q/001_Electoral-Finance-Bill-Select-Committee.htm'
+  end
+
+  it 'should return normalized name correctly for debate' do
+    name = '2008/12/11/advance/49HansD_20081211_00000896-Employment-Relations-Amendment-Bill-Second.htm'
+    file = PersistedFile.new :file_name => name, :index_on_date => 8
+    file.normalized_name.should == '2008/12/11/D/008_Employment-Relations-Amendment-Bill-Second.htm'
+  end
+=begin
+  it 'should return normalized name' do
+    PersistedFiles.set_normalized_names @first_date
+    @file.normalized_name.should == '2007/08/15/001_Electoral-Finance-Bill-Select-Committee.htm'
+=end
 end

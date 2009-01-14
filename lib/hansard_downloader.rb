@@ -69,7 +69,7 @@ class HansardDownloader
       unless record
         time = File.new(filename).ctime
         download_date = Date.new(time.year, time.month, time.day).to_s
-        record = PersistedFile.new ({
+        record = PersistedFile.new({
             :debate_date => date,
             :publication_status => publication_status(filename),
             :oral_answer => @downloading_uncorrected,
