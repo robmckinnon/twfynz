@@ -20,6 +20,8 @@ public/stylesheets/default.css
 public/stylesheets/print.css
 public/stylesheets/parlywords.css
 data
+nz-hansard
+db/persisted_files.yml
 lib/oe_votes.rb
 R Console.txt
 pca.rb

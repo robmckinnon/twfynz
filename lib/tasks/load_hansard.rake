@@ -3,9 +3,8 @@ namespace :kiwimp do
   desc 'download hansard from parliament.nz'
   task :download_hansard => :environment do
     require File.dirname(__FILE__) + '/../hansard_downloader.rb'
-    data_path = RAILS_ROOT + '/data/'
-    HansardDownloader.new.download data_path, (uncorrected=true), (update_of_persisted_files_table=false)
-    HansardDownloader.new.download data_path, (uncorrected=false), (update_of_persisted_files_table=false)
+    HansardDownloader.new.download(uncorrected=true, update_of_persisted_files_table=false)
+    HansardDownloader.new.download(uncorrected=false, update_of_persisted_files_table=false)
   end
 
   desc 'DEV USE ONLY: mark ALL files as not persisted in persisted_files table'

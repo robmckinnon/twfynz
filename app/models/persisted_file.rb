@@ -4,6 +4,103 @@ class PersistedFile < ActiveRecord::Base
 
   class << self
 
+    def data_path
+      RAILS_ROOT + '/data2/'
+    end
+
+    def file_name(date, status, name)
+      date.strftime('%Y/%m/%d')+'/'+status+'/'+name
+    end
+
+    def file_path(date, status, name)
+      data_path + file_name(date, status, name)
+    end
+
+    def exists? date, status, name
+      File.exists? file_path(date, status, name)
+    end
+
+    def publication_status_code status
+      if status.include? 'advance'
+        'A'
+      elsif status.include? 'uncorrected'
+        'U'
+      elsif status.include? 'final'
+        'F'
+      end
+    end
+
+    def add_new date, status, name, parliament_name, url, downloading_uncorrected, contents
+      make_directory date, status
+      filename = file_name(date, status, name)
+      status_code = publication_status_code(status)
+
+      record = new({
+          :debate_date => date,
+          :publication_status => status_code,
+          :oral_answer => downloading_uncorrected,
+          :file_name => filename,
+          :parliament_name => parliament_name,
+          :parliament_url => url
+      })
+      puts 'writing: ' + record.file_name
+      filepath = file_path(date, status, name)
+      File.open(filepath, 'w') do |file|
+        file.write(contents)
+        record.downloaded = true
+        record.download_date = Date.today
+      end
+      record.save!
+    end
+
+    def add_if_missing date, status, name, parliament_name, url, downloading_uncorrected
+      filename = file_name(date, status, name)
+      existing = find_by_file_name(filename)
+
+      unless existing
+        filepath = file_path(date, status, name)
+        time = File.new(filepath).ctime
+        download_date = Date.new(time.year, time.month, time.day).to_s
+        status_code = publication_status_code(status)
+
+        record = new({
+            :debate_date => date,
+            :publication_status => status_code,
+            :oral_answer => downloading_uncorrected,
+            :file_name => filename,
+            :parliament_name => parliament_name,
+            :parliament_url => url,
+            :downloaded => true,
+            :download_date => download_date
+        })
+        puts "adding #{filename} to persisted_files"
+        record.save!
+      end
+    end
+
+    def add_non_downloaded date, parliament_name, url, downloading_uncorrected
+      record = new({
+          :debate_date => date,
+          :downloaded => false,
+          :oral_answer => downloading_uncorrected,
+          :parliament_name => parliament_name,
+          :parliament_url => url
+      })
+      record.save!
+    end
+
+    def make_directory date, publication_status
+      make_dir data_path
+      make_dir data_path + date.strftime('%Y')
+      make_dir data_path + date.strftime('%Y/%m')
+      make_dir data_path + date.strftime('%Y/%m/%d')
+      make_dir data_path + date.strftime('%Y/%m/%d')+'/'+publication_status
+    end
+
+    def make_dir directory
+      Dir.mkdir directory unless File.exists? directory
+    end
+
     def set_all_indexes_on_date
       dates = all.collect(&:debate_date).uniq.sort
       dates.each do |date|
@@ -42,14 +139,18 @@ class PersistedFile < ActiveRecord::Base
   end
 
   def normalized_name
-    # 2008/12/11/advance/49HansD_20081211_00000896-Employment-Relations-Amendment-Bill-Second.htm
     if index_on_date
-      date = file_name[/\d\d\d\d\/\d\d\/\d\d/]
-      type = file_name[/Hans(.)/, 1]
-      name = file_name[/\d+-([\D].+.htm)$/, 1]
+      begin
+        date = file_name[/\d\d\d\d\/\d\d\/\d\d/]
+        type = file_name[/Hans(.)/, 1]
+        name = file_name[/\d+-([\D].+.htm)$/, 1]
 
-      index = index_on_date < 10 ? "00#{index_on_date}" : (index_on_date < 100 ? "0#{index_on_date}" : index_on_date.to_s)
-      "#{date}/#{type}/#{index}_#{name}"
+        index = index_on_date < 10 ? "00#{index_on_date}" : (index_on_date < 100 ? "0#{index_on_date}" : index_on_date.to_s)
+        "#{date}/#{type}/#{index}_#{name}"
+      rescue Exception => e
+        puts "unexpected file_name syntax: #{file_name}"
+        raise e
+      end
     else
       raise 'need to set index_on_date before calling normalized_name ' + self.inspect
     end
