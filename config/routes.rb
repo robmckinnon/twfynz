@@ -159,6 +159,8 @@ ActionController::Routing::Routes.draw do |map|
     make_route 'organisations/new', organisation, :new_organisation
     make_route 'organisations/edit', organisation, :edit_organisations
     make_route 'organisations/:name', organisation
+    make_route 'organisations/:name/edit', organisation, :edit_organisation
+    make_route 'organisations/:name/update', organisation, :update_organisation
     make_route 'organisations/:name/mentions', organisation, :show_organisation_mentions
     make_route 'organisations/set_organisation_wikipedia_url/:id', organisation, :set_organisation_wikipedia_url
     make_route 'organisations/set_organisation_alternate_names/:id', organisation, :set_organisation_alternate_names

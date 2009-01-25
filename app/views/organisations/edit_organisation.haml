@@ -1,11 +1,11 @@
-- @title= "New organisation"
+- @title= "Edit organisation"
 
 = error_messages_for :organisation
 
-- form_for(@organisation) do |f|
+- form_for(@organisation, :url => {:action => 'update_organisation'} ) do |f|
   %p
     = link_to 'Cancel', organisations_path
-    = f.submit "Create"
+    = f.submit "Save"
   %table
     %tr
       %td
@@ -40,4 +40,4 @@
 
   %p
     = link_to 'Cancel', organisations_path
-    = f.submit "Create"
+    = f.submit "Save"

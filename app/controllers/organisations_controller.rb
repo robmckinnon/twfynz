@@ -55,6 +55,26 @@ class OrganisationsController < ApplicationController
     end
   end
 
+  def edit_organisation
+    if admin?
+      name = params[:name]
+      @organisation = Organisation.find_by_slug(name)
+    else
+      render :text => ''
+    end
+  end
+
+  def update_organisation
+    if admin?
+      name = params[:name]
+      @organisation = Organisation.find_by_slug(name)
+      @organisation.update_attributes!(params[:organisation])
+      redirect_to :action => "show_organisation"
+    else
+      render :text => ''
+    end
+  end
+
   def create_organisation
     if admin?
       if params[:organisation][:url].blank?
@@ -71,5 +91,4 @@ class OrganisationsController < ApplicationController
       render :text => ''
     end
   end
-
 end

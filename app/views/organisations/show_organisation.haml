@@ -69,6 +69,9 @@
         - unless @organisation.wikipedia_url.blank?
           %li
             = link_to('Wikipedia page on ' + @organisation.name, @organisation.wikipedia_url, :rel=>"nofollow")
+        - unless @organisation.sourcewatch_url.blank?
+          %li
+            = link_to('Sourcewatch page on ' + @organisation.name, @organisation.sourcewatch_url, :rel=>"nofollow")
         - if @organisation.url
           %li
             = link_to('Website of ' + @organisation.name, 'http://'+@organisation.url+'/', :rel=>"nofollow")
