@@ -1,3 +1,5 @@
+require 'fileutils'
+
 class PersistedFile < ActiveRecord::Base
 
   before_validation_on_create :default_persisted
@@ -117,6 +119,12 @@ class PersistedFile < ActiveRecord::Base
         files = files.sort_by(&:id)
         files.each_with_index do |file, index|
           file.index_on_date = (index + 1)
+          unless file.name
+            file.populate_name
+            download_file = PersistedFile.data_path + file.file_name
+            storage_file = PersistedFile.data_path + file.name
+            FileUtils.cp download_file, storage_file
+          end
           file.save!
         end
       end
@@ -138,7 +146,7 @@ class PersistedFile < ActiveRecord::Base
     end
   end
 
-  def normalized_name
+  def populate_name
     if index_on_date
       begin
         date = file_name[/\d\d\d\d\/\d\d\/\d\d/]
@@ -146,7 +154,7 @@ class PersistedFile < ActiveRecord::Base
         name = file_name[/\d+-([\D].+.htm)$/, 1]
 
         index = index_on_date < 10 ? "00#{index_on_date}" : (index_on_date < 100 ? "0#{index_on_date}" : index_on_date.to_s)
-        "#{date}/#{type}/#{index}_#{name}"
+        self.name = "#{date}/#{type}/#{index}_#{name}"
       rescue Exception => e
         puts "unexpected file_name syntax: #{file_name}"
         raise e
@@ -156,6 +164,7 @@ class PersistedFile < ActiveRecord::Base
     end
   end
   private
+
     def default_persisted
       self.persisted = 0 unless self.persisted
     end
