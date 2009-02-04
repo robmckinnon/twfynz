@@ -53,81 +53,111 @@ class HansardDownloader
     def download_debates debates
       finished = false
       debates.each do |debate|
-        name = debate.inner_text
-        name.sub!(', ','') if name.starts_with? ', '
-        unless (finished or
-            (name == 'List of questions for oral answer') or
-            (name == 'Daily debates') or
-            (name == 'Speeches') or
-            name.include?('Parliamentary Debates (Hansard)'))
+        unless finished || ignore_debate?(debate)
           finished = download_debate(debate)
         end
       end
       finished
     end
 
+    def ignore_debate? debate
+      name = debate.inner_text
+      name.sub!(', ','') if name.starts_with? ', '
+      name == 'List of questions for oral answer' ||
+          name == 'Daily debates' ||
+          name == 'Speeches' ||
+          name.include?('Parliamentary Debates (Hansard)')
+    end
+
+    def ignore_old_content date
+      date <= Date.new(2008,12,1) # ignoring older content for now
+    end
+
+    def continue_until_we_find_date date
+      @download_date && (date > @download_date)
+    end
+
+    def past_date_we_wanted date
+      @download_date && (date < (@download_date - 1))
+    end
+
+    def past_date_we_wanted_continue_for_one_more_day date
+      @download_date && (date == (@download_date - 1))
+    end
+
+    def keep_looking date
+      ignore_old_content(date) || continue_until_we_find_date(date) || past_date_we_wanted_continue_for_one_more_day(date)
+    end
+
     def download_debate debate
       date = debate_date(debate)
-      finished =  if (date <= Date.new(2008,12,1))  # ignoring older content for now
-                    false
-                  elsif @download_date
-                    if date > @download_date  # "we're continuing until we find date"
-                      false
-                    elsif date < (@download_date - 1)  # "we're past the date we wanted"
-                      true
-                    elsif date == (@download_date - 1)  # "we might be past the date we wanted, continue for one more day"
-                      false
-                    else
-                      continue_download_debate date, debate
-                    end
-                  else
-                    continue_download_debate date, debate
-                  end
+      finished = if keep_looking(date)
+                   false
+                 elsif past_date_we_wanted(date)
+                   true
+                 else
+                   continue_download_debate(date, debate)
+                 end
       finished
     end
 
     def continue_download_debate date, debate
-      url = debate_url(debate)
-      name = debate_name(debate)
-      parliament_name = parliament_name(debate)
-      download_if_new date, url, name, parliament_name
+      persisted_file = PersistedFile.new({
+          :debate_date => date,
+          :oral_answer => @downloading_uncorrected,
+          :parliament_name => parliament_name(debate),
+          :parliament_url => debate_url(debate)
+      })
+      persisted_file.set_publication_status(@downloading_uncorrected ? 'uncorrected' : 'final')
+
+      download_if_new persisted_file
     end
 
-    def download_if_new date, url, name, parliament_name
-      status = (@downloading_uncorrected ? 'uncorrected' : 'final')
+    def download_if_new persisted_file
       finished = false
 
-      if PersistedFile.exists?(date, status, name)
-        PersistedFile.add_if_missing date, status, name, parliament_name, url, @downloading_uncorrected
+      if persisted_file.exists?
+        PersistedFile.add_if_missing persisted_file
 
-      elsif PersistedFile.exists?(date, 'advance', name)
-        if !@check_for_final && !@download_date # ie don't check for final file
-          PersistedFile.add_if_missing date, 'advance', name, parliament_name, url, @downloading_uncorrected
-        else
-          puts "checking status: #{url}" unless @downloading_uncorrected
-          finished = download_this_debate date, url, name, parliament_name
-        end
+      elsif @downloading_uncorrected
+        finished = download_this_debate persisted_file
+
       else
-        finished = download_this_debate date, url, name, parliament_name
+        persisted_file.set_publication_status('advance')
+        advance_exists = persisted_file.exists?
+
+        if advance_exists && !check_for_final
+          PersistedFile.add_if_missing persisted_file
+        else
+          puts "checking status: #{url}" if advance_exists
+          persisted_file.set_publication_status('final')
+          finished = download_this_debate persisted_file
+        end
       end
 
       finished
     end
 
-    def download_this_debate date, url, name, parliament_name
-      contents = debate_contents(url)
+    def check_for_final
+      @check_for_final && @download_date
+    end
+
+    def download_this_debate persisted_file
+      contents = debate_contents(persisted_file.parliament_url)
       finished = false
 
       if contents.include? 'Server Error'
-        PersistedFile.add_non_downloaded date, parliament_name, url, @downloading_uncorrected
+        PersistedFile.add_non_downloaded persisted_file
       else
         status = publication_status_from(contents)
+        persisted_file.set_publication_status(status)
+
         if @downloading_uncorrected && status != 'uncorrected'
           finished = true # finished downloading uncorrected oral answer files
-        elsif PersistedFile.exists?(date, status, name)
-          PersistedFile.add_if_missing date, status, name, parliament_name, url, @downloading_uncorrected
+        elsif persisted_file.exists?
+          PersistedFile.add_if_missing persisted_file
         else
-          PersistedFile.add_new date, status, name, parliament_name, url, @downloading_uncorrected, contents
+          PersistedFile.add_new persisted_file, contents
         end
       end
       finished

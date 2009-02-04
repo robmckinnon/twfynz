@@ -22,31 +22,33 @@ class PersistedFile < ActiveRecord::Base
       File.exists? file_path(date, status, name)
     end
 
+    def publication_status_name status_code
+      if status_code[/A/]
+        'advance'
+      elsif status_code[/U/]
+        'uncorrected'
+      elsif status_code[/F/]
+        'final'
+      end
+    end
+
     def publication_status_code status
-      if status.include? 'advance'
+      if status[/advance/]
         'A'
-      elsif status.include? 'uncorrected'
+      elsif status[/uncorrected/]
         'U'
-      elsif status.include? 'final'
+      elsif status[/final/]
         'F'
       end
     end
 
-    def add_new date, status, name, parliament_name, url, downloading_uncorrected, contents
-      make_directory date, status
-      filename = file_name(date, status, name)
-      status_code = publication_status_code(status)
+    def add_new record, contents
+      make_directory record.debate_date, record.publication_status_name
 
-      record = new({
-          :debate_date => date,
-          :publication_status => status_code,
-          :oral_answer => downloading_uncorrected,
-          :file_name => filename,
-          :parliament_name => parliament_name,
-          :parliament_url => url
-      })
+      record.file_name = record.make_file_name
       puts 'writing: ' + record.file_name
-      filepath = file_path(date, status, name)
+      filepath = record.make_file_path
+
       File.open(filepath, 'w') do |file|
         file.write(contents)
         record.downloaded = true
@@ -55,39 +57,27 @@ class PersistedFile < ActiveRecord::Base
       record.save!
     end
 
-    def add_if_missing date, status, name, parliament_name, url, downloading_uncorrected
-      filename = file_name(date, status, name)
+    def add_if_missing record
+      debate_date = record.debate_date
+      filename = record.make_file_name
       existing = find_by_file_name(filename)
 
       unless existing
-        filepath = file_path(date, status, name)
+        filepath = record.make_file_path
         time = File.new(filepath).ctime
         download_date = Date.new(time.year, time.month, time.day).to_s
-        status_code = publication_status_code(status)
 
-        record = new({
-            :debate_date => date,
-            :publication_status => status_code,
-            :oral_answer => downloading_uncorrected,
-            :file_name => filename,
-            :parliament_name => parliament_name,
-            :parliament_url => url,
-            :downloaded => true,
-            :download_date => download_date
-        })
+        record.file_name = filename
+        record.downloaded = true
+        record.download_date = download_date
+
         puts "adding #{filename} to persisted_files"
         record.save!
       end
     end
 
-    def add_non_downloaded date, parliament_name, url, downloading_uncorrected
-      record = new({
-          :debate_date => date,
-          :downloaded => false,
-          :oral_answer => downloading_uncorrected,
-          :parliament_name => parliament_name,
-          :parliament_url => url
-      })
+    def add_non_downloaded record
+      record.downloaded = false
       record.save!
     end
 
@@ -146,6 +136,26 @@ class PersistedFile < ActiveRecord::Base
     end
   end
 
+  def make_file_path
+    PersistedFile.file_path(debate_date, publication_status_name, parliament_file_name)
+  end
+
+  def make_file_name
+    PersistedFile.file_name(debate_date, publication_status_name, parliament_file_name)
+  end
+
+  def exists?
+    PersistedFile.exists?(debate_date, publication_status_name, parliament_file_name)
+  end
+
+  def publication_status_name
+    PersistedFile.publication_status_name self.publication_status
+  end
+
+  def parliament_file_name
+    parliament_url.split('/').last
+  end
+
   def populate_name
     if index_on_date
       begin
@@ -163,6 +173,11 @@ class PersistedFile < ActiveRecord::Base
       raise 'need to set index_on_date before calling normalized_name ' + self.inspect
     end
   end
+
+  def set_publication_status status_name
+    self.publication_status = PersistedFile.publication_status_code(status)
+  end
+
   private
 
     def default_persisted
