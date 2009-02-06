@@ -175,7 +175,7 @@ class PersistedFile < ActiveRecord::Base
   end
 
   def set_publication_status status_name
-    self.publication_status = PersistedFile.publication_status_code(status)
+    self.publication_status = PersistedFile.publication_status_code(status_name)
   end
 
   private
