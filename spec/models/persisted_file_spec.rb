@@ -34,8 +34,15 @@ describe PersistedFile, 'the class' do
 
   it 'should set indexes on date for a given date' do
     download_file = PersistedFile.data_path + @file_name
-    storage_file = PersistedFile.data_path + '2007/08/15/Q/001_Electoral-Finance-Bill-Select-Committee.htm'
+    storage_file = PersistedFile.storage_path + '2007/08/15/Q/001_Electoral-Finance-Bill-Select-Committee.htm'
+
+    File.should_receive(:size?).and_return 2
+    FileUtils.should_receive(:mkdir_p).with(storage_file.sub('/001_Electoral-Finance-Bill-Select-Committee.htm',''))
     FileUtils.should_receive(:cp).with(download_file, storage_file)
+    FileUtils.should_receive(:rm).with(download_file)
+    FileUtils.should_receive(:touch).with(download_file)
+    PersistedFile.should_receive(:set_yaml_index)
+
     PersistedFile.set_indexes_on_date @first_date, 'U'
     file = PersistedFile.find(@file.id)
     file.index_on_date.should == 1

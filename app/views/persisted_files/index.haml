@@ -1,0 +1,18 @@
+- @title = 'Persisted Files'
+
+%table
+  %thead
+    %tr
+      %th Index
+      %th Name
+      %th Date
+      %th Persisted
+  %tbody
+    - @persisted_files.each do |group|
+      - group.each do |file|
+        %tr{:style=> file.persisted ? 'color: grey;' : ''}
+          %td= file.index_on_date
+          %td= file.parliament_name
+          %td= file.debate_date
+          %td= file.persisted ? 'persisted' : 'downloaded'
+

@@ -47,7 +47,7 @@ namespace :kiwimp do
   end
 
   def redownload_date date
-    data_path = File.join(RAILS_ROOT, 'data', date.strftime('%Y/%m/%d'))
+    data_path = File.join(PersistedFile.data_path, date.strftime('%Y/%m/%d'))
 
     if (to_delete = get_directory_to_delete(data_path))
       publication_status = to_delete[0..0].upcase
@@ -56,8 +56,7 @@ namespace :kiwimp do
       delete_debates date, publication_status
       delete_records date, publication_status
 
-      HansardDownloader.new.download(RAILS_ROOT + '/data/',
-          (to_delete == 'uncorrected'),
+      HansardDownloader.new.download((to_delete == 'uncorrected'),
           (update_of_persisted_files_table=true), date)
 
       warn_if_problem original, date, publication_status, backup

@@ -6,6 +6,23 @@ class PersistedFile < ActiveRecord::Base
 
   class << self
 
+    def git_push
+      Dir.chdir storage_path
+      puts `git status`
+      puts `git add .`
+      puts `git commit -m 'download on #{Date.today.to_s}'`
+      puts `git push`
+    end
+
+    def git_pull
+      Dir.chdir storage_path
+      puts `git pull`
+    end
+
+    def storage_path
+      RAILS_ROOT + '/nz-hansard/'
+    end
+
     def data_path
       RAILS_ROOT + '/data2/'
     end
@@ -94,29 +111,50 @@ class PersistedFile < ActiveRecord::Base
     end
 
     def set_all_indexes_on_date
-      dates = all.collect(&:debate_date).uniq.sort
-      dates.each do |date|
-        puts "setting indexes for: #{date}"
-        set_indexes_on_date date, 'U'
-        set_indexes_on_date date, 'A'
-        set_indexes_on_date date, 'F'
+      set_indexes_for_status 'U'
+      set_indexes_for_status 'A'
+      set_indexes_for_status 'F'
+    end
+
+    def set_indexes_for_status publication_status
+      files = find_all_by_name_and_publication_status(nil, publication_status)
+
+      unless files.empty?
+        puts "setting indexes for publication status #{publication_status}"
+        files.collect(&:debate_date).uniq.sort.each do |date|
+          puts "setting indexes for: #{date}; publication status #{publication_status}"
+          set_indexes_on_date date, publication_status
+        end
       end
     end
 
-    def set_indexes_on_date debate_date, publication_status
-      files = find_all_by_debate_date_and_publication_status(debate_date, publication_status)
+    def set_yaml_index files
+      path = File.dirname(files.first.name)
+      File.open(storage_path+path+'/index.yaml','w') do |index|
+        yaml = files.collect(&:attributes).collect{|h| h.delete('id'); h}.to_yaml
+        index.write(yaml)
+      end
+    end
+
+    def set_indexes_on_date date, publication_status
+      files = find_all_by_debate_date_and_publication_status date, publication_status
       unless files.empty?
         files = files.sort_by(&:id)
         files.each_with_index do |file, index|
           file.index_on_date = (index + 1)
-          unless file.name
-            file.populate_name
-            download_file = PersistedFile.data_path + file.file_name
-            storage_file = PersistedFile.data_path + file.name
+          file.populate_name
+          download_file = data_path + file.file_name
+          storage_file = storage_path + file.name
+          if File.size? download_file
+            FileUtils.mkdir_p File.dirname(storage_file)
             FileUtils.cp download_file, storage_file
+            FileUtils.rm download_file
+            FileUtils.touch download_file
           end
           file.save!
         end
+
+        set_yaml_index files
       end
     end
 
@@ -134,6 +172,10 @@ class PersistedFile < ActiveRecord::Base
     def unpersisted_files date, publication_status
       find_all_by_debate_date_and_publication_status_and_persisted(date, publication_status, false)
     end
+  end
+
+  def storage_name
+    PersistedFile.storage_path + name
   end
 
   def make_file_path

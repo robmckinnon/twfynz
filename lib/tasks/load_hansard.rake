@@ -25,15 +25,19 @@ namespace :kiwimp do
   end
 
   desc 'load hansard from /data'
-  task :load_hansard => [:environment, :load_questions] do
+  task :load_hansard => [:load_questions] do
     # require File.dirname(__FILE__) + '/../hansard_parser.rb'
     sleep_seconds = ENV['sleep'].to_i if ENV['sleep']
     persist 'A', sleep_seconds
     persist 'F', sleep_seconds
   end
 
+  task :git_pull_data do
+    PersistedFile.git_pull
+  end
+
   # desc 'load questions from /data'
-  task :load_questions => :environment do
+  task :load_questions => [:environment, :git_pull_data] do
     require File.dirname(__FILE__) + '/../hansard_parser.rb'
     data_path = RAILS_ROOT + '/data/'
     dates = PersistedFile.unpersisted_dates 'U'
@@ -43,10 +47,8 @@ namespace :kiwimp do
       oral_answers = nil
 
       files.each_with_index do |file, index|
-        puts 'parsing: data/' + file.file_name
-        file_path = data_path + file.file_name
-        url = file.parliament_url
-        parser = HansardParser.new(file_path, url)
+        puts 'parsing: ' + file.storage_name
+        parser = HansardParser.new(file.storage_name, file.parliament_url)
         oral_answers = parser.parse_oral_answer(index+1, oral_answers)
       end
 
@@ -56,7 +58,6 @@ namespace :kiwimp do
         f.persisted = true
         f.save!
       end
-
       puts 'persisted: ' + date.to_s
 
       oral_answers.create_url_slugs!
@@ -77,15 +78,12 @@ def date_after_sept_2005? date
 end
 
 def persist_date date, publication_status, sleep_seconds=nil
-  data_path = RAILS_ROOT + '/data/'
   files = PersistedFile.unpersisted_files(date, publication_status).sort_by(&:file_name)
   index = 1
   debates = []
   files.each do |file|
-    puts 'parsing: data/' + file.file_name
-    file_path = data_path + file.file_name
-    url = file.parliament_url
-    parser = HansardParser.new(file_path, url)
+    puts 'parsing: ' + file.storage_name
+    parser = HansardParser.new(file.storage_name, file.parliament_url)
     debate = parser.parse(index)
 
     if debate.is_a?(Array)
@@ -98,7 +96,6 @@ def persist_date date, publication_status, sleep_seconds=nil
       debate.valid?
       index = debate.oral_answers.last.debate_index if debate.is_a?(OralAnswers)
       index = debate.sub_debates.last.debate_index if debate.is_a?(ParentDebate)
-
       index = index.next
       debates << debate
     end

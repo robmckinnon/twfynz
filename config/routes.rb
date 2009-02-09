@@ -61,6 +61,10 @@ ActionController::Routing::Routes.draw do |map|
     make_route 'places/:name', place
   end
 
+  with_controller :persisted_files, map do |pf|
+    index_route 'persisted_files', pf
+  end
+
   with_controller :portfolios, map do |portfolio|
     index_route 'portfolios', portfolio
     make_route 'portfolios/:portfolio_url', portfolio

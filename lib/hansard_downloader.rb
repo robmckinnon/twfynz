@@ -25,6 +25,10 @@ class HansardDownloader
         end
       end
     end
+
+    PersistedFile.set_all_indexes_on_date
+
+    PersistedFile.git_push
   end
 
   protected
