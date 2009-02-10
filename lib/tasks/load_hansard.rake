@@ -48,7 +48,7 @@ namespace :kiwimp do
 
       files.each_with_index do |file, index|
         puts 'parsing: ' + file.storage_name
-        parser = HansardParser.new(file.storage_name, file.parliament_url)
+        parser = HansardParser.new(file.storage_name, file.parliament_url, file.debate_date)
         oral_answers = parser.parse_oral_answer(index+1, oral_answers)
       end
 
@@ -83,7 +83,7 @@ def persist_date date, publication_status, sleep_seconds=nil
   debates = []
   files.each do |file|
     puts 'parsing: ' + file.storage_name
-    parser = HansardParser.new(file.storage_name, file.parliament_url)
+    parser = HansardParser.new(file.storage_name, file.parliament_url, file.debate_date)
     debate = parser.parse(index)
 
     if debate.is_a?(Array)

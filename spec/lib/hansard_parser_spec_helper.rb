@@ -4,13 +4,13 @@ PARSED = {} unless defined?(PARSED)
 
 def parse_hansard name, debate_index
   @url = 'http://www.parliament.nz/en-NZ/PB/Debates/Debates/c/5/7/'+name
-  HansardParser.new(File.dirname(__FILE__) + "/../data/#{name}", @url).parse debate_index
+  HansardParser.new(File.dirname(__FILE__) + "/../data/#{name}", @url, @date).parse debate_index
 end
 
 module ParserHelperMethods
   def parse_hansards
     @url = 'http://www.parliament.nz/en-NZ/PB/Debates/Debates/c/5/7/'+@file_name
-    HansardParser.new(File.dirname(__FILE__) + "/../data/#{@file_name}", @url).parse @debate_index
+    HansardParser.new(File.dirname(__FILE__) + "/../data/#{@file_name}", @url, @date).parse @debate_index
   end
 
   def def_party name, id

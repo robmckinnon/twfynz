@@ -24,7 +24,7 @@ class PersistedFile < ActiveRecord::Base
     end
 
     def data_path
-      RAILS_ROOT + '/data2/'
+      RAILS_ROOT + '/data/'
     end
 
     def file_name(date, status, name)
@@ -117,7 +117,7 @@ class PersistedFile < ActiveRecord::Base
     end
 
     def set_indexes_for_status publication_status
-      files = find_all_by_name_and_publication_status(nil, publication_status)
+      files = find_all_by_name_and_publication_status(nil, publication_status, :conditions => 'debate_date > "2008-12-01"')
 
       unless files.empty?
         puts "setting indexes for publication status #{publication_status}"

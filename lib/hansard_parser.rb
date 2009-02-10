@@ -4,10 +4,11 @@ require 'hpricot'
 
 class HansardParser
 
-  def initialize file, url
+  def initialize file, url, date
     @parliament_url = url
     @file = file
     @speaker_recalled = false
+    @debate_date = date
   end
 
   def self.load_doc file
@@ -89,7 +90,10 @@ class HansardParser
       year = yyyy_mm_dd[0..3].to_i
       month = yyyy_mm_dd[5..6].to_i
       day = yyyy_mm_dd[8..9].to_i
-      Date.new(year, month, day)
+      dc_date = Date.new(year, month, day)
+      puts "dc_date different from file_date: #{dc_date}; #{@debate_date}" if dc_date != @debate_date
+
+      @debate_date # use debate date from file name
     end
 
     def publication_status

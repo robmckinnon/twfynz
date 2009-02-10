@@ -120,7 +120,7 @@ module OralQuestionHelperMethods
 
   def parse_oral_answers name, debate_index
     @url = 'http://www.parliament.nz/en-NZ/PB/Debates/Debates/c/5/7/'+name
-    HansardParser.new(File.dirname(__FILE__) + "/../data/#{name}", @url).parse_oral_answer debate_index, nil
+    HansardParser.new(File.dirname(__FILE__) + "/../data/#{name}", @url, @date).parse_oral_answer debate_index, nil
   end
 
   def parse_debate
