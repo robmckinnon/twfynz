@@ -6,11 +6,11 @@ class PersistedFile < ActiveRecord::Base
 
   class << self
 
-    def git_push
+    def git_push msg="download on #{Date.today.to_s}"
       Dir.chdir storage_path
       puts `git status`
       puts `git add .`
-      puts `git commit -m 'download on #{Date.today.to_s}'`
+      puts `git commit -m '#{msg}'`
       puts `git push`
     end
 
