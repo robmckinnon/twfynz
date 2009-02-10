@@ -14,6 +14,7 @@ namespace :kiwimp do
       if f.persisted
         count += 1
         f.persisted = false
+        f.persisted_date = nil
         f.save!
       end
     end
@@ -56,6 +57,7 @@ namespace :kiwimp do
       oral_answers.save!
       files.each do |f|
         f.persisted = true
+        f.persisted_date = Date.today
         f.save!
       end
       puts 'persisted: ' + date.to_s
@@ -118,6 +120,7 @@ def persist_date date, publication_status, sleep_seconds=nil
 
   files.each do |file|
     file.persisted = true
+    file.persisted_date = Date.today
     file.save!
   end
 
