@@ -29,7 +29,7 @@ class SiteMapIndex
     siteindex <<
         %Q|</sitemapindex>\n|
 
-    File.open("public/sitemap_index.xml",'w') do |file|
+    File.open("#{RAILS_ROOT}/public/sitemap_index.xml",'w') do |file|
       puts 'writing: ' + file.path
       file.write siteindex.join('')
     end
