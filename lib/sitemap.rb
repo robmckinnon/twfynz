@@ -90,7 +90,7 @@ class SiteMap
 
       @most_recent_modification = pages.collect(&:last_modification).max
       @site_map = site_map.join('')
-      @location = "public/sitemap_#{name}.xml.gz"
+      @location = "#{RAILS_ROOT}/public/sitemap_#{name}.xml.gz"
     end
 
     def populate_sitemap_for_model model_class, &block
