@@ -1002,7 +1002,6 @@ class HansardParser
     def add_more_sub_headings sub_names, headings
       title = document_title
       headings.each do |heading|
-        heading = heading.to_clean_s
         if heading.size > 0 && title.include?(heading)
           sub_names << heading
         else
@@ -1017,7 +1016,7 @@ class HansardParser
       sub_debates = (@doc/'.SubDebate')
       sub_names = add_sub_headings(sub_debates) if sub_debates.size > 0
 
-      headings = (@doc/'.BillDebate/h1/text()')
+      headings = (@doc/'.BillDebate/h1/text()').collect(&:to_clean_s).select{|x| !is_date?(x)}
       if headings.size > 1
         headings = headings[1,headings.length-1]
         sub_names = add_more_sub_headings(sub_names, headings)

@@ -52,6 +52,7 @@ describe HansardParser, "when passed bill debate with three subdebates" do
         <a name="DocumentReference"></a>
         <p>[Advance Copy - Subject to minor change before inclusion in Bound Volume.]</p>
         <div class="BillDebate">
+          <h1>Tuesday, 9 December 2008</h1>
           <h1>Bail Amendment Bill</h1>
           <div class="SubDebate">
             <h2>First Reading</h2>
