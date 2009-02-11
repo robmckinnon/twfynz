@@ -843,13 +843,18 @@ class HansardParser
       debate
     end
 
-    def debate_h2_headings(type)
-      (@doc/".#{type}/h2")
+    def debate_headings(type)
+      headings = (@doc/".#{type}/h2")
+      if headings.empty?
+        headings = (@doc/".#{type}/h1")
+        @title_is_h2 = false
+      end
+      headings
     end
 
     def find_name_and_sub_names type
       sub_names = []
-      headings = debate_h2_headings(type)
+      headings = debate_headings(type)
       if headings.size > 1
         name = headings.first.at('text()').to_clean_s
         sub_names << headings[1].at('text()').to_clean_s
@@ -908,7 +913,7 @@ class HansardParser
     end
 
     def make_when_sub_debates_not_empty debate_index, type, sub_debates
-      name = debate_h2_headings(type).last.at('text()').to_clean_s
+      name = debate_headings(type).last.at('text()').to_clean_s
       sub_names = []
       sub_debates.each { |sub_debate| add_sub_heading(sub_debate, sub_names) }
 
