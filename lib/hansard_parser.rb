@@ -52,8 +52,7 @@ class HansardParser
       create_oral_answers debate_index
 
     elsif type == 'SubsQuestion'
-      name = (@doc/'.copy/.section[1]/h1[1]/text()')[0].to_clean_s
-      create_oral_answer name, (@doc/'.copy/.section[1]/.SubsQuestion[1]')[0], true, debate_index
+      create_oral_answer document_title, (@doc/'.copy/.section[1]/.SubsQuestion[1]')[0], true, debate_index
 
     elsif type == 'BillDebate'
       create_bill_debate debate_index
@@ -112,7 +111,7 @@ class HansardParser
     def create_oral_answers debate_index
       qoa = (@doc/'.QOA')[0]
       name = (qoa/'h2[1]/text()')[0].to_clean_s
-      if is_date_text(name)
+      if is_date?(name)
         name = (qoa/'h2[2]/text()')[0].to_clean_s
       end
 
@@ -153,7 +152,7 @@ class HansardParser
             end
           elsif node.name == 'h2'
             heading = node.inner_html.to_clean_s
-            if (heading == name or is_date_text(heading))
+            if (heading == name or is_date?(heading))
                 #ignore
             elsif (heading == 'Questions to Members' or
                 heading == 'Urgent Questions' or
@@ -192,7 +191,7 @@ class HansardParser
       answers_array
     end
 
-    def is_date_text text
+    def is_date? text
       if (/^[mtwf][a-z]+, \d\d? [jfmasond][a-z]+ \d\d\d\d$/.match text.downcase)
         true
       else
@@ -200,32 +199,45 @@ class HansardParser
       end
     end
 
+    def part_of_the_debate_title? debate, text
+      debate.name.include?(text) && !@speaker_recalled
+    end
+
+    def part_of_the_subdebate_title? debate, text
+      debate.sub_debates.size > 0 && debate.sub_debate.name.include?(text)
+    end
+
+    def part_of_parent_or_subdebate_title? debate, text
+      debate.debate.name.include?(text) || debate.name.include?(text)
+    end
+
+    def speaker_recalled_title? title_h, type, text
+      type == title_h && (text == 'Speaker Recalled')
+    end
+
+    def raise_unexpected node, name, sub=''
+      raise "found #{node.name} not in #{sub}debate name #{name}: #{node.to_s}"
+    end
+
     def handle_h1_h2_h3 node, debate
       title_h = @title_is_h2 ? 'h2' : 'h1'
-
       text = node.inner_html.to_clean_s
       type = node.name
-      if (debate.name.include?(text) and not(@speaker_recalled))
-        # it's part of the debate title, ignore
-      elsif (type == title_h and text == 'Speaker Recalled')
+
+      if part_of_the_debate_title?(debate, text)
+        # ignore
+      elsif speaker_recalled_title?(title_h, type, text)
         @speaker_recalled = true
         header = SectionHeader.new :text => text
         debate.contributions << header
 
       elsif debate.is_a?(ParentDebate)
-        if (debate.sub_debates.size > 0 and debate.sub_debate.name.include?(text))
-          # it's part of the sub-debate title, ignore
-        else
-          raise 'found '+type+' not in sub-debate name ' + debate.sub_debates[0].name + ': ' + node.to_s
-        end
+        raise_unexpected(node, debate.sub_debate.name, 'sub-') unless part_of_the_subdebate_title?(debate, text)
+
       elsif debate.is_a?(SubDebate)
         @speaker_recalled = false
-        if debate.debate.name.include?(text)
-          # it's part of the debate title, ignore
-        elsif debate.name.include?(text)
-          # it's part of the debate title, ignore
-        elsif is_date_text(text)
-          # it's just the debate date, we'll ignore
+        if part_of_parent_or_subdebate_title?(debate, text) || is_date?(text)
+          # ignore
         elsif type == title_h
           sub_debates = debate.debate.sub_debates
           next_index = sub_debates.index(debate) + 1
@@ -233,16 +245,12 @@ class HansardParser
           debate = sub_debates[next_index]
           raise "expected sub_debate for #{title_h}: " + node.to_s + ', but found: ' + debate.name unless (debate.name == text)
         else
-          raise 'found '+type+' not in debate name ' + debate.name + ': ' + node.to_s
+          raise_unexpected(node, debate.name)
         end
       elsif debate.is_a?(DebateAlone)
-        if is_date_text(text)
-          # it's just the debate date, we'll ignore
-        else
-          raise 'found '+type+' not in debate name ' + debate.name + ': ' + node.to_s
-        end
+        raise_unexpected(node, debate.name) unless is_date?(text)
       else
-        raise 'found '+type+' not in debate name ' + debate.name + ': ' + node.to_s
+        raise_unexpected(node, debate.name)
       end
 
       debate
@@ -623,30 +631,32 @@ class HansardParser
       end
     end
 
+    def raise_unexpected_element node
+      raise "unexpected element in handle_contributions: #{node.to_s} #{node.parent ? node.parent.to_s : ''}"
+    end
+
     def handle_contributions element, debate
       element.children.each do |node|
-        if node.elem?
-          name = node.name
-          if name == 'p'
-            handle_paragraph node, debate
-          elsif name == 'a'
+        case node.name
+          when 'p'
+            handle_paragraph(node, debate)
+          when 'a'
             @page = node['name'].sub('page_','').to_i
-          elsif name == 'ul'
-            proceduals = handle_procedural node
-            proceduals.each {|procedual| debate.contributions << procedual}
-          elsif (name == 'h1' or name == 'h2' or (@title_is_h2 && name == 'h3') )
-            debate = handle_h1_h2_h3 node, debate
-          elsif name == 'div'
-            handle_div node, debate
+          when 'ul'
+            proceduals = handle_procedural(node)
+            proceduals.each {|p| debate.contributions << p}
+          when 'div'
+            handle_div(node, debate)
+          when 'h1', 'h2'
+            debate = handle_h1_h2_h3(node, debate)
+          when 'h3'
+            debate = handle_h1_h2_h3(node, debate) if @title_is_h2
+            raise_unexpected_element(node) unless @title_is_h2
           else
-            raise 'unexpected element in handle_contributions: ' + node.to_s + ' ' + (node.parent ? node.parent.to_s : '')
-          end
+            raise_unexpected_element(node)
+        end if node.elem?
 
-        elsif node.text?
-          if node.to_clean_s.strip.size > 0
-            raise 'unexpected text ' + node.to_s
-          end
-        end
+        raise "unexpected text #{node.to_s}" if (node.text? && node.to_clean_s.strip.size > 0)
       end
     end
 
@@ -686,7 +696,7 @@ class HansardParser
       if name.ends_with? '—'
         raise "didn't expect oral question name to end with '—': " + name
       end
-      debate = OralAnswer.new :name => name,
+      debate = OralAnswer.new :name => name.sub(" —","—"),
           :date => get_date,
           :publication_status => publication_status,
           :css_class => 'oralanswer',
@@ -833,17 +843,6 @@ class HansardParser
       debate
     end
 
-    def add_sub_heading sub_debate, sub_names
-      h_element = @title_is_h2 ? 'h3' : 'h2'
-      sub_heading = (sub_debate/"#{h_element}[1]/text()")
-
-      if sub_heading.size > 0 || (sub_heading = (sub_debate/"h2[1]/text()") ).size > 0
-        sub_names << sub_heading[0].to_clean_s
-      else
-        raise "can't find sub heading"
-      end
-    end
-
     def debate_h2_headings(type)
       (@doc/".#{type}/h2")
     end
@@ -938,61 +937,90 @@ class HansardParser
       text = (@doc/'.BillDebate/h2[1]/text()')[0]
       if text
         name = text.to_clean_s
-        if is_date_text(name)
-          name = (@doc/'.BillDebate/h2[2]/text()')[0].to_clean_s
-        end
+        name = (@doc/'.BillDebate/h2[2]/text()')[0].to_clean_s if is_date?(name)
         sub_name = (@doc/'.SubDebate/h3[1]/text()')[0].to_clean_s
       else
         name = (@doc/'.BillDebate/h1[1]/text()')[0].to_clean_s
-        if is_date_text(name)
-          name = (@doc/'.BillDebate/h1[2]/text()')[0].to_clean_s
-        end
+        name = (@doc/'.BillDebate/h1[2]/text()')[0].to_clean_s if is_date?(name)
         sub_name = (@doc/'.SubDebate/h2[1]/text()')[0].to_clean_s
         @title_is_h2 = false
       end
       make_bill_debate name, sub_name, debate_index, 'BillDebate', 'billdebate'
     end
 
+    def document_title
+      (@doc/'.copy/.section[1]/h1[1]/text()')[0].to_clean_s
+    end
+
     def create_bill_debate_from_debate_debate debate_index
-      full_name = (@doc/'.copy/.section[1]/h1[1]/text()')[0].to_clean_s.split('—')
-      name = full_name[0].strip
-      sub_name = full_name[1].strip
+      names = document_title.split('—')
+      name = names[0].strip
+      sub_name = names[1].strip
       make_bill_debate name, sub_name, debate_index, 'DebateDebate', 'billdebate'
     end
 
     def create_bill_debate_from_bill_debate2 debate_index
-      full_name = (@doc/'.copy/.section[1]/h1[1]/text()')[0].to_clean_s.split('—')
-      name = full_name[0..(full_name.size-2)].join('—').strip
-      sub_name = full_name.last.strip
+      names = document_title.split('—')
+      name = names[0..(names.size-2)].join('—').strip
+      sub_name = names.last.strip
       make_bill_debate name, sub_name, debate_index, 'BillDebate2', 'billdebate2'
     end
 
     def create_bill_debate_from_bill_debate_mid debate_index
-      full_name = (@doc/'.copy/.section[1]/h1[1]/text()')[0].to_clean_s.split('—')
-      name = full_name[0..(full_name.size-2)].join('—').strip
-      sub_name = full_name.last.strip
+      names = document_title.split('—')
+      name = names[0..(names.size-2)].join('—').strip
+      sub_name = names.last.strip
       make_bill_debate name, sub_name, debate_index, 'BillDebateMid', 'billdebate_mid'
+    end
+
+    def add_sub_heading sub_debate, sub_names
+      h_element = @title_is_h2 ? 'h3' : 'h2'
+      sub_heading = (sub_debate/"#{h_element}[1]/text()")
+
+      if sub_heading.size > 0 || (sub_heading = (sub_debate/"h2[1]/text()") ).size > 0
+        sub_names << sub_heading[0].to_clean_s
+      else
+        raise "can't find sub heading"
+      end
+    end
+
+    def add_sub_headings sub_debates
+      sub_names = []
+      sub_debates.each { |sub_debate| add_sub_heading(sub_debate, sub_names) }
+
+      sibling = sub_debates.last.next_sibling
+      while sibling
+        if (sibling.elem? and sibling.name == 'h2')
+          sub_name = sibling.inner_html.to_clean_s
+          sub_names << sub_name if sub_name != 'Speaker Recalled'
+        end
+        sibling = sibling.next_sibling
+      end
+      sub_names
+    end
+
+    def add_more_sub_headings sub_names, headings
+      title = document_title
+      headings.each do |heading|
+        heading = heading.to_clean_s
+        if heading.size > 0 && title.include?(heading)
+          sub_names << heading
+        else
+          raise "unexpected heading: #{heading}"
+        end
+      end
+      sub_names
     end
 
     def make_bill_debate name, sub_name, debate_index, type, css_class
       sub_names = [sub_name]
       sub_debates = (@doc/'.SubDebate')
+      sub_names = add_sub_headings(sub_debates) if sub_debates.size > 0
 
-      if sub_debates.size > 0
-        sub_names = []
-        sub_debates.each { |sub_debate| add_sub_heading(sub_debate, sub_names) }
-
-        sibling = sub_debates.last.next_sibling
-        while sibling
-          if (sibling.elem? and sibling.name == 'h2')
-            # (sibling.name == 'h3' and sibling.previous_sibling['class'] == 'SubDebate')
-            sub_name = sibling.inner_html.to_clean_s
-            if sub_name != 'Speaker Recalled'
-              sub_names << sub_name
-            end
-          end
-          sibling = sibling.next_sibling
-        end
+      headings = (@doc/'.BillDebate/h1/text()')
+      if headings.size > 1
+        headings = headings[1,headings.length-1]
+        sub_names = add_more_sub_headings(sub_names, headings)
       end
 
       debate = BillDebate.new :name => name,

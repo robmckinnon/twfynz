@@ -80,7 +80,7 @@ describe HansardParser, " when passed Oral Question: 1. Electoral Finance Bill�
     <div class="copy">
       <div class="section">
         <a name="DocumentTitle"></a>
-        <h1>1. Electoral Finance Bill—Select Committee Changes</h1>
+        <h1>1. Electoral Finance Bill —Select Committee Changes</h1>
         <a name="DocumentReference"></a>
         <p>[Uncorrected transcript—subject to correction and further editing.]</p>
         <div class="SubsQuestion">
