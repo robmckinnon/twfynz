@@ -1,4 +1,5 @@
 require 'fileutils'
+require 'yaml'
 
 class PersistedFile < ActiveRecord::Base
 
@@ -6,10 +7,122 @@ class PersistedFile < ActiveRecord::Base
 
   class << self
 
+    def load_questions
+      require File.dirname(__FILE__) + '/../../lib/hansard_parser.rb'
+      dates = unpersisted_dates('U')
+  
+      dates.each do |date|
+        files = unpersisted_files(date, 'U').sort_by(&:file_name)
+        load_questions_for files
+      end
+    end
+
+    def load_questions_for files
+      oral_answers = nil
+      files.each_with_index do |file, index|
+        puts "parsing: #{file.storage_name}"
+        parser = HansardParser.new(file.storage_name, file.parliament_url, file.debate_date)
+        oral_answers = parser.parse_oral_answer(index+1, oral_answers)
+      end
+      puts "saving: #{oral_answers.class.name}"
+      oral_answers.save!
+      files.each { |f| f.do_persist! }
+      date = files.first.debate_date
+      puts "persisted: #{date}"
+      oral_answers.create_url_slugs!
+      puts "created url slugs: #{date}"
+      Debate.expire_cached_pages date
+    end
+    
+    def date_after_sept_2005? date
+      date.year > 2005 || (date.year == 2005 && date.month > 9)
+    end
+    
+    def load_debates publication_status, sleep_seconds
+      dates = unpersisted_dates(publication_status).select {|d| date_after_sept_2005? d}
+      dates.each { |date| load_debates_for_date date, publication_status, sleep_seconds }
+    end
+    
+    def load_debates_for_date date, publication_status, sleep_seconds=nil
+      files = unpersisted_files(date, publication_status).sort_by(&:file_name)
+      load_debates_for files, sleep_seconds
+    end
+    
+    def load_debates_for files, sleep_seconds=nil
+      index = 1
+      debates = []
+      files.each do |file|
+        puts "parsing: #{file.storage_name}"
+        parser = HansardParser.new(file.storage_name, file.parliament_url, file.debate_date)
+        debate = parser.parse(index)
+    
+        if debate.is_a?(Array)
+          debate_array = debate
+          debate_array.each {|d| d.valid?}
+          index = debate_array.last.oral_answers.last.debate_index
+          debate_array.each {|d| debates << d }
+        else
+          debate.valid?
+          index = debate.oral_answers.last.debate_index if debate.is_a?(OralAnswers)
+          index = debate.sub_debates.last.debate_index if debate.is_a?(ParentDebate)
+          debates << debate
+        end
+        index = index.next
+        sleep sleep_seconds if sleep_seconds
+      end
+    
+      debates.each_with_index do |debate, index|
+        puts "saving: #{debate.name}"
+        begin
+          debate.save!
+        rescue Exception => e
+          debates.each_with_index do |a_debate, a_index|
+            a_debate.destroy if a_index < index
+          end
+          raise e
+        end
+      end
+    
+      files.each { |f| f.do_persist! }
+      date = files.first.debate_date
+      publication_status = files.first.publication_status
+      puts "persisted: #{date}"
+    
+      Debate.find_all_by_date_and_publication_status(date,publication_status).sort_by(&:debate_index).each do |debate|
+        debate.create_url_slug
+        debate.save!
+      end
+      SubDebate.find_all_by_url_slug(nil).each {|s| s.create_url_slug; s.save!}    
+      puts "created url slugs: #{date}"
+      Debate.expire_cached_pages date
+    end
+    
+    def load_yaml_index
+      Dir.glob("#{storage_path}2*/**/index.yaml").each do |file|
+        data = YAML::load_file(file)
+        files = data.collect {|d| PersistedFile.new(d) }
+        stored = files.first
+        
+        if stored.parliament_url
+          existing = PersistedFile.find_by_parliament_url(stored.parliament_url)
+          msg = "#{stored.debate_date} #{stored.publication_status} #{files.size}"
+          if existing
+            puts "existing #{msg}"
+          else
+            if stored.oral_answer
+              load_questions_for(files)
+            else
+              load_debates_for(files)
+            end
+          end
+        end
+      end
+    end
+    
     def git_push msg="download on #{Date.today.to_s}"
       Dir.chdir storage_path
-      puts `git status`
       puts `git add .`
+      puts `git status`
       puts `git commit -m '#{msg}'`
       puts `git push`
     end
@@ -198,6 +311,12 @@ class PersistedFile < ActiveRecord::Base
     parliament_url.split('/').last
   end
 
+  def do_persist!
+    self.persisted = true
+    self.persisted_date = Date.today
+    self.save!
+  end
+  
   def populate_name
     if index_on_date
       begin

@@ -7,8 +7,12 @@ namespace :kiwimp do
     Organisation.find(:all).each {|o| o.save!}
   end
 
+  desc ':load_hansard, :update_sitting_days, :update_organisation_mentions, :make_sitemap'
+  task :all_update => [:environment, :load_hansard, :update_sitting_days, :update_organisation_mentions, :make_sitemap] do
+  end
+
   desc 'update sitting days using data in database'
-  task :update_sitting_days => [:environment, :load_hansard, :update_organisation_mentions, :make_sitemap] do
+  task :update_sitting_days => [:environment] do
     PersistedFile.find(:all).each do |file|
       day = SittingDay.find_by_date(file.debate_date)
       day = SittingDay.new(:date=>file.debate_date) unless day
