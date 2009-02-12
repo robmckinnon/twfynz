@@ -4,6 +4,13 @@ class Portfolio < ActiveRecord::Base
   has_many :oral_answers, :as => :about
 
   class << self
+    
+    def create_portfolio name, url, minister
+      portfolio = Portfolio.create :portfolio_name => name, :url => url
+      minister = Minister.create :title => minister, :responsible_for_id => portfolio.id
+      portfolio
+    end
+
     def questions_asked_count_by_month name
       (name == 'all') ? questions_asked_count_by_month_for_all : questions_asked_count_by_month_for(name)
     end
@@ -91,5 +98,4 @@ class Portfolio < ActiveRecord::Base
       sql = %Q[select count(*) from debates where about_type = 'Portfolio' and about_id = #{id} and publication_status = '#{publication_status}']
       Debate.count_by_sql(sql)
     end
-
 end

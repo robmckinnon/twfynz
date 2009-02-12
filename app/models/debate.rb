@@ -532,41 +532,54 @@ class Debate < ActiveRecord::Base
     hash
   end
 
-  def next_debate_id_hash
+  def next_debate
     begin
-      debate = Debate.find_by_index year, month, day, next_index
-      return nil unless debate
+      @next_debate ||= Debate.find_by_index year, month, day, next_index
     rescue Exception => e
-      return nil
+      nil
     end
-
-    case debate
-      when BillDebate
-        debate.sub_debates.empty? ? debate.id_hash : debate.sub_debates[0].id_hash
-      when OralAnswers, ParentDebate
-        debate.sub_debates[0].id_hash
-      else
-        debate.id_hash
+  end
+  
+  def next_debate_id_hash
+    if(debate = next_debate)
+      case debate
+        when BillDebate
+          debate.sub_debates.empty? ? debate.id_hash : debate.sub_debates[0].id_hash
+        when OralAnswers, ParentDebate
+          debate.sub_debates[0].id_hash
+        else
+          debate.id_hash
+      end
+    else
+      nil
     end
   end
 
-  def prev_debate_id_hash
-    return nil unless can_have_previous
-    begin
-      prev_index = Debate.to_num_str(index.to_i-1)
-      debate = Debate.find_by_index year, month, day, prev_index
-      return nil unless debate
-    rescue Exception => e
-      return nil
+  def previous_debate
+    if can_have_previous
+      begin
+        prev_index = Debate.to_num_str(index.to_i-1)
+        @previous_debate ||= Debate.find_by_index year, month, day, prev_index
+      rescue Exception => e
+        nil
+      end
+    else
+      nil
     end
-
-    case debate
-      when BillDebate, OralAnswers, ParentDebate
-        debate.prev_debate_id_hash
-      when OralAnswer, SubDebate
-        debate.id_hash
-      else
-        debate.id_hash
+  end
+  
+  def prev_debate_id_hash
+    if can_have_previous && (debate = previous_debate)
+      case debate
+        when BillDebate, OralAnswers, ParentDebate
+          debate.prev_debate_id_hash
+        when OralAnswer, SubDebate
+          debate.id_hash
+        else
+          debate.id_hash
+      end
+    else
+      nil
     end
   end
 
