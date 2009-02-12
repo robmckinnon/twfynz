@@ -35,7 +35,7 @@ class PersistedFile < ActiveRecord::Base
     end
     
     def date_after_sept_2005? date
-      date.year > 2005 || (date.year == 2005 && date.month > 9)
+      date.year > 2008 || (date.year == 2008 && date.month > 11)
     end
     
     def load_debates publication_status, sleep_seconds
