@@ -52,6 +52,7 @@ class PersistedFile < ActiveRecord::Base
       index = 1
       debates = []
       files.each do |file|
+        puts file.inspect
         puts "parsing: #{file.storage_name}"
         parser = HansardParser.new(file.storage_name, file.parliament_url, file.debate_date)
         debate = parser.parse(index)
