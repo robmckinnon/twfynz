@@ -24,7 +24,7 @@
     #latest_content
       #latest_debates
         .latest_debates
-          %h2 Latest day of debates
+          %h2 Latest debate transcript
           = date_to_s @latest_debates.first.date
           %ul
             - @latest_debates.each do |debate|
