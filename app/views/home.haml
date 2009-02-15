@@ -20,24 +20,24 @@
             %tr
               %td= link_to date.title, show_bill_url(:bill_url => date.bill.url)
               %td= "#{format_date date.date}"
-  - if @lastest_debates
-    #lastest_content
-      #lastest_debates
-        .lastest_debates
+  - if @latest_debates
+    #latest_content
+      #latest_debates
+        .latest_debates
           %h2 Latest day of debates
-          = date_to_s @lastest_debates.first.date
+          = date_to_s @latest_debates.first.date
           %ul
-            - @lastest_debates.each do |debate|
+            - @latest_debates.each do |debate|
               - if debate.is_a?(DebateAlone)
                 %li= link_to_debate(debate)
               - else
                 %li= link_to_debate debate.sub_debate, false, false, true
-      #lastest_orals
-        .lastest_orals
+      #latest_orals
+        .latest_orals
           %h2 Latest oral answers
-          = date_to_s @lastest_orals.first.date
+          = date_to_s @latest_orals.first.date
           %ul
-            - @lastest_orals.each do |debate|
+            - @latest_orals.each do |debate|
               %li= link_to_debate debate, false, false, true
   - if @days_top_pages
     #popular_content
