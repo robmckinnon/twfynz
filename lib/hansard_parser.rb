@@ -576,6 +576,12 @@ class HansardParser
       check_for_vote_blanks vote
     end
 
+    def add_section_header heading, debate
+      text = heading.inner_html.to_clean_s
+      header = SectionHeader.new :text => text
+      debate.contributions << header
+    end
+
     def handle_div div, debate
       case div['class']
         when 'SubDebate'
@@ -588,11 +594,9 @@ class HansardParser
           handle_personal_vote div, debate
         when 'section'
           if (h4 = div.at('h4'))
-            header = SectionHeader.new :text => h4.inner_html.to_clean_s
-            debate.contributions << header
+            add_section_header h4, debate
           elsif (h3 = div.at('h3'))
-            header = SectionHeader.new :text => h3.inner_html.to_clean_s
-            debate.contributions << header
+            add_section_header h3, debate
           else
             raise 'unexpected div ' + div.to_s
           end
@@ -890,7 +894,7 @@ class HansardParser
     def make_when_sub_debates_empty debate_index, type
       name, sub_names = find_name_and_sub_names(type)
       debate = make_parent_debate(name, debate_index, sub_names)
-      handle_contributions @doc.at('.'+type), debate.sub_debates[0]
+      handle_contributions @doc.at(".#{type}"), debate.sub_debates[0]
       debate
     end
 
@@ -1039,13 +1043,23 @@ class HansardParser
       debate.valid?
       debate.sub_debates.each {|sub_debate| sub_debate.debate = debate}
 
-      if sub_debates.size == 0
-        handle_contributions @doc.at('.'+type), debate.sub_debates[0]
-      elsif sub_debates.size == 1
+      if sub_debates.size == 0 || sub_debates.size == 1
         handle_contributions @doc.at('.'+type), debate.sub_debates[0]
       else
-        sub_debates.each_with_index do |sub_debate, index|
-          handle_contributions sub_debate, debate.sub_debates[index]
+        nodes = @doc.at('.BillDebate').children
+        index = -1
+        nodes.each do |node|
+          if node.name == 'div' && node['class'] == 'SubDebate'
+            index = index.next
+            handle_contributions node, debate.sub_debates[index]
+          else
+            text = node.at('text()').to_clean_s
+            if node.name[/^h\d$/] && text == debate.sub_debates[index+1].name
+              index = index.next
+            elsif !is_date?(text) && text != debate.name
+              handle_div node, debate.sub_debates[index]
+            end
+          end if node.elem?
         end
       end
       debate

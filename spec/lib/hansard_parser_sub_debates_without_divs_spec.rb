@@ -37,6 +37,10 @@ describe HansardParser, "when passed bill debate with three subdebates" do
     @debate.sub_debates[2].name.should == 'In Committee'
     @debate.sub_debates[3].name.should == 'Third Reading'
   end
+  
+  it 'should add contributions for sub debate outside of div' do
+    @debate.sub_debates[2].contributions.first.should_not be_nil    
+  end
 
   def html
     %Q|<html>
@@ -57,8 +61,20 @@ describe HansardParser, "when passed bill debate with three subdebates" do
           <div class="SubDebate">
             <h2>First Reading</h2>
           </div>
-          <h1>Second Reading</h1>
+          <div class="SubDebate">
+            <h2>Second Reading</h2>
+          </div>
           <h1>In Committee</h1>
+          <div class="section">
+            <h3>Part 1 Part 6A repealed</h3>
+          </div>
+          <div class="Speech">
+            <p class="Speech">
+              <a name="time_21:54:35"></a>
+              <strong>Hon DAVID PARKER (Labour)</strong>
+              <strong>:</strong> I would like to begin</p>
+            </p>
+          </div>
           <h1>Third Reading</h1>
         </div>
       </div>
