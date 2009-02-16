@@ -260,6 +260,7 @@ class PersistedFile < ActiveRecord::Base
           if File.size? download_file
             FileUtils.mkdir_p File.dirname(storage_file)
             FileUtils.cp download_file, storage_file
+            strip_empty_lines file
             FileUtils.rm download_file
             FileUtils.touch download_file
           end
@@ -268,6 +269,13 @@ class PersistedFile < ActiveRecord::Base
 
         set_yaml_index files
       end
+    end
+
+    def strip_empty_lines file
+      lines = IO.readlines(file.storage_name)
+      lines.delete_if{|line| line.strip.empty?}
+      content = lines.join("\n").gsub("\r\n",'').gsub("\n\n","\n")
+      File.open(file.storage_name, 'w') {|f| f.write content}
     end
 
     def unpersisted_dates publication_status
@@ -337,7 +345,7 @@ class PersistedFile < ActiveRecord::Base
   def set_publication_status status_name
     self.publication_status = PersistedFile.publication_status_code(status_name)
   end
-
+  
   private
 
     def default_persisted

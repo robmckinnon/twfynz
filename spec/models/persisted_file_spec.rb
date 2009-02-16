@@ -41,6 +41,7 @@ describe PersistedFile, 'the class' do
     FileUtils.should_receive(:cp).with(download_file, storage_file)
     FileUtils.should_receive(:rm).with(download_file)
     FileUtils.should_receive(:touch).with(download_file)
+    PersistedFile.should_receive(:strip_empty_lines)
     PersistedFile.should_receive(:set_yaml_index)
 
     PersistedFile.set_indexes_on_date @first_date, 'U'
