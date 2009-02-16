@@ -2,6 +2,8 @@
 - @home = true
 - @script = "Event.observe(window, 'load', function() { if ($('user_login')) $('user_login').focus(); } );"
 #normalcontent
+  %a{ :href=>"http://creativefreedom.org.nz/blackout.html" }
+    %img{ :style=>"margin: 0em 0em 2em 0em; border: 1px solid #333", :src=>"http://creativefreedom.org.nz/library/black-out/banner-728x90.gif", :width=>'728',:height=>'90', :alt=>"New Zealand's new Copyright Law presumes 'Guilt Upon Accusation' and will Cut Off Internet Connections without a trial. Join the black out protest against it!"}
   %h1 Find out what your elected representatives are doing in Aotearoa New Zealand's Parliament.
   #project_summary
     =render :partial => 'project_summary'

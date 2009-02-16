@@ -105,7 +105,7 @@ class PersistedFile < ActiveRecord::Base
         if stored.parliament_url
           existing = PersistedFile.find_by_parliament_url(stored.parliament_url)
           msg = "#{stored.debate_date} #{stored.publication_status} #{files.size}"
-          if existing
+          if existing && (existing.persisted || existing.debate_date < Date.new(2008,12,1) )
             puts "existing #{msg}"
           else
             if stored.oral_answer

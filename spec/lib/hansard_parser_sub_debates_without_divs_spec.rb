@@ -34,12 +34,13 @@ describe HansardParser, "when passed bill debate with three subdebates" do
   it 'should set name correctly on each sub-debates' do
     @debate.sub_debates[0].name.should == 'First Reading'
     @debate.sub_debates[1].name.should == 'Second Reading'
-    @debate.sub_debates[2].name.should == 'In Committee'
+    @debate.sub_debates[2].name.should == 'In Committee'    
     @debate.sub_debates[3].name.should == 'Third Reading'
   end
   
   it 'should add contributions for sub debate outside of div' do
-    @debate.sub_debates[2].contributions.first.should_not be_nil    
+    @debate.sub_debates[2].contributions.first.should be_an_instance_of(SectionHeader)
+    @debate.sub_debates[2].contributions.last.should be_an_instance_of(Speech)
   end
 
   def html
