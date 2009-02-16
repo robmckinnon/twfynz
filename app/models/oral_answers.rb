@@ -42,6 +42,10 @@ class OralAnswers < Debate
     end
   end
 
+  def last_debate_index
+    oral_answers.last.debate_index
+  end
+  
   def heading_level
     4
   end

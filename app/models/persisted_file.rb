@@ -57,14 +57,13 @@ class PersistedFile < ActiveRecord::Base
         debate = parser.parse(index)
     
         if debate.is_a?(Array)
-          debate_array = debate
-          debate_array.each {|d| d.valid?}
-          index = debate_array.last.oral_answers.last.debate_index
-          debate_array.each {|d| debates << d }
+          debate_list = debate
+          debate_list.each {|d| d.valid?}
+          index = debate_list.last.last_debate_index
+          debate_list.each {|d| debates << d }
         else
           debate.valid?
-          index = debate.oral_answers.last.debate_index if debate.is_a?(OralAnswers)
-          index = debate.sub_debates.last.debate_index if debate.is_a?(ParentDebate)
+          index = debate.last_debate_index if debate.respond_to?(:last_debate_index)
           debates << debate
         end
         index = index.next

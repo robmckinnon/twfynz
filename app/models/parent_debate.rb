@@ -11,6 +11,10 @@ class ParentDebate < Debate
     sub_debates.size == 1
   end
 
+  def last_debate_index
+    sub_debates.last.debate_index
+  end
+  
   def sub_debate
     sub_debates.first
   end

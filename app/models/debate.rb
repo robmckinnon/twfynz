@@ -220,6 +220,20 @@ class Debate < ActiveRecord::Base
       debates.in_groups_by(&:name)
     end
 
+    def find_latest_by_status publication_status
+      d = PersistedFile.find_all_by_publication_status(publication_status).collect(&:debate_date).max
+      if d
+        latest_debates = find_by_date(d.year.to_s, mm_to_mmm(d.month.to_s), d.day.to_s)
+        latest_debates.delete_if do |d|
+          (publication_status == 'A' && d.kind_of?(SubDebate) ) ||
+          (publication_status == 'U' && d.kind_of?(OralAnswers) )
+        end
+        latest_debates
+      else
+        []
+      end
+    end
+    
     def find_referred_oral_answer debate
       find_by_date_and_oral_answer_no(debate.date, debate.re_oral_answer_no)
     end

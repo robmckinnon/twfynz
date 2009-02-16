@@ -50,13 +50,8 @@ class ApplicationController < ActionController::Base
         @days_top_pages = nil
       end
       
-      d = PersistedFile.find_all_by_publication_status('A').collect(&:debate_date).max
-      @latest_debates = Debate.find_by_date(d.year.to_s,Debate.mm_to_mmm(d.month.to_s),d.day.to_s)
-      @latest_debates.delete_if {|d| d.kind_of? SubDebate }
-      
-      d = PersistedFile.find_all_by_publication_status('U').collect(&:debate_date).max
-      @latest_orals = Debate.find_by_date(d.year.to_s,Debate.mm_to_mmm(d.month.to_s),d.day.to_s)
-      @latest_orals.delete_if {|d| d.kind_of? OralAnswers }
+      @latest_debates = Debate.find_latest_by_status('A')
+      @latest_orals = Debate.find_latest_by_status('U')
       
       @third_reading_matrix = Vote.third_reading_matrix
       @submission_dates = SubmissionDate.find_live_bill_submissions
