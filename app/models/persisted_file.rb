@@ -319,9 +319,11 @@ class PersistedFile < ActiveRecord::Base
   end
 
   def do_persist!
-    self.persisted = true
-    self.persisted_date = Date.today
-    self.save!
+    existing = PersistedFile.find_by_parliament_url(self.parliament_url)
+    existing = existing ? existing : self
+    existing.persisted = true
+    existing.persisted_date = Date.today
+    existing.save!
   end
   
   def populate_name

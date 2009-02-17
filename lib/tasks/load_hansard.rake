@@ -2,6 +2,7 @@ namespace :kiwimp do
 
   desc 'sync hansard on local machine'
   task :sync_hansard => :environment do
+    PersistedFile.git_pull
     PersistedFile.load_yaml_index
   end
   

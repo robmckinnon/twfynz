@@ -18,11 +18,20 @@ class Contribution < ActiveRecord::Base
 
   class << self
 
+    def submodels
+      models = [Answer, Clause, ClauseAlone, ClauseDescription, ClauseHeading,
+      ClauseIndent1, ClauseIndent2, ClauseIndent3, ClauseModel, ClauseOutline,
+      ClauseParagraph, ClausePart, ClauseSubClause, ClauseSubParagraph,
+      ContinueAnswer, ContinueIntervention, ContinueQuestion, ContinueSpeech,
+      Interjection, Intervention, Procedural, Question, Quotation,
+      SectionHeader, Speech, SubsAnswer, SubsQuestion, SupAnswer, SupQuestion,
+      Translation, VotePlaceholder]
+    end
+    
     def count_by_term term
       # sql = 'SELECT COUNT(*) FROM contributions WHERE ' + create_condition(term)
       # count_by_sql(sql)
-      models = [Answer, Clause, ClauseAlone, ClauseDescription, ClauseHeading, ClauseIndent1, ClauseIndent2, ClauseIndent3, ClauseModel, ClauseOutline, ClauseParagraph, ClausePart, ClauseSubClause, ClauseSubParagraph, ContinueAnswer, ContinueIntervention, ContinueQuestion, ContinueSpeech, Interjection, Intervention, Procedural, Question, Quotation, SectionHeader, Speech, SubsAnswer, SubsQuestion, SupAnswer, SupQuestion, Translation, VotePlaceholder]
-      search = ActsAsXapian::Search.new(models, term, :limit => 1)
+      search = ActsAsXapian::Search.new(submodels, term, :limit => 1)
       return search.matches_estimated
     end
 
@@ -31,8 +40,7 @@ class Contribution < ActiveRecord::Base
       # find(:all, :conditions=> condition, :order=>'date DESC, spoken_in_id DESC',
           # :limit => match_pages.items_per_page.to_s,
           # :offset => match_pages.current.offset)
-      models = [Answer, Clause, ClauseAlone, ClauseDescription, ClauseHeading, ClauseIndent1, ClauseIndent2, ClauseIndent3, ClauseModel, ClauseOutline, ClauseParagraph, ClausePart, ClauseSubClause, ClauseSubParagraph, ContinueAnswer, ContinueIntervention, ContinueQuestion, ContinueSpeech, Interjection, Intervention, Procedural, Question, Quotation, SectionHeader, Speech, SubsAnswer, SubsQuestion, SupAnswer, SupQuestion, Translation, VotePlaceholder]
-      search = ActsAsXapian::Search.new(models, term,
+      search = ActsAsXapian::Search.new(submodels, term,
           :limit => limit,
           :offset => offset,
           :sort_by_prefix => 'debate_date')
