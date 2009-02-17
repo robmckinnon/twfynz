@@ -66,7 +66,8 @@ class SiteMap
 
   def write_to_file!
     raise "can only write to file once" unless @site_map
-    Zlib::GzipWriter.open(@location) do |file|
+    
+    Zlib::GzipWriter.open("#{RAILS_ROOT}/#{@location}") do |file|
       puts 'writing: ' + @location
       file.write @site_map
     end
@@ -90,7 +91,7 @@ class SiteMap
 
       @most_recent_modification = pages.collect(&:last_modification).max
       @site_map = site_map.join('')
-      @location = "#{RAILS_ROOT}/public/sitemap_#{name}.xml.gz"
+      @location = "public/sitemap_#{name}.xml.gz"
     end
 
     def populate_sitemap_for_model model_class, &block
