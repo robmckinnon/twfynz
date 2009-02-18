@@ -32,6 +32,8 @@
             - @latest_debates.each do |debate|
               - if debate.is_a?(DebateAlone)
                 %li= link_to_debate(debate)
+              - elsif debate.is_a?(OralAnswers)
+                %li= link_to_debate debate, false, false, true
               - else
                 %li= link_to_debate debate.sub_debate, false, false, true
       #latest_orals
