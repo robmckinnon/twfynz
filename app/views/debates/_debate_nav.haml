@@ -1,27 +1,28 @@
 - debate = debate_nav
-.box
-  .contentarea
-    %ul.linklist
-      %li= 'All on ' + link_to("#{date_to_s debate.date}", show_debates_on_date_url({:url_category=>'debates'}.merge(debate.date_hash)))
-      - if debate.prev_debate_id_hash
-        %li= '&laquo; ' + link_to("Previous", get_url_from_hash(debate.prev_debate_id_hash)) + ' on day'
-      - if debate.next_debate_id_hash
-        %li= '&raquo; ' + link_to("Next", get_url_from_hash(debate.next_debate_id_hash)) + ' on day'
-- if @about and @about_type.to_s == 'Bill'
+- if false
   .box
     .contentarea
       %ul.linklist
-        %li= 'More about ' + link_to_about(@hash, @about, @about_type)
-
-.box
-  .contentarea
-    %a{ :href=>"http://creativefreedom.org.nz/blackout.html" }
-      %img{ :style=>"margin: 0em 2em; border: 1px solid #333", :src=>"http://creativefreedom.org.nz/library/black-out/banner-160x600.gif", :alt=>"New Zealand's new Copyright Law presumes 'Guilt Upon Accusation' and will Cut Off Internet Connections without a trial. Join the black out protest against it!"}
-- if debate.name.include?('General Debate') || (debate.is_a?(SubDebate) && debate.parent && debate.parent.kind_of?(BillDebate) && ( (debate.contributions.select(&:is_speech?).size > 1) || (debate.contributions.select(&:is_vote?).size > 0) ) )
+        %li= 'All on ' + link_to("#{date_to_s debate.date}", show_debates_on_date_url({:url_category=>'debates'}.merge(debate.date_hash)))
+        - if debate.prev_debate_id_hash
+          %li= '&laquo; ' + link_to("Previous", get_url_from_hash(debate.prev_debate_id_hash)) + ' on day'
+        - if debate.next_debate_id_hash
+          %li= '&raquo; ' + link_to("Next", get_url_from_hash(debate.next_debate_id_hash)) + ' on day'
+  - if @about and @about_type.to_s == 'Bill'
+    .box
+      .contentarea
+        %ul.linklist
+          %li= 'More about ' + link_to_about(@hash, @about, @about_type)
+  
   .box
     .contentarea
-      %h4 Speeches
-      %ul.linklist
-        = render :partial => 'speech_link', :collection => debate.contributions
-- if debate
-  = calendar_nav debate.date
+      %a{ :href=>"http://creativefreedom.org.nz/blackout.html" }
+        %img{ :style=>"margin: 0em 2em; border: 1px solid #333", :src=>"http://creativefreedom.org.nz/library/black-out/banner-160x600.gif", :alt=>"New Zealand's new Copyright Law presumes 'Guilt Upon Accusation' and will Cut Off Internet Connections without a trial. Join the black out protest against it!"}
+  - if debate.name.include?('General Debate') || (debate.is_a?(SubDebate) && debate.parent && debate.parent.kind_of?(BillDebate) && ( (debate.contributions.select(&:is_speech?).size > 1) || (debate.contributions.select(&:is_vote?).size > 0) ) )
+    .box
+      .contentarea
+        %h4 Speeches
+        %ul.linklist
+          = render :partial => 'speech_link', :collection => debate.contributions
+  - if debate
+    = calendar_nav debate.date
