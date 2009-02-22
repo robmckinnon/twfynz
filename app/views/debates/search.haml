@@ -2,7 +2,7 @@
 - @no_heading = true
 - @javascript = "prototype"
 - if @term
-  %h1= %Q[Search results for: #{ @term } (#{page_entries_info(@entries).sub('Displaying speeches','').strip.sub(' in total','') })]
+  %h1= %Q[Search results for: #{ @term } (#{page_entries_info(@entries).sub(/Displaying (speeches|entries) /,'').strip.sub(' in total','') })]
 - if @matches and @matches.length > 0
   - params.delete(:commit)
   - paginated_section @entries do
