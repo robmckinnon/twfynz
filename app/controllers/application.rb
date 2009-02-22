@@ -80,16 +80,12 @@ class ApplicationController < ActionController::Base
     @term = params[:q]
     render :template => 'debates/search' and return if @term == nil
 
-    if params['page']
-      @count = Contribution.count_by_term @term
-      @match_pages = Paginator.new self, @count, 10, params['page']
-      limit = @match_pages.items_per_page.to_s.to_i
-      offset = @match_pages.current.offset
-      @matches, @count = Contribution.match_by_term(@term, limit, offset)
-    else
-      @matches, @count = Contribution.match_by_term(@term, 10, 0)
-      @match_pages = Paginator.new self, @count, 10, nil
-    end
+    page = params['page'] || 1
+    @entries = WillPaginate::Collection.create(page, 10) do |pager|
+      @matches, @count = Contribution.match_by_term(@term, pager.per_page, pager.offset)
+      pager.replace(@matches)    
+      pager.total_entries = @count
+    end 
 
     unless @matches.empty?
       @matches = @matches.compact

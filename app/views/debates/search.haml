@@ -2,16 +2,11 @@
 - @no_heading = true
 - @javascript = "prototype"
 - if @term
-  %h1= %Q[Search results for: #{ @term }#{ result_summary @match_pages, @matches, @count }]
+  %h1= %Q[Search results for: #{ @term } (#{page_entries_info(@entries).sub('Displaying speeches','').strip.sub(' in total','') })]
 - if @matches and @matches.length > 0
   - params.delete(:commit)
-  - pagination_line = pagination_links(@match_pages, :params => params)
-  - pagination_line = pagination_line.gsub(/page=(\d+)&amp;q=([^"]+)"/,'q=\2&amp;page=\1"') if pagination_line
-  - unless pagination_line.blank?
-    %p.pagination_links= pagination_line
-  = render :partial => 'debates/debate_match', :collection => @debate_ids, :locals => { :expand => 'false', :debates => @debates, :by_debate => @by_debate, :term => @term.gsub('"','').gsub("'",'') }
-  - unless pagination_line.blank?
-    %p.pagination_links= pagination_line
+  - paginated_section @entries do
+    = render :partial => 'debates/debate_match', :collection => @debate_ids, :locals => { :expand => 'false', :debates => @debates, :by_debate => @by_debate, :term => @term.gsub('"','').gsub("'",'') }
 - else
   #debate_search
     - form_tag({:controller => 'debates', :action => :search}, {:method=>"get"}) do

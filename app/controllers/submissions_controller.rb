@@ -6,16 +6,8 @@ class SubmissionsController < ApplicationController
 
   def index
     if admin?
-      @count = Submission.count_by_sql('SELECT COUNT(*) FROM submissions')
-      @match_pages = Paginator.new self, @count, 50, params['page']
-
-      sql = 'SELECT * FROM submissions'
-      sql += ' ORDER BY id desc'
-      sql += ' LIMIT ' + @match_pages.current.offset.to_s + ',' + @match_pages.items_per_page.to_s
-
-      @submissions = Submission.find_by_sql(sql)
+      @submissions = Submission.paginate :page => params[:page]
       @submissions.each { |s| s.save! if (s.populate_submitter_id == 'yes') }
-
       respond_to do |format|
         format.html # index.html.erb
         format.xml  { render :xml => @submissions }

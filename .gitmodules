@@ -16,3 +16,6 @@
 [submodule "acts_as_xapian"]
 	path = acts_as_xapian
 	url = git://github.com/frabcus/acts_as_xapian.git
+[submodule "vendor/plugins/will_paginate"]
+	path = vendor/plugins/will_paginate
+	url = git://github.com/mislav/will_paginate.git
