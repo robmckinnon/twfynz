@@ -13,10 +13,6 @@
       %ul.linklist
         %li= 'More about ' + link_to_about(@hash, @about, @about_type)
 
-.box
-  .contentarea
-    %a{ :href=>"http://creativefreedom.org.nz/blackout.html" }
-      %img{ :style=>"margin: 0em 2em; border: 1px solid #333", :src=>"http://creativefreedom.org.nz/library/black-out/banner-160x600.gif", :alt=>"New Zealand's new Copyright Law presumes 'Guilt Upon Accusation' and will Cut Off Internet Connections without a trial. Join the black out protest against it!"}
 - if debate.name.include?('General Debate') || (debate.is_a?(SubDebate) && debate.parent && debate.parent.kind_of?(BillDebate) && ( (debate.contributions.select(&:is_speech?).size > 1) || (debate.contributions.select(&:is_vote?).size > 0) ) )
   .box
     .contentarea
