@@ -133,7 +133,7 @@ class HansardDownloader
         if advance_exists && (!@check_for_final || @download_date)
           PersistedFile.add_if_missing persisted_file
         else
-          puts "checking status: #{url}" if advance_exists
+          puts "checking status: #{persisted_file.parliament_url}" if advance_exists
           persisted_file.set_publication_status('final')
           finished = download_this_debate persisted_file
         end
