@@ -117,13 +117,13 @@ class Mp < ActiveRecord::Base
     end
 
     def all_by_last
-      @mps = Mp.find(:all, :order => "last", :include => [:party,:members])
-      @mps.delete_if{|mp| mp.is_former?}
+      mps = Mp.find(:all, :order => "last", :include => [:party,:members])
+      mps.delete_if{|mp| mp.is_former?}
     end
 
     def all_by_first
-      @mps = Mp.find(:all, :order => "first", :include => [:party,:members])
-      @mps.delete_if{|mp| mp.is_former?}
+      mps = Mp.find(:all, :order => "first", :include => [:party,:members])
+      mps.delete_if{|mp| mp.is_former?}
     end
 
     def all_by_electorate
@@ -135,7 +135,7 @@ class Mp < ActiveRecord::Base
       list_mps = list_members.collect(&:person).sort{|a,b| a.first <=> b.first}
       electorate_mps = electorate_members.collect(&:person)
 
-      @mps = (electorate_mps + list_mps)
+      mps = (electorate_mps + list_mps)
     end
 
     def all_by_party
@@ -149,7 +149,7 @@ class Mp < ActiveRecord::Base
       parties.each do |party|
         mps << members_by_party[party].sort{|a,b| a.person.first <=> b.person.first}
       end
-      @mps = mps.flatten.collect(&:person)
+      mps = mps.flatten.collect(&:person)
     end
   end
 
@@ -268,13 +268,11 @@ class Mp < ActiveRecord::Base
   end
 
   def question_debates
-    @question_debates = oral_answer_debates SubsQuestion, SupQuestion unless @question_debates
-    @question_debates
+    oral_answer_debates SubsQuestion, SupQuestion
   end
 
   def answer_debates
-    @answer_debates = oral_answer_debates SubsAnswer, SupAnswer unless @answer_debates
-    @answer_debates
+    oral_answer_debates SubsAnswer, SupAnswer
   end
 
   def expire_cached_page
