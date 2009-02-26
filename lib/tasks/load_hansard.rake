@@ -1,5 +1,13 @@
 namespace :kiwimp do
 
+  task :update_organisation_mentions do
+    Organisation.find(:all).each {|o| o.save!}
+  end
+
+  desc ':load_hansard, :update_sitting_days, :update_organisation_mentions, :make_sitemap'
+  task :all_update => [:environment, :load_hansard, :update_sitting_days, :update_organisation_mentions, :make_sitemap] do
+  end
+
   desc 'sync hansard on local machine'
   task :sync_hansard => :environment do
     PersistedFile.git_pull

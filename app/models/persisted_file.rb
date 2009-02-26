@@ -103,9 +103,9 @@ class PersistedFile < ActiveRecord::Base
         stored = files.first
         
         if stored.parliament_url
-          existing = PersistedFile.find_by_parliament_url(stored.parliament_url)
-          msg = "#{stored.debate_date} #{stored.publication_status} #{files.size}"
+          existing = PersistedFile.find_by_parliament_url_and_publication_status(stored.parliament_url, stored.publication_status)
           if existing && (existing.persisted || existing.debate_date < Date.new(2008,12,1) )
+            msg = "#{stored.debate_date} #{stored.publication_status} #{files.size}"
             puts "existing #{msg}"
           else
             if stored.oral_answer
@@ -117,7 +117,7 @@ class PersistedFile < ActiveRecord::Base
         end
       end
     end
-    
+
     def git_push msg="download on #{Date.today.to_s}"
       Dir.chdir storage_path
       puts `git add .`
@@ -319,7 +319,7 @@ class PersistedFile < ActiveRecord::Base
   end
 
   def do_persist!
-    existing = PersistedFile.find_by_parliament_url(self.parliament_url)
+    existing = PersistedFile.find_by_parliament_url_and_publication_status(self.parliament_url, self.publication_status)
     existing = existing ? existing : self
     existing.persisted = true
     existing.persisted_date = Date.today

@@ -3,14 +3,6 @@ require 'hpricot'
 
 namespace :kiwimp do
 
-  task :update_organisation_mentions do
-    Organisation.find(:all).each {|o| o.save!}
-  end
-
-  desc ':load_hansard, :update_sitting_days, :update_organisation_mentions, :make_sitemap'
-  task :all_update => [:environment, :load_hansard, :update_sitting_days, :update_organisation_mentions, :make_sitemap] do
-  end
-
   desc 'update sitting days using data in database'
   task :update_sitting_days => [:environment] do
     PersistedFile.find(:all).each do |file|
