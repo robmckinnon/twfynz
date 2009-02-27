@@ -238,7 +238,6 @@ class Mp < ActiveRecord::Base
     portfolios = question_debates.select {|d| d.about_type == 'Portfolio' }.group_by {|d| d.about}
     portfolios = most_frequent portfolios
     portfolios.sort! { |a,b| b[1].size <=> a[1].size }
-    # portfolios.collect {|p| p[0]}
     portfolios
   end
 
@@ -246,7 +245,6 @@ class Mp < ActiveRecord::Base
     portfolios = answer_debates.select {|d| d.about_type == 'Portfolio' }.group_by {|d| d.about}
     portfolios = most_frequent portfolios
     portfolios.sort! { |a,b| b[1].size <=> a[1].size }
-    # portfolios.collect {|p| p[0]}
     portfolios
   end
 
@@ -254,8 +252,6 @@ class Mp < ActiveRecord::Base
     subjects = question_debates.group_by {|d| d.name.split('—').first }
     subjects = most_frequent subjects
     subjects.sort! { |a,b| b[1].last.date <=> a[1].last.date }
-    # subjects.collect {|s| "#{s[0]} (#{s[1]})"}
-    # subjects.collect {|s| s[0]}
     subjects
   end
 
@@ -263,7 +259,6 @@ class Mp < ActiveRecord::Base
     subjects = answer_debates.group_by {|d| d.name.split('—').first }
     subjects = most_frequent subjects
     subjects.sort! { |a,b| b[1].last.date <=> a[1].last.date }
-    # subjects.collect {|s| s[0]}
     subjects
   end
 

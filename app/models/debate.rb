@@ -228,6 +228,7 @@ class Debate < ActiveRecord::Base
           (publication_status == 'A' && d.kind_of?(SubDebate) ) ||
           (publication_status == 'U' && d.kind_of?(OralAnswers) )
         end
+        latest_debates.delete_if {|d| d.publication_status != publication_status}
         latest_debates
       else
         []
