@@ -36,11 +36,12 @@
                 %li= link_to_debate debate.sub_debate, false, false, true
       #latest_orals
         .latest_orals
-          %h2 Latest oral answers
-          = date_to_s @latest_orals.first.date
-          %ul
-            - @latest_orals.each do |debate|
-              %li= link_to_debate debate, false, false, true
+          - unless @latest_orals.empty?
+            %h2 Latest oral answers
+            = date_to_s @latest_orals.first.date
+            %ul
+              - @latest_orals.each do |debate|
+                %li= link_to_debate debate, false, false, true
   - if @days_top_pages
     #popular_content
       #popular_last_day
