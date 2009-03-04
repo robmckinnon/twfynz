@@ -49,10 +49,10 @@ class ApplicationController < ActionController::Base
         @weeks_top_pages = nil
         @days_top_pages = nil
       end
-      
+
       @latest_debates = Debate.find_latest_by_status('A')
       @latest_orals = Debate.find_latest_by_status('U')
-      
+
       @third_reading_matrix = Vote.third_reading_matrix
       @submission_dates = SubmissionDate.find_live_bill_submissions
       render :template => 'home'
@@ -83,9 +83,9 @@ class ApplicationController < ActionController::Base
     page = params['page'] || 1
     @entries = WillPaginate::Collection.create(page, 10) do |pager|
       @matches, @count = Contribution.match_by_term(@term, pager.per_page, pager.offset)
-      pager.replace(@matches)    
+      pager.replace(@matches)
       pager.total_entries = @count
-    end 
+    end
 
     unless @matches.empty?
       @matches = @matches.compact
@@ -181,7 +181,7 @@ class ApplicationController < ActionController::Base
       profile = Rugalytics.default_profile
       previous_date = Date.today - days
       report = profile.top_content_report :from => previous_date
-      items = report.items.delete_if{|i| (i.path[/\d\d\d\d/].nil? && !i.path[/bills\//]) || i.path[/search\?/] }
+      items = report.items.delete_if{|i| (i.path[/\d\d\d\d/].nil? && !i.path[/bills\//]) || i.path[/search\?/] || i.path[/portfolios\/education\/2007\/jul\/26\/teachers/] }
       items = items.sort_by{|i| i.unique_pageviews.to_i}.reverse
       items = items[0..9] if items.size > 10
       items.each do |item|
