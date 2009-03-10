@@ -19,7 +19,7 @@
           - @submission_dates.each do |date|
             %tr
               %td= link_to date.title, show_bill_url(:bill_url => date.bill.url)
-              %td= "#{format_date date.date}"
+              %td.date= "#{format_date date.date}"
   - if @latest_debates
     #latest_content
       #latest_debates
