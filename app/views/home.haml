@@ -20,9 +20,9 @@
             %tr
               %td= link_to date.title, show_bill_url(:bill_url => date.bill.url)
               %td.date= "#{format_date date.date}"
-  - if @latest_debates
-    #latest_content
-      #latest_debates
+  #column_content
+    #left_column_content
+      - if @latest_debates
         .latest_debates
           %h2 Latest debate transcript
           = date_to_s @latest_debates.first.date
@@ -34,30 +34,27 @@
                 %li= link_to_debate debate, false, false, true
               - else
                 %li= link_to_debate debate.sub_debate, false, false, true
-      #latest_orals
-        .latest_orals
-          - unless @latest_orals.empty?
-            %h2 Latest oral answers
-            = date_to_s @latest_orals.first.date
-            %ul
-              - @latest_orals.each do |debate|
-                %li= link_to_debate debate, false, false, true
-  - if @days_top_pages
-    #popular_content
-      #popular_last_day
+      - if @days_top_pages
         .popular_last_day
           %h2 Popular yesterday
           %ul
             - @days_top_pages.each do |item|
               %li= link_to("#{item.page_title}", item.url) + " <span class='page_views'>(#{item.unique_pageviews})</span>"
-      #popular_last_week
-        - if @weeks_top_pages
-          .popular_last_week
-            %h2 Popular over last week
-            %ul
-              - @weeks_top_pages.each do |item|
-                %li
-                  = link_to(item.page_title, item.url)
-                  %span.page_views
-                    ="(#{item.unique_pageviews})"
+    #right_column_content
+      - unless @latest_orals.empty?
+        .latest_orals
+          %h2 Latest oral answers
+          = date_to_s @latest_orals.first.date
+          %ul
+            - @latest_orals.each do |debate|
+              %li= link_to_debate debate, false, false, true
+      - if @weeks_top_pages
+        .popular_last_week
+          %h2 Popular over last week
+          %ul
+            - @weeks_top_pages.each do |item|
+              %li
+                = link_to(item.page_title, item.url)
+                %span.page_views
+                  ="(#{item.unique_pageviews})"
 - #render :partial => 'calendar.haml'
