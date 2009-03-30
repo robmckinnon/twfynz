@@ -16,7 +16,10 @@
       = auto_discovery_link_tag(:atom, :action => @atom)
     - if @javascript == 'feeds'
       = javascript_include_tag('jquery')
+    - if @home || @javascript == 'feeds'
       = %Q[<script src='http://www.google.com/jsapi?key=ABQIAAAAqaIV0FrI66ZwKQCBvHVROhS4B9IOWGabz75EWBZk7jQ9CQA49BR5l_F12e50hYNKqoQbLx_HpSOnxg' type='text/javascript'></script>]
+    - if @home
+      = javascript_include_tag('twitter_feeds')
     - if (@javascript and @javascript.to_s.ends_with? '_table')
       = stylesheet_link_tag('datatable')
       = javascript_include_tag('datatable-beta-min')

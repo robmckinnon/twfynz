@@ -23,6 +23,13 @@
               %td.date= "#{format_date date.date}"
   #column_content
     #left_column_content
+      - unless @latest_orals.empty?
+        .latest_orals
+          %h2 Latest oral answers
+          = date_to_s @latest_orals.first.date
+          %ul
+            - @latest_orals.each do |debate|
+              %li= link_to_debate debate, false, false, true
       - if @latest_debates
         .latest_debates
           %h2 Latest debate transcript
@@ -41,14 +48,6 @@
           %ul
             - @days_top_pages.each do |item|
               %li= link_to("#{item.page_title}", item.url) + " <span class='page_views'>(#{item.unique_pageviews})</span>"
-    #right_column_content
-      - unless @latest_orals.empty?
-        .latest_orals
-          %h2 Latest oral answers
-          = date_to_s @latest_orals.first.date
-          %ul
-            - @latest_orals.each do |debate|
-              %li= link_to_debate debate, false, false, true
       - if @weeks_top_pages
         .popular_last_week
           %h2 Popular over last week
@@ -58,4 +57,6 @@
                 = link_to(item.page_title, item.url)
                 %span.page_views
                   ="(#{item.unique_pageviews})"
+    #right_column_content
+      #twitter_feed
 - #render :partial => 'calendar.haml'

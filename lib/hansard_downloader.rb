@@ -11,23 +11,22 @@ class HansardDownloader
 
     finished = false
     index_page = 0
-    debates = debates_in_index index_page
+    debates = debates_in_index(index_page)
 
-    while (debates.size > 0 and !finished)
+    while debates.size > 0 && !finished
       finished = download_debates(debates)
       index_page = index_page.next
-      debates = debates_in_index index_page
+      debates = debates_in_index(index_page)
 
-      if (@check_for_final and debates.size > (@downloading_uncorrected ? 0 : 2))
+      if (@check_for_final && debates.size > (@downloading_uncorrected ? 0 : 2))
         first_debate = @downloading_uncorrected ? debates.first : debates[2]
-        if (already_saved?(first_debate) and already_saved?(debates.last))
+        if already_saved?(first_debate) && already_saved?(debates.last)
           finished = true
         end
       end
     end
 
     PersistedFile.set_all_indexes_on_date
-
     PersistedFile.git_push
   end
 
