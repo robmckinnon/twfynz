@@ -41,6 +41,7 @@ public/sitemap_*
 config/environments/production.rb
 config/rugalytics.yml
 coverage
+script/twitter.sh
 db/members.yml
 spec/rcov.opts
 vendor/plugins/acts_as_xapian
