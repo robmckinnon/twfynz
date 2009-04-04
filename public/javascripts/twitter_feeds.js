@@ -28,7 +28,7 @@ window.TimeIs.prototype = {
     if (minutes < 1) return 'less than a minute';
     if (minutes < 50) return minutes.toString() + ' minute' + (minutes == 1 ? '' : 's');
     if (minutes < 90) return 'about one hour';
-    if (minutes < 1080) return Math.round(minutes / 60).toString() + "#{0} hours";
+    if (minutes < 1080) return Math.round(minutes / 60).toString() + " hours";
     if (minutes < 1440) return 'one day';
     if (minutes < 2880) return 'about one day';
     if (minutes > 525600) return 'over a year';
@@ -74,11 +74,14 @@ function replace_all(text, old, replace) {
 
 function render_feed(results, dom_id, feed_title) {
   var entry;
-  var html =  '<div>';
+  var html = '<div class="hfeed">\n'+
+             '  <h2 class="feed-title">' + feed_title + '</h2>\n'+
+             '  <div class="entries">\n';
+
   if (results.length > 0) {
     for (var i = 0; i < results.length; i++) {
       entry = results[i];
-      var content = entry.text;
+      var content = entry.text.replace('Via Beehive: ','');
       var title = hyperlink(content);
       var author = entry.user.screen_name;
       var publishedDate = entry.created_at;
@@ -105,6 +108,7 @@ function render_feed(results, dom_id, feed_title) {
   } else {
     html +=   '</div>\n';
   }
+  html +=   '</div>\n';
 
   document.getElementById(dom_id).innerHTML = html;
 }
