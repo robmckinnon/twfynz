@@ -30,7 +30,7 @@
           %ul
             - @latest_orals.each do |debate|
               %li= link_to_debate debate, false, false, true
-      - if @latest_debates
+      - if false && @latest_debates
         .latest_debates
           %h2 Latest debate transcript
           = date_to_s @latest_debates.first.date

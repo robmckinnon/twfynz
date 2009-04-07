@@ -667,7 +667,7 @@ class HansardParser
     def create_oral_answer name, answer_root, number_in_name, debate_index
       if (match = /Question No\.? (\d+) to Minister/.match name)
         re_oral_answer_no = $1
-      elsif (name != 'Question Time' and not(name.starts_with?'Question No.') and name != 'Urgent Question—Leave to Ask')
+      elsif (name != 'Question Time' && !name.starts_with?'Question No.' && name != 'Urgent Question—Leave to Ask' && !name.starts_with?('Personal Explanation') )
         strongs = (answer_root/'.SubsQuestion[1]/strong')
         if strongs.size > 0
           last = strongs.last.at('text()')
