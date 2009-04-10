@@ -15,6 +15,7 @@ contracts.yml
 db/bills.yml*
 development_structure.sql
 schema.rb
+public/friends_timeline.json
 public/stylesheets/datatable.css
 public/stylesheets/default.css
 public/stylesheets/print.css

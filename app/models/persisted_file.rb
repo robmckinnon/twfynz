@@ -5,12 +5,21 @@ class PersistedFile < ActiveRecord::Base
 
   before_validation_on_create :default_persisted
 
+  def others_exists_on_date?
+    PersistedFile.persisted_version_exists?(debate_date, publication_status)
+  end
+
   class << self
+
+    def persisted_version_exists? date, publication_status_code
+      persisted = find_all_by_persisted_and_debate_date_and_publication_status(true, date, publication_status_code)
+      !persisted.empty?
+    end
 
     def load_questions
       require File.dirname(__FILE__) + '/../../lib/hansard_parser.rb'
       dates = unpersisted_dates('U')
-  
+
       dates.each do |date|
         files = unpersisted_files(date, 'U').sort_by(&:file_name)
         load_questions_for files
@@ -33,21 +42,21 @@ class PersistedFile < ActiveRecord::Base
       puts "created url slugs: #{date}"
       Debate.expire_cached_pages date
     end
-    
+
     def date_after_sept_2005? date
       date.year > 2008 || (date.year == 2008 && date.month > 11)
     end
-    
+
     def load_debates publication_status, sleep_seconds
       dates = unpersisted_dates(publication_status).select {|d| date_after_sept_2005? d}
       dates.each { |date| load_debates_for_date date, publication_status, sleep_seconds }
     end
-    
+
     def load_debates_for_date date, publication_status, sleep_seconds=nil
       files = unpersisted_files(date, publication_status).sort_by(&:file_name)
       load_debates_for files, sleep_seconds
     end
-    
+
     def load_debates_for files, sleep_seconds=nil
       index = 1
       debates = []
@@ -55,7 +64,7 @@ class PersistedFile < ActiveRecord::Base
         puts "parsing: #{file.storage_name}"
         parser = HansardParser.new(file.storage_name, file.parliament_url, file.debate_date)
         debate = parser.parse(index)
-    
+
         if debate.is_a?(Array)
           debate_list = debate
           debate_list.each {|d| d.valid?}
@@ -69,7 +78,7 @@ class PersistedFile < ActiveRecord::Base
         index = index.next
         sleep sleep_seconds if sleep_seconds
       end
-    
+
       debates.each_with_index do |debate, index|
         puts "saving: #{debate.name}"
         begin
@@ -81,27 +90,27 @@ class PersistedFile < ActiveRecord::Base
           raise e
         end
       end
-    
+
       files.each { |f| f.do_persist! }
       date = files.first.debate_date
       publication_status = files.first.publication_status
       puts "persisted: #{date}"
-    
+
       Debate.find_all_by_date_and_publication_status(date,publication_status).sort_by(&:debate_index).each do |debate|
         debate.create_url_slug
         debate.save!
       end
-      SubDebate.find_all_by_url_slug(nil).each {|s| s.create_url_slug; s.save!}    
+      SubDebate.find_all_by_url_slug(nil).each {|s| s.create_url_slug; s.save!}
       puts "created url slugs: #{date}"
       Debate.expire_cached_pages date
     end
-    
+
     def load_yaml_index
       Dir.glob("#{storage_path}2*/**/index.yaml").each do |file|
         data = YAML::load_file(file)
         files = data.collect {|d| PersistedFile.new(d) }
         stored = files.first
-        
+
         if stored.parliament_url
           existing = PersistedFile.find_by_parliament_url_and_publication_status(stored.parliament_url, stored.publication_status)
           if existing && (existing.persisted || existing.debate_date < Date.new(2008,12,1) )
@@ -325,7 +334,7 @@ class PersistedFile < ActiveRecord::Base
     existing.persisted_date = Date.today
     existing.save!
   end
-  
+
   def populate_name
     if index_on_date
       begin
@@ -347,7 +356,7 @@ class PersistedFile < ActiveRecord::Base
   def set_publication_status status_name
     self.publication_status = PersistedFile.publication_status_code(status_name)
   end
-  
+
   private
 
     def default_persisted
