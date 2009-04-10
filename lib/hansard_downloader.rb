@@ -235,7 +235,7 @@ class HansardDownloader
           PersistedFile.add_if_missing persisted_file
         else
           if persisted_file.others_exists_on_date?
-            puts 'need to reload day, coz of: ' + persisted_file.inspect
+            puts 'need to reload day, coz of: ' + persisted_file.parliament_url
           else
             PersistedFile.add_new persisted_file, contents
           end
