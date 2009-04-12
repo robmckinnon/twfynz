@@ -252,7 +252,7 @@ class HansardDownloader
         elsif persisted_file.others_exists_on_date?
           puts 'need to reload day, coz of: ' + persisted_file.parliament_url
 
-          redownload_date debate_date
+          redownload_date persisted_file.debate_date
         else
           PersistedFile.add_new persisted_file, contents
         end
