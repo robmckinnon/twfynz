@@ -5,7 +5,7 @@ require 'fileutils'
 
 class HansardDownloader
 
-  def download downloading_uncorrected, update_of_persisted_files_table, download_date=nil
+  def download downloading_uncorrected, update_of_persisted_files_table, download_date=nil, suppress_git_push=false
     @check_for_final = (!update_of_persisted_files_table)
     @download_date = download_date
     @downloading_uncorrected = downloading_uncorrected
@@ -27,8 +27,12 @@ class HansardDownloader
       end
     end
 
-    PersistedFile.set_all_indexes_on_date
-    PersistedFile.git_push
+    if suppress_git_push
+      puts 'suppressing git push'
+    else
+      PersistedFile.set_all_indexes_on_date
+      PersistedFile.git_push
+    end
   end
 
   def unload_date date, publication_status
@@ -42,16 +46,17 @@ class HansardDownloader
     data_path = File.join(PersistedFile.data_path, date.strftime('%Y/%m/%d'))
 
     if (to_delete = get_directory_to_delete(data_path))
+      puts "redownloading: #{date}"
       publication_status = to_delete[0..0].upcase
 
-      original, backup = move_original_download(data_path, to_delete, date)
-      delete_debates date, publication_status
-      delete_records date, publication_status
+      original_directory, backup = move_original_download(data_path, to_delete, date)
+      delete_debates(date, publication_status)
+      records_size = delete_records(date, publication_status)
 
       HansardDownloader.new.download((to_delete == 'uncorrected'),
-          (update_of_persisted_files_table=true), date)
+        (update_of_persisted_files_table=true), date, (suppress_git_push = true) )
 
-      warn_if_problem original, date, publication_status, backup
+      warn_if_problem original_directory, date, publication_status, backup, records_size
     else
       puts 'no directory found to redownload at: ' + data_path
     end
@@ -70,21 +75,25 @@ class HansardDownloader
     def delete_debates date, publication_status
       debates = Debate.find_all_by_date_and_publication_status(date, publication_status)
       puts "found: #{debates.size} for #{date} #{publication_status}"
-      puts 'destroying ' + debates.size.to_s + ' debates' if debates
+      puts "destroying #{debates.size} debates" if debates
       debates.each { |debate| debate.destroy }
     end
 
     def delete_records date, publication_status
       records = PersistedFile.find_all_by_debate_date_and_publication_status(date, publication_status)
-      puts 'destroying ' + records.size.to_s + ' persisted file records' if records
+      records_size = records.size
+      puts "destroying #{records_size} persisted file records" if records
       records.each { |record| record.destroy }
+      records_size
     end
 
-    def warn_if_problem original, date, publication_status, backup
+    def warn_if_problem original, date, publication_status, backup, original_records_size
       if File.exists?(original)
         records = PersistedFile.find_all_by_debate_date_and_publication_status(date, publication_status)
         if records.size == 0
-          raise 'expected new rows to be in persisted_files, but they are not there! backup is: ' + backup
+          raise "expected #{original_records_size} new rows to be in persisted_files, but they are not there! backup is: #{backup}"
+        elsif records.size != original_records_size
+          raise "expected #{original_records_size} new rows to be in persisted_files, but redownloaded #{records.size}, manual fix required!"
         else
           puts 'created ' + records.size.to_s + ' persisted file records; to load use rake kiwimp:load_hansard'
         end
@@ -153,15 +162,21 @@ class HansardDownloader
     end
 
     def continue_until_we_find_date date
-      @download_date && (date > @download_date)
+      continue = @download_date && (date > @download_date)
+      puts "ignoring #{date}, continuing until we find #{@download_date}" if continue
+      continue
     end
 
     def past_date_we_wanted date
-      @download_date && (date < (@download_date - 1))
+      past = @download_date && (date < (@download_date - 1))
+      puts "past #{@download_date}, finished" if past
+      past
     end
 
     def past_date_we_wanted_continue_for_one_more_day date
-      @download_date && (date == (@download_date - 1))
+      past = @download_date && (date == (@download_date - 1))
+      puts "past #{@download_date}, continuing for one more day" if past
+      past
     end
 
     def keep_looking date
@@ -233,12 +248,13 @@ class HansardDownloader
           finished = true # finished downloading uncorrected oral answer files
         elsif persisted_file.exists?
           PersistedFile.add_if_missing persisted_file
+
+        elsif persisted_file.others_exists_on_date?
+          puts 'need to reload day, coz of: ' + persisted_file.parliament_url
+
+          redownload_date debate_date
         else
-          if persisted_file.others_exists_on_date?
-            puts 'need to reload day, coz of: ' + persisted_file.parliament_url
-          else
-            PersistedFile.add_new persisted_file, contents
-          end
+          PersistedFile.add_new persisted_file, contents
         end
       end
       finished
