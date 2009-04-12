@@ -1,5 +1,5 @@
 - @title = about_title(@bill)
-- @description = @bill.description.blank? ? @bill.full_name : @bill.description
+- @description = @bill.description.blank? ? @bill.full_name : "#{@bill.description.split('.').first}."
 - is_production_env = (RAILS_ENV == 'production')
 - @javascript = 'feeds' if is_production_env
 - @atom = 'show_bill_atom' unless is_production_env
