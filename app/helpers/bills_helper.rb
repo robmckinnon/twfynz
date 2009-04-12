@@ -1,11 +1,11 @@
 module BillsHelper
 
-  def bill_meta_description
-    if @bill.description.blank?
-      @bill.full_name
+  def bill_meta_description bill
+    if bill.description.blank?
+      bill.full_name
     else
-      description = @bill.description.split('.').first
-      description.gsub!("This bill", @bill.full_name)
+      description = bill.description.split('.').first
+      description.gsub!("This bill", bill.full_name)
       "#{description}."
     end
   end
