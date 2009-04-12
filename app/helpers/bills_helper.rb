@@ -1,5 +1,15 @@
 module BillsHelper
 
+  def bill_meta_description
+    if @bill.description.blank?
+      @bill.full_name
+    else
+      description = @bill.description.split('.').first
+      description.gsub!("This bill", @bill.full_name)
+      "#{description}."
+    end
+  end
+
   def bill_event_description bill_event
     # "#{bill_event.bill.bill_name}-#{bill_event.name}"
     url = bill_event_url(bill_event)
