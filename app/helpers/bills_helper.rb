@@ -5,7 +5,7 @@ module BillsHelper
       bill.full_name
     else
       description = bill.description.split('.').first
-      description.gsub!("This bill", bill.full_name)
+      description.gsub!("This bill", "The #{bill.full_name}")
       "#{description}."
     end
   end
