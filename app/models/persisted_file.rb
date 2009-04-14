@@ -257,8 +257,21 @@ class PersistedFile < ActiveRecord::Base
       end
     end
 
+    def check_final_vs_advanced_count(final_count, date)
+      advance_count = find_all_by_debate_date_and_publication_status(date, 'A').size
+      if advance_count > 0
+        if advance_count != final_count
+          raise "expected #{advance_count} files for #{date}, but got #{final_count} final files, manual fix required."
+        else
+          puts "count of final and advance files matches #{final_count} for #{date}."
+        end
+      end
+    end
+
     def set_indexes_on_date date, publication_status
       files = find_all_by_debate_date_and_publication_status date, publication_status
+      check_final_vs_advanced_count(files.size, date) if publication_status == 'F'
+
       unless files.empty?
         files = files.sort_by(&:id)
         files.each_with_index do |file, index|
