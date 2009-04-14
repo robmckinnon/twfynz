@@ -158,7 +158,7 @@ class HansardDownloader
     end
 
     def ignore_old_content date
-      date <= Date.new(2009,3,23) # ignoring older content for now
+      date <= Date.new(2009,2,1) # ignoring older content for now
     end
 
     def continue_until_we_find_date date
