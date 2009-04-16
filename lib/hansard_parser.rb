@@ -4,6 +4,12 @@ require 'hpricot'
 
 class HansardParser
 
+  class << self
+    def load_doc file
+      Hpricot open(file)
+    end
+  end
+
   def initialize file, url, date
     @parliament_url = url
     @file = file
@@ -11,13 +17,8 @@ class HansardParser
     @debate_date = date
   end
 
-  def self.load_doc file
-    Hpricot open(file)
-  end
-
   def parse_oral_answer debate_index, oral_answers=nil
-    answer = parse debate_index+1
-
+    answer = parse debate_index + 1
     unless oral_answers
       oral_answers = OralAnswers.new({
         :name => 'Questions for Oral Answer',
@@ -30,7 +31,6 @@ class HansardParser
         :start_page => answer.start_page
       })
     end
-
     oral_answers.add_oral_answer(answer)
     oral_answers
   end
@@ -856,11 +856,15 @@ class HansardParser
       headings
     end
 
-    def find_name_and_sub_names type
-      sub_names = []
+    def find_name_and_sub_names type, sub_names=[]
       headings = debate_headings(type)
+      name = headings.first.at('text()').to_clean_s
+      if is_date? name
+        name = headings[1].at('text()').to_clean_s
+        headings = headings[1, headings.length-1]
+      end
+
       if headings.size > 1
-        name = headings.first.at('text()').to_clean_s
         sub_names << headings[1].at('text()').to_clean_s
 
         sibling = headings[1].next_sibling
@@ -870,10 +874,11 @@ class HansardParser
           end
           sibling = sibling.next_sibling
         end
-        return name, sub_names
-      else
-        raise "can't find sub heading"
       end
+
+      raise "can't find sub heading" if sub_names.empty?
+
+      return name, sub_names
     end
 
     def make_parent_debate name, debate_index, sub_names
@@ -917,20 +922,42 @@ class HansardParser
     end
 
     def make_when_sub_debates_not_empty debate_index, type, sub_debates
-      name = debate_headings(type).last.at('text()').to_clean_s
       sub_names = []
       sub_debates.each { |sub_debate| add_sub_heading(sub_debate, sub_names) }
 
+      name, sub_names = find_name_and_sub_names type, sub_names
       debate = make_parent_debate(name, debate_index, sub_names)
 
-      sub_debates.each_with_index do |sub_debate, index|
-        handle_contributions sub_debate, debate.sub_debates[index]
+      if sub_debates.size == sub_names.size
+        sub_debates.each_with_index do |sub_debate, index|
+          handle_contributions sub_debate, debate.sub_debates[index]
+        end
+      else
+        handle_mixed_subdebates type, debate
       end
 
       empty_sub_debates = debate.sub_debates.select {|sub_debate| sub_debate.contributions.empty?}
       remove_empty_sub_debate(empty_sub_debates, debate) unless empty_sub_debates.empty?
 
       debate
+    end
+
+    def handle_mixed_subdebates type, debate
+      nodes = @doc.at(".#{type}").children
+      index = -1
+      nodes.each do |node|
+        if node.name == 'div' && node['class'] == 'SubDebate'
+          index = index.next
+          handle_contributions node, debate.sub_debates[index]
+        else
+          text = node.at('text()').to_clean_s
+          if node.name[/^h\d$/] && text == debate.sub_debates[index+1].name
+            index = index.next
+          elsif !is_date?(text) && text != debate.name
+            handle_div node, debate.sub_debates[index]
+          end
+        end if node.elem?
+      end
     end
 
     def create_debate debate_index, type
@@ -1027,7 +1054,7 @@ class HansardParser
 
       headings = (@doc/'.BillDebate/h1/text()').collect(&:to_clean_s).select{|x| !is_date?(x)}
       if headings.size > 1
-        headings = headings[1,headings.length-1]
+        headings = headings[1, headings.length-1]
         sub_names = add_more_sub_headings(sub_names, headings)
       end
 
@@ -1046,25 +1073,10 @@ class HansardParser
       if sub_debates.size == 0 || sub_debates.size == 1
         handle_contributions @doc.at('.'+type), debate.sub_debates[0]
       else
-        nodes = @doc.at('.BillDebate').children
-        index = -1
-        nodes.each do |node|
-          if node.name == 'div' && node['class'] == 'SubDebate'
-            index = index.next
-            handle_contributions node, debate.sub_debates[index]
-          else
-            text = node.at('text()').to_clean_s
-            if node.name[/^h\d$/] && text == debate.sub_debates[index+1].name
-              index = index.next
-            elsif !is_date?(text) && text != debate.name
-              handle_div node, debate.sub_debates[index]
-            end
-          end if node.elem?
-        end
+        handle_mixed_subdebates 'BillDebate', debate
       end
       debate
     end
-
 end
 
 class String
