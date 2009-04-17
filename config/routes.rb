@@ -46,6 +46,7 @@ ActionController::Routing::Routes.draw do |map|
 
   with_controller :application, map do |application|
     make_route '', application, :home
+    make_route 'newspaper', application
     make_route 'about', application
     make_route 'contact', application
     make_route 'search', application

@@ -36,6 +36,11 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def newspaper
+    @latest_debates = Debate.find_latest_by_status('A')
+    render :template => 'newspaper', :layout => false
+  end
+
   def home
     if is_parlywords_request?
       # render :template => 'parlywords', :layout => 'parlywords'
