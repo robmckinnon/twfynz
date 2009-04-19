@@ -50,13 +50,10 @@ class BillEvent < ActiveRecord::Base
         debates = debates_in_groups_by_name.select {|list| list.first.normalized_name == stage}.flatten
 
         if debates.blank?
-          # puts 'creating bill event ' + stage
           events << create_from_bill_stage(bill, stage, date)
         else
-          # puts 'creating ' + debates.size.to_s + ' bill debate events for ' + stage
-          debates.each do |debate|
-            events << create_from_bill_debate(bill, stage, debate)
-          end
+          debate = debates.sort_by(&:id).last
+          events << create_from_bill_debate(bill, stage, debate)
         end
       end
       events
@@ -86,6 +83,15 @@ class BillEvent < ActiveRecord::Base
   def debates
     debates_in_groups_by_name, votes_by_name = bill.debates_by_name_names_votes_by_name
     debates = debates_in_groups_by_name.blank? ? nil : debates_in_groups_by_name.select {|list| list.first.normalized_name == self.name}.flatten
+
+    debates.sort! do |a,b|
+      comparison = b.date <=> a.date
+      if comparison == 0
+        b.id <=> a.id
+      else
+        comparison
+      end
+    end
     debates = nil if debates.blank?
     debates
   end
@@ -167,11 +173,15 @@ class BillEvent < ActiveRecord::Base
         comparison = +1
       elsif name[/First/] && (other_name[/Second/] or other_name[/Third/])
         comparison = -1
-      elsif name[/Second/] && (other_name[/Third/])
+      elsif name[/Second/] && (other_name[/Third/] or other_name[/In Committee/])
         comparison = -1
       elsif name[/Second/] && (other_name[/First/])
         comparison = +1
-      elsif name[/Third/] && (other_name[/First/] or other_name[/Second/])
+      elsif name[/In Committee/] && (other_name[/First/] or other_name[/Second/])
+        comparison = +1
+      elsif name[/In Committee/] && (other_name[/Third/])
+        comparison = -1
+      elsif name[/Third/] && (other_name[/First/] or other_name[/Second/] or other_name[/In Committee/] )
         comparison = +1
       else
         comparison = 0

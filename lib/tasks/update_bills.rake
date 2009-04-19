@@ -158,10 +158,11 @@ namespace :kiwimp do
   end
 
   def get_bill_list
-    p 'downloading list of bills'
+    bill_list_url = 'http://www.parliament.nz/en-NZ/PB/Legislation/Bills/Default.htm?lgc=1&sort=Title&order=0'
+    p "downloading list of bills: #{bill_list_url}"
     names, types, refs, urls = [], [], [], []
 
-    open('http://www.parliament.nz/en-NZ/PB/Legislation/Bills/Default.htm?lgc=1&sort=Title&order=0') do |f|
+    open(bill_list_url) do |f|
       f.each_line do |line|
         if (match = /				<h4><a [^>]* href="\/en-NZ\/PB\/Legislation\/Bills\/([^\/]+\/[^\/]+\/[^\/]+\/.*.htm)">([^<]*)<\/a><\/h4>/.match line)
           if (match[2] != "Schedule of divided bills" and match[2] != "Progress of legislation")

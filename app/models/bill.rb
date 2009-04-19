@@ -160,17 +160,21 @@ class Bill < ActiveRecord::Base
         other_date, other_name = yield b
         comparison = date <=> other_date
         if comparison == 0
-          if (name.include? 'Introduction')
+          if (name[/Introduction/])
             comparison = -1
-          elsif (other_name.include? 'Introduction')
+          elsif (other_name[/Introduction/])
             comparison = +1
-          elsif (name.include? 'First' and (other_name.include? 'Second' or other_name.include? 'Third'))
+          elsif (name[/First/] and (other_name[/Second/] or other_name[/Third/]))
             comparison = -1
-          elsif (name.include? 'Second' and (other_name.include? 'Third'))
+          elsif (name[/Second/] and (other_name[/Third/]))
             comparison = -1
-          elsif (name.include? 'Second' and (other_name.include? 'First'))
+          elsif (name[/Second/] and (other_name[/First/]))
             comparison = +1
-          elsif (name.include? 'Third' and (other_name.include? 'First' or other_name.include? 'Second'))
+          elsif name[/In Committee/] && (other_name[/First/] or other_name[/Second/])
+            comparison = +1
+          elsif name[/In Committee/] && (other_name[/Third/])
+            comparison = -1
+          elsif name[/Third/] && (other_name[/First/] or other_name[/Second/] or other_name[/In Committee/] )
             comparison = +1
           else
             comparison = 0
@@ -395,7 +399,19 @@ class Bill < ActiveRecord::Base
     events = bill_events.compact # copy bill_events
     events.delete_if {|e| e.source && !e.source.is_a?(Debate) }
     events = bill_events if events.empty?
-    events = events.reverse.in_groups_by(&:name).collect(&:first).sort.reverse
+    events = events.group_by(&:name)
+    top_level = []
+    events.each do |name, matching|
+      with_debates = matching.select {|e| e.source.is_a?(Debate)}
+      if with_debates.empty?
+        top_level << matching.first
+      else
+        top_level << with_debates.first
+      end
+    end
+
+    events = top_level.compact.sort.reverse
+    events
   end
 
   def events_by_date
@@ -486,8 +502,8 @@ class Bill < ActiveRecord::Base
             last = contributions.last
             if (last.is_vote?)
               votes = [last.vote]
-            elsif ((last.text.include? 'Bill to be reported without amendment presently.' or
-              last.text.include? 'Bill referred to') and
+            elsif ((last.text[/Bill to be reported without amendment presently./] or
+              last.text[/Bill referred to/]) and
               contributions[contributions.size-2].is_vote?)
               votes = [contributions[contributions.size-2].vote]
             end
@@ -547,14 +563,14 @@ class Bill < ActiveRecord::Base
     end
   protected
     def populate_former_name
-      if bill_change and not(bill_change.include? 'Formerly part of') and (bill_change.include? 'Formerly ')
+      if bill_change and not(bill_change[/Formerly part of/]) and (bill_change[/Formerly /])
         self.former_name = bill_change.gsub('(Formerly ','').chomp(')')
       end
     end
 
     def populate_formerly_part_of
       if formerly_part_of.blank?
-        if bill_change and bill_change.include? 'Formerly part of'
+        if bill_change and bill_change[/Formerly part of/]
           former = bill_change.gsub('(Formerly part of ', '').chomp(')')
           if former_bill = Bill.find_by_bill_name(former)
             self.formerly_part_of_id = former_bill.id

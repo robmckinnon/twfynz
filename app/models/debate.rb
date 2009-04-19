@@ -234,7 +234,7 @@ class Debate < ActiveRecord::Base
         []
       end
     end
-    
+
     def find_referred_oral_answer debate
       find_by_date_and_oral_answer_no(debate.date, debate.re_oral_answer_no)
     end
@@ -381,7 +381,8 @@ class Debate < ActiveRecord::Base
 
     def debates_in_groups_by_name debates
       debates = remove_duplicates debates
-      in_groups_by_name = debates.in_groups_by(&:normalized_name)
+      in_groups_by_name = []
+      debates.group_by(&:normalized_name).each {|name, list| in_groups_by_name << list}
       in_groups_by_name.each do |list|
         list.sort! do |a,b|
           comparison = b.date <=> a.date
@@ -554,7 +555,7 @@ class Debate < ActiveRecord::Base
       nil
     end
   end
-  
+
   def next_debate_id_hash
     if(debate = next_debate)
       case debate
@@ -582,7 +583,7 @@ class Debate < ActiveRecord::Base
       nil
     end
   end
-  
+
   def prev_debate_id_hash
     if can_have_previous && (debate = previous_debate)
       case debate
