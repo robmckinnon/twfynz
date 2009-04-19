@@ -42,7 +42,7 @@ namespace :kiwimp do
   end
 
   def try_bill_update url, bill, updated_bill=nil
-    if not(bill.current?)
+    if !bill.current? && !bill.missing_events?
       puts '  ignoring: as have bill that is not current'
     else
       updated_bill = BillProxy.new(url).create_bill unless updated_bill
@@ -50,7 +50,8 @@ namespace :kiwimp do
       updated_bill.url = bill.url unless bill.url.blank?
       updated_bill.parliament_id = bill.parliament_id unless bill.parliament_id.blank?
 
-      if has_changed? bill, updated_bill
+      if has_changed?(bill, updated_bill) || bill.missing_events?
+        puts '  bill missing events' if bill.missing_events?
         update_the_bill bill, updated_bill
       else
         puts '  not changed'

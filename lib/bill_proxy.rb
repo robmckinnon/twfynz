@@ -46,6 +46,15 @@ class BillProxy
   end
 
   def set_attributes_from_text text
+    doc = Hpricot text.gsub('disharged', 'discharged')
+
+    (doc/'th[@scope="row"]').each do |node|
+      label = node.inner_text.strip.chomp(':').strip
+      value = node.next_sibling.inner_text.strip
+
+      send "data_#{label.gsub(' ','_').sub('(','').sub(')','').downcase}=".to_sym, value
+    end
+
     text.each_line do |line|
       line = line.gsub('disharged', 'discharged')
       process_line line
@@ -166,9 +175,6 @@ class BillProxy
 
       elsif (match = /Consideration of report:<\/th><td>Order of the day for consideration of report discharged, re-referred to Commerce Committee 2\/8\/00<\/td><\/tr><tr><th scope="row"><\/th><td>12\/12\/01<\/td><\/tr><tr><th scope="row"><\/th><td>5\/5\/04<\/td><\/tr><tr><th scope="row"><\/th><td>Question that the bill do proceed negatived. 5\/5\/04<\/td>/.match line)
         send "data_consideration_of_report=".to_sym, '5/5/04' # hack for Shop Trading Hours Act Repeal Act (Abolition of Restrictions) Amendment Bill, bill_no: 272-3
-
-      elsif (match = /<tr><th scope="row">([^:]*):<\/th><td>([^<]*)<\/td>/.match line)
-        send "data_#{match[1].gsub(' ','_').sub('(','').sub(')','').downcase}=".to_sym, match[2]
       end
     end
 

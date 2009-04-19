@@ -1,0 +1,14 @@
+%tr
+  %td= bill_event_name(bill_event)
+  %td.date= bill_event_dates bill_event
+  %td.summary= bill_event_result_summary bill_event
+  - if @have_votes
+    - if bill_event.is_reading_before_nov_2005?
+      %td.ayes n/a *
+      %td.noes n/a *
+      %td.abstentions n/a *
+    - else
+      %td.ayes= vote_ayes(bill_event)
+      %td.noes= vote_noes(bill_event)
+      %td.abstentions= vote_abstentions(bill_event)
+

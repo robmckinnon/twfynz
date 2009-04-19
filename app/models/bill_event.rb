@@ -104,6 +104,8 @@ class BillEvent < ActiveRecord::Base
           true
         elsif vote_bill_name.include?(bill_name.sub(' Bill',''))
           true
+        elsif vote_bill_name.include?(bill_name.sub(' Amendment Bill', ' Bill'))
+          true
         elsif vote_bill_names = vote.bill_names
           if vote_bill_names.include?(bill_name)
             true
@@ -159,7 +161,11 @@ class BillEvent < ActiveRecord::Base
     comparison = date <=> other_date
     if comparison == 0
       other_name = event.name
-      if name[/First/] && (other_name[/Second/] or other_name[/Third/])
+      if name[/Introduction/]
+        comparison = -1
+      elsif other_name[/Introduction/]
+        comparison = +1
+      elsif name[/First/] && (other_name[/Second/] or other_name[/Third/])
         comparison = -1
       elsif name[/Second/] && (other_name[/Third/])
         comparison = -1

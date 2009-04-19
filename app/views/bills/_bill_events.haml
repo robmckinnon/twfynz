@@ -11,19 +11,6 @@
         %th.ayes Ayes
         %th.noes Noes
         %th.abstentions Abstentions
-    - bill_events.each_with_index do |bill_event, i|
-      %tr
-        %td= bill_event_name(bill_event)
-        %td.date= bill_event_dates bill_event
-        %td.summary= bill_event_result_summary bill_event
-        - if @have_votes
-          - if bill_event.is_reading_before_nov_2005?
-            %td.ayes n/a *
-            %td.noes n/a *
-            %td.abstentions n/a *
-          - else
-            %td.ayes= vote_ayes(bill_event)
-            %td.noes= vote_noes(bill_event)
-            %td.abstentions= vote_abstentions(bill_event)
+    = render :partial => 'bill_event', :collection => bill_events
   - if @missing_votes
     %p* We don't have voting data from before Nov 2005 in our database at present.

@@ -156,13 +156,15 @@ class Bill < ActiveRecord::Base
 
     def sort_events_by_date events
       events.sort do |a,b|
-        date = a[0]
-        other_date = b[0]
+        date, name = yield a
+        other_date, other_name = yield b
         comparison = date <=> other_date
         if comparison == 0
-          name = a[1]
-          other_name = b[1]
-          if (name.include? 'First' and (other_name.include? 'Second' or other_name.include? 'Third'))
+          if (name.include? 'Introduction')
+            comparison = -1
+          elsif (other_name.include? 'Introduction')
+            comparison = +1
+          elsif (name.include? 'First' and (other_name.include? 'Second' or other_name.include? 'Third'))
             comparison = -1
           elsif (name.include? 'Second' and (other_name.include? 'Third'))
             comparison = -1
@@ -256,6 +258,13 @@ class Bill < ActiveRecord::Base
   def probably_not_divided?
     year = Date.today.year
     divided_into_bills.empty? or (divided_into_bills.size > 0 and (last_event and last_event[0].year == year))
+  end
+
+  def missing_events?
+    events = top_level_bill_events.collect(&:name)
+    readings = debates.collect(&:name).select{|x| x[/Reading/]}.collect{|x| x.singularize}
+    missing = readings - events
+    !missing.empty?
   end
 
   def current?
@@ -386,28 +395,28 @@ class Bill < ActiveRecord::Base
     events = bill_events.compact # copy bill_events
     events.delete_if {|e| e.source && !e.source.is_a?(Debate) }
     events = bill_events if events.empty?
-    events = events.reverse.in_groups_by(&:name).collect(&:first)
+    events = events.reverse.in_groups_by(&:name).collect(&:first).sort.reverse
   end
 
   def events_by_date
-    events = {}
-    events[introduction] = 'Introduction' if introduction
-    events[first_reading] = 'First Reading' if first_reading
-    events[sc_reports] = 'SC Reports' if sc_reports
-    events[submissions_due] = 'Submissions Due' if submissions_due
-    events[second_reading] = 'Second Reading' if second_reading
-    events[committee_of_the_whole_house] = 'In Committee' if committee_of_the_whole_house
-    events[third_reading] = 'Third Reading' if third_reading
-    events[royal_assent] = 'Royal Assent' if royal_assent
+    events = []
+    events << [introduction, 'Introduction'] if introduction
+    events << [first_reading, 'First Reading'] if first_reading
+    events << [sc_reports, 'SC Reports'] if sc_reports
+    events << [submissions_due, 'Submissions Due'] if submissions_due
+    events << [second_reading, 'Second Reading'] if second_reading
+    events << [committee_of_the_whole_house, 'In Committee'] if committee_of_the_whole_house
+    events << [third_reading, 'Third Reading'] if third_reading
+    events << [royal_assent, 'Royal Assent'] if royal_assent
 
-    events[withdrawn] = 'Withdrawn' if withdrawn
-    events[second_reading_withdrawn] = 'Second reading withdrawn' if second_reading_withdrawn
-    events[committal_discharged] = 'Committee of the whole House: Order of the day for committal discharged' if committal_discharged
-    events[consideration_of_report_discharged] = 'Consideration of report: Order of the day for consideration of report discharged' if consideration_of_report_discharged
-    events[second_reading_discharged] = 'Second reading: Order of the day for second reading discharged' if second_reading_discharged
-    events[first_reading_discharged] = 'First reading: Order of the day for first reading discharged' if first_reading_discharged
+    events << [withdrawn, 'Withdrawn'] if withdrawn
+    events << [second_reading_withdrawn, 'Second reading withdrawn'] if second_reading_withdrawn
+    events << [committal_discharged, 'Committee of the whole House: Order of the day for committal discharged'] if committal_discharged
+    events << [consideration_of_report_discharged, 'Consideration of report: Order of the day for consideration of report discharged'] if consideration_of_report_discharged
+    events << [second_reading_discharged, 'Second reading: Order of the day for second reading discharged'] if second_reading_discharged
+    events << [first_reading_discharged, 'First reading: Order of the day for first reading discharged'] if first_reading_discharged
 
-    Bill.sort_events_by_date events
+    Bill.sort_events_by_date(events) {|e| [e[0],e[1]]}
   end
 
   def populate_plain_bill_name
