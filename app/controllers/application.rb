@@ -51,6 +51,7 @@ class ApplicationController < ActionController::Base
         @weeks_top_pages = top_content 7
         @days_top_pages = top_content 1
       rescue Exception => e
+        logger.error e
         @weeks_top_pages = nil
         @days_top_pages = nil
       end
@@ -147,39 +148,6 @@ class ApplicationController < ActionController::Base
     current_user && current_user.login == 'rob'
   end
 
-  def self.title_from_path path
-    case path.gsub('/',' ')
-      when /^ debates (\d\d\d\d) (\S\S\S) (\d\d)$/
-        date = DebateDate.new({:year=>$1,:month=>$2,:day=>$3})
-        debates = Debate.find_by_date(date.year, date.month, date.day)
-        if debates.first.is_a? OralAnswers
-          "Questions for Oral Answer, #{date.to_date.as_date}"
-        else
-          "Parlimentary Debates, #{date.to_date.as_date}"
-        end
-      when /^ (bills|portfolios|committees) (\S+)$/
-        about = $1.singularize.titleize.constantize.find_by_url($2)
-        about.send("#{$1.singularize}_name")
-      when /^ bills (\S+) submissions$/
-        bill = Bill.find_by_url($1)
-        "Submissions on #{bill.bill_name}"
-      when /^ (bills|portfolios|committees) (\S+) (\d\d\d\d) (\S\S\S) (\d\d) (\S+)$/
-        date = DebateDate.new({:year=>$3,:month=>$4,:day=>$5})
-        debate = Debate.find_by_about_on_date_with_slug($1.singularize.titleize.constantize, $2, date, $6)
-        if debate
-          ($1 == 'bills') ? "#{debate.parent_name}, #{debate.name}" : debate.name
-        else
-          path
-        end
-      when /^ (\S+) (\d\d\d\d) (\S\S\S) (\d\d) (\S+)$/
-        date = DebateDate.new({:year=>$2,:month=>$3,:day=>$4})
-        debate = Debate.find_by_url_category_and_url_slug(date, $1, $5)
-        debate.parent_name ? "#{debate.parent_name}, #{debate.name}" : debate.name
-      else
-        path
-    end
-  end
-
   private
 
     def top_content days
@@ -187,13 +155,14 @@ class ApplicationController < ActionController::Base
       previous_date = Date.today - days
       report = profile.top_content_report :from => previous_date
       items = report.items.delete_if{|i| (i.path[/\d\d\d\d/].nil? && !i.path[/bills\//]) || i.path[/search\?/] || i.path[/portfolios\/education\/2007\/jul\/\d\d\/teachers/] }
-      items = items.sort_by{|i| i.unique_pageviews.to_i}.reverse
-      items = items[0..9] if items.size > 10
-      items.each do |item|
+      # items = items.sort_by{|i| i.unique_pageviews.to_i}.reverse
+      items = items.collect do |item|
         item.path.sub!('mori','maori')
         item.url.sub!('mori','maori')
-        item.page_title = ApplicationController.title_from_path item.path
+        UrlItem.new(item)
       end
+      items = items.sort_by{|i| i.weighted_score }.reverse
+      items = items[0..9] if items.size > 10
       items
     end
 
