@@ -5,8 +5,13 @@ require 'hpricot'
 class HansardParser
 
   class << self
+    def load_file file
+      open(file).read
+    end
     def load_doc file
-      Hpricot open(file)
+      text = load_file file
+      text = text.gsub(/<caption>[^<]*<p>/,'<caption>').gsub(/<\/p>[^<]*<\/caption>/,'</caption>')
+      Hpricot text
     end
   end
 
@@ -477,7 +482,8 @@ class HansardParser
     def handle_party_vote_table table, vote, placeholder
       vote_text = ''
       vote_question = ''
-      table.at('caption').at('p').children.each do |child|
+      caption = table.at('caption')
+      caption.children.each do |child|
         if child.text?
           text = child.to_clean_s.strip
           if (match = /(.*)(That the .*)/.match text) || (match = /(.*)(That Vote .*)/.match text)
@@ -503,12 +509,14 @@ class HansardParser
       end
       placeholder.text = vote_text.strip
       vote.vote_question = vote_question
-      vote.vote_result = table.at('.VoteResult').inner_html.to_clean_s
+      vote_result = table.at('.VoteResult')
+      vote.vote_result = vote_result.inner_html.to_clean_s
 
       have_ayes = false
       have_noes = false
       have_abstentions = false
-      (table/'.VoteCount').each do |node|
+      vote_counts = (table/'.VoteCount')
+      vote_counts.each do |node|
         text = node.inner_html.to_clean_s
         if (match = /Ayes (\d+)/.match text)
           raise 'double ayes count for vote: ' + vote_question + ' ' + vote.inspect if have_ayes

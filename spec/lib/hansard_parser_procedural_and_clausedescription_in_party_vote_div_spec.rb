@@ -15,7 +15,7 @@ describe HansardParser, "when passed bill debate with a procedural paragraph and
     @debate_index = 1
     @file_name = '48HansD_20070911_00001084-Aviation-Security-Legislation-Bill-In-Committee.htm'
     def_parties
-    HansardParser.stub!(:load_doc).and_return Hpricot(html)
+    HansardParser.stub!(:load_file).and_return html
     @debate = parse_debate
     @sub_debate = @debate.sub_debate
   end

@@ -43,7 +43,7 @@ describe HansardParser, " when passed questions to ministers and members" do
     chair.stub!(:committee).and_return(committee)
     CommitteeChair.stub!(:from_name).and_return(chair)
 
-    HansardParser.stub!(:load_doc).and_return Hpricot(html)
+    HansardParser.stub!(:load_file).and_return html
     debates = parse_oral_answers_all
     @debate = debates[0]
     @other_debate = debates[1]

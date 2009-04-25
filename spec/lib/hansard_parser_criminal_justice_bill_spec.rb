@@ -16,7 +16,7 @@ describe HansardParser, "when passed Criminal Justice Reform Bill—In Committee
     @file_name = 'nil'
     def_parties
 
-    HansardParser.stub!(:load_doc).and_return Hpricot(html)
+    HansardParser.stub!(:load_file).and_return html
     @debate = parse_debate
     @sub_debate = @debate.sub_debate
   end

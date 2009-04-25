@@ -28,7 +28,7 @@ describe HansardParser, " when passed oral answers with on behalf asker" do
         'Minister of Internal Affairs'
     ]
 
-    HansardParser.stub!(:load_doc).and_return Hpricot(html)
+    HansardParser.stub!(:load_file).and_return html
     parse_oral_answers_all
   end
 

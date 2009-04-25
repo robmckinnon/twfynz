@@ -27,7 +27,7 @@ describe HansardParser, " when passed 48HansD_20070814_00000157-Questions-for-Or
         'Minister for Courts'
     ]
 
-    HansardParser.stub!(:load_doc).and_return Hpricot(html)
+    HansardParser.stub!(:load_file).and_return html
     parse_oral_answers_all
   end
 

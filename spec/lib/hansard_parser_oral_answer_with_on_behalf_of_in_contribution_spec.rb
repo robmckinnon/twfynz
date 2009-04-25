@@ -56,7 +56,7 @@ describe HansardParser, " when passed oral question that has 'on behalf of' in c
 
     @interjecter_names = ['Hon Bill English','Madam SPEAKER']
     @interjecter_ids = [@asking_mp_id, @yet_other_asking_mp_id]
-    HansardParser.stub!(:load_doc).and_return Hpricot(html)
+    HansardParser.stub!(:load_file).and_return html
     parse_debate
   end
 

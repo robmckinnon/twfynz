@@ -7,7 +7,7 @@ describe HansardParser, "when passed Business Statement 2007-07-19" do
     @publication_status = 'A'
     @date = Date.new(2007,7,19)
     @debate_index = 1
-    HansardParser.stub!(:load_doc).and_return Hpricot(html)
+    HansardParser.stub!(:load_file).and_return html
     @debate = parse_hansard 'nil', @debate_index
   end
 
@@ -76,7 +76,7 @@ describe HansardParser, "when passed Tabling of Documents — Code of Conduct fo
     @publication_status = 'A'
     @date = Date.new(2007,8,9)
     @debate_index = 1
-    HansardParser.stub!(:load_doc).and_return Hpricot(html)
+    HansardParser.stub!(:load_file).and_return html
     @debate = parse_hansard '48HansD_20070809_00000052-Tabling-of-Documents-Code-of-Conduct-for.htm', @debate_index
     @sub_debate = @debate.sub_debate
   end
@@ -132,7 +132,7 @@ describe HansardParser, "when passed Points-of-Order with two subdebates" do
     @publication_status = 'A'
     @date = Date.new(2007,8,9)
     @debate_index = 1
-    HansardParser.stub!(:load_doc).and_return Hpricot(html)
+    HansardParser.stub!(:load_file).and_return html
     @debate = parse_hansard 'nil', @debate_index
     @sub_debate = @debate.sub_debate
   end
@@ -201,7 +201,7 @@ describe HansardParser, "when passed Motions — Military Awards—Victoria Cros
     @publication_status = 'A'
     @date = Date.new(2007,7,17)
     @debate_index = 1
-    HansardParser.stub!(:load_doc).and_return Hpricot(html)
+    HansardParser.stub!(:load_file).and_return html
     @debate = parse_hansard 'nil', @debate_index
     @sub_debate = @debate.sub_debate
   end
@@ -269,7 +269,7 @@ describe HansardParser, "when passed Speaker’s Rulings — Documents Tabled By
     @publication_status = 'A'
     @date = Date.new(2007,7,17)
     @debate_index = 1
-    HansardParser.stub!(:load_doc).and_return Hpricot(html)
+    HansardParser.stub!(:load_file).and_return html
     @debate = parse_hansard 'nil', @debate_index
     @sub_debate = @debate.sub_debate
   end
@@ -322,7 +322,7 @@ describe HansardParser, "when passed Visitors — Niue—Speaker of the Legislat
     @publication_status = 'A'
     @date = Date.new(2007,7,18)
     @debate_index = 1
-    HansardParser.stub!(:load_doc).and_return Hpricot(html)
+    HansardParser.stub!(:load_file).and_return html
     @debate = parse_hansard 'nil', @debate_index
     @sub_debate = @debate.sub_debate
   end
@@ -391,7 +391,7 @@ describe HansardParser, "when passed General Debate 2007-07-18" do
     @publication_status = 'A'
     @date = Date.new(2007,7,18)
     @debate_index = 1
-    HansardParser.stub!(:load_doc).and_return Hpricot(html)
+    HansardParser.stub!(:load_file).and_return html
     @debate = parse_hansard 'nil', @debate_index
   end
 
@@ -434,7 +434,7 @@ describe HansardParser, "when passed General Debate with a ContinueSpeech withou
     @publication_status = 'A'
     @date = Date.new(2007,7,18)
     @debate_index = 1
-    HansardParser.stub!(:load_doc).and_return Hpricot(html)
+    HansardParser.stub!(:load_file).and_return html
 
     @debate = parse_hansard 'nil', @debate_index
   end
@@ -495,7 +495,7 @@ describe HansardParser, "when passed Points of Order — Reserve Bank (Amending 
     @publication_status = 'A'
     @date = Date.new(2007,7,19)
     @debate_index = 1
-    HansardParser.stub!(:load_doc).and_return Hpricot(html)
+    HansardParser.stub!(:load_file).and_return html
     @debate = parse_hansard 'nil', @debate_index
     @sub_debate = @debate.sub_debate
   end
@@ -546,7 +546,7 @@ describe HansardParser, "when passed Business of the House 2007-06-19" do
     @publication_status = 'F'
     @date = Date.new(2007,6,19)
     @debate_index = 1
-    HansardParser.stub!(:load_doc).and_return Hpricot(html)
+    HansardParser.stub!(:load_file).and_return html
     @debate = parse_hansard 'nil', @debate_index
   end
 

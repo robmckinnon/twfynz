@@ -16,7 +16,7 @@ describe HansardParser, "when passed bill debate with one subdebate plus two h2 
     @file_name = 'bill_debate_with_one_subdebate_plus_two_h2_headings.htm'
     def_parties
 
-    HansardParser.stub!(:load_doc).and_return Hpricot(html)
+    HansardParser.stub!(:load_file).and_return html
     @debate = parse_debate
     @sub_debate = @debate.sub_debate
   end
