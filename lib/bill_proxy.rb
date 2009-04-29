@@ -123,6 +123,10 @@ class BillProxy
         self.data_title = match[1].squeeze(' ')
         self.data_info = match[2].strip
         self.data_bill_change = match[3].strip
+
+      elsif (match = /<h1>([^<]*)<\/h1>([^<]*)<p>(.*)<\/p>([^<]*)<table class="variablelist"/.match text)
+        self.data_title = match[1].squeeze(' ')
+        self.data_bill_change = match[3].strip
       end
     end
 
