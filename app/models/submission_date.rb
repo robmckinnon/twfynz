@@ -9,7 +9,7 @@ class SubmissionDate < ActiveRecord::Base
     submissions.each do |submission|
       if bills.include? submission.bill_id
         unique << submission
-        bills.delele(submission.bill_id)
+        bills.delete(submission.bill_id)
       end
     end
     unique.sort {|a,b| ((a.date <=> b.date) == 0) ? a.title <=> b.title : a.date <=> b.date }
