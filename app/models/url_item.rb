@@ -48,7 +48,7 @@ class UrlItem
           end
         when /^ (bills|portfolios|committees) (\S+)$/
           about = $1.singularize.titleize.constantize.find_by_url($2)
-          about.send("#{$1.singularize}_name")
+          about ? about.send("#{$1.singularize}_name") : path
         when /^ bills (\S+) submissions$/
           bill = Bill.find_by_url($1)
           "Submissions on #{bill.bill_name}"
