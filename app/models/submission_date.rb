@@ -4,6 +4,14 @@ class SubmissionDate < ActiveRecord::Base
 
   def self.find_live_bill_submissions
     submissions = find(:all, :include => :bill).select{|sd| sd.date >= Date::today}
-    submissions.sort {|a,b| ((a.date <=> b.date) == 0) ? a.title <=> b.title : a.date <=> b.date }
+    bills = submissions.collect(&:bill_id).uniq
+    unique = []
+    submissions.each do |submission|
+      if bills.include? submission.bill_id
+        unique << submission
+        bills.delele(submission.bill_id)
+      end
+    end
+    unique.sort {|a,b| ((a.date <=> b.date) == 0) ? a.title <=> b.title : a.date <=> b.date }
   end
 end
