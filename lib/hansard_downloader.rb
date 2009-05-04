@@ -119,7 +119,7 @@ class HansardDownloader
 
     def open_index_page page
       if @downloading_uncorrected
-        url = 'http://www.parliament.nz/en-NZ/PB/Debates/QOA/Default.htm?p='+page.to_s
+        url = 'http://www.parliament.nz/en-NZ/PB/Business/QOA/Default.htm?p='+page.to_s
       else
         url = 'http://www.parliament.nz/en-NZ/PB/Debates/Debates/Default.htm?p='+page.to_s
       end

@@ -13,7 +13,7 @@ class SubmissionsDownloader
   end
 
   def self.open_page page_number
-    url = "http://www.parliament.nz/en-NZ/SC/Papers/Evidence/Default.htm?p=#{page_number.to_s}"
+    url = "http://www.parliament.nz/en-NZ/PB/SC/Documents/Evidence/Default.htm?p=#{page_number.to_s}"
     puts 'downloading '+url
     Hpricot open(url)
   end

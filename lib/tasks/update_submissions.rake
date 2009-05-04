@@ -15,13 +15,13 @@ namespace :kiwimp do
   end
 
   def get_submissions
-    doc = Hpricot open('http://www.parliament.nz/en-NZ/SC/SubmCalled/Default.htm?ps=0')
+    doc = Hpricot open('http://www.parliament.nz/en-NZ/PB/SC/MakeSub/Default.htm?ps=0')
     submissions = Hash.new {|h,k| h[k] = OpenStruct.new}
     (doc/"table.listing/tbody/tr").each do |row| # /
       (row/"td/h4/a").each do |t|                # /
         url = t.attributes['href']
         submission = submissions[url]
-        submission.url = url.sub('/en-NZ/SC/SubmCalled','')
+        submission.url = url.sub('/en-NZ/PB/SC/MakeSub','')
         submission.about = t.innerHTML.strip
 
         details_node = t.parent.next_node.next_node
