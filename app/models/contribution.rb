@@ -27,7 +27,7 @@ class Contribution < ActiveRecord::Base
       SectionHeader, Speech, SubsAnswer, SubsQuestion, SupAnswer, SupQuestion,
       Translation, VotePlaceholder]
     end
-    
+
     def count_by_term term
       # sql = 'SELECT COUNT(*) FROM contributions WHERE ' + create_condition(term)
       # count_by_sql(sql)
@@ -290,12 +290,14 @@ class Contribution < ActiveRecord::Base
   # protected
 
     def handle_contribution_part node, geoname_matches
-      node.children.each do |child|
-        if child.text?
-          text = child.to_s
-          geoname_matches += Geoname.matches(text) unless text.empty?
-        elsif child.elem?
-          geoname_matches = handle_contribution_part(child, geoname_matches)
+      if node.children
+        node.children.each do |child|
+          if child.text?
+            text = child.to_s
+            geoname_matches += Geoname.matches(text) unless text.empty?
+          elsif child.elem?
+            geoname_matches = handle_contribution_part(child, geoname_matches)
+          end
         end
       end
       geoname_matches
