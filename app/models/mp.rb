@@ -29,7 +29,7 @@ class Mp < ActiveRecord::Base
       @all_mp_names
     end
 
-    def from_vote_name name
+    def from_vote_name name, date, party
       name = 'Roy E' if name == 'E Roy'
       name_downcase = name.downcase.strip.gsub('’',"'")
       mps = Mp.find(:all)
@@ -41,17 +41,17 @@ class Mp < ActiveRecord::Base
         end
       end
 
+      if party
+        matching = matching.select {|mp| mp.party_on_date(date) == party}
+      else
+        matching = matching.select {|mp| mp.member_on_date(date) != nil}
+      end
       if matching.size == 1
         return matching[0]
       elsif matching.empty?
         raise 'no matching MP for vote name: ' + name
       else
-        matching = matching.select {|mp| !mp.former}
-        if matching.size == 1
-          return matching[0]
-        else
-          raise 'more than one matching MP for vote name: ' + name
-        end
+        raise 'more than one matching MP for vote name: ' + name
       end
     end
 

@@ -267,7 +267,8 @@ class HansardParser
           :vote_label => name,
           :mp_name => name,
           :party_name => 'Independent',
-          :present => false
+          :present => false,
+          :date => @debate_date
       begin
         vote_cast.valid?
       rescue Exception => e
@@ -314,7 +315,8 @@ class HansardParser
               :vote_label => mp_name,
               :mp_name => mp_name,
               :party_name => party_name,
-              :present => false
+              :present => false,
+              :date => @debate_date
           vote.vote_casts << vote_cast
         end
       elsif (match = /([^\d]+) (\d+)\.?/.match text.strip)
@@ -325,7 +327,8 @@ class HansardParser
             :cast_count => cast_count,
             :vote_label => party_name,
             :party_name => party_name,
-            :present => false
+            :present => false,
+            :date => @debate_date
         vote.vote_casts << vote_cast
 
       else
@@ -365,7 +368,8 @@ class HansardParser
             :cast_count => 1,
             :vote_label => text,
             :mp_name => name,
-            :present => present
+            :present => present,
+            :date => @debate_date
 
           vote.vote_casts << vote_cast
         end
