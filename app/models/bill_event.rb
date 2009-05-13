@@ -82,7 +82,7 @@ class BillEvent < ActiveRecord::Base
 
   def debates
     debates_in_groups_by_name, votes_by_name = bill.debates_by_name_names_votes_by_name
-    debates = debates_in_groups_by_name.blank? ? nil : debates_in_groups_by_name.select {|list| list.first.normalized_name == self.name}.flatten
+    debates = debates_in_groups_by_name.blank? ? [] : debates_in_groups_by_name.select {|list| list.first.normalized_name == self.name}.flatten
 
     debates.sort! do |a,b|
       comparison = b.date <=> a.date
@@ -91,7 +91,7 @@ class BillEvent < ActiveRecord::Base
       else
         comparison
       end
-    end
+    end if debates
     debates = nil if debates.blank?
     debates
   end
