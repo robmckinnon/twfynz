@@ -1,4 +1,6 @@
-# See http://www.robotstxt.org/wc/norobots.html for documentation on how to use the robots.txt file
+User-agent: *
+Disallow: /search
+
 User-agent: BecomeBot
 Disallow: /
 
@@ -18,4 +20,5 @@ User-agent: CazoodleBot
 Disallow: /
 
 User-agent: Slurp
+Disallow: /search
 Crawl-delay: 3
