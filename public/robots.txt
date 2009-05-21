@@ -1,5 +1,5 @@
 User-agent: *
-Disallow: /search
+Disallow: /search/
 
 User-agent: BecomeBot
 Disallow: /
@@ -20,5 +20,5 @@ User-agent: CazoodleBot
 Disallow: /
 
 User-agent: Slurp
-Disallow: /search
+Disallow: /search/
 Crawl-delay: 3
