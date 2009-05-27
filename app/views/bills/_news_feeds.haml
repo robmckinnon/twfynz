@@ -3,8 +3,34 @@
     %h2.feed-title News coverage
     .entries
       %p loading...
+  - if false
+    - if @govt_items
+      .hfeed
+        %h2.feed-title Govt coverage
+        .entries
+          - if @govt_items
+            = render :partial => 'news_entry', :collection => @govt_items
+          - else
+            %p loading...
+    - unless @news_items.blank?
+      .hfeed
+        %h2.feed-title News coverage
+        - if @news_items
+          .entries
+            = render :partial => 'news_entry', :collection => @news_items
+        - else
+          %p loading...
 #blog_feed
   .hfeed
     %h2.feed-title Blog coverage
     .entries
       %p loading...
+  - if false
+    .hfeed
+      - unless @blog_items.blank?
+        %h2.feed-title Blog coverage
+        .entries
+          - if @blog_items
+            = render :partial => 'blog_entry', :collection => @blog_items
+          - else
+            %p loading...

@@ -1,3 +1,5 @@
+require 'morph'
+
 class NzlEvent < ActiveRecord::Base
 
   belongs_to :about, :polymorphic => true

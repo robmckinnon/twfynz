@@ -6,19 +6,19 @@ Rails::Initializer.run do |config|
 
   config.frameworks -= [ :active_resource ]
 
-  config.gem 'ar_fixtures'
-  config.gem 'css_graphs'
-  # config.gem 'haml'
-  config.gem 'hpricot', :source => 'http://code.whytheluckystiff.net'
-  config.gem 'has_many_polymorphs'
-  config.gem 'sparklines'
-  config.gem 'htmlentities'
-  config.gem 'morph'
-  config.gem 'rugalytics'
-  config.gem 'twitter'
-  config.gem 'ar-extensions'
-  config.gem 'will_paginate'
-  config.gem 'color'
+  # config.gem 'ar_fixtures'
+  # config.gem 'css_graphs'
+  # # config.gem 'haml'
+  # config.gem 'hpricot', :source => 'http://code.whytheluckystiff.net'
+  # config.gem 'has_many_polymorphs'
+  # config.gem 'sparklines'
+  # config.gem 'htmlentities'
+  # # config.gem 'morph'
+  # config.gem 'rugalytics'
+  # config.gem 'twitter'
+  # config.gem 'ar-extensions'
+  # config.gem 'will_paginate'
+  # config.gem 'color'
 
   # Only load the plugins named here, by default all plugins in vendor/plugins are loaded
   # config.plugins = %W( exception_notification ssl_requirement )
@@ -73,6 +73,7 @@ require 'in_groups_by'
 require 'route_helper'
 require 'sitemap'
 require 'expire_cache'
+require 'google_ajax'
 
 module Twfynz
   def self.twitter_update message

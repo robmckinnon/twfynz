@@ -16,7 +16,7 @@
       - @bill.bill_events.each do |e|
         %p= h e.inspect
     = render :partial => 'bill_events', :object => @top_level_bill_events
-    - if is_production_env
+    - if is_production_env || true
       = render :partial => 'news_feeds'
 - if current_user
   = render :partial => 'bill_tracking'

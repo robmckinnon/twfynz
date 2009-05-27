@@ -10,4 +10,8 @@
 #
 
 class PecuniaryInterest < ActiveRecord::Base
+
+  belongs_to :pecuniary_category
+  belongs_to :mp
+
 end

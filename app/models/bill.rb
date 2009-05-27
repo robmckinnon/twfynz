@@ -186,6 +186,81 @@ class Bill < ActiveRecord::Base
     end
   end
 
+  def query_for_search
+    name = %Q|"#{bill_name}"|
+    words = name.split(' ').size
+    if words > 6
+      name = name.gsub(' Bill','')
+      name = name.gsub(' Amendment','')
+    end
+    if words < 4
+      name += ' site:nz'
+    end
+    name
+  end
+
+  def news_items
+    begin
+      url = "http://news.google.co.nz/news?hl=en&ned=nz&ie=UTF-8&scoring=n&q=#{URI.escape(query_for_search)}&output=atom"
+
+      xml = open(url).read
+      results = Morph.from_hash(Hash.from_xml(xml.gsub('id>','id_name>').gsub('type=','type_name=')))
+      results.entries = [results.entry] if results.respond_to?(:entry) && results.entry
+      results.entries = [] if !results.respond_to?(:entries) || results.entries.blank?
+
+      results.entries.each do |e|
+        doc = Hpricot "<html><body>#{e.content}</body></html>"
+        e.author = doc.at('font[@color="#6f6f6f"]').inner_text
+        e.publisher = e.author.split(',')[0]
+        e.full_title = e.title
+        e.title = doc.at('a').inner_text
+        e.title = e.full_title.sub(e.publisher,'').strip.chomp('-') if e.title.blank?
+        e.content = doc.at('font[@size="-1"]:eq(1)').to_s
+        e.published_date = e.issued
+        e.display_date = Date.parse(e.published_date).to_s(:long)
+        e.url = e.link.href
+      end
+
+      results.entries.sort_by {|x| Date.parse(x.published_date) }.reverse
+    rescue Exception => e
+      raise e
+      nil
+    end
+  end
+
+  def blog_items
+    begin
+      url = "http://blogsearch.google.co.nz/blogsearch_feeds?hl=en&scoring=d&q=#{URI.escape(query_for_search)}&ie=utf-8&num=10&output=atom"
+
+      xml = open(url).read
+      results = Morph.from_hash(Hash.from_xml(xml.gsub('id>','id_name>').gsub('type=','type_name=')))
+      results.entries = [results.entry] if results.respond_to?(:entry) && results.entry
+      results.entries = [] if !results.respond_to?(:entries) || results.entries.blank?
+
+      results.entries.each do |e|
+        e.full_title = e.title
+        if (split = e.title.split('|')).size == 2
+          e.title = split[0]
+          e.author.name = split[1]
+        end
+        if e.author.name[/unknown|Anonymous|nospam@example\.com/i]
+          e.author.name = e.author.uri.sub('http://','').sub('www.','').chomp('/')
+        end
+        e.publisher = e.author.name
+        e.published_date = e.published
+        e.display_date = Date.parse(e.published_date).to_s(:long)
+        e.url = e.link.href
+        e.content = %Q|<font size="-1">#{e.content.sub('Contents; « Previous · Next » · Search within this Bill.','')}</font>|
+      end
+
+      # results.entries.delete_if {|x| x.publisher[/example\.com/]}
+      results.entries.sort_by {|x| Date.parse(x.published_date) }.reverse
+    rescue Exception => e
+      raise e
+      nil
+    end
+  end
+
   def fix_debate_topics
     topics = unmatched_debate_topics
     if topics.size > 0
