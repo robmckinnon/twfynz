@@ -1,0 +1,12 @@
+- entry = blog_entry
+.hentry
+  .entry-title
+    = link_to entry.title, entry.url
+  %div
+    %span.vcard.author
+      = entry.publisher
+    %span.published{ :title=> entry.published_date }
+      = entry.display_date
+  .entry-summary
+    = entry.content
+

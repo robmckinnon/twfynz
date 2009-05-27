@@ -1,0 +1,12 @@
+- entry = news_entry
+.hentry
+  .entry-title
+    = link_to entry.title.sub('Scoop: ',''), entry.url
+  %div
+    %span.vcard.author
+      = entry.publisher
+    %span.published{ :title=> entry.published_date }
+      = entry.display_date
+  .entry-summary
+    = entry.content
+
