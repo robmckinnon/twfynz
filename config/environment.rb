@@ -10,7 +10,7 @@ Rails::Initializer.run do |config|
   # config.gem 'css_graphs'
   # # config.gem 'haml'
   # config.gem 'hpricot', :source => 'http://code.whytheluckystiff.net'
-  # config.gem 'has_many_polymorphs'
+  config.gem 'has_many_polymorphs'
   # config.gem 'sparklines'
   # config.gem 'htmlentities'
   # # config.gem 'morph'
@@ -64,7 +64,7 @@ Rails::Initializer.run do |config|
 
 end
 
-#require 'htmlentities'
+require 'htmlentities'
 require 'acts_as_slugged'
 require 'acts_as_wikipedia'
 require 'string_extensions_for_maori'

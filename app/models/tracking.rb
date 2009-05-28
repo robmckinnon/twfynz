@@ -50,7 +50,7 @@ class Tracking < ActiveRecord::Base
   protected
 
     def set_created_at_date
-      self.created_at = (Time.now.utc + TimeZone.new("Auckland").utc_offset).to_date
+      self.created_at = (Time.now.utc + ActiveSupport::TimeZone.new("Auckland").utc_offset).to_date
     end
 
     def default_booleans

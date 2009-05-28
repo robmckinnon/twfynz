@@ -7,14 +7,12 @@ YAHOO.util.Event.addListener(window, "load", function() {
   YAHOO.example.EnhanceFromMarkup = new function() {
     var myColumnDefs = [
       {key:"portfolio",  label:"Portfolio",  sortable:true},
-      {key:"sparkline", label:"Questions per month graph", sortable:true, sortOptions:{sortFunction:sortSparlines, defaultDir:YAHOO.widget.DataTable.CLASS_DESC} },
       {key:"count",  label:"Questions count*", formatter:"number", sortable:true, sortOptions:{defaultDir:YAHOO.widget.DataTable.CLASS_DESC} }
     ];
     this.myDataSource = new YAHOO.util.DataSource(YAHOO.util.Dom.get("portfolio-table"));
     this.myDataSource.responseType = YAHOO.util.DataSource.TYPE_HTMLTABLE;
     this.myDataSource.responseSchema = {
       fields: [{key:"portfolio"},
-              {key:"sparkline"},
               {key:"count", parser:YAHOO.util.DataSource.parseNumber}
       ]
     };

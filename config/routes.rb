@@ -117,8 +117,8 @@ ActionController::Routing::Routes.draw do |map|
     index_route 'bills', bill
     make_route 'bills/assented', bill
     make_route 'bills/negatived', bill
-    make_route 'bills/:bill_url', bill
     make_route 'bills/:bill_url.atom', bill, :show_bill_atom
+    make_route 'bills/:bill_url', bill
     make_route 'bills/:bill_url/submissions', bill, :show_bill_submissions
   end
 
@@ -149,8 +149,8 @@ ActionController::Routing::Routes.draw do |map|
     make_route 'parties/:name/:other_name', party, :compare_parties
   end
 
-  map.resources :trackings
-  map.resources :submissions
+  map.resources :trackings, :except => [:index]
+  map.resources :submissions, :except => [:destroy] #, :only => [:index, :show]
 
   with_controller :submissions, map do |submission|
     make_route 'submissions/set_submission_submitter_url/:id', submission, :set_submission_submitter_url

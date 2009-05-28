@@ -120,7 +120,7 @@ describe Geoname, ' when formatting a non-relevant geoname occurance' do
     text = 'Mr. Liverpool'
     Geoname.should_receive(:matches).with(text).and_return([])
     formatted = Geoname.format_geonames(text)
-    formatted.should_not have_tag("span[class=geo]")
+    formatted.should_not include("<span class=")
   end
 end
 
@@ -144,20 +144,17 @@ describe Geoname, ' when formatting a single geoname occurance' do
 
   it 'should create span element with class "geo" surrounding place name with latitude and longitude values' do
     formatted = Geoname.format_geonames(@text)
-    formatted.should have_tag("span[class=geo]")
-    formatted.should have_tag("span[class=geo]", :text => "Liverpool 53.4166667 -3.0")
+    formatted.should include('<span class="geo">Liverpool<span class="space"> </span><span class="latitude">53.4166667</span><span class="space"> </span><span class="longitude">-3.0</span></span>')
   end
 
   it 'should create span element with class "latitude" surrounding latitude value' do
     formatted = Geoname.format_geonames(@text)
-    formatted.should have_tag("span[class=latitude]")
-    formatted.should have_tag("span[class=latitude]", :text => "53.4166667")
+    formatted.should include('<span class="latitude">53.4166667')
   end
 
   it 'should create span element with class "longitude" surrounding longitude value' do
     formatted = Geoname.format_geonames(@text)
-    formatted.should have_tag("span[class=longitude]")
-    formatted.should have_tag("span[class=longitude]", :text => "-3.0")
+    formatted.should include('<span class="longitude">-3.0') # longitude
   end
 
   it 'should replace original place name text with markedup version correctly' do

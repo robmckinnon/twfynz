@@ -66,7 +66,9 @@ module ApplicationHelper
 
     layout = layout.include?("/") ? layout : "layouts/#{layout}" if layout
     buffer = eval("_erbout", block.binding)
-    buffer.concat(@template.render_file(layout, true))
+    # buffer.concat(@template.render_file(layout, true))
+
+    buffer.concat(@template.render( :file => layout, :use_full_path => true ))
   end
 
   def format_date date

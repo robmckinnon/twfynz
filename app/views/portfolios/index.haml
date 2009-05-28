@@ -11,7 +11,7 @@
           %thead
             %tr
               %th='Portfolio'
-              %th='Questions per month graph'
+              - # %th='Questions per month graph'
               %th{ :style=>"text-align: right;" }='Questions count*'
           %tbody
             = render(:partial => 'portfolio_group', :collection => @letter_to_portfolios.keys.sort, :locals => {:letter_to_portfolios => @letter_to_portfolios, :portfolios => @portfolios_with_debates})

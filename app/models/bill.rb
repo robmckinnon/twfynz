@@ -740,6 +740,7 @@ class Bill < ActiveRecord::Base
             url = url[0..34].chomp('_')+num[1]
           end
         end
+
         bill = Bill.find_by_url(url)
 
         if bill

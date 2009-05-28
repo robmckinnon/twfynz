@@ -108,8 +108,9 @@ describe "All oral questions", :shared => true do
       interjection.should_not be_nil
       interjection.spoken_in_id.should == @debate.id
       interjection.should be_an_instance_of(Interjection)
-      interjection.speaker.should == @interjecter
-      interjection.spoken_by_id.should == @interjecter_id
+
+      interjection.speaker.should == @interjecter_names.first
+      interjection.spoken_by_id.should == @interjecter_ids.first
       interjection.text.should == @interjecter_text
     end
   end

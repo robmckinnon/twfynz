@@ -36,6 +36,7 @@ describe HansardParser, "when passed Crimes (Substituted Section 59) Amendment B
   end
 
   it 'should create a party vote with correct tally of ayes, noes, absentions' do
+    @vote.valid?.should be_true
     @vote.ayes_tally.should == 113
     @vote.noes_tally.should == 8
     @vote.abstentions_tally.should == 0

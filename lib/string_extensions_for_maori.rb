@@ -1,7 +1,7 @@
 class String
 
   def to_latin
-    self.chars.
+    self.mb_chars.
       gsub('Ā','A').gsub('Ē','E').gsub('Ī','I').gsub('Ō','O').gsub('Ū','U').
       gsub('ā','a').gsub('ē','e').gsub('ī','i').gsub('ō','o').gsub('ū','u')
   end

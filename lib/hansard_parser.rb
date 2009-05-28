@@ -421,6 +421,7 @@ class HansardParser
         when 'table'
           if debate.contributions.last != placeholder
             placeholder.vote = vote
+            vote.contribution = placeholder
             placeholder.spoken_in = debate
             debate.contributions << placeholder
           end
@@ -1093,7 +1094,7 @@ end
 
 class String
   def to_clean_s
-    to_s.chars.gsub("\r\n",' ').gsub("\n",' ').squeeze(' ').gsub(' ,',',').strip.to_s
+    to_s.mb_chars.gsub("\r\n",' ').gsub("\n",' ').squeeze(' ').gsub(' ,',',').strip.to_s
   end
 end
 

@@ -2,91 +2,26 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe TrackingsController, "#route_for" do
 
-  it "should map { :controller => 'trackings', :action => 'index' } to /trackings" do
-    route_for(:controller => "trackings", :action => "index").should == "/trackings"
-  end
-
   it "should map { :controller => 'trackings', :action => 'new' } to /trackings/new" do
     route_for(:controller => "trackings", :action => "new").should == "/trackings/new"
   end
 
   it "should map { :controller => 'trackings', :action => 'show', :id => 1 } to /trackings/1" do
-    route_for(:controller => "trackings", :action => "show", :id => 1).should == "/trackings/1"
+    assert_generates("/trackings/1", :controller => "trackings", :action => "show", :id => 1)
   end
 
   it "should map { :controller => 'trackings', :action => 'edit', :id => 1 } to /trackings/1/edit" do
-    route_for(:controller => "trackings", :action => "edit", :id => 1).should == "/trackings/1/edit"
+    assert_generates("/trackings/1/edit", :controller => "trackings", :action => "edit", :id => 1)
   end
 
   it "should map { :controller => 'trackings', :action => 'update', :id => 1} to /trackings/1" do
-    route_for(:controller => "trackings", :action => "update", :id => 1).should == "/trackings/1"
+    assert_generates("/trackings/1", :controller => "trackings", :action => "update", :id => 1)
   end
 
   it "should map { :controller => 'trackings', :action => 'destroy', :id => 1} to /trackings/1" do
-    route_for(:controller => "trackings", :action => "destroy", :id => 1).should == "/trackings/1"
+    assert_generates("/trackings/1", :controller => "trackings", :action => "destroy", :id => 1)
   end
 
-end
-
-describe TrackingsController, "handling GET /trackings" do
-
-  before do
-    @tracking = mock_model(Tracking)
-    Tracking.stub!(:find).and_return([@tracking])
-  end
-
-  def do_get
-    get :index
-  end
-
-  it "should be successful" do
-    do_get
-    response.should be_success
-  end
-
-  it "should render index template" do
-    do_get
-    response.should render_template('index')
-  end
-
-  it "should find all trackings" do
-    Tracking.should_receive(:find).with(:all).and_return([@tracking])
-    do_get
-  end
-
-  it "should assign the found trackings for the view" do
-    do_get
-    assigns[:trackings].should == [@tracking]
-  end
-end
-
-describe TrackingsController, "handling GET /trackings.xml" do
-
-  before do
-    @tracking = mock_model(Tracking, :to_xml => "XML")
-    Tracking.stub!(:find).and_return(@tracking)
-  end
-
-  def do_get
-    @request.env["HTTP_ACCEPT"] = "application/xml"
-    get :index
-  end
-
-  it "should be successful" do
-    do_get
-    response.should be_success
-  end
-
-  it "should find all trackings" do
-    Tracking.should_receive(:find).with(:all).and_return([@tracking])
-    do_get
-  end
-
-  it "should render the found trackings as xml" do
-    @tracking.should_receive(:to_xml).and_return("XML")
-    do_get
-    response.body.should == "XML"
-  end
 end
 
 describe TrackingsController, "handling GET /trackings/1" do
@@ -227,7 +162,8 @@ describe TrackingsController, "handling POST /trackings" do
     @tracking.stub!(:user=)
     @tracking.stub!(:item).and_return(mock_model(Bill))
     Tracking.stub!(:new).and_return(@tracking)
-    controller.stub!(:current_user).and_return(users(:the_bob))
+    # user = users(:the_bob)
+    controller.stub!(:current_user).and_return(mock(User, :login=>'bob'))
     @params = {}
   end
 
@@ -251,7 +187,7 @@ describe TrackingsController, "handling PUT /trackings/1" do
   before do
     @tracking = mock_model(Tracking, :to_param => "1", :update_attributes => true)
     Tracking.stub!(:find).and_return(@tracking)
-  end
+    end
 
   def do_update
     put :update, :id => "1"

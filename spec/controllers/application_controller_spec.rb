@@ -51,7 +51,7 @@ describe ApplicationController do
         end
         it 'should show 404' do
           do_get
-          response.headers["Status"].should == "404 Not Found"
+          response.status.should == "404 Not Found"
         end
       end
       describe 'and there are parly words on date' do

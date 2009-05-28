@@ -44,10 +44,10 @@ class DebatesController < ApplicationController
     page = params['page'] || 1
     @entries = WillPaginate::Collection.create(page, 10) do |pager|
       @matches, @count = Contribution.match_by_term(@term, pager.per_page, pager.offset)
-      pager.replace(@matches)    
+      pager.replace(@matches)
       pager.total_entries = @count
-    end 
-   
+    end
+
     unless @matches.empty?
       @debate_ids = @matches.collect(&:spoken_in_id).uniq
       debates = []

@@ -12,7 +12,7 @@ class VoteCast < ActiveRecord::Base
   end
 
   def date
-    vote ? vote.debate.date : @date
+    @date ? @date : vote.debate.date
   end
 
   protected

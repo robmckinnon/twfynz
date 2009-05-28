@@ -190,9 +190,12 @@ describe Bill do
         former_bill = mock_model(Bill)
         former_bill.stub!(:id).and_return(1)
         former_bill.should_receive(:earliest_date).and_return Date.new(2007,9,11)
+
         Bill.should_receive(:find_by_bill_name).with('Aviation Security Legislation Bill').and_return former_bill
         Bill.should_receive(:find).with(1).and_return former_bill
         Mp.should_receive(:from_name).and_return(mock_model(Mp))
+
+        Bill.should_receive(:find_by_url).with('major_events_management').and_return nil
         bill = Bill.new(bill_params.merge(:introduction => nil, :bill_change => '(Formerly part of Aviation Security Legislation Bill)'))
         bill.should be_valid
         bill.earliest_date.should == Date.new(2007,9,11)
@@ -322,6 +325,7 @@ describe Bill do
       former_bill = Bill.new(bill_params.merge(:bill_name => 'Statutes Amendment Bill (No 2)'))
       Bill.should_receive(:find).with(id, anything).and_return former_bill
 
+      Bill.should_receive(:find_by_url).with('major_events_management').and_return nil
       bill = new_bill :formerly_part_of_id => id
       bill.formerly_part_of.should == former_bill
     end
@@ -360,16 +364,6 @@ describe Bill do
       bill.referred_to_committee_id.should eql(id)
 
       Bill.delete_all
-    end
-  end
-
-  describe 'getting NzlEvents' do
-    fixtures :bills, :nzl_events
-
-    it 'should should return associated NzlEvents latest first' do
-      titles = bills(:a_bill).nzl_events.collect(&:title)
-      titles.include?(nzl_events(:two).title).should be_true
-      titles.include?(nzl_events(:one).title).should be_true
     end
   end
 

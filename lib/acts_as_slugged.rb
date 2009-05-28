@@ -74,8 +74,8 @@ module Acts
 
       def truncate_text(text, length = 30, truncate_string = "...")
         if text.nil? then return end
-        l = length - truncate_string.chars.length
-        (text.chars.length > length ? text.chars[0...l] + truncate_string : text).to_s
+        l = length - truncate_string.mb_chars.length
+        (text.mb_chars.length > length ? text.mb_chars[0...l] + truncate_string : text).to_s
       end
     end
 

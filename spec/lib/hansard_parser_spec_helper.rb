@@ -18,7 +18,8 @@ module ParserHelperMethods
     party.should_receive(:id).any_number_of_times.and_return id
     party.should_receive(:vote_name).any_number_of_times.and_return name
     Party.should_receive(:from_vote_name).with(name).any_number_of_times.and_return(party)
-    Party.should_receive(:find).with(id, {:conditions=>nil, :include=>nil}).any_number_of_times.and_return(party)
+    Party.should_receive(:find).with(id, {:select=>nil, :conditions=>nil, :readonly=>nil, :include=>nil}).any_number_of_times.and_return(party)
+    party.stub!(:new_record?).and_return false
     party
   end
 

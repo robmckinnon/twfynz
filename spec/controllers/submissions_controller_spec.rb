@@ -11,19 +11,15 @@ describe SubmissionsController, "#route_for" do
   end
 
   it "should map { :controller => 'submissions', :action => 'show', :id => 1 } to /submissions/1" do
-    route_for(:controller => "submissions", :action => "show", :id => 1).should == "/submissions/1"
+    route_for(:controller => "submissions", :action => "show", :id => "1").should == "/submissions/1"
   end
 
   it "should map { :controller => 'submissions', :action => 'edit', :id => 1 } to /submissions/1/edit" do
-    route_for(:controller => "submissions", :action => "edit", :id => 1).should == "/submissions/1/edit"
+    route_for(:controller => "submissions", :action => "edit", :id => "1").should == "/submissions/1/edit"
   end
 
   it "should map { :controller => 'submissions', :action => 'update', :id => 1} to /submissions/1" do
-    route_for(:controller => "submissions", :action => "update", :id => 1).should == "/submissions/1"
-  end
-
-  it "should map { :controller => 'submissions', :action => 'destroy', :id => 1} to /submissions/1" do
-    route_for(:controller => "submissions", :action => "destroy", :id => 1).should == "/submissions/1"
+    assert_generates("/submissions/1", :controller => "submissions", :action => "update", :id => "1")
   end
 
 end
@@ -256,33 +252,5 @@ describe SubmissionsController, "handling PUT /submissions/1" do
   it "should redirect to the submission" do
     do_update
     response.should render_template('_submission')
-  end
-end
-
-describe SubmissionsController, "handling DELETE /submissions/1" do
-
-  before do
-    @submission = mock_model(Submission, :destroy => true)
-    Submission.stub!(:find).and_return(@submission)
-    @controller.stub!(:admin?).and_return(true)
-  end
-
-  def do_delete
-    delete :destroy, :id => "1"
-  end
-
-  it "should find the submission requested" do
-    Submission.should_receive(:find).with("1").and_return(@submission)
-    do_delete
-  end
-
-  it "should call destroy on the found submission" do
-    @submission.should_receive(:destroy)
-    do_delete
-  end
-
-  it "should redirect to the submissions list" do
-    do_delete
-    response.should redirect_to(submissions_url)
   end
 end

@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'hpricot'
+require 'acts_as_wikipedia'
 
 class Organisation < ActiveRecord::Base
 

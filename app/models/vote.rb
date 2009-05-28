@@ -11,7 +11,7 @@ class Vote < ActiveRecord::Base
   validates_presence_of :vote_question
   validates_presence_of :vote_result
 
-  before_validation_on_create :default_vote_tallies
+  before_validation :default_vote_tallies
 
   class << self
     def value_for_votes votes_cast

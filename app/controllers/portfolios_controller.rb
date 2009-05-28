@@ -1,9 +1,9 @@
-require 'sparklines'
+# require 'sparklines'
 
 class PortfoliosController < ApplicationController
 
   caches_action :index, :show_portfolio
-  caches_page :activity_sparkline
+  # caches_page :activity_sparkline
 
   layout "portfolios_layout"
 
@@ -43,15 +43,17 @@ class PortfoliosController < ApplicationController
   end
 
   def activity_sparkline
-    logger.info('request.request_uri: ' + request.request_uri)
-    counts = Portfolio::questions_asked_count_by_month params['portfolio_url']
-    # , :background_color => 'transparent'
-    params = { :type => 'smooth', :height => (counts.max * 0.5), :step => 3, :line_color => '#333333' }
+    if false
+      logger.info('request.request_uri: ' + request.request_uri)
+      counts = Portfolio::questions_asked_count_by_month params['portfolio_url']
+      # , :background_color => 'transparent'
+      params = { :type => 'smooth', :height => (counts.max * 0.5), :step => 3, :line_color => '#333333' }
 
-    send_data(Sparklines.plot(counts, params),
-          :disposition => 'inline',
-          :type => 'image/png',
-          :filename => "spark_#{params[:type]}.png" )
+      send_data(Sparklines.plot(counts, params),
+            :disposition => 'inline',
+            :type => 'image/png',
+            :filename => "spark_#{params[:type]}.png" )
+    end
   end
 
   def show_portfolio

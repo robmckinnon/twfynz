@@ -3,5 +3,5 @@
 %tr
   - has_answers = (portfolio and portfolio.oral_answers.size > 0)
   %td= link_to(portfolio.portfolio_name, show_portfolio_url(:portfolio_url => portfolio.url))
-  %td= has_answers ? activity_sparkline_tag(portfolio) : ''
+  - # %td= has_answers ? activity_sparkline_tag(portfolio) : ''
   %td.count= has_answers ? portfolio.questions_asked_count : ''
