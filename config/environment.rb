@@ -62,6 +62,9 @@ Rails::Initializer.run do |config|
     :authentication => :login
   }
 
+  if RAILS_ENV == 'production'
+    config.load_paths += [ '/home/x/opt/my_ruby_modules' ]
+  end
 end
 
 require 'htmlentities'
