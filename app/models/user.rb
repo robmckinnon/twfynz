@@ -1,4 +1,6 @@
 require 'digest/sha1'
+require 'rubygems'
+require 'has_many_polymorphs'
 
 class User < ActiveRecord::Base
 
