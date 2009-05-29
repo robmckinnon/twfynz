@@ -15,7 +15,7 @@ Rails::Initializer.run do |config|
   # config.gem 'htmlentities'
   # # config.gem 'morph'
   # config.gem 'rugalytics'
-  config.gem 'twitter', :version => '~> 0.2.7'
+  # config.gem 'twitter', :version => '~> 0.2.7'
   # config.gem 'ar-extensions'
   # config.gem 'will_paginate'
   # config.gem 'color'
