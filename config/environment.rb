@@ -68,6 +68,7 @@ Rails::Initializer.run do |config|
 end
 
 require 'htmlentities'
+require 'has_many_polymorphs'
 require 'acts_as_slugged'
 require 'acts_as_wikipedia'
 require 'string_extensions_for_maori'
