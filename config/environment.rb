@@ -6,19 +6,19 @@ Rails::Initializer.run do |config|
 
   config.frameworks -= [ :active_resource ]
 
-  config.gem 'ar_fixtures'
-  config.gem 'css_graphs'
+  # config.gem 'ar_fixtures'
+  # config.gem 'css_graphs'
   # config.gem 'haml'
   # config.gem 'hpricot', :source => 'http://code.whytheluckystiff.net'
-  config.gem 'has_many_polymorphs'
+  # config.gem 'has_many_polymorphs'
   # config.gem 'sparklines'
   # config.gem 'htmlentities'
   # # config.gem 'morph'
-  config.gem 'rugalytics'
+  # config.gem 'rugalytics'
   config.gem 'twitter', :version => '~> 0.2.7'
-  config.gem 'ar-extensions'
-  config.gem 'will_paginate'
-  config.gem 'color'
+  # config.gem 'ar-extensions'
+  # config.gem 'will_paginate'
+  # config.gem 'color'
 
   # Only load the plugins named here, by default all plugins in vendor/plugins are loaded
   # config.plugins = %W( exception_notification ssl_requirement )
