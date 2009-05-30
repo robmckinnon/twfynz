@@ -77,6 +77,7 @@ require 'in_groups_by'
 require 'route_helper'
 require 'sitemap'
 require 'expire_cache'
+require 'twitter'
 
 module Twfynz
   def self.twitter_update message
