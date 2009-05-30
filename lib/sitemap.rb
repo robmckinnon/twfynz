@@ -1,3 +1,5 @@
+require 'zlib'
+
 class SiteMapIndex
   def write_to_file!
     site_map_types = [GeneralSiteMap, PortfoliosSiteMap, BillsSiteMap, MpsSiteMap, PartiesSiteMap, OrganisationsSiteMap]
@@ -66,7 +68,7 @@ class SiteMap
 
   def write_to_file!
     raise "can only write to file once" unless @site_map
-    
+
     Zlib::GzipWriter.open("#{RAILS_ROOT}/#{@location}") do |file|
       puts 'writing: ' + @location
       file.write @site_map
