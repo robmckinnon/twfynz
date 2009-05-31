@@ -9,7 +9,7 @@ namespace :kiwimp do
     if cache_dir
       cmd = "rm #{cache_dir}/views/theyworkforyou.co.nz/index.cache"
       system cmd
-      cmd = "wget http://theyworkforyou.co.nz/"
+      cmd = "wget http://theyworkforyou.co.nz/ ; rm index.html"
       system cmd
     else
       puts 'USAGE: rake kiwimp:rm_index_cache cache_dir=/opt/apps/twfynz/shared/cache'
