@@ -3,4 +3,16 @@ namespace :kiwimp do
     `git submodule init`
     `git submodule update`
   end
+
+  task :rm_index_cache do
+    cache_dir = ENV['cache_dir']
+    if cache_dir
+      cmd = "rm #{cache_dir}/views/theyworkforyou.co.nz/index.cache"
+      system cmd
+      cmd = "wget http://theyworkforyou.co.nz/"
+      system cmd
+    else
+      puts 'USAGE: rake kiwimp:rm_index_cache cache_dir=/opt/apps/twfynz/shared/cache'
+    end
+  end
 end
