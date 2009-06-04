@@ -77,6 +77,8 @@ require 'in_groups_by'
 require 'route_helper'
 require 'sitemap'
 require 'expire_cache'
+require 'color'
+require 'will_paginate'
 # require 'twitter'
 
 module Twfynz
