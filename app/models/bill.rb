@@ -100,6 +100,7 @@ class Bill < ActiveRecord::Base
       bills = send(method, name.gsub('Limited Partnerships Bill be now read a third time and the Taxation (Limited Partnerships) Bill', 'Limited Partnerships Bill')) if bills.empty?
       bills = send(method, name.gsub('Public Transport Amendment Bill', 'Public Transport Management Bill')) if bills.empty?
       bills = send(method, name.gsub('Social Security (Entitlement Cards) Amendment', 'Social Security (Entitlement Cards) Amendment Bill')) if bills.empty?
+      bills = send(method, name.gsub('Parole (Extended Supervision Orders) Bill', 'Parole (Extended Supervision Orders) Amendment Bill')) if bills.empty?
       bills = bills.select {|b| b.royal_assent.nil? || (b.royal_assent > date) }
       bills = bills.select do |b|
         if b.introduction.nil? && b.earliest_date.nil?
