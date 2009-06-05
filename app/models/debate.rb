@@ -634,7 +634,7 @@ class Debate < ActiveRecord::Base
     contributions.collect(&:geonames).flatten.uniq
   end
 
-  CACHE_ROOT = RAILS_ROOT + '/tmp/cache/views/theyworkforyou.co.nz'
+  CACHE_ROOT = RAILS_ROOT + '/../../shared/cache/views/theyworkforyou.co.nz'
 
   def update_bill_events
     if bill = find_related_bill

@@ -1,6 +1,6 @@
 module ExpireCache
 
-  CACHE_ROOT = RAILS_ROOT + '/tmp/cache/views/theyworkforyou.co.nz' unless defined? CACHE_ROOT
+  CACHE_ROOT = RAILS_ROOT + '/../../shared/cache/views/theyworkforyou.co.nz' unless defined? CACHE_ROOT
 
   private
     def uncache sub_path
