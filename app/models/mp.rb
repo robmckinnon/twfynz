@@ -108,7 +108,8 @@ class Mp < ActiveRecord::Base
 
         elsif ((speaker == 'the assistant speaker' or
             speaker == 'the chairperson' or
-            speaker == 'the temporary speaker') and name.include?('('))
+            speaker == 'the temporary speaker' or
+            speaker == 'the temporary chairperson') and name.include?('('))
           sub_name = name.split('(')[1].chop.strip
           mp = Mp.from_name sub_name, date
         end
