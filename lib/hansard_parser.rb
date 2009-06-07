@@ -964,6 +964,9 @@ class HansardParser
           handle_contributions node, debate.sub_debates[index]
         elsif node.name == 'a'
           @page = node['name'].sub('page_','').to_i
+        elsif node.name == 'p' && node['class'] == 'Urgency'
+          procedural = Procedural.new :text => node.inner_html.to_clean_s
+          debate.contributions << procedural
         else
           begin
             text = node.at('text()').to_clean_s
