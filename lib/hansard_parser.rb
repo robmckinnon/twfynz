@@ -962,8 +962,15 @@ class HansardParser
         if node.name == 'div' && node['class'] == 'SubDebate'
           index = index.next
           handle_contributions node, debate.sub_debates[index]
+        elsif node.name == 'a'
+          @page = node['name'].sub('page_','').to_i
         else
-          text = node.at('text()').to_clean_s
+          begin
+            text = node.at('text()').to_clean_s
+          rescue Exception => e
+            puts node.insp
+            raise e
+          end
           if node.name[/^h\d$/] && text == debate.sub_debates[index+1].name
             index = index.next
           elsif !is_date?(text) && text != debate.name
