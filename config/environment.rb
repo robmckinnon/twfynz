@@ -87,3 +87,19 @@ module Twfynz
     twitter.update message
   end
 end
+
+module ActiveSupport
+  module Cache
+    class FileStore < Store
+
+      def write_with_chmod(name, value, options = nil)
+        result = write_without_chmod(name, value, options)
+        system "chmod a+w #{real_file_path(name)}" if result
+        result
+      end
+
+      alias_method_chain :write, :chmod
+    end
+  end
+end
+
