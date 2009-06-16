@@ -1,4 +1,3 @@
-require 'rubygems'
 require 'twitter'
 
 class OrderPaperAlert < ActiveRecord::Base
