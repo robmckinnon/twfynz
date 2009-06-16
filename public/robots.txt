@@ -1,24 +1,24 @@
-User-agent: *
+User-Agent: *
 Disallow: /search/
+Disallow: /debates/contribution_match/
 
-User-agent: BecomeBot
+User-Agent: BecomeBot
 Disallow: /
 
-User-agent: SurveyBot
+User-Agent: SurveyBot
 Disallow: /
 
-User-agent: SurveyBot_IgnoreIP
+User-Agent: SurveyBot_IgnoreIP
 Disallow: /
 
-User-agent: ichiro
+User-Agent: ichiro
 Disallow: /
 
-User-agent: dotbot
+User-Agent: dotbot
 Disallow: /
 
-User-agent: CazoodleBot
+User-Agent: CazoodleBot
 Disallow: /
 
-User-agent: Slurp
-Disallow: /search/
+User-Agent: Slurp
 Crawl-delay: 3

@@ -79,11 +79,11 @@ require 'sitemap'
 require 'expire_cache'
 require 'color'
 require 'will_paginate'
-# require 'twitter'
 
 module Twfynz
   def self.twitter_update message
-    twitter = Twitter::Base.new(twitter_user, twitter_password)
+    httpauth = Twitter::HTTPAuth.new(twitter_user, twitter_password)
+    twitter = Twitter::Base.new(httpauth)
     twitter.update message
   end
 end

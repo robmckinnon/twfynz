@@ -1,4 +1,4 @@
-require 'config/initializers/geoname_config'
+require "#{RAILS_ROOT}/config/initializers/geoname_config"
 
 # Configuration is in: config/initializers/geoname_config.rb
 class Geoname < ActiveRecord::Base
