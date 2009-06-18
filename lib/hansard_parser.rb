@@ -213,7 +213,12 @@ class HansardParser
     end
 
     def part_of_parent_or_subdebate_title? debate, text
-      debate.debate.name.include?(text) || debate.name.include?(text)
+      begin
+        debate.debate.name.include?(text) || debate.name.include?(text)
+      rescue Exception => e
+        puts text
+        raise e
+      end
     end
 
     def speaker_recalled_title? title_h, type, text
