@@ -70,6 +70,9 @@ class ApplicationController < ActionController::Base
     if params[:id] == '48'
       @third_reading_matrix = Vote.third_reading_matrix
       render :template => 'parliaments/48'
+    elsif params[:id] == '49'
+      @third_reading_matrix = Vote.third_reading_matrix
+      render :template => 'parliaments/49'
     else
       render(:text => 'not found', :status => 404)
     end

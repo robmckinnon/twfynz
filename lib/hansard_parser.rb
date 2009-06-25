@@ -748,7 +748,7 @@ class HansardParser
             raise 'unexpected element ' + node.to_s
           end
         elsif (child.text? and child.to_clean_s.strip.size > 0)
-          raise 'unexpected text ' + child.to_clean_s
+          raise 'unexpected text ' + child.to_clean_s + node.to_s
         end
       end
       proceduals
