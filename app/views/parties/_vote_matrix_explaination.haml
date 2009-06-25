@@ -1,4 +1,4 @@
-=render(:partial => 'parties/unscaled_vote_matrix', :object => @third_reading_matrix)
+=render(:partial => "parties/unscaled_vote_matrix_#{@parliament.id}", :object => @third_reading_matrix)
 %p.faa Each number is the percentage of final bill reading votes where two parties voted in the same way.
 
 .divider3

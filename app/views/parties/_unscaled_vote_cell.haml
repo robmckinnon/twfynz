@@ -11,7 +11,10 @@
   - color = Color::RGB.from_html(colour).adjust_brightness(40).lighten_by(40).mix_with(Color::RGB::White, opacity).html
 
 - if percentage == 0
-  %td{:style=>"margin-right: 0; width: 5em; background: #{color}; text-align: center"}
+  - if party != other_party
+    %td{:style=>"margin-right: 0; width: 5em; background: white; text-align: center"}
+  - else
+    %td{:style=>"margin-right: 0; width: 5em; background: #{color}; text-align: center"}
 - else
   - if false
     - color = color.lighten_by(lighten).html # .from_percentage(color_percent, color_percent, color_percent).html
