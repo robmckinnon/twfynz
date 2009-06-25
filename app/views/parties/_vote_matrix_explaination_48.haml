@@ -8,8 +8,10 @@
 %p.faa
   You can see the bills that two parties agreed or disagreed on by <em>clicking on the tables above</em>. There is a page for each two party combination, for example:
   %ul.linklist
-    %li <a href="http://theyworkforyou.co.nz/parties/green/labour">compare Labour and the Green Party</a>
-    %li <a href="http://theyworkforyou.co.nz/parties/maori_party/national">compare National and the Māori Party</a>
+    %li
+      = link_to "compare Labour and the Green Party", compare_parties_by_parliament_url(:parliament_number=>@parliament.id, :name=>'green',:other_name=>'labour')
+    %li
+      = link_to "compare National and the Māori Party", compare_parties_by_parliament_url(:parliament_number=>@parliament.id, :name=>'maori_party',:other_name=>'national')
 %p
 %p.faq Is there an explanation for the patterns in voting?
 %p.faa The Labour Party had the following agreements with other parliamentary parties in the 48th Parliament: a coalition agreement with Progressive; confidence and supply agreements with New Zealand First and with United Future; and a co-operation agreement with the Green Party.

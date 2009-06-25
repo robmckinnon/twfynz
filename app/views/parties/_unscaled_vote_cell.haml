@@ -5,16 +5,15 @@
 - other_party = vote_cell[1]
 - colour = party.short == 'Maori Party' ? Color::RGB::Brown.html : party.colour
 - colour = party.short == 'NZ First' ? Color::RGB::Black.lighten_by(90).html : colour
-- if opacity > 75
+- if percentage == 0 && party != other_party
+  - color = 'white'
+- elsif opacity > 75
   - color = Color::RGB.from_html(colour).adjust_brightness(40).lighten_by(40).mix_with(Color::RGB::White, 100).html
 - else
   - color = Color::RGB.from_html(colour).adjust_brightness(40).lighten_by(40).mix_with(Color::RGB::White, opacity).html
 
-- if percentage == 0
-  - if party != other_party
-    %td{:style=>"margin-right: 0; width: 5em; background: white; text-align: center"}
-  - else
-    %td{:style=>"margin-right: 0; width: 5em; background: #{color}; text-align: center"}
+- if percentage == 0 && party == other_party
+  %td{:style=>"margin-right: 0; width: 5em; background: #{color}; text-align: center"}
 - else
   - if false
     - color = color.lighten_by(lighten).html # .from_percentage(color_percent, color_percent, color_percent).html
