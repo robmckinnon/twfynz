@@ -1,0 +1,36 @@
+=render(:partial => "parties/unscaled_vote_matrix_#{@parliament.id}", :object => @third_reading_matrix)
+%p.faa Each number is the percentage of final bill reading votes where two parties voted in the same way.
+
+.divider3
+%p.faq Can you give me an example to explain the percentage?
+%p.faa For example, if you look at the row for the Green Party, you can see the Green Party and National voted in the same way in 0% of the final bill readings, the Green Party and Labour voted in the same way in 58% of the readings.
+%p.faq Can I see the bills that parties agreed on?
+%p.faa
+  You can see the bills that two parties agreed or disagreed on by <em>clicking on the table above</em>. There is a page for each two party combination, for example:
+  %ul.linklist
+    %li
+      = link_to "compare Labour and National", compare_parties_url(:name=>'labour',:other_name=>'national')
+    %li
+      = link_to "compare the Greens and National", compare_parties_url(:name=>'green',:other_name=>'national')
+%p
+%p.faq Is there an explanation for the patterns in voting?
+%p.faa The Labour Party had the following agreements with other parliamentary parties in the 48th Parliament: a coalition agreement with Progressive; confidence and supply agreements with New Zealand First and with United Future; and a co-operation agreement with the Green Party.
+%p.faq Which bill reading votes are included?
+%p.faa There are 110 final bill reading votes included in the analysis. All the votes are from the 48th New Zealand Parliament which was in term between 7 November 2005 and 3 October 2008.
+%p.faq What did you consider to be a 'final' bill reading vote?
+%p.faa Included in the analysis are 91 bill third reading party votes. If parliament passes a bill's third reading, the bill moves on to receive royal assent and become law. Also included in the analysis are 19 first and second reading party votes where parliament voted against the reading of the bill.
+%p.faq What did you do with personal votes?
+%p.faa There were 4 final bill reading votes that were personal votes of conscience, these were excluded from the analysis.
+%p.faq Did the parties vote on every bill third reading?
+%p.faa Parliament passed over 100 bill third readings without a vote, these were excluded from the analysis.
+%p.faq How do I report a mistake or give feedback?
+%p.faa
+  If you have found an error, or have feedback, please send an email to:
+  %br
+  %img.link{ :alt=>"rob at they work for you dot co dot nz", :src=>"images/e.png" }
+  %br
+  TheyWorkForYou.co.nz is a volunteer project — please be understanding if you spot mistakes. Errors will be corrected as soon as possible.
+%p.faq How can I help?
+%p.faa Please blog, 'tweet', facebook-share and email this party comparison if you find it useful!
+%p.faq What else is on this website?
+= render :partial => 'project_summary'
