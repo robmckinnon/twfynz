@@ -9,7 +9,8 @@ class PartiesController < ApplicationController
     @title = "Parties in Aotearoa New Zealand's Parliament"
     @total_mps_48 = @parties.inject(0) {|count, p| count + p.mp_count(48) }
     @total_mps_49 = @parties.inject(0) {|count, p| count + p.mp_count(49) }
-    @third_reading_matrix = Vote.third_reading_matrix
+    @parliament = Parliament.latest
+    # @third_reading_matrix = Vote.third_reading_matrix(@parliament.id)
   end
 
   def compare_parties

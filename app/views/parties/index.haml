@@ -1,6 +1,11 @@
 #normalcontent
   %h1 Political Parties
   .contentarea
+    %p#compare_parties
+      = link_to 'Compare party voting', parliament_url(:id => @parliament.id)
+      in the
+      = @parliament.ordinal
+      Parliament.
     %table
       %thead
         %th
@@ -18,4 +23,5 @@
           %td TOTAL MPS
           %td.count= @total_mps_48
           %td.count= @total_mps_49
+
 

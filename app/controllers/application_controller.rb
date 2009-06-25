@@ -70,7 +70,7 @@ class ApplicationController < ActionController::Base
   def parliament
     if @parliament = Parliament.find(params[:id])
       @third_reading_matrix = Vote.third_reading_matrix(@parliament.id)
-      render :template => "parliaments/#{@parliament.id}"
+      render :template => "parliaments/#{@parliament.id}", :layout => 'parties_layout'
     else
       render(:text => 'not found', :status => 404)
     end
