@@ -76,6 +76,18 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def third_reading_and_negatived_votes_by_parliament
+    @parliament = Parliament.find(params[:id])
+    if @parliament
+      respond_to do |format|
+        header = %Q|"#{Vote.third_reading_and_negatived_votes(@parliament.id).collect(&:bill).collect(&:bill_name).join('","')}"|
+        format.csv { render :text => header + "\n" + Vote.vote_vectors(@parliament.id).collect(&:to_s).join("\n") }
+      end
+    else
+      render(:text => 'not found', :status => 404)
+    end
+  end
+
   def about
     render :template => 'about'
   end
@@ -148,6 +160,12 @@ class ApplicationController < ActionController::Base
 
   def admin?
     current_user && current_user.login == 'rob'
+  end
+
+  def format_date date
+    text = date.strftime "%d %b %Y"
+    text = text[1..(text.size-1)] if text.size > 0 and text[0..0] == '0'
+    text
   end
 
   private

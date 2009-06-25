@@ -74,9 +74,16 @@ class PartiesController < ApplicationController
   end
 
   def third_reading_and_negatived_votes
-    respond_to do |format|
-      header = %Q|"#{Vote.third_reading_and_negatived_votes.collect(&:bill).collect(&:bill_name).join('","')}"|
-      format.csv { render :text => header + "\n" + Vote.vote_vectors.collect(&:to_s).join("\n") }
+    @title = 'Bill third reading and negatived votes data'
+    text = []
+    Parliament.find_each do |parliament|
+      html = "<a href='#{third_reading_and_negatived_votes_by_parliament_url(:id=>parliament.id, :format=>'csv')}'>#{parliament.ordinal} Parliament bill votes CSV</a>"
+      html += " (#{format_date(parliament.commission_opening_date)} - "
+      html += "#{parliament.dissolution_date ? format_date(parliament.dissolution_date) : format_date(Date.today)}"
+      html += ")"
+      text << html
     end
+    render :text => "<h1>#{@title}</h1><p>#{text.join('</p><p>')}</p>", :layout => 'parties_layout'
+    # redirect_to third_reading_and_negatived_votes_by_parliament_url(:id => Parliament.latest.id)
   end
 end

@@ -35,9 +35,9 @@ class Vote < ActiveRecord::Base
       end
     end
 
-    def vote_vectors
+    def vote_vectors parliament_number
       parties = Party.party_list
-      votes = third_reading_and_negatived_votes
+      votes = third_reading_and_negatived_votes(parliament_number)
       vectors = []
       parties.each do |party|
         values = [party.short]

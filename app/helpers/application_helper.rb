@@ -61,7 +61,7 @@ module ApplicationHelper
     d
   end
 
- def inside_layout(layout, &block)
+  def inside_layout(layout, &block)
     @template.instance_variable_set("@content_for_layout", capture(&block))
 
     layout = layout.include?("/") ? layout : "layouts/#{layout}" if layout
