@@ -167,8 +167,8 @@ class Party < ActiveRecord::Base
     votes_together.keys.sort_by(&:bill_name)
   end
 
-  def votes_comparison other_party
-    votes = Vote.third_reading_and_negatived_votes
+  def votes_comparison other_party, parliament_number
+    votes = Vote.third_reading_and_negatived_votes(parliament_number)
 
     ayes_ayes = []
     noes_noes = []

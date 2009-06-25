@@ -106,8 +106,8 @@ class Vote < ActiveRecord::Base
       end
     end
 
-    def third_reading_matrix cast=nil
-      votes = third_reading_and_negatived_votes
+    def third_reading_matrix parliament_number, cast=nil
+      votes = third_reading_and_negatived_votes parliament_number
       matrix = Party.party_matrix
       add_to_matrix matrix, votes, :ayes_cast if !cast || cast == :ayes
       add_to_matrix matrix, votes, :noes_cast if !cast || cast == :noes
@@ -130,20 +130,21 @@ class Vote < ActiveRecord::Base
       matrix
     end
 
-    def third_reading_and_negatived_votes
-      @third_reading_and_negatived_votes ||= third_reading_votes + negatived_party_votes
+    def third_reading_and_negatived_votes parliament_number
+      @third_reading_and_negatived_votes ||= third_reading_votes(parliament_number) + negatived_party_votes(parliament_number)
       @third_reading_and_negatived_votes
     end
 
-    def negatived_party_votes
+    def negatived_party_votes parliament_number
       negatived_bills = Bill.find_all_negatived
       last_debate_votes = negatived_bills.collect{|b| b.debates.sort_by(&:date).last.votes.last}.compact
-      last_debate_votes.select{|v| v.type == 'PartyVote'}
+      last_debate_votes.select{|v| v.type == 'PartyVote' && Parliament.date_within?(parliament_number, v.debate.date) }
     end
 
-    def third_reading_votes
+    def third_reading_votes parliament_number
       votes = find(:all, :conditions => 'vote_question like "%third%"', :include => [{:vote_casts => :party}, {:contribution => :spoken_in}])
       remove_duplicates(votes)
+      votes.select{|v| Parliament.date_within?(parliament_number, v.debate.date)}
     end
 
     def all_unique

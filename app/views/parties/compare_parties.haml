@@ -7,49 +7,55 @@
     = @other_party.display_name
     compared
   %p
-    In the 48th Parliament:
-  %p.tab
-    = @party.display_name
-    and
-    = @other_party.display_name
-    voted in the
-    = link_to("same way on #{number_to_percentage(@voted_same_way_percent, :precision=>0)}", '#voted_same_way')
-    of final bill readings
-    = " (#{@voted_same_way_count} out of #{@total_count})"
-  %p.tab
-    = @party.display_name
-    and
-    = @other_party.display_name
-    voted in a
-    = link_to("different way on #{number_to_percentage(@voted_different_way_percent, :precision=>0)}", '#voted_different_way')
-    of final bill readings
-    = " (#{@voted_different_way_count} out of #{@total_count})"
+    In the
+    = @parliament.ordinal
+    Parliament:
+  - unless @voted_same_way_count == 0
+    %p.tab
+      = @party.display_name
+      and
+      = @other_party.display_name
+      voted in the
+      = link_to("same way on #{number_to_percentage(@voted_same_way_percent, :precision=>0)}", '#voted_same_way')
+      of final bill readings
+      = " (#{@voted_same_way_count} out of #{@total_count})"
+  - unless @voted_different_way_count == 0
+    %p.tab
+      = @party.display_name
+      and
+      = @other_party.display_name
+      voted in a
+      = link_to("different way on #{number_to_percentage(@voted_different_way_percent, :precision=>0)}", '#voted_different_way')
+      of final bill readings
+      = " (#{@voted_different_way_count} out of #{@total_count})"
   .divider3
   %p
     Bolded bill links below represent bills that passed their third reading.
     See other
-    = link_to("parties compared", home_url+'#compare_parties') + '.'
-  .divider3
-  %h2#voted_same_way
-    = "Voted in same way on #{@voted_same_way_count} final bill readings"
-  = render :partial => 'bill_votes', :locals => {:party_vote=>'aye', :other_party_vote=>'aye', :party_vote2=>'no', :other_party_vote2=>'no', :votes=>@aye_votes_together, :votes2=>@noe_votes_together}
-  - if @abstentions_abstentions.size > 0 || @novote_novote.size > 0
-    = render :partial => 'bill_votes', :locals => {:party_vote=>'abstention', :other_party_vote=>'abstention', :party_vote2=>'no vote', :votes=>@abstentions_abstentions, :votes2=>@novote_novote}
-  .divider3
-  %h2#voted_different_way
-    = "Voted in a different way on #{@voted_different_way_count} final bill readings"
-  = render :partial => 'bill_votes', :locals => {:party_vote=>'aye', :other_party_vote=>'no', :party_vote2=>'no', :other_party_vote2=>'aye', :votes=>@ayes_noes, :votes2=>@noes_ayes}
-  - if @ayes_abstentions.size > 0 || @noes_abstentions.size > 0
-    = render :partial => 'bill_votes', :locals => {:party_vote=>'aye', :other_party_vote=>'abstention', :party_vote2=>'no', :other_party_vote2=>'abstention', :votes=>@ayes_abstentions, :votes2=>@noes_abstentions}
-  - if @abstentions_ayes.size > 0 || @abstentions_noes.size > 0
-    = render :partial => 'bill_votes', :locals => {:party_vote=>'abstention', :other_party_vote=>'aye', :party_vote2=>'abstention', :other_party_vote2=>'no', :votes=>@abstentions_ayes, :votes2=>@abstentions_noes}
-  - if @ayes_novote.size > 0 || @noes_novote.size > 0
-    = render :partial => 'bill_votes', :locals => {:party_vote=>'aye', :other_party_vote=>'no vote', :party_vote2=>'no', :other_party_vote2=>'no vote', :votes=>@ayes_novote, :votes2=>@noes_novote}
-  - if @novote_ayes.size > 0 || @novote_noes.size > 0
-    = render :partial => 'bill_votes', :locals => {:party_vote=>'no vote', :other_party_vote=>'aye', :party_vote2=>'no vote', :other_party_vote2=>'no', :votes=>@novote_ayes, :votes2=>@novote_noes}
-  - if @abstentions_novote.size > 0 || @novote_abstentions.size > 0
-    = render :partial => 'bill_votes', :locals => {:party_vote=>'abstention', :other_party_vote=>'no vote', :party_vote2=>'no vote', :other_party_vote2=>'abstention', :votes=>@abstentions_novote, :votes2=>@novote_abstentions}
+    = link_to("parties compared", parliament_url(:id => @parliament.id)) + '.'
+  - unless @voted_same_way_count == 0
+    .divider3
+    %h2#voted_same_way
+      = "Voted in same way on #{@voted_same_way_count} final bill readings"
+    = render :partial => 'bill_votes', :locals => {:party_vote=>'aye', :other_party_vote=>'aye', :party_vote2=>'no', :other_party_vote2=>'no', :votes=>@aye_votes_together, :votes2=>@noe_votes_together}
+    - if @abstentions_abstentions.size > 0 || @novote_novote.size > 0
+      = render :partial => 'bill_votes', :locals => {:party_vote=>'abstention', :other_party_vote=>'abstention', :party_vote2=>'no vote', :votes=>@abstentions_abstentions, :votes2=>@novote_novote}
+  - unless @voted_different_way_count == 0
+    .divider3
+    %h2#voted_different_way
+      = "Voted in a different way on #{@voted_different_way_count} final bill readings"
+    = render :partial => 'bill_votes', :locals => {:party_vote=>'aye', :other_party_vote=>'no', :party_vote2=>'no', :other_party_vote2=>'aye', :votes=>@ayes_noes, :votes2=>@noes_ayes}
+    - if @ayes_abstentions.size > 0 || @noes_abstentions.size > 0
+      = render :partial => 'bill_votes', :locals => {:party_vote=>'aye', :other_party_vote=>'abstention', :party_vote2=>'no', :other_party_vote2=>'abstention', :votes=>@ayes_abstentions, :votes2=>@noes_abstentions}
+    - if @abstentions_ayes.size > 0 || @abstentions_noes.size > 0
+      = render :partial => 'bill_votes', :locals => {:party_vote=>'abstention', :other_party_vote=>'aye', :party_vote2=>'abstention', :other_party_vote2=>'no', :votes=>@abstentions_ayes, :votes2=>@abstentions_noes}
+    - if @ayes_novote.size > 0 || @noes_novote.size > 0
+      = render :partial => 'bill_votes', :locals => {:party_vote=>'aye', :other_party_vote=>'no vote', :party_vote2=>'no', :other_party_vote2=>'no vote', :votes=>@ayes_novote, :votes2=>@noes_novote}
+    - if @novote_ayes.size > 0 || @novote_noes.size > 0
+      = render :partial => 'bill_votes', :locals => {:party_vote=>'no vote', :other_party_vote=>'aye', :party_vote2=>'no vote', :other_party_vote2=>'no', :votes=>@novote_ayes, :votes2=>@novote_noes}
+    - if @abstentions_novote.size > 0 || @novote_abstentions.size > 0
+      = render :partial => 'bill_votes', :locals => {:party_vote=>'abstention', :other_party_vote=>'no vote', :party_vote2=>'no vote', :other_party_vote2=>'abstention', :votes=>@abstentions_novote, :votes2=>@novote_abstentions}
   %p
     See other
-    = link_to("parties compared", home_url+'#compare_parties') + '.'
+    = link_to("parties compared", parliament_url(:id => @parliament.id)) + '.'
 

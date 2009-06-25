@@ -147,6 +147,7 @@ ActionController::Routing::Routes.draw do |map|
     make_route 'parties/third_reading_and_negatived_votes.:format', party, :third_reading_and_negatived_votes
     make_route 'parties/:name', party
     make_route 'parties/:name/:other_name', party, :compare_parties
+    make_route 'parties/:name/:other_name/:parliament_number', party, :compare_parties_by_parliament
   end
 
   map.resources :trackings, :except => [:index]
