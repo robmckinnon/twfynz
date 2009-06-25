@@ -161,6 +161,10 @@ class Vote < ActiveRecord::Base
     end
   end
 
+  def is_third_reading_vote?
+    vote_question && vote_question[/third/] ? true : false
+  end
+
   def debate
     contribution.debate
   end

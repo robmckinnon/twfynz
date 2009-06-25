@@ -14,15 +14,31 @@
       = link_to "compare the Greens and National", compare_parties_url(:name=>'green',:other_name=>'national')
 %p
 %p.faq Is there an explanation for the patterns in voting?
-%p.faa The Labour Party had the following agreements with other parliamentary parties in the 48th Parliament: a coalition agreement with Progressive; confidence and supply agreements with New Zealand First and with United Future; and a co-operation agreement with the Green Party.
+%p.faa
+  The National Party has the following agreements with other parliamentary parties in the
+  = @parliament.ordinal
+  Parliament: a confidence and supply agreement with ACT; a confidence and supply agreement with the Māori Party; and a confidence and supply agreement with United Future.
 %p.faq Which bill reading votes are included?
-%p.faa There are 110 final bill reading votes included in the analysis. All the votes are from the 48th New Zealand Parliament which was in term between 7 November 2005 and 3 October 2008.
+%p.faa
+  There are
+  = @third_reading_and_negatived_votes.size
+  final bill reading votes included in the analysis. All the votes are from the
+  = @parliament.ordinal
+  New Zealand Parliament which has been in term since
+  = format_date(@parliament.commission_opening_date) + '.'
 %p.faq What did you consider to be a 'final' bill reading vote?
-%p.faa Included in the analysis are 91 bill third reading party votes. If parliament passes a bill's third reading, the bill moves on to receive royal assent and become law. Also included in the analysis are 19 first and second reading party votes where parliament voted against the reading of the bill.
+%p.faa
+  Included in the analysis are
+  = @third_reading_vote_count
+  bill third reading party votes. If parliament passes a bill's third reading, the bill moves on to receive royal assent and become law.
+  - if @negatived_vote_count > 0
+    Also included in the analysis are
+    = @negatived_vote_count
+    first and second reading party votes where parliament voted against the reading of the bill.
 %p.faq What did you do with personal votes?
-%p.faa There were 4 final bill reading votes that were personal votes of conscience, these were excluded from the analysis.
+%p.faa Any final bill reading votes that were personal votes of conscience are excluded from the analysis.
 %p.faq Did the parties vote on every bill third reading?
-%p.faa Parliament passed over 100 bill third readings without a vote, these were excluded from the analysis.
+%p.faa Parliament passes some bill third readings without a vote, these were excluded from the analysis.
 %p.faq How do I report a mistake or give feedback?
 %p.faa
   If you have found an error, or have feedback, please send an email to:
