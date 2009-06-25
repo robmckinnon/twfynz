@@ -1,0 +1,28 @@
+- vote_matrix = unscaled_vote_matrix_49
+%table.votematrix
+  %thead
+    %tr
+      %th
+      %th{:style=>"text-align: center"}= 'National'
+      %th{:style=>"text-align: center"}= 'ACT'
+      %th{:style=>"text-align: center"}= 'United Future'
+      %th{:style=>"text-align: center"}= 'Maori Party'.sub('Maori','Māori')
+      %th{:style=>"text-align: center"}= 'Labour'
+      %th{:style=>"text-align: center"}= 'Progressive'.sub('Progressive','Progres- sive')
+      %th{:style=>"text-align: center"}= 'Green'
+  %tbody
+    - order = [Party.national, Party.act, Party.united_future, Party.maori, Party.labour, Party.progressive, Party.green]
+    - vote_matrix.delete_if{|x| x[0][0] == Party.nz_first}
+    - vote_matrix.sort_by{|r| order.index(r[0][0])}.each do |row|
+      - party = row[0][0]
+      %tr{:style=>"height: 2.5em;"}
+        - %Q|%th{:style=>"width: 6em;"}= row[0][0].short.sub('Maori Party','Māori').sub('Progressive','Progres.').sub('United Future','United F.')|
+        %td= party_logo_small(party)
+        = render :partial => 'parties/unscaled_vote_cell', :object => row.rassoc(Party.national), :locals => {:other_party => Party.national}
+        = render :partial => 'parties/unscaled_vote_cell', :object => row.rassoc(Party.act), :locals => {:other_party => Party.act}
+        = render :partial => 'parties/unscaled_vote_cell', :object => row.rassoc(Party.united_future), :locals => {:other_party => Party.united_future}
+        = render :partial => 'parties/unscaled_vote_cell', :object => row.rassoc(Party.maori), :locals => {:other_party => Party.maori}
+        = render :partial => 'parties/unscaled_vote_cell', :object => row.rassoc(Party.labour), :locals => {:other_party => Party.labour}
+        = render :partial => 'parties/unscaled_vote_cell', :object => row.rassoc(Party.progressive), :locals => {:other_party => Party.progressive}
+        = render :partial => 'parties/unscaled_vote_cell', :object => row.rassoc(Party.green), :locals => {:other_party => Party.green}
+
