@@ -13,7 +13,7 @@ class PartiesController < ApplicationController
   end
 
   def compare_parties
-    params[:parliament_number] = Parliament.maximum('id')
+    params[:parliament_number] = Parliament.latest.id
     compare_parties_by_parliament
   end
 

@@ -4,6 +4,10 @@ class Parliament < ActiveRecord::Base
   belongs_to :commission_opening_debate, :class_name=>'Debate', :foreign_key=>'commission_opening_debate_id'
 
   class << self
+    def latest
+      find(maximum('id'))
+    end
+
     def dissolution_date parliament_id
       @dissolution_dates ||= []
       unless @dissolution_dates[parliament_id]

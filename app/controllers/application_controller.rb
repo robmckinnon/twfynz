@@ -60,7 +60,8 @@ class ApplicationController < ActionController::Base
       @latest_debates = Debate.find_latest_by_status('A')
       @latest_orals = Debate.find_latest_by_status('U')
 
-      @third_reading_matrix = Vote.third_reading_matrix
+      @parliament = Parliament.latest
+      @third_reading_matrix = Vote.third_reading_matrix(@parliament.id)
       @submission_dates = SubmissionDate.find_live_bill_submissions
       render :template => 'home'
     end

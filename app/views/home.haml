@@ -8,8 +8,10 @@
     =render :partial => 'project_summary'
   %p#compare_parties
     You can also
-    = link_to 'compare party voting', {:controller=>'application', :action=>'parliament', :id=>48}
-    in the 48th Parliament.
+    = link_to 'compare party voting', parliament_url(:id => @parliament.id)
+    in the
+    = @parliament.ordinal
+    Parliament.
 #primarycontainer
   #primarycontent
   - unless @submission_dates.nil? || @submission_dates.empty?
