@@ -317,7 +317,11 @@ class PersistedFile < ActiveRecord::Base
   end
 
   def storage_name
-    PersistedFile.storage_path + name
+    if name
+      PersistedFile.storage_path + name
+    else
+      PersistedFile.data_path + file_name
+    end
   end
 
   def make_file_path
