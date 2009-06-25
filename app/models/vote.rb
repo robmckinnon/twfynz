@@ -179,7 +179,7 @@ class Vote < ActiveRecord::Base
     if vote_question[/That the (.+) be now read a third time/] && !$1.include?('Bill, ') && !$1.include?('Bill and')
       $1
     else
-      bill ? bill.bill_name : ('no bill ' + vote.debate.date.to_s + ' ' + vote.bill_names)
+      bill ? bill.bill_name : ('no bill ' + debate.date.to_s + ' ' + bill_names)
     end
   end
 
