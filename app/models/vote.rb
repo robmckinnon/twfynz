@@ -131,8 +131,9 @@ class Vote < ActiveRecord::Base
     end
 
     def third_reading_and_negatived_votes parliament_number
-      @third_reading_and_negatived_votes ||= third_reading_votes(parliament_number) + negatived_party_votes(parliament_number)
-      @third_reading_and_negatived_votes
+      @third_reading_and_negatived_votes ||= {}
+      @third_reading_and_negatived_votes[parliament_number] ||= third_reading_votes(parliament_number) + negatived_party_votes(parliament_number)
+      @third_reading_and_negatived_votes[parliament_number]
     end
 
     def negatived_party_votes parliament_number
