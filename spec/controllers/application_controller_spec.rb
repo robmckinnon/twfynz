@@ -80,6 +80,7 @@ describe ApplicationController do
 
   describe 'host is theyworkforyou.co.nz' do
     before do
+      Parliament.stub!(:latest).and_return mock(Parliament, :ordinal=>'48th')
       controller.stub!(:is_parlywords_request?).and_return false
     end
     describe 'when asked for home' do
