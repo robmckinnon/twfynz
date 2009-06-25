@@ -20,7 +20,9 @@
   %td{:style=>"margin-right: 0; width: 5.2em; background: #{color}; text-align: center;"}
     - text = number_to_percentage(percentage, :precision => 0)
     - url = show_party_url(:name => party.url_name)
-    - url += '/'+other_party.url_name if party != other_party
+    - if party != other_party
+      - url += "/#{other_party.url_name}"
+      - url += "/#{@parliament.id.to_s}" if @parliament
     - class_name = (percentage > 75 ? 'high_vote_correlation' : percentage > 50 ? 'moderate_vote_correlation' : percentage > 25 ? 'low_vote_correlation' : 'minimumal_vote_correlation')
     - desc = "#{party.display_name} and #{other_party.display_name} voted the same way on #{vote_cell[3].size} bills"
     = link_to text, url, :class => class_name, :title => desc
