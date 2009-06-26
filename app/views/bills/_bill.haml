@@ -6,7 +6,7 @@
     %span.bill_name
       = link_to(bill.bill_name, show_bill_url(:bill_url => bill.url))
     %span.royal_assent
-      = bill.royal_assent ? "(#{format_date(bill.royal_assent)})" : ''
+      = bill.royal_assent && !@parliament.date_within?(bill.royal_assent) ? "(#{format_date(bill.royal_assent)})" : ''
   %td= bill.member_in_charge.party ? link_to_party(bill.member_in_charge.party) : 'no party '+ bill.member_in_charge.full_name
   %td= bill_type(bill).chomp(' bill')
   - unless bill.divided_into_bills.empty?
@@ -16,7 +16,7 @@
           %span.bill_name
             = link_to_bill split_bill
           %span.royal_assent
-            = split_bill.royal_assent ? "(#{format_date(split_bill.royal_assent)})" : ''
+            = split_bill.royal_assent && !@parliament.date_within?(split_bill.royal_assent) ? "(#{format_date(split_bill.royal_assent)})" : ''
         %td
         %td
 - else

@@ -5,6 +5,7 @@
   .divider3
   .contentarea
     - @parliaments.each do |parliament|
+      - @parliament = parliament
       %h2= "Assented during #{parliament.ordinal} Parliament"
       %p
         %span= "Bills that received Royal Assent during the #{parliament.ordinal} Parliament."

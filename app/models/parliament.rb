@@ -31,7 +31,9 @@ class Parliament < ActiveRecord::Base
   end
 
   def date_within? date
-    if commission_opening_date && dissolution_date
+    if date.nil?
+      false
+    elsif commission_opening_date && dissolution_date
       if commission_opening_date <= date && date <= dissolution_date
         true
       else
