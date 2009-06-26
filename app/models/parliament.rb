@@ -1,6 +1,7 @@
 class Parliament < ActiveRecord::Base
 
   has_many :members, :include => [:person, :party]
+  has_many :parliament_parties
   belongs_to :commission_opening_debate, :class_name=>'Debate', :foreign_key=>'commission_opening_debate_id'
 
   class << self

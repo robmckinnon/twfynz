@@ -40,13 +40,17 @@ class Vote < ActiveRecord::Base
       votes = third_reading_and_negatived_votes(parliament_number)
       vectors = []
       parties.each do |party|
-        values = [party.short]
-        votes.each do |vote|
-          x, by_party = vote.votes_by_party
-          votes_cast = by_party[party]
-          values << value_for_votes(votes_cast)
+        if parliament_number.to_i == 49 && party == Party.nz_first
+          # ignore
+        else
+          values = [party.short]
+          votes.each do |vote|
+            x, by_party = vote.votes_by_party
+            votes_cast = by_party[party]
+            values << value_for_votes(votes_cast)
+          end
+          vectors << values.join(",")
         end
-        vectors << values.join(",")
       end
       vectors
     end
