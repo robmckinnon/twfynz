@@ -275,6 +275,16 @@ class Mp < ActiveRecord::Base
     uncache "/mps/#{id_name}.cache" if is_file_cache?
   end
 
+  def set_resignation_details parliament_number, resignation_url, valedictory_url, to_what, to_date, replaced_by_id
+    m = members.select{|x| x.parliament_id == parliament_number}.first
+    m.resignation_url = resignation_url if resignation_url
+    m.valedictory_statement_url = valedictory_url if valedictory_url
+    m.to_what = to_what if to_what
+    m.to_date = to_date if to_date
+    m.replaced_by_id = replaced_by_id if replaced_by_id
+    m.save
+  end
+
   private
 
     def oral_answer_debates type, supplementary_type
