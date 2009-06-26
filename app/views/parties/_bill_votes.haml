@@ -32,7 +32,10 @@
             - bill_name = (vote.bill_name || 'no bill ' + vote.debate.date.to_s + vote.bill_names)
             - date = vote.debate.date
             - name = vote.bill_name
-            - bill = Bill.from_name_and_date(name, date)
+            - begin
+              - bill = Bill.from_name_and_date(name, date)
+            - rescue
+              - bill = nil
             - if vote.passed_third_reading?
               %span.assented_bill= bill ? link_to_bill(bill) : bill_name
             - else
@@ -46,7 +49,10 @@
               - bill_name = (vote.bill_name || 'no bill ' + vote.debate.date.to_s + vote.bill_names)
               - date = vote.debate.date
               - name = vote.bill_name
-              - bill = Bill.from_name_and_date(name, date)
+              - begin
+                - bill = Bill.from_name_and_date(name, date)
+              - rescue
+                - bill = nil
               - if vote.passed_third_reading?
                 %span.assented_bill=  bill ? link_to_bill(bill) : bill_name
               - else
