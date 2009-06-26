@@ -39,7 +39,7 @@
       = "Voted in same way on #{@voted_same_way_count} final bill readings"
     = render :partial => 'bill_votes', :locals => {:party_vote=>'aye', :other_party_vote=>'aye', :party_vote2=>'no', :other_party_vote2=>'no', :votes=>@aye_votes_together, :votes2=>@noe_votes_together}
     - if @abstentions_abstentions.size > 0 || @novote_novote.size > 0
-      = render :partial => 'bill_votes', :locals => {:party_vote=>'abstention', :other_party_vote=>'abstention', :party_vote2=>'no vote', :votes=>@abstentions_abstentions, :votes2=>@novote_novote}
+      = render :partial => 'bill_votes', :locals => {:party_vote=>'abstention', :other_party_vote=>'abstention', :party_vote2=>'no vote', :other_party_vote2=>'no vote', :votes=>@abstentions_abstentions, :votes2=>@novote_novote}
   - unless @voted_different_way_count == 0
     .divider3
     %h2#voted_different_way
