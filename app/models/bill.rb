@@ -566,9 +566,9 @@ class Bill < ActiveRecord::Base
     def get_votes_by_name debates_in_groups_by_name
       debates_in_groups_by_name.inject({}) do |by_name, list|
         debate = list.first
-        votes = debate.votes.select { |v| v and v.question.include?('be now read') }
+        votes = debate.votes.select { |v| v && v.question[/be (now )?read/] }
         if votes.empty?
-          votes = debate.votes.select { |v| v and v.result.include?('Bill referred') }
+          votes = debate.votes.select { |v| v && v.result.include?('Bill referred') }
         else
           contributions = debate.contributions
           if (contributions.last and contributions.last.is_vote?)
