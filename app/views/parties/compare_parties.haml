@@ -1,5 +1,5 @@
-- @title = %Q[#{@party.display_name} vs #{@other_party.display_name}: Aotearoa New Zealand's Parliament]
-- @description = %Q[#{@party.display_name} and #{@other_party.display_name} compared]
+- @title = %Q[#{@party.display_name} vs #{@other_party.display_name}: #{@parliament.ordinal} New Zealand Parliament]
+- @description = %Q[Comaparison of bill voting by #{@party.display_name} and #{@other_party.display_name} in the #{@parliament.ordinal} New Zealand Parliament]
 #normalcontent
   %h1
     = @party.display_name

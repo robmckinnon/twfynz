@@ -1,18 +1,24 @@
-- @title = "Bills: Aotearoa New Zealand's Parliament "
+- @title = "Assented Bills: Aotearoa New Zealand's Parliament"
+- @description = "Bills assented during 48th and 49th New Zealand Parliaments"
 #normalcontent
   %h1 Assented Bills
   .divider3
   .contentarea
-    %p
-      %span Bills that received Royal Assent during the 48th Parliament.
-      %span.right= %Q[See also: #{ link_to ('Negatived Bills', negatived_url) } | #{ link_to ('Current Bills', bills_url) }]
-    %p= render(:partial => 'bill_group_link', :collection => @letter_to_assented.keys.sort, :locals => {:prefix => ''})
-    %table
-      %tr
-        %th Bill name
-        %th Party of MP in charge
-        %th Bill type
-      = render(:partial => 'bill_group', :collection => @letter_to_assented.keys.sort, :locals => {:letter_to_bills => @letter_to_assented, :bills => @bills_assented, :prefix => '', :first => @letter_to_assented.keys.sort[0]})
-    .divider3
+    - @parliaments.each do |parliament|
+      %h2= "Assented during #{parliament.ordinal} Parliament"
+      %p
+        %span= "Bills that received Royal Assent during the #{parliament.ordinal} Parliament."
+        %span.right= %Q[See also: #{ link_to ('Negatived Bills', negatived_url) } | #{ link_to ('Current Bills', bills_url) }]
+      - letter_to_assented = @letter_to_assented_by_parliament.assoc(parliament)[1]
+      - letters = letter_to_assented.keys.sort
+      - bills_assented = @bills_assented_by_parliament.assoc(parliament)[1]
+      %p= render(:partial => 'bill_group_link', :collection => letters, :locals => {:prefix => ''})
+      %table
+        %tr
+          %th Bill name
+          %th Party of MP in charge
+          %th Bill type
+        = render(:partial => 'bill_group', :collection => letters, :locals => {:letter_to_bills => letter_to_assented, :bills => bills_assented, :prefix => '', :first => letters[0]})
+      .divider3
     .divider3
     %p= %Q[See also: #{ link_to ('Negatived Bills', negatived_url) } | #{ link_to ('Current Bills', bills_url) }]

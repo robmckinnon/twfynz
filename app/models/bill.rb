@@ -150,10 +150,16 @@ class Bill < ActiveRecord::Base
       find_all_with_debates.select(&:negatived?)
     end
 
-    def find_all_assented
+    def find_all_assented_by_parliament
       assented = find_all_with_debates.select(&:assented?)
-      assented = assented.collect {|b| b.formerly_part_of_id ? b.formerly_part_of : b}.uniq
-      assented
+      by_parliament = []
+      parliaments = Parliament.all.sort_by(&:id).reverse
+      parliaments.each do |parliament|
+        assented_during_parliament = assented.select{|x| parliament.date_within?(x.royal_assent) }
+        assented_during_parliament = assented_during_parliament.collect {|b| b.formerly_part_of_id ? b.formerly_part_of : b}.uniq
+        by_parliament << [parliament, assented_during_parliament]
+      end
+      by_parliament
     end
 
     def sort_events_by_date events

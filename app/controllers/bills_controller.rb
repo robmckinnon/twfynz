@@ -25,8 +25,15 @@ class BillsController < ApplicationController
 
   def assented
     @bills_on = true
-    @bills_assented = Bill.find_all_assented.group_by(&:url)
-    @letter_to_assented = @bills_assented.keys.group_by {|b| b[0..0]}
+    assented_by_parliament = Bill.find_all_assented_by_parliament
+    @letter_to_assented_by_parliament = []
+    @bills_assented_by_parliament = assented_by_parliament.collect do |by_parliament|
+      parliament = by_parliament[0]
+      grouped_by_url = by_parliament[1].group_by(&:url)
+      @letter_to_assented_by_parliament << [parliament, grouped_by_url.keys.group_by {|b| b[0..0]}]
+      [parliament, grouped_by_url]
+    end
+    @parliaments = @bills_assented_by_parliament.collect{|x| x[0]}
   end
 
   def show_bill_submissions
