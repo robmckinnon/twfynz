@@ -17,8 +17,7 @@
           = link_to('Resigned from Parliament', @former_member_role.resignation_url)
           = " with effect on "
           - if @former_member_role.valedictory_statement_url
-            = @former_member_role.to_date.as_date
-            ", and gave "
+            = @former_member_role.to_date.as_date + ", and gave "
             = link_to("valedictory statement", @former_member_role.valedictory_statement_url)
             - if @former_member_role.to_date == @former_member_role.valedictory_statement_date
               = ' on the same day.'
