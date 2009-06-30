@@ -3,8 +3,8 @@ class ParliamentParty < ActiveRecord::Base
   belongs_to :parliament
 
   def populate_party_vote_counts
-    self.bill_final_reading_party_votes_count = party.bill_third_reading_and_negatived_votes.size
-    self.party_votes_count = party.party_votes.size
+    self.bill_final_reading_party_votes_count = party.bill_third_reading_and_negatived_votes(parliament_id).size
+    self.party_votes_count = party.party_votes(parliament_id).size
   end
 
 end

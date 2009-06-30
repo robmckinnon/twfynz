@@ -87,22 +87,24 @@ class Party < ActiveRecord::Base
     end
   end
 
-  def bill_third_reading_and_negatived_votes
-    @bill_third_reading_and_negatived_votes ||= Set.new(party_votes).&(Vote.third_reading_and_negatived_votes).to_a
+  def bill_third_reading_and_negatived_votes parliament_number
+    third_reading_and_negatived = Vote.third_reading_and_negatived_votes(parliament_number)
+    @bill_third_reading_and_negatived_votes ||= Set.new(party_votes(parliament_number)).&(third_reading_and_negatived).to_a
     @bill_third_reading_and_negatived_votes
   end
 
-  def split_bill_third_reading_and_negatived_votes
-    bill_third_reading_and_negatived_votes.select {|p| p.noes_by_party[1].key?(self) && p.ayes_by_party[1].key?(self)}
+  def split_bill_third_reading_and_negatived_votes parliament_number
+    votes = bill_third_reading_and_negatived_votes(parliament_number)
+    votes.select {|p| p.noes_by_party[1].key?(self) && p.ayes_by_party[1].key?(self)}
   end
 
-  def party_votes
-    @party_votes ||= Vote.remove_duplicates( votes )
+  def party_votes parliament_number
+    @party_votes ||= Vote.remove_duplicates( votes ).select{|v| Parliament.date_within?(parliament_number, v.debate.date)}
     @party_votes
   end
 
-  def split_party_votes
-    party_votes.select {|p| p.noes_by_party[1].key?(self) && p.ayes_by_party[1].key?(self)}
+  def split_party_votes parliament_number
+    party_votes(parliament_number).select {|p| p.noes_by_party[1].key?(self) && p.ayes_by_party[1].key?(self)}
   end
 
   def compare_with other, another
