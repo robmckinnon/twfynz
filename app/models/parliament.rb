@@ -47,10 +47,4 @@ class Parliament < ActiveRecord::Base
     end
   end
 
-  def populate_48th_members
-    Member.find(:all, :conditions=>'from_date >= "2005-11-07"').each do |m|
-      m.parliament_id = 48
-      m.save
-    end
-  end
 end

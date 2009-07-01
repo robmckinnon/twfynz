@@ -87,6 +87,11 @@ class Party < ActiveRecord::Base
     end
   end
 
+  def member_count_on_date date
+    @member_count_on_date ||= members.select {|m| m.is_active_on(date)}.size
+    @member_count_on_date
+  end
+
   def bill_third_reading_and_negatived_votes parliament_number
     third_reading_and_negatived = Vote.third_reading_and_negatived_votes(parliament_number)
     @bill_third_reading_and_negatived_votes ||= Set.new(party_votes(parliament_number)).&(third_reading_and_negatived).to_a
@@ -176,6 +181,7 @@ class Party < ActiveRecord::Base
     noes_noes = []
     abstentions_abstentions = []
     novote_novote = []
+    bothways_bothways = []
 
     ayes_noes = []
     noes_ayes = []
@@ -186,20 +192,40 @@ class Party < ActiveRecord::Base
     ayes_novote = []
     noes_novote = []
 
+    ayes_bothways = []
+    noes_bothways = []
+
     abstentions_ayes = []
     abstentions_noes = []
     abstentions_novote = []
+    abstentions_bothways = []
 
     novote_ayes = []
     novote_noes = []
     novote_abstentions = []
+    novote_bothways = []
+
+    bothways_ayes = []
+    bothways_noes = []
+    bothways_abstentions = []
+    bothways_novote = []
 
     votes.each do |vote|
       ayes = vote.ayes_cast_by_party
       noes = vote.noes_cast_by_party
       abstentions = vote.abstentions_cast_by_party
 
-      if ayes.key?(self) && ayes.key?(other_party)
+      if (ayes.key?(self) && noes.key?(self)) && (ayes.key?(other_party) && noes.key?(other_party))
+        bothways_bothways << vote
+      elsif (ayes.key?(self) && noes.key?(self)) && ayes.key?(other_party)
+        bothways_ayes << vote
+      elsif ayes.key?(self) && (ayes.key?(other_party) && noes.key?(other_party))
+        ayes_bothways << vote
+      elsif (ayes.key?(self) && noes.key?(self)) && noes.key?(other_party)
+        bothways_noes << vote
+      elsif noes.key?(self) && (ayes.key?(other_party) && noes.key?(other_party))
+        noes_bothways << vote
+      elsif ayes.key?(self) && ayes.key?(other_party)
         ayes_ayes << vote
       elsif noes.key?(self) && noes.key?(other_party)
         noes_noes << vote
@@ -209,6 +235,10 @@ class Party < ActiveRecord::Base
         noes_ayes << vote
       elsif noes.key?(self) && noes.key?(other_party)
         noes_noes << vote
+      elsif (ayes.key?(self) && noes.key?(self)) && abstentions.key?(other_party)
+        bothways_abstentions << vote
+      elsif abstentions.key?(self) && (ayes.key?(other_party) && noes.key?(other_party))
+        abstentions_bothways << vote
       elsif abstentions.key?(self) && abstentions.key?(other_party)
         abstentions_abstentions << vote
       elsif ayes.key?(self) && abstentions.key?(other_party)
@@ -220,7 +250,9 @@ class Party < ActiveRecord::Base
       elsif abstentions.key?(self) && noes.key?(other_party)
         abstentions_noes << vote
       elsif !ayes.key?(self) && !noes.key?(self) && !abstentions.key?(self)
-        if ayes.key?(other_party)
+        if (ayes.key?(other_party) && noes.key?(other_party))
+          novote_bothways << vote
+        elsif ayes.key?(other_party)
           novote_ayes << vote
         elsif noes.key?(other_party)
           novote_noes << vote
@@ -230,7 +262,9 @@ class Party < ActiveRecord::Base
           novote_novote << vote
         end
       elsif !ayes.key?(other_party) && !noes.key?(other_party) && !abstentions.key?(other_party)
-        if ayes.key?(self)
+        if (ayes.key?(self) && noes.key?(self))
+          bothways_novote << vote
+        elsif ayes.key?(self)
           ayes_novote << vote
         elsif noes.key?(self)
           noes_novote << vote
@@ -251,7 +285,17 @@ class Party < ActiveRecord::Base
     abstentions_novote.sort_by(&:bill_name),
     novote_ayes.sort_by(&:bill_name),
     novote_noes.sort_by(&:bill_name),
-    novote_abstentions.sort_by(&:bill_name)
+    novote_abstentions.sort_by(&:bill_name),
+
+    bothways_bothways.sort_by(&:bill_name),
+    ayes_bothways.sort_by(&:bill_name),
+    noes_bothways.sort_by(&:bill_name),
+    abstentions_bothways.sort_by(&:bill_name),
+    novote_bothways.sort_by(&:bill_name),
+    bothways_ayes.sort_by(&:bill_name),
+    bothways_noes.sort_by(&:bill_name),
+    bothways_abstentions.sort_by(&:bill_name),
+    bothways_novote.sort_by(&:bill_name)
     ]
   end
 

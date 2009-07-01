@@ -40,6 +40,8 @@
     = render :partial => 'bill_votes', :locals => {:party_vote=>'aye', :other_party_vote=>'aye', :party_vote2=>'no', :other_party_vote2=>'no', :votes=>@aye_votes_together, :votes2=>@noe_votes_together}
     - if @abstentions_abstentions.size > 0 || @novote_novote.size > 0
       = render :partial => 'bill_votes', :locals => {:party_vote=>'abstention', :other_party_vote=>'abstention', :party_vote2=>'no vote', :other_party_vote2=>'no vote', :votes=>@abstentions_abstentions, :votes2=>@novote_novote}
+    - if @bothways_bothways.size > 0
+      = render :partial => 'bill_votes', :locals => {:party_vote=>'bothways', :other_party_vote=>'bothways', :party_vote2=>'', :other_party_vote2=>'', :votes=>@bothways_bothways, :votes2=> nil}
   - unless @voted_different_way_count == 0
     .divider3
     %h2#voted_different_way
@@ -49,10 +51,18 @@
       = render :partial => 'bill_votes', :locals => {:party_vote=>'aye', :other_party_vote=>'abstention', :party_vote2=>'no', :other_party_vote2=>'abstention', :votes=>@ayes_abstentions, :votes2=>@noes_abstentions}
     - if @abstentions_ayes.size > 0 || @abstentions_noes.size > 0
       = render :partial => 'bill_votes', :locals => {:party_vote=>'abstention', :other_party_vote=>'aye', :party_vote2=>'abstention', :other_party_vote2=>'no', :votes=>@abstentions_ayes, :votes2=>@abstentions_noes}
+    - if @ayes_bothways.size > 0 || @noes_bothways.size > 0
+      = render :partial => 'bill_votes', :locals => {:party_vote=>'aye', :other_party_vote=>'both aye and no', :party_vote2=>'no', :other_party_vote2=>'both aye and no', :votes=>@ayes_bothways, :votes2=>@noes_bothways}
+    - if @bothways_ayes.size > 0 || @bothways_noes.size > 0
+      = render :partial => 'bill_votes', :locals => {:party_vote=>'both aye and no', :other_party_vote=>'aye', :party_vote2=>'both aye and no', :other_party_vote2=>'no', :votes=>@bothways_ayes, :votes2=>@bothways_noes}
     - if @ayes_novote.size > 0 || @noes_novote.size > 0
       = render :partial => 'bill_votes', :locals => {:party_vote=>'aye', :other_party_vote=>'no vote', :party_vote2=>'no', :other_party_vote2=>'no vote', :votes=>@ayes_novote, :votes2=>@noes_novote}
     - if @novote_ayes.size > 0 || @novote_noes.size > 0
       = render :partial => 'bill_votes', :locals => {:party_vote=>'no vote', :other_party_vote=>'aye', :party_vote2=>'no vote', :other_party_vote2=>'no', :votes=>@novote_ayes, :votes2=>@novote_noes}
+    - if @bothways_novote.size > 0 || @novote_bothways.size > 0
+      = render :partial => 'bill_votes', :locals => {:party_vote=>'both aye and no', :other_party_vote=>'no vote', :party_vote2=>'no vote', :other_party_vote2=>'both aye and no', :votes=>@bothways_novote, :votes2=>@novote_bothways}
+    - if @abstentions_bothways.size > 0 || @bothways_abstentions.size > 0
+      = render :partial => 'bill_votes', :locals => {:party_vote=>'abstention', :other_party_vote=>'both aye and no', :party_vote2=>'both aye and no', :other_party_vote2=>'abstention', :votes=>@abstentions_bothways, :votes2=>@bothways_abstentions}
     - if @abstentions_novote.size > 0 || @novote_abstentions.size > 0
       = render :partial => 'bill_votes', :locals => {:party_vote=>'abstention', :other_party_vote=>'no vote', :party_vote2=>'no vote', :other_party_vote2=>'abstention', :votes=>@abstentions_novote, :votes2=>@novote_abstentions}
   %p

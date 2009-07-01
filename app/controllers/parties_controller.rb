@@ -29,9 +29,10 @@ class PartiesController < ApplicationController
     if @party && @other_party && @parliament
       # @aye_votes_together = @party.aye_votes_together(@other_party)
       # @noe_votes_together = @party.noe_votes_together(@other_party)
-      @aye_votes_together, @noe_votes_together, @ayes_noes, @noes_ayes, @abstentions_abstentions, @ayes_abstentions, @noes_abstentions, @abstentions_ayes, @abstentions_noes, @novote_novote, @ayes_novote, @noes_novote, @abstentions_novote, @novote_ayes, @novote_noes, @novote_abstentions = @party.votes_comparison(@other_party, parliament_number)
-      @voted_same_way_count = @aye_votes_together.size + @noe_votes_together.size + @abstentions_abstentions.size + @novote_novote.size
-      @voted_different_way_count = @ayes_noes.size + @noes_ayes.size + @ayes_abstentions.size + @noes_abstentions.size + @abstentions_ayes.size + @abstentions_noes.size + @ayes_novote.size + @noes_novote.size + @abstentions_novote.size + @novote_ayes.size + @novote_noes.size + @novote_abstentions.size
+
+      @aye_votes_together, @noe_votes_together, @ayes_noes, @noes_ayes, @abstentions_abstentions, @ayes_abstentions, @noes_abstentions, @abstentions_ayes, @abstentions_noes, @novote_novote, @ayes_novote, @noes_novote, @abstentions_novote, @novote_ayes, @novote_noes, @novote_abstentions, @bothways_bothways, @ayes_bothways, @noes_bothways, @abstentions_bothways, @novote_bothways, @bothways_ayes, @bothways_noes, @bothways_abstentions, @bothways_novote = @party.votes_comparison(@other_party, parliament_number)
+      @voted_same_way_count = @aye_votes_together.size + @noe_votes_together.size + @abstentions_abstentions.size + @novote_novote.size + @bothways_bothways.size
+      @voted_different_way_count = @ayes_noes.size + @noes_ayes.size + @ayes_abstentions.size + @noes_abstentions.size + @abstentions_ayes.size + @abstentions_noes.size + @ayes_novote.size + @noes_novote.size + @abstentions_novote.size + @novote_ayes.size + @novote_noes.size + @novote_abstentions.size + @ayes_bothways.size + @noes_bothways.size + @abstentions_bothways.size + @novote_bothways.size + @bothways_ayes.size + @bothways_noes.size + @bothways_abstentions.size + @bothways_novote.size
       @total_count = @voted_same_way_count + @voted_different_way_count
       @voted_same_way_percent = @voted_same_way_count / @total_count.to_f * 100
       @voted_different_way_percent = @voted_different_way_count / @total_count.to_f * 100

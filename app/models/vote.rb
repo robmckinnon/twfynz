@@ -77,9 +77,19 @@ class Vote < ActiveRecord::Base
                 cell_hash[[party, other_party]] = cell
                 votes.each do |vote|
                   parties_cast = {}
-                  vote.send(cast).collect{ |c| parties_cast[c.party] = true }
+                  vote.send(cast).each do |vote_cast|
+                    parties_cast[vote_cast.party] = vote_cast.cast_count.to_f / vote_cast.party.member_count_on_date(vote_cast.date)
+                  end
                   if voted_same_way(party, other_party, parties_cast)
-                    cell[2] = cell[2].next
+                    proportion_of_party       = parties_cast[party]
+                    proportion_of_other_party = parties_cast[other_party]
+                    went_both_ways = vote.noes_by_party[1].key?(party) && vote.ayes_by_party[1].key?(party)
+                    other_went_both_ways = vote.noes_by_party[1].key?(other_party) && vote.ayes_by_party[1].key?(other_party)
+                    if went_both_ways || other_went_both_ways
+                    else
+                      cell[2] += 1 # [proportion_of_party, proportion_of_other_party].min
+                    end
+                    # logger.info vote.debate.parent.name + ' ' + party.short + '(' + proportion_of_party.to_s + ') ' + other_party.short + '(' + proportion_of_other_party.to_s + ') ' + ' ' + cell[2].to_s
                     cell[3][vote] = true
                   end
                 end
