@@ -46,7 +46,8 @@
     .divider3
     %h2#voted_different_way
       = "Voted in a different way on #{@voted_different_way_count} final bill readings"
-    = render :partial => 'bill_votes', :locals => {:party_vote=>'aye', :other_party_vote=>'no', :party_vote2=>'no', :other_party_vote2=>'aye', :votes=>@ayes_noes, :votes2=>@noes_ayes}
+    - if @ayes_noes.size > 0 || @noes_ayes.size > 0
+      = render :partial => 'bill_votes', :locals => {:party_vote=>'aye', :other_party_vote=>'no', :party_vote2=>'no', :other_party_vote2=>'aye', :votes=>@ayes_noes, :votes2=>@noes_ayes}
     - if @ayes_abstentions.size > 0 || @noes_abstentions.size > 0
       = render :partial => 'bill_votes', :locals => {:party_vote=>'aye', :other_party_vote=>'abstention', :party_vote2=>'no', :other_party_vote2=>'abstention', :votes=>@ayes_abstentions, :votes2=>@noes_abstentions}
     - if @abstentions_ayes.size > 0 || @abstentions_noes.size > 0
