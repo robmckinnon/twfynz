@@ -47,6 +47,7 @@ class DebateAlone < Debate
 
     def populate_url_category category_text
       category_text = 'Members Sworn' if category_text == 'Member Sworn'
+      category_text = 'Maiden Statement' if category_text == 'Maiden Statements'
       unless category_text.blank?
         category = make_slug(category_text) { |candidate_category| nil }
         if Debate::CATEGORIES.include?(category)
