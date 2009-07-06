@@ -38,6 +38,9 @@ class Mp < ActiveRecord::Base
         matching = mps.select {|mp| (mp.last.downcase + ' ' + mp.first.downcase[0..0]) == name_downcase}
         if matching.size == 0
           matching = mps.select {|mp| (mp.last.downcase + mp.first.downcase[0..0]) == name_downcase}
+          if matching.size == 0 && !mp.alt.blank?
+            matching = mps.select {|mp| (mp.last.downcase + ' ' + mp.alt.downcase[0..0]) == name_downcase}
+          end
         end
       end
 
