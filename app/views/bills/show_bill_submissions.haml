@@ -1,6 +1,8 @@
 - @title = 'Submissions: ' + about_title(@bill)
-- @header_title = 'Submissions on ' + link_to_bill(@bill)
+- @header_title = "Submissions on #{link_to_bill(@bill)}"
 #primarycontainer
+  %p
+    = "#{@name_to_submissions.size} submissions in total"
   %table#submissions
     %thead
       %th Submitter
