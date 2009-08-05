@@ -53,7 +53,12 @@ class PersistedFile < ActiveRecord::Base
     end
 
     def load_debates_for_date date, publication_status, sleep_seconds=nil
-      files = unpersisted_files(date, publication_status).sort_by(&:file_name)
+      files = unpersisted_files(date, publication_status)
+      if files.first.index_on_date
+        files = files.sort_by(&:index_on_date)
+      else
+        files = files.sort_by(&:file_name)
+      end
       load_debates_for files, sleep_seconds
     end
 
@@ -211,6 +216,7 @@ class PersistedFile < ActiveRecord::Base
 
         puts "adding #{filename} to persisted_files"
         record.save!
+      else
       end
     end
 
