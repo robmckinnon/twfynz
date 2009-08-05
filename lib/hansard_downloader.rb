@@ -142,6 +142,7 @@ class HansardDownloader
       finished = false
       debates.each do |debate|
         unless finished || ignore_debate?(debate)
+          # puts debate.inner_text
           finished = download_debate(debate)
         end
       end
@@ -154,11 +155,15 @@ class HansardDownloader
       name == 'List of questions for oral answer' ||
           name == 'Daily debates' ||
           name == 'Speeches' ||
-          name.include?('Parliamentary Debates (Hansard)')
+          name.include?('Parliamentary Debates (Hansard)') ||
+          debate_date(debate) == Date.new(2009,5,17) ||
+          debate_date(debate) == Date.new(2009,5,14)
     end
 
     def ignore_old_content date
-      date <= Date.new(2009,2,1) # ignoring older content for now
+      ignore = date <= Date.new(2009,2,1)
+      # puts "ignoring older content for now #{date.to_s}" if ignore
+      ignore
     end
 
     def continue_until_we_find_date date
@@ -211,6 +216,7 @@ class HansardDownloader
       finished = false
 
       if persisted_file.exists?
+        # puts "persisted_file exists #{persisted_file.inspect}"
         PersistedFile.add_if_missing persisted_file
 
       elsif @downloading_uncorrected
@@ -220,15 +226,16 @@ class HansardDownloader
         persisted_file.set_publication_status('advance')
         advance_exists = persisted_file.exists?
 
-        if advance_exists && (!@check_for_final || @download_date)
-          PersistedFile.add_if_missing persisted_file
-        else
+        # if advance_exists && (!@check_for_final || @download_date)
+          # puts 'persisted_file exists'
+          # PersistedFile.add_if_missing persisted_file
+        # else
           if advance_exists
             puts "checking status: #{persisted_file.parliament_url}"
             persisted_file.set_publication_status('final')
           end
           finished = download_this_debate persisted_file
-        end
+        # end
       end
 
       finished
