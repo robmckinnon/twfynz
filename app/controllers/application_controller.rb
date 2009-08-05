@@ -10,8 +10,8 @@ class ApplicationController < ActionController::Base
   before_filter :user_login_flash
   after_filter :user_login_flash
 
-  include CacheableFlash
-  before_filter :write_flash_to_cookie
+  # include CacheableFlash
+  # before_filter :write_flash_to_cookie
 
   # prevent any field that matches /password/ from being logged
   filter_parameter_logging "password"
@@ -19,6 +19,10 @@ class ApplicationController < ActionController::Base
   caches_action :home, :about, :contact, :parliament
 
   layout "application"
+
+  def is_twfynz_request?
+    request.host == 'theyworkforyou.co.nz'
+  end
 
   def is_parlywords_request?
     request.host == 'parlywords.org.nz'
@@ -47,6 +51,8 @@ class ApplicationController < ActionController::Base
     if is_parlywords_request?
       # render :template => 'parlywords', :layout => 'parlywords'
       render :text => 'coming soon', :layout => false
+    elsif !is_twfynz_request?
+      render(:text => 'not found', :status => 404)      
     else
       begin
         @weeks_top_pages = top_content 7
