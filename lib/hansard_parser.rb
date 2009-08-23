@@ -685,7 +685,7 @@ class HansardParser
     def create_oral_answer name, answer_root, number_in_name, debate_index
       if (match = /Question No\.? (\d+) to Minister/.match name)
         re_oral_answer_no = $1
-      elsif (name != 'Question Time' && !name.starts_with?('Question No.') && name != 'Urgent Question—Leave to Ask' && !name.starts_with?('Personal Explanation') )
+      elsif (name != 'Question Time' && !name.starts_with?('Question No.') && name != 'Urgent Question—Leave to Ask' && !name.starts_with?('Personal Explanation') && !name.starts_with?('Urgent Question to Minister') )
         strongs = (answer_root/'.SubsQuestion[1]/strong')
         if strongs.size > 0
           last = strongs.last.at('text()')
@@ -887,7 +887,7 @@ class HansardParser
 
         sibling = headings[1].next_sibling
         while sibling
-          if (sibling.elem? and sibling.name == 'h2')
+          if sibling.elem? && sibling.name == 'h2'
             sub_names << sibling.inner_html.to_clean_s
           end
           sibling = sibling.next_sibling
@@ -940,6 +940,7 @@ class HansardParser
     end
 
     def make_when_sub_debates_not_empty debate_index, type, sub_debates
+      headings = debate_headings(type)
       sub_names = []
       sub_debates.each { |sub_debate| add_sub_heading(sub_debate, sub_names) }
 
