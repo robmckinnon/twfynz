@@ -13,7 +13,7 @@ class PartyVote < Vote
 
     list = Party.party_list
     list.each do |party|
-      (list - party).each do |other_party|
+      (list - [party]).each do |other_party|
         uncache "/parties/#{party.id_name}/#{other_party.id_name}.cache"
       end
     end
