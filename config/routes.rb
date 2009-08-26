@@ -52,6 +52,7 @@ ActionController::Routing::Routes.draw do |map|
     make_route 'search', application
     make_route 'parliaments/:id', application, :parliament
     make_route 'parliaments/:id/third_reading_and_negatived_votes.:format', application, :third_reading_and_negatived_votes_by_parliament
+    make_route 'parliaments/:id/third_reading_and_negatived_votes_for_r.:format', application, :third_reading_and_negatived_votes_by_parliament_for_r
 
     application.with_options(single_date_options) do |single_date|
       make_route single_date_path, single_date, :show_single_date
