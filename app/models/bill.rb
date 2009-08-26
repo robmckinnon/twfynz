@@ -453,10 +453,11 @@ class Bill < ActiveRecord::Base
   end
 
   def have_votes?
-    votes_by_name = votes_in_groups_by_name
+    # votes_by_name = votes_in_groups_by_name
     have_votes = false
     bill_events.each do |bill_event|
-      votes = votes_by_name.blank? ? nil : votes_by_name[bill_event.name]
+      # votes = votes_by_name.blank? ? nil : votes_by_name[bill_event.name]
+      votes = bill_event.votes
       have_votes = (votes && !votes.empty?) || bill_event.is_reading_before_nov_2005?
       break if have_votes
     end

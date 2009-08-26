@@ -190,93 +190,6 @@ module BillsHelper
     strip_tags(text) == 'Motion agreed to.'
   end
 
-  def bill_reading? text
-    strip_tags(text)[/Bills? read a (first|second|third) time\.?/]
-  end
-
-  def result_from_vote bill_event
-    votes = bill_event.votes
-    result = votes.compact.collect do |vote|
-      result = vote.result
-      if bill_reading?(result)
-        result = link_to_contribution(result,vote.contribution)
-      end
-      result
-    end.join('<br /><br />')
-
-    if votes.size == 1
-      debate = bill_event.debates.first
-      contributions = debate.contributions
-      last = contributions.last
-      if last.is_procedural?
-        if motion_agreed_to? last.text
-          result += '<br /><br />' + strip_tags(last.text).chomp('.') + ':<br />'
-          if (contributions.size > 1 and contributions[contributions.size-2].is_speech?)
-            if match = contributions[contributions.size-2].text.match(/That the .*/)
-              result += strip_tags(match[0])
-            end
-          end
-        elsif bill_reading? last.text
-          result += '<br /><br />' + strip_tags(last.text)
-        else
-          result += '<br /><br />' + strip_tags(last.text)
-        end
-      elsif (contributions.size > 1 and contributions[contributions.size-2].is_procedural?)
-        result += '<br /><br />' + strip_tags(contributions[contributions.size-2].text)
-      end
-    end
-
-    result = make_committee_a_link result, bill_event.bill, votes
-    result
-  end
-
-  def result_from_contributions bill_event
-    debate = bill_event.debates.first
-    bill = bill_event.bill
-    if debate.contributions.size == 0
-      ''
-    else
-      contributions = debate.contributions.reverse
-      i = 0
-      statement = contributions[i]
-      results = []
-
-      if motion_agreed_to? statement.text
-        result = strip_tags(statement.text).chomp('.') + ':<br />'
-
-        if (contributions.size > 1 and contributions[1].is_speech?)
-          if match = contributions[1].text.match(/That the .*/)
-            result += strip_tags(match[0]).gsub('</i>','')
-          end
-        end
-
-        if (contributions.size > 2 and contributions[2].is_procedural?)
-          if contributions[2].text.include? 'Bill read'
-            result = strip_tags(contributions[2].text) + '<br /><br />' + result
-          end
-        end
-
-        result.sub!(':<br />','.') if result.ends_with?(':<br />')
-      else
-        while (statement and statement.is_procedural?)
-          text = strip_tags(statement.text)
-          if bill_reading? text
-            results << link_to_contribution(text, statement)
-          else
-            results << text unless statement.text[/(Waiata|Sitting suspended)/]
-          end
-          i = i.next
-          statement = (i != contributions.size) ? contributions[i] : nil
-          statement = nil if (statement and statement.text.include? 'House resumed')
-          statement = nil if (statement and statement.text.gsub('<p>', '').strip[/^(Clause|\[An interpretation)/])
-        end
-        result = results.reverse.flatten.join('<br /><br />')
-      end
-      result = make_committee_a_link result, bill
-      result
-    end
-  end
-
   def introduction bill_event
     bill = bill_event.bill
     intro = mp_in_charge(bill)
@@ -358,11 +271,16 @@ module BillsHelper
       end
     elsif bill_event.has_votes?
       view_bill = bill_event.was_split_at_third_reading? ? split_bill_details(bill_event) : ''
-      result = result_from_vote(bill_event)
+      result = bill_event.result_from_vote self
       result += "<br/><br/>#{view_bill}" unless view_bill.blank?
       result
     else
-      result_from_contributions bill_event
+      result = bill_event.result_from_contributions self
+      if result.blank?
+        bill_event.reading_result_from_contributions self
+      else
+        result
+      end
     end
   end
 
@@ -383,30 +301,7 @@ module BillsHelper
     party
   end
 
-  private
-
-    def make_committee_a_link result, bill, votes=nil
-      if bill
-        committee = bill.referred_to_committee
-        if (committee and result.include?(committee.full_committee_name))
-          name = committee.full_committee_name
-          result.sub!(name, link_to(name, show_committee_url(:committee_url => committee.url) ) )
-        elsif (match = (/the (.* Committee)/.match result))
-          name = match[1]
-          committee = Committee::from_name name
-          if committee
-            if votes
-              votes.each do |vote|
-                if (vote.votes_count > 0 and (vote.ayes_count > vote.noes_count))
-                  bill.referred_to_committee = committee
-                  bill.save
-                end
-              end
-            end
-            result.sub!(name, link_to(name, show_committee_url(:committee_url => committee.url) ) )
-          end
-        end
-      end
-      result
-    end
+  def show_committee_url args
+    super
+  end
 end

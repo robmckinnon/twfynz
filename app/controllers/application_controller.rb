@@ -21,7 +21,9 @@ class ApplicationController < ActionController::Base
   layout "application"
 
   def is_twfynz_request?
-    request.host == 'theyworkforyou.co.nz'
+    request.host == 'theyworkforyou.co.nz' ||
+        (RAILS_ENV == 'development' && request.host == 'localhost') ||
+        (RAILS_ENV == 'test' && request.host == 'test.host')
   end
 
   def is_parlywords_request?
@@ -52,7 +54,7 @@ class ApplicationController < ActionController::Base
       # render :template => 'parlywords', :layout => 'parlywords'
       render :text => 'coming soon', :layout => false
     elsif !is_twfynz_request?
-      render(:text => 'not found', :status => 404)      
+      render(:text => 'not found', :status => 404)
     else
       begin
         @weeks_top_pages = top_content 7
@@ -86,12 +88,45 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def third_reading_and_negatived_votes_by_parliament_for_r
+    @parliament = Parliament.find(params[:id])
+    if @parliament
+      respond_to do |format|
+        votes = Vote.third_reading_and_negatived_votes(@parliament.id)
+        header = %Q|"#{votes.collect(&:bill_name).join('","')}"|
+        vote_vectors = Vote.vote_vectors(@parliament.id)
+        format.csv { render :text => header + "\n" + vote_vectors.collect(&:to_s).join("\n") }
+      end
+    else
+      render(:text => 'not found', :status => 404)
+    end
+  end
+
   def third_reading_and_negatived_votes_by_parliament
     @parliament = Parliament.find(params[:id])
     if @parliament
       respond_to do |format|
-        header = %Q|"#{Vote.third_reading_and_negatived_votes(@parliament.id).collect(&:bill).collect(&:bill_name).join('","')}"|
-        format.csv { render :text => header + "\n" + Vote.vote_vectors(@parliament.id).collect(&:to_s).join("\n") }
+        votes = Vote.third_reading_and_negatived_votes(@parliament.id)
+        bills = votes.collect(&:bill)
+        bill_urls = bills.collect{|x| show_bill_url(x.id_hash)}
+        # parent_bill_names = %Q|"","#{bills.collect(&:bill_name).join('","')}"|
+        # parent_bill_urls = %Q|"","#{bill_urls.join('","')}"|
+        # child_bill_names = %Q|"","#{votes.collect(&:bill_name).join('","')}"|
+        # vote_vectors = Vote.vote_vectors(@parliament.id)
+        # format.csv { render :text => parent_bill_names + "\n" + parent_bill_urls + "\n" + child_bill_names + "\n" + vote_vectors.collect(&:to_s).join("\n") }
+
+        parent_bill_names = [""] + bills.collect{|x| %Q|"#{x.bill_name}"|}
+        parent_bill_urls = [""] + bill_urls
+        child_bill_names = [""] + votes.collect{|x| %Q|"#{x.bill_name}"|}
+        vote_vectors = Vote.vote_vectors(@parliament.id, to_string=false)
+
+        array = [parent_bill_names, parent_bill_urls, child_bill_names]
+
+        vote_vectors.each {|v| array << v}
+
+        csv = array.transpose.collect{|x| x.join(",") }.join("\n")
+
+        format.csv { render :text => csv }
       end
     else
       render(:text => 'not found', :status => 404)

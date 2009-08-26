@@ -79,10 +79,12 @@ class PartiesController < ApplicationController
     @title = 'Bill third reading and negatived votes data'
     text = []
     Parliament.find_each do |parliament|
-      html = "<a href='#{third_reading_and_negatived_votes_by_parliament_url(:id=>parliament.id, :format=>'csv')}'>#{parliament.ordinal} Parliament bill votes CSV</a>"
+      html = "<p><strong>#{parliament.ordinal} Parliament</strong> "
       html += " (#{format_date(parliament.commission_opening_date)} - "
       html += "#{parliament.dissolution_date ? format_date(parliament.dissolution_date) : format_date(Date.today)}"
-      html += ")"
+      html += ")<ul class='linklist'>"
+      html += "<li><a href='#{third_reading_and_negatived_votes_by_parliament_url(:id=>parliament.id, :format=>'csv')}'>#{parliament.ordinal} Parliament bill votes CSV</a></li>"
+      html += "<li><a href='#{third_reading_and_negatived_votes_by_parliament_for_r_url(:id=>parliament.id, :format=>'csv')}'>#{parliament.ordinal} Parliament bill votes CSV formatted for R</a></li></ul></p>"
       text << html
     end
     render :text => "<h1>#{@title}</h1><p>#{text.join('</p><p>')}</p>", :layout => 'parties_layout'

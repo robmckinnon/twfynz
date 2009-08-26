@@ -35,7 +35,7 @@ class Vote < ActiveRecord::Base
       end
     end
 
-    def vote_vectors parliament_number
+    def vote_vectors parliament_number, to_string=true
       parties = Party.party_list
       votes = third_reading_and_negatived_votes(parliament_number)
       vectors = []
@@ -49,7 +49,7 @@ class Vote < ActiveRecord::Base
             votes_cast = by_party[party]
             values << value_for_votes(votes_cast)
           end
-          vectors << values.join(",")
+          vectors << (to_string ? values.join(",") : values)
         end
       end
       vectors
