@@ -107,7 +107,11 @@ class Bill < ActiveRecord::Base
         if b.introduction.nil? && b.earliest_date.nil?
           true
         elsif b.introduction.nil?
-          b.earliest_date <= date ? true : false
+          select = b.earliest_date <= date ? true : false
+          if !select && b.formerly_part_of
+            select = (b.formerly_part_of.earliest_date && b.formerly_part_of.earliest_date <= date) ? true : false
+          end
+          select
         elsif b.earliest_date.nil?
           b.introduction <= date ? true : false
         elsif b.earliest_date <= date || b.introduction <= date
@@ -544,6 +548,7 @@ class Bill < ActiveRecord::Base
     if member_in_charge
       uncache "/mps/#{member_in_charge.id_name}.cache"
     end
+
     uncache "/bills.cache"
     uncache "/bills.atom.atom.cache"
   end
