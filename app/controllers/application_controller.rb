@@ -127,7 +127,7 @@ class ApplicationController < ActionController::Base
         child_bill_names.each_with_index {|x,i| parent_bill_names[i] = '' if (parent_bill_names[i].gsub('(','').gsub(')','').sub(' Bill','').sub(' Amendment','') == x.gsub('(','').gsub(')','').sub(' Bill','').sub(' Amendment','') ) }
 
         dates = ["Party Vote Date"] + votes.collect{|x| x.debate.date}
-        array = [child_bill_names, parent_bill_names, dates, child_bill_urls]
+        array = [parent_bill_names, child_bill_urls, dates, child_bill_names]
 
         vote_vectors.each {|v| array << v}
 
