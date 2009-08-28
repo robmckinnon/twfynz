@@ -124,7 +124,13 @@ class ApplicationController < ActionController::Base
 
         parent_bill_names = ["Formerly part of bill"] + parent_bills.collect{|x| %Q|"#{x.bill_name}"|}
 
-        child_bill_names.each_with_index {|x,i| parent_bill_names[i] = '' if (parent_bill_names[i].gsub('(','').gsub(')','').sub(' Bill','').sub(' Amendment','') == x.gsub('(','').gsub(')','').sub(' Bill','').sub(' Amendment','') ) }
+        child_bill_names.each_with_index do |x,i|
+          if parent_bill_names[i].gsub('(','').gsub(')','').sub(' Bill','').sub(' Amendment','') == x.gsub('(','').gsub(')','').sub(' Bill','').sub(' Amendment','') ||
+            x == 'Public Transport Amendment Bill' ||
+            x == 'Limited Partnerships Bill be now read a third time and the Taxation (Limited Partnerships) Bill'
+            parent_bill_names[i] = ''
+          end
+        end
 
         dates = ["Party Vote Date"] + votes.collect{|x| x.debate.date}
         array = [parent_bill_names, child_bill_urls, dates, child_bill_names]
