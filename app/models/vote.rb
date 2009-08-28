@@ -189,6 +189,10 @@ class Vote < ActiveRecord::Base
     contribution.bill
   end
 
+  def vote_bill
+    Bill.from_name_and_date bill_name, contribution.date
+  end
+
   def bill_name
     if vote_question[/That the (.+) be now read a third time/] && !$1.include?('Bill, ') && !$1.include?('Bill and')
       $1

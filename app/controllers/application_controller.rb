@@ -106,21 +106,28 @@ class ApplicationController < ActionController::Base
     @parliament = Parliament.find(params[:id])
     if @parliament
       respond_to do |format|
-        votes = Vote.third_reading_and_negatived_votes(@parliament.id)
-        bills = votes.collect(&:bill)
-        bill_urls = bills.collect{|x| show_bill_url(x.id_hash)}
+        votes = Vote.third_reading_and_negatived_votes(@parliament.id).sort_by{|x| x.debate.date}
+        parent_bills = votes.collect(&:bill)
         # parent_bill_names = %Q|"","#{bills.collect(&:bill_name).join('","')}"|
         # parent_bill_urls = %Q|"","#{bill_urls.join('","')}"|
         # child_bill_names = %Q|"","#{votes.collect(&:bill_name).join('","')}"|
         # vote_vectors = Vote.vote_vectors(@parliament.id)
         # format.csv { render :text => parent_bill_names + "\n" + parent_bill_urls + "\n" + child_bill_names + "\n" + vote_vectors.collect(&:to_s).join("\n") }
 
-        parent_bill_names = [""] + bills.collect{|x| %Q|"#{x.bill_name}"|}
-        parent_bill_urls = [""] + bill_urls
-        child_bill_names = [""] + votes.collect{|x| %Q|"#{x.bill_name}"|}
+        bills = votes.collect(&:vote_bill)
+        bill_urls = bills.collect{|x| show_bill_url(x.id_hash)}
+
+        child_bill_names = ["Bill name"] + votes.collect{|x| %Q|"#{x.bill_name}"|}
+        child_bill_urls = ["Bill URL"] + bill_urls
+
         vote_vectors = Vote.vote_vectors(@parliament.id, to_string=false)
 
-        array = [parent_bill_names, parent_bill_urls, child_bill_names]
+        parent_bill_names = ["Formerly part of bill"] + parent_bills.collect{|x| %Q|"#{x.bill_name}"|}
+
+        child_bill_names.each_with_index {|x,i| parent_bill_names[i] = '' if (parent_bill_names[i].gsub('(','').gsub(')','').sub(' Bill','').sub(' Amendment','') == x.gsub('(','').gsub(')','').sub(' Bill','').sub(' Amendment','') ) }
+
+        dates = ["Party Vote Date"] + votes.collect{|x| x.debate.date}
+        array = [child_bill_names, parent_bill_names, dates, child_bill_urls]
 
         vote_vectors.each {|v| array << v}
 
