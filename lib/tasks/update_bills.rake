@@ -146,7 +146,7 @@ namespace :kiwimp do
       name = names[i]
       bill_no = refs[i]
       puts ''
-      puts name + ', bill_no: ' + bill_no
+      puts "#{name}, bill_no: #{bill_no}"
 
       # prevent accessing Progress of Legislation page
       proceed = !(url.include? '00HOOOCProgressLegislation1-Progress-of-Legislation.htm')
