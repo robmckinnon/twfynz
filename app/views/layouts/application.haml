@@ -92,6 +92,14 @@
       #menubottom
       - unless (@bill || @home || @organisation)
         = ''
+      %div{ :style => 'color: #eee; padding: 1em 1em 0.7em 1em; background:#373737 none repeat scroll 0 0; position:relative; width:100%; margin-bottom: 2em;' }
+        %p
+          As of January 2010, this website is no longer being kept uptodate.
+          It contains NZ Parliament debates from November 2005 to December 2009.
+          We may resurrect the site in 2011 for the General Election.
+        %p
+          To keep uptodate with parliament, why not try a political blog? We recommend:
+          = link_to 'No Right Turn', 'http://norightturn.blogspot.com/'
       #content
         = @content_for_layout
       #footer
