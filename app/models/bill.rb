@@ -1,3 +1,4 @@
+# coding:utf-8
 class Bill < ActiveRecord::Base
 
   belongs_to :member_in_charge, :class_name => 'Mp', :foreign_key => 'member_in_charge_id'
@@ -102,6 +103,7 @@ class Bill < ActiveRecord::Base
       bills = send(method, name.gsub('Social Security (Entitlement Cards) Amendment', 'Social Security (Entitlement Cards) Amendment Bill')) if bills.empty?
       bills = send(method, name.gsub('Parole (Extended Supervision Orders) Bill', 'Parole (Extended Supervision Orders) Amendment Bill')) if bills.empty?
       bills = send(method, name.gsub('Employment Relations (Minimum Redundancy Entitlements) Amendment Bill', 'Employment Relations (Statutory Minimum Redundancy Entitlements) Amendment Bill')) if bills.empty?
+      bills = send(method, name.gsub('Cluster Munitions (Prohibition) Bill', 'Cluster Munitions Bill')) if bills.empty?
       bills = bills.select {|b| b.royal_assent.nil? || (b.royal_assent >= date) }
       bills = bills.select do |b|
         if b.introduction.nil? && b.earliest_date.nil?
