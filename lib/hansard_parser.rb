@@ -1,3 +1,4 @@
+# coding:utf-8
 require 'rubygems'
 require 'open-uri'
 require 'hpricot'
@@ -10,7 +11,9 @@ class HansardParser
     end
     def load_doc file
       text = load_file file
-      text = text.gsub(/<caption>[^<]*<p>/,'<caption>').gsub(/<\/p>[^<]*<\/caption>/,'</caption>')
+      text.gsub!(/<caption>[^<]*<p>/,'<caption>')
+      text.gsub!(/<\/p>[^<]*<\/caption>/,'</caption>')
+      text.gsub!(%Q|<p class="a">\n        <strong>Prayers</strong>.</p>|, '')
       Hpricot text
     end
   end
