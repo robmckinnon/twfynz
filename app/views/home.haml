@@ -14,7 +14,7 @@
     Parliament.
 #primarycontainer
   #primarycontent
-  - unless @submission_dates.nil? || @submission_dates.empty?
+  - unless true || @submission_dates.nil? || @submission_dates.empty?
     #public_bill_submissions
       %h2 Bills open for public submissions
       %table.bill-table
@@ -25,7 +25,7 @@
               %td.date= "#{format_date date.date}"
   #column_content
     #left_column_content
-      - unless @latest_orals.empty?
+      - unless true || @latest_orals.empty?
         .latest_orals
           %h2 Latest oral answers
           = date_to_s @latest_orals.first.date
@@ -44,13 +44,13 @@
                 %li= link_to_debate debate, false, false, true
               - else
                 %li= link_to_debate debate.sub_debate, false, false, true
-      - if @days_top_pages
+      - if false && @days_top_pages
         .popular_last_day
           %h2 Popular yesterday
           %ul
             - @days_top_pages.each do |item|
               %li= link_to("#{item.page_title}", item.url) + " <span class='page_views'>(#{item.unique_pageviews})</span>"
-      - if @weeks_top_pages
+      - if false && @weeks_top_pages
         .popular_last_week
           %h2 Popular over last week
           %ul
