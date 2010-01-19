@@ -59,6 +59,7 @@
                 = link_to(item.page_title, item.url)
                 %span.page_views
                   ="(#{item.unique_pageviews})"
-    #right_column_content
-      #twitter_feed
+    - if false
+      #right_column_content
+        #twitter_feed
 - #render :partial => 'calendar.haml'
