@@ -25,7 +25,7 @@
       = javascript_include_tag(@javascript)
     - unless @javascript == :defaults
       = javascript_include_tag 'prototype'
-    - if @home
+    - if false && @home
       = javascript_include_tag('twitter_feeds')
     = javascript_include_tag 'cookie'
     = javascript_include_tag 'json'
@@ -93,22 +93,14 @@
       - unless (@bill || @home || @organisation)
         = ''
       %div{ :style => 'color: #eee; padding: 1em 1em 0.7em 1em; background:#373737 none repeat scroll 0 0; position:relative; margin-bottom: 2em;' }
-        %p
+        %p{ :style => 'padding-right: 0.5em;' }
           As of January 2010, this website is no longer being kept uptodate.
-          It contains NZ Parliament debates from November 2005 to December 2009.
-          We may resurrect the site in 2011 for the General Election.
-        %p
-          To keep yourself uptodate with parliament,
-          why not try following a political blog? For its excellent parliament
-          coverage, we recommend
-          = link_to('No Right Turn', 'http://norightturn.blogspot.com/') + '.'
-        %p
-          TheyWorkForYou.co.nz is volunteer run, and has been in operation since
-          November 2006. We developed it entirely with free and open source
-          software, as a <i>hint</i> to the public sector that they should be
-          adopting and promoting free and open source software themselves
-          (despite what foreign corporations masquerading as a NZ ICT industry 
-          may say to the contrary).
+          It contains NZ Parliament debates from Nov 2005 to Dec 2009.
+          We may resurrect the site for the 2011 General Election.
+        - if false
+          %p{ :style => 'padding-right: 0.25em; padding-left: 0.25em;' }
+            TheyWorkForYou.co.nz is volunteer run, and has been in operation since
+            November 2006.
       #content
         = @content_for_layout
       #footer
@@ -129,12 +121,14 @@
             - rlinks += spacer +  link_to("About", {:controller=>'application', :action=>'about'}, :title=>'About TheyWorkForYou.co.nz', :class=>(@about_on ? 'active' : nil) )
             = rlinks
     - if RAILS_ENV == 'production'
-      = %Q[<script type="text/javascript">]
-      = %Q[var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");]
-      = %Q[document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));]
-      = %Q[</script>]
-      = %Q[<script type="text/javascript">]
-      = %Q[var pageTracker = _gat._getTracker("UA-981751-1");]
-      = %Q[pageTracker._initData();]
-      = %Q[pageTracker._trackPageview();]
-      = %Q[</script>]
+      = %Q|<script type="text/javascript">|
+      = %Q^  var _gaq = _gaq || [];^
+      = %Q|  _gaq.push(['_setAccount', 'UA-18183959-1']);|
+      = %Q|  _gaq.push(['_trackPageview']);|
+      = %Q|  (function() {|
+      = %Q|    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;|
+      = %Q|    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';|
+      = %Q|    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);|
+      = %Q|  })();|
+      = %Q|</script>|
+
