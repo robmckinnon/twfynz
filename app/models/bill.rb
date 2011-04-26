@@ -1,4 +1,3 @@
-# coding:utf-8
 class Bill < ActiveRecord::Base
 
   belongs_to :member_in_charge, :class_name => 'Mp', :foreign_key => 'member_in_charge_id'
@@ -128,6 +127,12 @@ class Bill < ActiveRecord::Base
       elsif bills.empty?
         if method == :find_all_by_bill_name
           from_name_and_date_by_method name, date, :find_all_by_former_name
+        elsif name == 'Resource Management (Simplifying and Streamlining) Amendment Bill' ||
+            name == 'Local Government (Auckland Law Reform) Bill' ||
+            name == 'Domestic Violence (Enhancing Safety) Bill' ||
+            name == 'Climate Change (Emissions Trading and Renewable Preference) Bill' ||
+            name == 'Corrections (Contract Management of Prisons) Amendment Bill'
+          Bill.find_by_bill_name(name)
         else
           raise "no bills match: #{name}, #{date.to_s}"
         end
@@ -351,7 +356,7 @@ class Bill < ActiveRecord::Base
 
   def probably_not_divided?
     year = Date.today.year
-    divided_into_bills.empty? or (divided_into_bills.size > 0 and (last_event and last_event[0].year == year))
+    divided_into_bills.empty? or (divided_into_bills.size > 0 and (last_event and (last_event[0].year == year || last_event[0].year == year-1) ))
   end
 
   def missing_events?
@@ -362,10 +367,11 @@ class Bill < ActiveRecord::Base
   end
 
   def current?
+    is_current = ( (not(negatived? or assented? or withdrawn? or discharged?)) and probably_not_divided? )
     if divided_into_bills.empty?
-      ( (not(negatived? or assented? or withdrawn? or discharged?)) and probably_not_divided? )
+      is_current
     else
-      divided_into_bills.inject(false) {|current, bill| current && bill.current?}
+      divided_into_bills.inject(is_current) {|current, bill| current && bill.current?}
     end
   end
 
