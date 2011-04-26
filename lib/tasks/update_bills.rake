@@ -152,7 +152,11 @@ namespace :kiwimp do
       proceed = !(url.include? '00HOOOCProgressLegislation1-Progress-of-Legislation.htm')
 
       if proceed
-        update_bill(update_existing, url, name, bill_no) if proceed
+        # begin
+          update_bill(update_existing, url, name, bill_no) if proceed
+        # rescue Exception => e
+          # puts("#{e.class.name} #{e.to_s} #{e.backtrace.join("\n")}")
+        # end
       end
     end
   end
