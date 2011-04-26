@@ -4,7 +4,7 @@ class Portfolio < ActiveRecord::Base
   has_many :oral_answers, :as => :about
 
   class << self
-    
+
     def create_portfolio name, url, minister
       portfolio = Portfolio.create :portfolio_name => name, :url => url
       minister = Minister.create :title => minister, :responsible_for_id => portfolio.id
