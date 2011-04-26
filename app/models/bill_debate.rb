@@ -26,7 +26,7 @@ class BillDebate < ParentDebate
         group.sort! do |debate, other|
           comp = debate.date <=> other.date
           if comp == 0
-            debate.sub_about_index <=> other.sub_about_index
+            (debate.sub_about_index || 0) <=> (other.sub_about_index || 0)
           else
             comp
           end
