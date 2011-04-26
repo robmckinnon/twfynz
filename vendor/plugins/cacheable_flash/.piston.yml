@@ -1,8 +1,0 @@
---- 
-format: 1
-handler: 
-  piston:remote-revision: 1543
-  piston:uuid: af276e61-6b34-4dac-905b-574b5f35ef33
-lock: false
-repository_url: svn://rubyforge.org/var/svn/pivotalrb/cacheable_flash/trunk
-repository_class: Piston::Svn::Repository
