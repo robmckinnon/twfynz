@@ -1,4 +1,18 @@
 - debate = debate_nav
+- if RAILS_ENV == 'production'
+  .blank_box
+    .contentarea
+      = %Q|<script type="text/javascript"><!--|
+      = %Q|google_ad_client = "ca-pub-8597146813885553";|
+      = %Q|/* TWFY NZ 200x200 */|
+      = %Q|google_ad_slot = "7628374736";|
+      = %Q|google_ad_width = 200;|
+      = %Q|google_ad_height = 200;|
+      = %Q|//-->|
+      = %Q|</script>|
+      = %Q|<script type="text/javascript"|
+      = %Q|src="http://pagead2.googlesyndication.com/pagead/show_ads.js">|
+      = %Q|</script>|
 .box
   .contentarea
     %ul.linklist
@@ -7,6 +21,7 @@
         %li= '&laquo; ' + link_to("Previous", get_url_from_hash(debate.prev_debate_id_hash)) + ' on day'
       - if debate.next_debate_id_hash
         %li= '&raquo; ' + link_to("Next", get_url_from_hash(debate.next_debate_id_hash)) + ' on day'
+
 - if @about and @about_type.to_s == 'Bill'
   .box
     .contentarea
