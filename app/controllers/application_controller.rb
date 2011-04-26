@@ -126,8 +126,8 @@ class ApplicationController < ActionController::Base
 
         child_bill_names.each_with_index do |x,i|
           if parent_bill_names[i].gsub('(','').gsub(')','').sub(' Bill','').sub(' Amendment','') == x.gsub('(','').gsub(')','').sub(' Bill','').sub(' Amendment','') ||
-            x == 'Public Transport Amendment Bill' ||
-            x == 'Limited Partnerships Bill be now read a third time and the Taxation (Limited Partnerships) Bill'
+            parent_bill_names[i] == 'Public Transport Management Bill' ||
+            parent_bill_names[i] == 'Limited Partnerships Bill'
             parent_bill_names[i] = ''
           end
         end
