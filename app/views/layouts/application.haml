@@ -59,21 +59,23 @@
       #sign_in
       - if @home
         #search-home
-          - form_tag({:controller => 'application', :action => :search}, {:method=>"get"}) do
-            - if @term
-              = text_field_tag(:q, '', :maxlength=>"100", :size=>"12", :value => @term)
-            - else
-              = text_field_tag(:q, '', :maxlength=>"100", :size=>"12")
-            = submit_tag "Search", :class => 'submit'
+          - if false
+            - form_tag({:controller => 'application', :action => :search}, {:method=>"get"}) do
+              - if @term
+                = text_field_tag(:q, '', :maxlength=>"100", :size=>"12", :value => @term)
+              - else
+                = text_field_tag(:q, '', :maxlength=>"100", :size=>"12")
+              = submit_tag "Search", :class => 'submit'
         - #headerpic
       - else
         #search
-          - form_tag({:controller => 'application', :action => :search}, {:method=>"get"}) do
-            - if @term
-              = text_field_tag(:q, '', :maxlength=>"100", :size=>"12", :value => @term)
-            - else
-              = text_field_tag(:q, '', :maxlength=>"100", :size=>"12")
-            = submit_tag "Search", :class => 'submit'
+          - if false
+            - form_tag({:controller => 'application', :action => :search}, {:method=>"get"}) do
+              - if @term
+                = text_field_tag(:q, '', :maxlength=>"100", :size=>"12", :value => @term)
+              - else
+                = text_field_tag(:q, '', :maxlength=>"100", :size=>"12")
+              = submit_tag "Search", :class => 'submit'
       #menu
         %ul
           - @hansard_on = false if @search_on
