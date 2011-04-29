@@ -286,6 +286,8 @@ class Mp < ActiveRecord::Base
     m.to_date = to_date if to_date
     m.replaced_by_id = replaced_by_id if replaced_by_id
     m.save
+    self.former = true
+    self.save
   end
 
   private
