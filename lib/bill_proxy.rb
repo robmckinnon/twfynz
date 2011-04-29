@@ -83,6 +83,7 @@ class BillProxy
     puts '    ' + attributes.inspect
 
     attributes.delete(:sc_reports_interim_report_interim_report) # temp fix
+    attributes.delete(:first_reading_withdrawn) # temp fix
 
     bill = Object.const_get(attributes[:type]).new(attributes)
     bill.reset_earliest_date
