@@ -8,9 +8,9 @@ class Contribution < ActiveRecord::Base
   before_validation_on_create :populate_spoken_by_id
   before_validation :populate_date
 
-  acts_as_xapian :texts => [ :text ],
-      :values => [ [ :date, 0, "debate_date", :date ] ],
-      :terms => [ [ :date_int, 'D', "date" ] ]
+  # acts_as_xapian :texts => [ :text ],
+      # :values => [ [ :date, 0, "debate_date", :date ] ],
+      # :terms => [ [ :date_int, 'D', "date" ] ]
 
   # acts_as_solr :fields => [:text]
 
