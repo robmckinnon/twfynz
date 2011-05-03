@@ -1,4 +1,4 @@
-require 'twitter'
+# require 'twitter'
 
 class OrderPaperAlert < ActiveRecord::Base
 
