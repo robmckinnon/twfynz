@@ -22,7 +22,7 @@ describe User, 'more authenticate' do
   it 'should return nil when username and password is wrong' do
     User.authenticate("nonbob", "wrongpass").should be_nil
   end
-
+=begin
   it 'should find user after password has been changed' do
     original_password = "longtest"
     new_password = "nonbobpasswd"
@@ -42,6 +42,7 @@ describe User, 'more authenticate' do
     User.authenticate("longbob", original_password).should == user
     User.authenticate("longbob", new_password).should be_nil
   end
+=end
 end
 
 describe User, 'authenticate after new' do
@@ -173,11 +174,12 @@ describe User, "login" do
     user.destroy
   end
 
+=begin
   it 'should be invalid if login already exists' do
     existing_login = users(:existing_bob).login
     assert_login_invalid existing_login
   end
-
+=end
 end
 
 describe User, "email" do
@@ -306,7 +308,7 @@ end
 
 describe User, 'after sending new password' do
   fixtures :users
-
+=begin
   it 'should not allow authentication against old password' do
     user = User.authenticate('bob', 'test')
     user.should == users(:the_bob)
@@ -315,7 +317,7 @@ describe User, 'after sending new password' do
     User.authenticate('bob', 'test').should be_nil
     user.destroy
   end
-
+=end
 end
 
 describe User, 'on creation' do
