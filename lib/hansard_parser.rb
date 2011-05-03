@@ -689,6 +689,7 @@ class HansardParser
       if (match = /Question No\.? (\d+) to Minister/.match name)
         re_oral_answer_no = $1
       elsif (name != 'Question Time' && !name.starts_with?('Question No.') && name != 'Urgent Question—Leave to Ask' && !name.starts_with?('Personal Explanation') && !name.starts_with?('Urgent Question to Minister') )
+        question_p = answer_root.at('.SubsQuestion[1]')
         strongs = (answer_root/'.SubsQuestion[1]/strong')
         if strongs.size > 0
           last = strongs.last.at('text()')
@@ -712,6 +713,8 @@ class HansardParser
         else
           if (match = /(\d+)\.?.*/.match strongs.first.inner_html)
             oral_answer_no = $1.to_i
+          elsif (match = /(\d+)\.?.*/.match question_p.inner_html)
+            oral_answer_no = $1.to_i
           else
             raise 'cannot find oral answer number: ' + name
           end
@@ -734,6 +737,12 @@ class HansardParser
           :start_page => @page
 
       handle_contributions answer_root, debate
+      if debate.contributions.size > 0
+        question = debate.contributions.first
+        if question.text[/^<p>#{debate.oral_answer_no}\./]
+          question.text = question.text.sub(/^<p>#{debate.oral_answer_no}\./, '<p>')
+        end
+      end
       debate
     end
 

@@ -529,3 +529,78 @@ describe HansardParser, " when passed 1. Crimes (Substituted Section 59) Amendme
 </html>|
   end
 end
+
+describe HansardParser, " when passed question with question number not in strong element" do
+  include OralQuestionHelperMethods
+
+  before do
+    @name = 'Finance and Expenditure Committee—Television New Zealand Inquiry'
+    @file_name = '48HansQ_20060221_00000742-1-Finance-and-Expenditure-Committee-Television.htm'
+    @debate_index = 2
+    @publication_status = 'F'
+    @date = Date.new 2006,2,21
+    @oral_answer_no = 1
+    @about_id = 123
+    @answer_from_id = 456
+    @answer_from_name = 'Chairperson of the Finance and Expenditure Committee'
+    @asking_mp_id = 789
+    @asking_mp_name = 'RODNEY HIDE (Leader—ACT)'
+    @question_text = '<p>Does</p>'
+    @answering_mp_id = 245
+    @answering_mp_name = 'SHANE JONES (Chairperson of the Finance and Expenditure Committee)'
+    @answer_text = '<p>Yes.</p>'
+    @answer_from_type = CommitteeChair
+    @about_type_attribute = :committee
+    @about_type = Committee
+    @answer_time = '15:24:50'
+
+    @supplimentary_questioners_names = ['Rodney Hide']
+    @supplimentary_questioners_ids = [@asking_mp_id]
+
+    @first_suplimentary_mp_name = 'Rodney Hide'
+    @first_suplimentary_mp_id = @asking_mp_id
+    @first_suplimentary_question_text = '<p>Could</p>'
+    @supplimentary_answerer_name = 'SHANE JONES'
+    @first_suplimentary_answer_text = '<p>I</p>'
+    @interjecter_names = []
+    HansardParser.stub!(:load_file).and_return html
+    parse_debate
+  end
+
+  after(:all) do
+    Debate.find(:all).each {|d| d.destroy}
+    PARSED.clear
+  end
+
+  it_should_behave_like "All oral questions"
+
+  def html
+    %Q|<html>
+<head>
+<title>New Zealand Parliament - 1. Finance and Expenditure Committee—Television New Zealand Inquiry</title>
+<meta name="DC.Date" content="2006-02-21T12:00:00.000Z" />
+</head>
+<body>
+<div class="copy">
+  <div class="section">
+    <a name="DocumentTitle"></a>
+    <h1>1. Finance and Expenditure Committee—Television New Zealand Inquiry</h1>
+    <a name="DocumentReference"></a>
+    <p>[Volume:629;Page:1286]</p>
+    <div class="SubsQuestion">
+      <p class="SubsQuestion">1.
+      <strong>RODNEY HIDE (Leader—ACT)</strong> to the <strong>Chairperson of the Finance and Expenditure Committee</strong>: Does</p>
+      <p class="SubsAnswer">
+        <a name="time_15:24:50"></a>
+        <strong>SHANE JONES (Chairperson of the Finance and Expenditure Committee)</strong>
+        <strong>:</strong> Yes.</p>
+      <p class="SupQuestion"><strong>Rodney Hide</strong>: Could</p>
+      <p class="SupAnswer"><strong>SHANE JONES</strong>: I</p>
+      <a name="page_1287"></a>
+    </div>
+  </div>
+</div>
+</body>
+</html>|
+  end
+end
