@@ -254,7 +254,9 @@ class HansardParser
         elsif type == title_h
           sub_debates = debate.debate.sub_debates
           next_index = sub_debates.index(debate) + 1
-          raise 'expected more sub-debates than: ' + sub_debates.size.to_s + " (hit #{title_h}: #{node.to_s} in debate: #{debate.name}, parent debate: #{debate.debate.name})" if (sub_debates.size < (next_index+1))
+          if (sub_debates.size < (next_index+1))
+            raise 'expected more sub-debates than: ' + sub_debates.size.to_s + " (hit #{title_h}: #{node.to_s} in debate: #{debate.name}, parent debate: #{debate.debate.name})"
+          end
           debate = sub_debates[next_index]
           raise "expected sub_debate for #{title_h}: " + node.to_s + ', but found: ' + debate.name unless (debate.name == text)
         else
@@ -317,6 +319,20 @@ class HansardParser
         party_name = match[1]
         cast_count = match[2].to_i
         mps = match[3].split(',').collect{|m| m.strip}
+        mps.each do |mp_name|
+          vote_cast = VoteCast.new :cast => cast,
+              :cast_count => 1,
+              :vote_label => mp_name,
+              :mp_name => mp_name,
+              :party_name => party_name,
+              :present => false,
+              :date => @debate_date
+          vote.vote_casts << vote_cast
+        end
+      elsif (text.include? '(') && (match = /([^\d]+) \(([^\(]+)\) (\d+)\.?/.match text.strip)
+        party_name = match[1]
+        cast_count = match[3].to_i
+        mps = match[2].split(',').collect{|m| m.strip}
         mps.each do |mp_name|
           vote_cast = VoteCast.new :cast => cast,
               :cast_count => 1,
