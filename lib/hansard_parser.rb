@@ -118,6 +118,9 @@ class HansardParser
 
     def create_oral_answers debate_index
       qoa = (@doc/'.QOA')[0]
+      if qoa.inner_text[/no questions have been lodged today/]
+        return
+      end
       name = (qoa/'h2[1]/text()')[0].to_clean_s
       if is_date?(name)
         name = (qoa/'h2[2]/text()')[0].to_clean_s
