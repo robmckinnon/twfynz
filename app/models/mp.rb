@@ -52,9 +52,9 @@ class Mp < ActiveRecord::Base
       if matching.size == 1
         return matching[0]
       elsif matching.empty?
-        raise "no matching MP for vote name/party/date: #{name} #{party.short} #{date}"
+        raise "no matching MP for vote name/party/date: #{name} ; #{party ? party.short : 'no party'} ; #{date}"
       else
-        raise "more than one matching MP for vote name: #{name} #{party.short} #{date}"
+        raise "more than one matching MP for vote name: #{name} ; #{party.short} ; #{date}"
       end
     end
 
