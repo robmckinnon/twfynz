@@ -67,7 +67,7 @@ class OralAnswer < SubDebate
           else
             raise "can't find committee chair from: " + question_to
           end
-        elsif (minister = Minister.from_name question_to)
+        elsif (minister = Minister.from_name question_to) || ((question_to == 'Minister responsible for Whānau Ora') && minister = Minister.from_name 'Minister responsible for Whanau Ora')
           self.answer_from_type = Minister.name
           self.answer_from_id = minister.id
           self.about_type = Portfolio.name
