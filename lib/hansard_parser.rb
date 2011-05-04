@@ -118,12 +118,15 @@ class HansardParser
 
     def create_oral_answers debate_index
       qoa = (@doc/'.QOA')[0]
+      no_questions = false
       if qoa.inner_text[/no questions have been lodged today/]
-        return
-      end
-      name = (qoa/'h2[1]/text()')[0].to_clean_s
-      if is_date?(name)
-        name = (qoa/'h2[2]/text()')[0].to_clean_s
+        name = 'Questions for Oral Answer'
+        no_questions = true
+      else
+        name = (qoa/'h2[1]/text()')[0].to_clean_s
+        if is_date?(name)
+          name = (qoa/'h2[2]/text()')[0].to_clean_s
+        end
       end
 
       answers_array = []
@@ -197,7 +200,7 @@ class HansardParser
             raise 'unexpected element under "QOA"[' + index.to_s + ']: ' + node.to_s
           end
         end
-      end
+      end unless no_questions
 
       answers_array
     end
