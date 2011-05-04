@@ -43,7 +43,7 @@ class OralAnswers < Debate
   end
 
   def last_debate_index
-    if oral_answers.emtpy?
+    if oral_answers.nil? || oral_answers.empty?
       debate_index
     else
       oral_answers.last.debate_index
