@@ -159,6 +159,7 @@ class Vote < ActiveRecord::Base
 
     def third_reading_votes parliament_number
       votes = find(:all, :conditions => 'vote_question like "%third%"', :include => [{:vote_casts => :party}, {:contribution => :spoken_in}])
+      votes = votes.select {|x| x.contribution}
       remove_duplicates(votes)
       votes.select{|v| Parliament.date_within?(parliament_number, v.debate.date)}
     end

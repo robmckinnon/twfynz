@@ -310,7 +310,7 @@ class HansardParser
       if text.include?('Independent')
 
         if text.include?('Independent:') && !text.include?(',')
-          name = text.split(':')[1].strip.chomp('.').chomp('1').strip
+          name = text.split(':')[1].strip.chomp('.').chomp('1').strip.split(';').first
           handle_independent_vote_cast name, cast, vote
 
         elsif text[/Independents?:/]
