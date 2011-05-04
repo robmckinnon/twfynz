@@ -43,9 +43,13 @@ class OralAnswers < Debate
   end
 
   def last_debate_index
-    oral_answers.last.debate_index
+    if oral_answers.emtpy?
+      debate_index
+    else
+      oral_answers.last.debate_index
+    end
   end
-  
+
   def heading_level
     4
   end
