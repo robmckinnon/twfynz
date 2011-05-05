@@ -315,7 +315,7 @@ class Party < ActiveRecord::Base
   def mp_count parliament_id=49
     @mp_count_hash ||= {}
     unless @mp_count_hash[parliament_id]
-      count = members.select { |m| m.in_parliament?(parliament_id) }.size
+      count = members.select { |m| m.in_parliament?(parliament_id) && (parliament_id < 49 || m.is_active_on(Date.today) ) }.size
       @mp_count_hash[parliament_id] = count
     end
     @mp_count_hash[parliament_id]
