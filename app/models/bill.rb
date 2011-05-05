@@ -142,7 +142,7 @@ class Bill < ActiveRecord::Base
           if the_date.is_a? String
             the_date = Date.parse(date)
           end
-          days_back = bills.collect {|b| [(the_date - b.introduction).to_i, b] }
+          days_back = bills.select{|b| the_date >= b.earliest_date}.collect {|b| [(the_date - b.earliest_date).to_i, b] }
           bill = days_back.sort.first[1]
           bill
         rescue Exception => e
