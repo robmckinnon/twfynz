@@ -90,6 +90,8 @@ module ApplicationHelper
       if mp.img.blank?
         if mp.member && mp.member.image
           src = mp.member.image
+        elsif mp.members.last && mp.members.last.image
+          src = mp.members.last.image
         else
           src = nil
         end
