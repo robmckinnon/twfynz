@@ -35,13 +35,13 @@
           = link_to("valedictory statement", @former_member_role.valedictory_statement_url)
           = " on #{@former_member_role.valedictory_statement_date.as_date}."
           = "Replaced by #{link_to_mp(@former_member_role.replaced_by)}."
-    - if @member_role && @former_member_role && @former_member_role.membership_change_url
+    - if @membership_role_change
       .divider3
       %div{ :class=>"post", :id=>'membership_change' }
         %p
-          = "Prior to #{@member_role.from_date.as_date} "
-          - party = @former_member_role.party.abbreviated
-          = link_to("was a member of #{party[/Party$/] ? 'the '+party : party}", @former_member_role.membership_change_url) + '.'
+          = "Prior to #{@membership_role_change.to_date.as_date} "
+          - party = @membership_role_change.party.abbreviated
+          = link_to("was a member of #{party[/Party$/] ? 'the '+party : party}", @membership_role_change.membership_change_url) + '.'
     - if @member_role && @member_role.maiden_statement_url
       .divider3
       %div{ :class=>"post", :id=>'maiden_statement' }

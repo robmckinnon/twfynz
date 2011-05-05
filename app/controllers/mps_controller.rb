@@ -59,6 +59,7 @@ class MpsController < ApplicationController
       @mp = mp
       @member_role = mp.member_on_date(Date.today)
       @former_member_role = (mp.members - [@member_role]).sort_by(&:parliament_id).last if @member_role.nil? || @member_role.party.short == 'Independent'
+      @membership_role_change = mp.members.select {|m| m.membership_change_url}.sort_by(&:parliament_id).last
     elsif name == 'ian_ewen_street'
       headers["Status"] = "301 Moved Permanently"
       redirect_to show_mp_url(:name => 'ian_ewen-street')
