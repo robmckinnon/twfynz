@@ -1,6 +1,6 @@
 namespace :kiwimp do
 
-  task :update_organisation_mentions do
+  task :update_organisation_mentions => :environment do
     Organisation.find(:all).each {|o| o.save!}
   end
 
@@ -13,7 +13,7 @@ namespace :kiwimp do
     PersistedFile.git_pull
     PersistedFile.load_yaml_index
   end
-  
+
   desc 'download hansard from parliament.nz'
   task :download_hansard => :environment do
     require File.dirname(__FILE__) + '/../hansard_downloader.rb'
