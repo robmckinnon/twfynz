@@ -31,6 +31,7 @@ module ApplicationHelper
     else
       month = Date::MONTHNAMES[current_date.month][0..2]
       %Q|<table class="calendar" border="0" cellpadding="0" cellspacing="0"><thead><tr class="monthName"><th>#{heading_prefix} #{month} #{current_date.year}</th></tr></thead><tbody><tr><td style="text-align:center">(no sittings in  #{month} #{current_date.year})</td></tr></tbody></table>|
+      ""
     end
   end
 
