@@ -1,4 +1,5 @@
 - @title = @committee.full_name + ' Committee: Aotearoa New Zealand Parliament'
+- @description = "Debates and bills related to the #{@committee.full_name} Committee of the New Zealand Parliament."
 #primarycontainer
   - if (@debates_in_groups_by_name.blank? and (not @bills or @bills.size == 0) and (not @bills_before_committee or @bills_before_committee.size == 0))
     .divider3
