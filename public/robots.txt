@@ -1,5 +1,6 @@
 User-Agent: *
 Disallow: /search/
+Disallow: /debates/search/
 Disallow: /debates/contribution_match/
 
 User-Agent: BecomeBot
