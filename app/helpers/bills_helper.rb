@@ -1,5 +1,15 @@
 module BillsHelper
 
+  def summissions_meta_description bill
+    if bill.description.blank?
+      "Submissions on the #{bill.full_name}"
+    else
+      description = bill.description.split('.').first
+      description.gsub!(/^(This|The) bill/i, "The #{bill.full_name}")
+      "Submissions on the #{bill.full_name}. #{description}."
+    end
+  end
+
   def bill_meta_description bill
     if bill.description.blank?
       bill.full_name
