@@ -1,6 +1,8 @@
 User-Agent: *
-Disallow: /search/
-Disallow: /debates/search/
+Disallow: /search?search_term=
+Disallow: /search?page=
+Disallow: /debates/search?search_term=
+Disallow: /debates/search?page=
 Disallow: /debates/contribution_match/
 
 User-Agent: BecomeBot
