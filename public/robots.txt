@@ -3,8 +3,8 @@ Disallow: /search?search_term=
 Disallow: /search?page=
 Disallow: /debates/search?search_term=
 Disallow: /debates/search?page=
-Disallow: /debates/contribution_match/
-
+Disallow: /debates/contribution_match?expand=
+‎
 User-Agent: BecomeBot
 Disallow: /
 
