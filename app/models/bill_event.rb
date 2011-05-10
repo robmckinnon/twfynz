@@ -63,7 +63,7 @@ class BillEvent < ActiveRecord::Base
       bill.debates.each do |debate|
         event = BillEvent.find_by_bill_id_and_name_and_date(bill.id, debate.first.normalized_name, debate.date)
         unless event
-          events << create_from_bill_debate(bill, debate.first.normalized_name, debate)
+          events << create_from_bill_debate(bill, debate.normalized_name, debate)
         end
       end
 
