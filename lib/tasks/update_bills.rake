@@ -2,6 +2,13 @@ require File.dirname(__FILE__) + '/../bill_proxy.rb'
 
 namespace :kiwimp do
 
+  desc 'update bill events'
+  task :update_bill_events => :environment do
+    Bill.find_each do |bill|
+      BillEvent.refresh_events_from_bill(bill)
+    end
+  end
+
   desc 'downloads new bills'
   task :get_new_bills => :environment do
     update_bills false

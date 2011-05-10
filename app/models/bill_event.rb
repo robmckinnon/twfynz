@@ -27,7 +27,10 @@ class BillEvent < ActiveRecord::Base
     def refresh_events_from_bill bill
       create_from_bill(bill).each do |event|
         existing = find_existing event
-        event.save! unless existing
+        unless existing
+          event.save!
+          event.bill.expire_cached_pages
+        end
       end
     end
 
