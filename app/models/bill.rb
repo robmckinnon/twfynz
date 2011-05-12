@@ -87,6 +87,7 @@ class Bill < ActiveRecord::Base
     end
 
     def from_name_and_date_by_method name, date, method
+      name = name.sub('Hearing of evidence on the ','')
       bills = send(method, name)
       bills = send(method, name.gsub('-',' - ')) if bills.empty?
       bills = send(method, name.gsub('’',"'")) if bills.empty?
