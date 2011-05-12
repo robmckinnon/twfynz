@@ -14,7 +14,7 @@
     Parliament.
 #primarycontainer
   #primarycontent
-  - unless true || @submission_dates.nil? || @submission_dates.empty?
+  - unless @submission_dates.blank?
     #public_bill_submissions
       %h2 Bills open for public submissions
       %table.bill-table
