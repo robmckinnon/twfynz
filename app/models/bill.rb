@@ -132,7 +132,8 @@ class Bill < ActiveRecord::Base
             name == 'Local Government (Auckland Law Reform) Bill' ||
             name == 'Domestic Violence (Enhancing Safety) Bill' ||
             name == 'Climate Change (Emissions Trading and Renewable Preference) Bill' ||
-            name == 'Corrections (Contract Management of Prisons) Amendment Bill'
+            name == 'Corrections (Contract Management of Prisons) Amendment Bill' ||
+            name == 'Telecommunications (TSO, Broadband, and Other Matters) Amendment Bill'
           Bill.find_by_bill_name(name)
         else
           raise "no bills match: #{name}, #{date.to_s}"
