@@ -104,6 +104,7 @@ class Bill < ActiveRecord::Base
       bills = send(method, name.gsub('Parole (Extended Supervision Orders) Bill', 'Parole (Extended Supervision Orders) Amendment Bill')) if bills.empty?
       bills = send(method, name.gsub('Employment Relations (Minimum Redundancy Entitlements) Amendment Bill', 'Employment Relations (Statutory Minimum Redundancy Entitlements) Amendment Bill')) if bills.empty?
       bills = send(method, name.gsub('Cluster Munitions (Prohibition) Bill', 'Cluster Munitions Prohibition Bill')) if bills.empty?
+      bills = send(method, name.sub('Telecommunications (TSO, Broadbandm and Other Matters) Amendment Bill','Telecommunications (TSO, Broadband and Other Matters) Amendment Bill') if bills.empty?
       bills = bills.select {|b| b.royal_assent.nil? || (b.royal_assent >= date) }
       bills = bills.select do |b|
         if b.introduction.nil? && b.earliest_date.nil?
@@ -132,8 +133,7 @@ class Bill < ActiveRecord::Base
             name == 'Local Government (Auckland Law Reform) Bill' ||
             name == 'Domestic Violence (Enhancing Safety) Bill' ||
             name == 'Climate Change (Emissions Trading and Renewable Preference) Bill' ||
-            name == 'Corrections (Contract Management of Prisons) Amendment Bill' ||
-            name == 'Telecommunications (TSO, Broadband, and Other Matters) Amendment Bill'
+            name == 'Corrections (Contract Management of Prisons) Amendment Bill'
           Bill.find_by_bill_name(name)
         else
           raise "no bills match: #{name}, #{date.to_s}"
