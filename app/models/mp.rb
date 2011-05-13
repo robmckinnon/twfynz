@@ -14,7 +14,7 @@ class Mp < ActiveRecord::Base
   has_many :bills, :foreign_key => 'member_in_charge_id'
   has_many :contributions, :foreign_key => 'spoken_by_id'
 
-  TITLES = ['Dr the Hon', 'Rt Hon', 'Hon Dr', 'Hon', 'Dr', 'Sir']
+  TITLES = ['Dr The Rt Hon', 'Dr the Hon', 'Rt Hon', 'Hon Dr', 'Hon', 'Dr', 'Sir']
 
   after_save :expire_cached_page
 
