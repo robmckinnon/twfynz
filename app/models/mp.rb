@@ -24,15 +24,19 @@ class Mp < ActiveRecord::Base
 
   class << self
 
+    def all_mps
+      # @all_mps ||= Mp.find_by_sql('select id,first,alt,last from mps')
+      Mp.find_by_sql('select id,first,alt,last from mps')
+    end
+
     def all_mp_names
-      @all_mp_names = all.collect {|mp| "#{mp.alt.blank? ? mp.first : mp.alt} #{mp.last}" } unless @all_mp_names
-      @all_mp_names
+      all_mps.collect {|mp| "#{mp.alt.blank? ? mp.first : mp.alt} #{mp.last}" }
     end
 
     def from_vote_name name, date, party
       name = 'Roy E' if name == 'E Roy'
       name_downcase = name.downcase.strip.gsub('’',"'")
-      mps = Mp.find(:all)
+      mps = all_mps
       matching = mps.select {|mp| mp.last.downcase == name_downcase }
       if matching.size == 0
         matching = mps.select {|mp| (mp.last.downcase + ' ' + mp.first.downcase[0..0]) == name_downcase}
@@ -67,12 +71,12 @@ class Mp < ActiveRecord::Base
         speaker = name.split('(')[0].downcase.strip.gsub('’',"'")
 
         unless speaker[/speaker|member|chairperson/]
-          Mp.find(:all).each do |m|
+          all_mps.each do |m|
             if ((m.downcase_name == speaker) or
                 (m.alt_downcase_name and m.alt_downcase_name == speaker) or
                 (m.downcase_name.gsub(' ','') == speaker) or
                 (m.alt_downcase_name and m.alt_downcase_name.sub(' ','') == speaker))
-              mp = m
+              mp = find(m.id)
               break
             end
           end

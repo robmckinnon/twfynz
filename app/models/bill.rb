@@ -46,7 +46,7 @@ class Bill < ActiveRecord::Base
     end
 
     def all_bill_names
-      @all_bill_names = Bill.all.collect(&:bill_name).sort.uniq.reverse unless @all_bill_names
+      @all_bill_names = Bill.find_by_sql('select distinct bill_name from bills').collect(&:bill_name).sort.reverse unless @all_bill_names
       @all_bill_names
     end
 

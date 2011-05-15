@@ -1,10 +1,11 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 def mp_from_name_correct date, downcase_name, lookup_name, alt_downcase_name=nil
-  mp = mock(Mp)
+  mp = mock_model(Mp)
   mp.should_receive(:downcase_name).and_return(downcase_name)
   mp.should_receive(:alt_downcase_name).twice.and_return(alt_downcase_name) if alt_downcase_name
-  Mp.should_receive(:find).with(:all).and_return([mp])
+  Mp.should_receive(:find_by_sql).with('select id,first,alt,last from mps').and_return([mp])
+  Mp.should_receive(:find).with(mp.id).and_return mp
   Mp.from_name(lookup_name, date).should == mp
 end
 
