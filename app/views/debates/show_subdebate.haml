@@ -1,5 +1,5 @@
 #primarycontainer
-  %div{ :class => @debate.parent.css_class }
+  %div{ :class => @debate.parent ? @debate.parent.css_class : '' }
     %div{ :class => @debate.css_class }
       = render :partial => 'debate'
 #secondarycontent

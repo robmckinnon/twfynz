@@ -1,15 +1,13 @@
 - if contribution.is_vote?
-  - if contribution.previous_in_debate.is_a? ClauseModel
-    .divider3
-  - else
-    .divider3
+  .divider3
   = render :partial => 'vote', :collection => [contribution.vote], :locals => {:anchor_in_debate => (contribution.anchor_in_debate(debate))}
 - else
-  - if contribution.anchor_in_debate(debate).to_i == 1
+  - anchor_in_debate = contribution.anchor_in_debate(debate)
+  - if anchor_in_debate.to_i == 1
     = ''
   - else
-    %div{ :class => get_preceding_divider(contribution) }
-  - anchor_in_debate = contribution.anchor_in_debate(debate)
+    - previous_contribution = debate.previous_contribution(contribution)
+    %div{ :class => get_preceding_divider_for(contribution, previous_contribution) }
   %div{ :id => anchor_in_debate, :class => contribution.css_class }
     - if contribution.has_speaker?
       - if contribution.anchor_prefix

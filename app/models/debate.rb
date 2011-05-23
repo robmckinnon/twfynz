@@ -571,6 +571,15 @@ class Debate < ActiveRecord::Base
     end
   end
 
+  def previous_contribution contribution
+    index = contributions.index(contribution)
+    if index && index != 0
+      contributions[index - 1]
+    else
+      nil
+    end
+  end
+
   def previous_debate
     if can_have_previous
       begin

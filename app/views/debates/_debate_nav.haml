@@ -33,6 +33,11 @@
     .contentarea
       %h4 Speeches
       %ul.linklist
-        = render :partial => 'speech_link', :collection => debate.contributions
+        - if debate.contributions.size > 100
+          = render :partial => 'speech_link', :collection => debate.contributions[0..100]
+          %li
+            = "[... plus a further #{debate.contributions.size - 100} contributions not shown here]"
+        - else
+          = render :partial => 'speech_link', :collection => debate.contributions
 - if debate
   = calendar_nav debate.date

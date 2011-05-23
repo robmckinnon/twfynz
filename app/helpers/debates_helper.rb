@@ -162,7 +162,9 @@ module DebatesHelper
 
   def get_preceding_divider contribution
     previous_contribution = contribution.previous_in_debate
+  end
 
+  def get_preceding_divider_for contribution, previous_contribution
     if (contribution.is_question? ||
         (contribution.is_speech? &&
             !( previous_contribution.is_a?(SectionHeader) ||
