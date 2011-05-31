@@ -1,7 +1,9 @@
 User-Agent: *
 Disallow: /search?search_term=
+Disallow: /search?q=
 Disallow: /search?page=
 Disallow: /debates/search?search_term=
+Disallow: /debates/search?q=
 Disallow: /debates/search?page=
 Disallow: /debates/contribution_match?expand=
 ‎
