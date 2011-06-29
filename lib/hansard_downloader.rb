@@ -249,6 +249,10 @@ class HansardDownloader
         PersistedFile.add_non_downloaded persisted_file
       else
         status = publication_status_from(contents)
+        if status.nil?
+          puts "cannot determine status from contents: #{persisted_file.parliament_url}"
+        end
+
         persisted_file.set_publication_status(status)
 
         if @downloading_uncorrected && status != 'uncorrected'
