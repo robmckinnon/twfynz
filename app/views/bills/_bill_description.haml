@@ -4,6 +4,10 @@
     #bill_description
   - else
     %p= bill.description
+  - if bill.former_name
+    %p
+      Formerly named the
+      %span.former_name= bill.former_name + '.'
   - if bill.formerly_part_of
     %p
       Formerly part of
