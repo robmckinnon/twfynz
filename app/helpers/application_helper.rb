@@ -15,6 +15,22 @@ module ApplicationHelper
     # end
   # end
 
+  def voted_same_way matrix, party1, party2
+    percent = nil
+    0.upto(7) do |x|
+      0.upto(7) do |y|
+        if matrix[x] && matrix[x][y]
+          first_match = (matrix[x][y].first == party1)
+          second_match = (matrix[x][y].second == party2)
+          both_match = first_match && second_match
+          percent = matrix[x][y][2] if both_match
+        end
+      end
+    end
+
+    number_to_percentage(percent, :precision => 0)
+  end
+
   def calendar_nav current_date, heading_prefix=''
     first_sitting = SittingDay.find(:all).select{|s| s.date.year == current_date.year && s.date.month == current_date.month}.first
     if first_sitting
