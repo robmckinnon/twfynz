@@ -734,6 +734,7 @@ class Bill < ActiveRecord::Base
       if bill_name and not url
         url = bill_name.to_latin.to_s.downcase.
             tr(',:','').gsub('(','').gsub(')','').
+            gsub('’','').
             gsub('/ ',' ').tr('/',' ').
             gsub(/ng\S*ti/, 'ngati').
             tr("'",'').gsub(' and', '').
