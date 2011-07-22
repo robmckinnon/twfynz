@@ -97,14 +97,17 @@ class Bill < ActiveRecord::Base
       bills = send(method, name.gsub('’',"'").chomp(')').sub(')',') ').sub('(',' (').squeeze(' ').sub('Appropriations','Appropriation')) if bills.empty?
       bills = send(method, name.gsub('’',"'").chomp(')').sub(')',') ').sub('(',' (').squeeze(' ').sub('RateAmendments','Rate Amendments')) if bills.empty?
       bills = send(method, name.gsub('’',"'").chomp(')').sub(')',') ').sub('(',' (').squeeze(' ').sub('andAsure','and Asure')) if bills.empty?
-      bills = send(method, name.gsub('Appropriation (2005/06) Supplementary Estimates Bill', 'Appropriation (2005/06 Supplementary Estimates) Bill')) if bills.empty?
-      bills = send(method, name.gsub('Limited Partnerships Bill be now read a third time and the Taxation (Limited Partnerships) Bill', 'Limited Partnerships Bill')) if bills.empty?
-      bills = send(method, name.gsub('Public Transport Amendment Bill', 'Public Transport Management Bill')) if bills.empty?
-      bills = send(method, name.gsub('Social Security (Entitlement Cards) Amendment', 'Social Security (Entitlement Cards) Amendment Bill')) if bills.empty?
-      bills = send(method, name.gsub('Parole (Extended Supervision Orders) Bill', 'Parole (Extended Supervision Orders) Amendment Bill')) if bills.empty?
-      bills = send(method, name.gsub('Employment Relations (Minimum Redundancy Entitlements) Amendment Bill', 'Employment Relations (Statutory Minimum Redundancy Entitlements) Amendment Bill')) if bills.empty?
-      bills = send(method, name.gsub('Cluster Munitions (Prohibition) Bill', 'Cluster Munitions Prohibition Bill')) if bills.empty?
+      bills = send(method, name.sub('Appropriation (2005/06) Supplementary Estimates Bill', 'Appropriation (2005/06 Supplementary Estimates) Bill')) if bills.empty?
+      bills = send(method, name.sub('Limited Partnerships Bill be now read a third time and the Taxation (Limited Partnerships) Bill', 'Limited Partnerships Bill')) if bills.empty?
+      bills = send(method, name.sub('Public Transport Amendment Bill', 'Public Transport Management Bill')) if bills.empty?
+      bills = send(method, name.sub('Social Security (Entitlement Cards) Amendment', 'Social Security (Entitlement Cards) Amendment Bill')) if bills.empty?
+      bills = send(method, name.sub('Parole (Extended Supervision Orders) Bill', 'Parole (Extended Supervision Orders) Amendment Bill')) if bills.empty?
+      bills = send(method, name.sub('Employment Relations (Minimum Redundancy Entitlements) Amendment Bill', 'Employment Relations (Statutory Minimum Redundancy Entitlements) Amendment Bill')) if bills.empty?
+      bills = send(method, name.sub('Cluster Munitions (Prohibition) Bill', 'Cluster Munitions Prohibition Bill')) if bills.empty?
       bills = send(method, name.sub('Telecommunications (TSO, Broadband, and Other Matters) Amendment Bill','Telecommunications (TSO, Broadband and Other Matters) Amendment Bill')) if bills.empty?
+      bills = send(method, name.sub('2009/2010','2009/10')) if bills.empty?
+      bills = send(method, name.sub('Employment Relations (Film Production) Amendment Bill','Employment Relations (Film Production Work) Amendment Bill')) if bills.empty?
+      bills = send(method, name.sub('Research, Science and Technology Amendment Bill','Research, Science, and Technology Bill')) if bills.empty?
       bills = bills.select {|b| b.royal_assent.nil? || (b.royal_assent >= date) }
       bills = bills.select do |b|
         if b.introduction.nil? && b.earliest_date.nil?
