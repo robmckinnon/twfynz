@@ -543,7 +543,7 @@ class Bill < ActiveRecord::Base
   end
 
   def strip_name name
-    name.tr("-:/,'",'').gsub('(','').gsub(')','')
+    name.tr("-:/,'",'').gsub('(','').gsub(')','').gsub('’','')
   end
 
   def expire_cached_pages
