@@ -13,7 +13,7 @@
           = other_party_vote == 'no vote' ? "didn't vote" : " voted: #{other_party_vote}"
         - else
           &nbsp;
-      - if party_vote2 && votes2.size > 0
+      - if party_vote2 && votes2 && votes2.size > 0
         %th
           = party_logo_small(@party)
           = @party.display_name
@@ -23,7 +23,7 @@
           = @other_party.display_name
           = other_party_vote2 == 'no vote' ? "didn't vote" : " voted: #{other_party_vote2}"
   %tbody
-    - row_count = party_vote2 ? [votes.size, votes2.size].max : votes.size
+    - row_count = (party_vote2 && votes2) ? [votes.size, votes2.size].max : votes.size
     - 0.upto(row_count -1) do |index|
       %tr
         %td
@@ -42,7 +42,7 @@
               %span.negatived_bill= bill ? link_to_bill(bill) : bill_name
           - else
             &nbsp;
-        - if party_vote2
+        - if party_vote2 && votes2
           %td
             - if index < votes2.size
               - vote = votes2[index]
