@@ -112,7 +112,7 @@ class BillEvent < ActiveRecord::Base
     votes = votes_by_name.blank? ? nil : votes_by_name[self.name]
     votes = votes.compact.uniq if votes
 
-    votes = votes.select do |vote|
+    selected_votes = votes.select do |vote|
       if vote_bill_name = vote.bill_name
         bill_name = bill.bill_name
         if bill_name == vote_bill_name ||
@@ -130,8 +130,8 @@ class BillEvent < ActiveRecord::Base
       end
     end if votes
 
-    if votes && votes.empty?
-      votes = votes.select do |vote|
+    if votes && selected_votes.empty?
+      selected_votes = votes.select do |vote|
         if vote_bill_names = vote.bill_names
           bill_name = bill.bill_name
           if vote_bill_names.include?(bill_name)
@@ -143,7 +143,7 @@ class BillEvent < ActiveRecord::Base
       end
     end
 
-    votes
+    selected_votes
   end
 
   def has_debates?
