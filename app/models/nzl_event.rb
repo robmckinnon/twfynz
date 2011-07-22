@@ -132,6 +132,8 @@ public
         if bills.size == 1
           bill = bills.first
           self.about_id = bill.id
+        elsif self.title == 'New Zealand Security Intelligence Service Amendment Bill' && self.year.to_s == '2010'
+          self.about_id = bills.last.id
         elsif bills.size > 0
           raise 'more than one matching bill for ' + self.title + ' ' +
               self.year.to_s + ': ' + bills.inspect
