@@ -31,17 +31,19 @@ module DebatesHelper
     debate = vote.contribution.debate
     question = String.new vote.question
 
+    bills = vote.contribution.debate.related_bills
+
     if (not debate.is_a? DebateAlone) and (debate.parent.type.to_s == 'BillDebate')
       bill = debate.about
       if bill
         format_bill_link_in_vote_question question, bill
-      elsif debate.debate_topics
-        debate.debate_topics.each { |topic| format_bill_link_in_vote_question question, topic.topic }
-        question
+      elsif bills.size > 0
+        bills.each { |bill| format_bill_link_in_vote_question(question, bill) }
       end
-    else
-      question
+    elsif bills.size > 0
+      bills.each { |bill| format_bill_link_in_vote_question(question, bill) }
     end
+    question
   end
 
   def format_bill_in_contribution transcript, text, date
