@@ -651,6 +651,17 @@ class Debate < ActiveRecord::Base
     end
   end
 
+  def related_bills
+    bills = debate_topics.map(&:topic).select{|x| x.is_a?(Bill)}
+    if bills.size > 1
+      bills
+    elsif find_related_bill
+      [find_related_bill]
+    else
+      []
+    end
+  end
+
   def find_related_bill
     if id_hash[:bill_url]
       Bill.find_by_url(id_hash[:bill_url])
