@@ -285,9 +285,9 @@ module BillsHelper
       result += "<br/><br/>#{view_bill}" unless view_bill.blank?
       result
     else
-      result = bill_event.result_from_contributions self
+      result = bill_event.reading_result_from_contributions self
       if result.blank?
-        bill_event.reading_result_from_contributions self
+        bill_event.result_from_contributions self
       else
         result
       end
