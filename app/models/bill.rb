@@ -727,6 +727,11 @@ class Bill < ActiveRecord::Base
         end
       end
     end
+
+    def populate_parliament_id
+      self.parliament_id = parliament_url.split('/').last.split('.').first if parliament_id.blank?
+    end
+
   protected
     def default_negatived
       self.first_reading_negatived = 0 unless self.first_reading_negatived
