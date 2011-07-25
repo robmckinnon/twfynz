@@ -122,7 +122,15 @@ class ApplicationController < ActionController::Base
 
         vote_vectors = Vote.vote_vectors(@parliament.id, to_string=false)
 
-        parent_bill_names = ["Formerly part of bill"] + parent_bills.collect{|x| %Q|"#{x.bill_name}"|}
+        parent_bill_names = ["Formerly part of bill"] + votes.collect do |v|
+          name = if v.bill
+            v.bill.bill_name
+          elsif v.vote_bill && v.vote_bill.formerly_part_of
+            v.vote_bill.formerly_part_of.bill_name
+          else
+            ''
+          end
+        end
 
         child_bill_names.each_with_index do |x,i|
           if parent_bill_names[i].gsub('(','').gsub(')','').sub(' Bill','').sub(' Amendment','') == x.gsub('(','').gsub(')','').sub(' Bill','').sub(' Amendment','') ||
@@ -133,11 +141,12 @@ class ApplicationController < ActionController::Base
         end
 
         dates = ["Party Vote Date"] + votes.collect{|x| x.debate.date}
+        parent_bill_names = parent_bill_names.map {|x| %Q|"#{x}"|}
         array = [parent_bill_names, child_bill_urls, dates, child_bill_names]
 
         vote_vectors.each {|v| array << v}
 
-        csv = array.transpose.collect{|x| x.join(",") }.join("\n")
+        csv = array.transpose.collect{|x| x.join(',') }.join("\n")
 
         format.csv { render :text => csv }
       end
