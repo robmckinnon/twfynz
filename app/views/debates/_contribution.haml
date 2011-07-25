@@ -1,5 +1,5 @@
 - if contribution.is_vote?
-  .divider3
+  .divider2
   = render :partial => 'vote', :collection => [contribution.vote], :locals => {:anchor_in_debate => (contribution.anchor_in_debate(debate))}
 - else
   - anchor_in_debate = contribution.anchor_in_debate(debate)
