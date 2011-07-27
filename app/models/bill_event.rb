@@ -139,7 +139,15 @@ class BillEvent < ActiveRecord::Base
             vote_bill_name.include?(bill_name.sub(' Amendment Bill', ' Bill'))
           true
         else
-          false
+          begin
+            if (found_bill = Bill.from_name_and_date(vote_bill_name, date))
+              true
+            else
+              false
+            end
+          rescue
+            false
+          end
         end
       else
         true

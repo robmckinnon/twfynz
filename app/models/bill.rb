@@ -99,6 +99,28 @@ class Bill < ActiveRecord::Base
       end
     end
 
+    CORRECTIONS = [
+      ['Appropriation (2005/06) Supplementary Estimates Bill', 'Appropriation (2005/06 Supplementary Estimates) Bill'],
+      ['Limited Partnerships Bill be now read a third time and the Taxation (Limited Partnerships) Bill', 'Limited Partnerships Bill'],
+      ['Public Transport Amendment Bill', 'Public Transport Management Bill'],
+      ['Social Security (Entitlement Cards) Amendment', 'Social Security (Entitlement Cards) Amendment Bill'],
+      ['Parole (Extended Supervision Orders) Bill', 'Parole (Extended Supervision Orders) Amendment Bill'],
+      ['Employment Relations (Minimum Redundancy Entitlements) Amendment Bill', 'Employment Relations (Statutory Minimum Redundancy Entitlements) Amendment Bill'],
+      ['Cluster Munitions (Prohibition) Bill', 'Cluster Munitions Prohibition Bill'],
+      ['Telecommunications (TSO, Broadband, and Other Matters) Amendment Bill','Telecommunications (TSO, Broadband and Other Matters) Amendment Bill'],
+      ['2009/2010','2009/10'],
+      ['Employment Relations (Film Production) Amendment Bill','Employment Relations (Film Production Work) Amendment Bill'],
+      ['Research, Science and Technology Amendment Bill','Research, Science, and Technology Bill'],
+      ['Customs and Excise (Prohibition of Goods Made by Slave Labour) Amendment Bill','Customs and Excise (Prohibition of Imports Made by Slave Labour) Amendment Bill'],
+      ['Electoral (Reduction in Number of Members of Parliament) Bill','Electoral (Reduction in Number of Members of Parliament) Amendment Bill'],
+      ['Bill of Rights (Private Property Rights) Amendment Bill', 'New Zealand Bill of Rights (Private Property Rights) Amendment Bill'],
+      ['Subordinate Legislation (Confirmation and Validation Bill (No 2)','Subordinate Legislation (Confirmation and Validation) Bill (No 2)'],
+      ['Births, Death, Marriages, and Relationships Registration Amendment Bill','Births, Deaths, Marriages, and Relationships Registration Amendment Bill'],
+      ['Telecommunications (TSO, Broadband and Other Matters) Amendment Bill','Telecommunications (TSO, Broadband, and Other Matters) Amendment Bill'],
+      ['Aquaculture Legislation Amendment Bill (No. 3)','Aquaculture Legislation Amendment Bill (No 3)'],
+      [') Estimates)',' Estimates)'],
+      ['20010/11','2010/11']
+    ]
     def from_name_and_date_by_method name, date, method
       name = name.sub('Hearing of evidence on the ','')
       bills = send(method, name)
@@ -110,18 +132,13 @@ class Bill < ActiveRecord::Base
       bills = send(method, name.gsub('’',"'").chomp(')').sub(')',') ').sub('(',' (').squeeze(' ').sub('Appropriations','Appropriation')) if bills.empty?
       bills = send(method, name.gsub('’',"'").chomp(')').sub(')',') ').sub('(',' (').squeeze(' ').sub('RateAmendments','Rate Amendments')) if bills.empty?
       bills = send(method, name.gsub('’',"'").chomp(')').sub(')',') ').sub('(',' (').squeeze(' ').sub('andAsure','and Asure')) if bills.empty?
-      bills = send(method, name.sub('Appropriation (2005/06) Supplementary Estimates Bill', 'Appropriation (2005/06 Supplementary Estimates) Bill')) if bills.empty?
-      bills = send(method, name.sub('Limited Partnerships Bill be now read a third time and the Taxation (Limited Partnerships) Bill', 'Limited Partnerships Bill')) if bills.empty?
-      bills = send(method, name.sub('Public Transport Amendment Bill', 'Public Transport Management Bill')) if bills.empty?
-      bills = send(method, name.sub('Social Security (Entitlement Cards) Amendment', 'Social Security (Entitlement Cards) Amendment Bill')) if bills.empty?
-      bills = send(method, name.sub('Parole (Extended Supervision Orders) Bill', 'Parole (Extended Supervision Orders) Amendment Bill')) if bills.empty?
-      bills = send(method, name.sub('Employment Relations (Minimum Redundancy Entitlements) Amendment Bill', 'Employment Relations (Statutory Minimum Redundancy Entitlements) Amendment Bill')) if bills.empty?
-      bills = send(method, name.sub('Cluster Munitions (Prohibition) Bill', 'Cluster Munitions Prohibition Bill')) if bills.empty?
-      bills = send(method, name.sub('Telecommunications (TSO, Broadband, and Other Matters) Amendment Bill','Telecommunications (TSO, Broadband and Other Matters) Amendment Bill')) if bills.empty?
-      bills = send(method, name.sub('2009/2010','2009/10')) if bills.empty?
-      bills = send(method, name.sub('Employment Relations (Film Production) Amendment Bill','Employment Relations (Film Production Work) Amendment Bill')) if bills.empty?
-      bills = send(method, name.sub('Research, Science and Technology Amendment Bill','Research, Science, and Technology Bill')) if bills.empty?
-      bills = send(method, name.sub('Customs and Excise (Prohibition of Goods Made by Slave Labour) Amendment Bill','Customs and Excise (Prohibition of Imports Made by Slave Labour) Amendment Bill') )  if bills.empty?
+
+      if bills.empty?
+        CORRECTIONS.each do |old_text, new_text|
+          bills = send(method, name.sub(old_text, new_text)) if bills.empty?
+        end
+      end
+
       bills = bills.select {|b| b.royal_assent.nil? || (b.royal_assent >= date) }
       bills = bills.select do |b|
         if b.introduction.nil? && b.earliest_date.nil?

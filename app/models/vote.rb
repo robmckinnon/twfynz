@@ -191,11 +191,17 @@ class Vote < ActiveRecord::Base
   end
 
   def vote_bill
-    Bill.from_name_and_date bill_name, contribution.date
+    if vote_question[/That the bill be now read a \w+ time/]
+      bill
+    else
+      Bill.from_name_and_date bill_name, contribution.date
+    end
   end
 
   def bill_name
     if vote_question[/That the (.+) be now read a \w+ time,? and the/]
+      $1
+    elsif vote_question[/and the (Imprest Supply .+) be (now )?read a (.+) time/]
       $1
     elsif vote_question[/That the (.+) be now read a (.+) time/] && !$1.include?('Bill, ') && !$1.include?('Bill and')
       $1
