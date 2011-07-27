@@ -232,6 +232,14 @@ class Contribution < ActiveRecord::Base
     starts_with?('I move that')
   end
 
+  def is_motion_to_now_read?
+    text.include?('I move') && text.include?('be now read')
+  end
+
+  def bill_names
+    Bill.bill_names text.match(/That the (.*)be now read/)[1]
+  end
+
   def is_interjection?
     false
   end

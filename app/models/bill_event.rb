@@ -78,12 +78,16 @@ class BillEvent < ActiveRecord::Base
     end
 
     def create_from_bill_stage bill, stage, date
+      if stage == 'Imprest Supply Debate' && bill.is_appropriation_bill?
+        stage = 'Third Reading' if bill.third_reading.to_s == date.to_s
+      end
       returning(BillEvent.new) do |e|
         e.bill_id     = bill.id
         e.name        = stage
         e.date        = date
       end
     end
+
   end
 
   def date_method
@@ -93,7 +97,15 @@ class BillEvent < ActiveRecord::Base
 
   def debates
     debates_in_groups_by_name, votes_by_name = bill.debates_by_name_names_votes_by_name
-    debates = debates_in_groups_by_name.blank? ? [] : debates_in_groups_by_name.select {|list| list.first.normalized_name == self.name}.flatten
+    debates = if debates_in_groups_by_name.blank?
+                []
+              else
+                debates_in_groups_by_name.select {|list| list.first.normalized_name == self.name}.flatten
+              end
+
+    if debates.empty? && bill.is_appropriation_bill?
+      debates = debates_in_groups_by_name.select {|list| list.first.normalized_name == 'Imprest Supply Debate'}.flatten
+    end
 
     debates.sort! do |a,b|
       comparison = b.date <=> a.date
@@ -110,6 +122,10 @@ class BillEvent < ActiveRecord::Base
   def votes
     votes_by_name = bill.votes_in_groups_by_name
     votes = votes_by_name.blank? ? nil : votes_by_name[self.name]
+    if votes.nil? && bill.is_appropriation_bill?
+      votes = votes_by_name.blank? ? nil : votes_by_name['Imprest Supply Debate']
+    end
+
     votes = votes.compact.uniq if votes
 
     selected_votes = votes.select do |vote|
@@ -227,6 +243,7 @@ class BillEvent < ActiveRecord::Base
       debate = self.debates.first
       contributions = debate.contributions
       last = contributions.last
+      # raise name + ' ' + debate.inspect if last.nil?
       if last.is_procedural?
         if motion_agreed_to? last.text
           result += '<br /><br />' + strip_tags(last.text).chomp('.') + ':<br />'

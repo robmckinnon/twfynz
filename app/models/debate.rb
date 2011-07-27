@@ -413,6 +413,35 @@ class Debate < ActiveRecord::Base
       puts 'found: '+debates.size.to_s
       debates.each { |d| d.expire_cached_pages }
     end
+
+    def create_debate_topics debates
+      debates = debates.select { |debate| debate.debate_topics.blank? }
+      contributions = debates.collect(&:motion_to_now_read_contributions).flatten
+
+      debate_to_bill_names = {}
+      contributions.each { |c| debate_to_bill_names[c.debate] = c.bill_names }
+
+      debate_to_bill_names.each_pair { |d,b| puts d.id.to_s + " -> " + b.join(' | ') }
+      puts "\n unknown bills:"
+      debate_to_bill_names.each_pair do |d, bill_names|
+        bill_names.select{|n| Bill.from_name_and_date(n, d.date).nil? }.each { |name| puts "#{d.date} #{name}" }
+      end ;nil
+
+      debate_to_bill_names.each do |debate, bill_names|
+        bills = bill_names.collect { |name| Bill.from_name_and_date(name, debate.date) }.compact
+
+        bills.each do |bill|
+          topic = DebateTopic.find_or_create_by_debate_id_and_topic_id_and_topic_type(debate.id, bill.id, 'Bill')
+          BillEvent.refresh_events_from_bill bill
+          puts topic.inspect
+        end
+        nil
+      end ; nil
+    end
+  end
+
+  def motion_to_now_read_contributions
+    contributions.select(&:is_motion_to_now_read?)
   end
 
   def formerly_about_bill

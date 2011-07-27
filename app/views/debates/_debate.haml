@@ -1,7 +1,7 @@
-- if debate.contributions.size > 100
-  = render :partial => 'contribution', :collection => debate.contributions[0..100], :locals => { :debate => debate }
+- if debate.contributions.size > 115
+  = render :partial => 'contribution', :collection => debate.contributions[0..115], :locals => { :debate => debate }
   %div
     %p
-      = "[... plus a further #{debate.contributions.size - 100} contributions not shown here]"
+      = "[... plus a further #{debate.contributions.size - 115} contributions not shown here]"
 - else
   = render :partial => 'contribution', :collection => debate.contributions, :locals => { :debate => debate }

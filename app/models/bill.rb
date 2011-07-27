@@ -18,6 +18,7 @@ class Bill < ActiveRecord::Base
   validates_presence_of :member_in_charge_id
 
   validates_presence_of :parliament_url
+  validates_uniqueness_of :parliament_id, :allow_blank => true
 
   before_validation :populate_former_name,
       :populate_formerly_part_of,
@@ -36,6 +37,22 @@ class Bill < ActiveRecord::Base
 
   class << self
 
+    def bill_names text
+      bill_text = text.to_s
+      bill_text.gsub!(/(\d)\), Te/, '\1), the Te')
+      bill_text.gsub!(/Bill( \(No \d+\))? and the/,'Bill\1, and the')
+      bill_text.gsub!(/Bill( \([^\)]+\))? and the/,'Bill\1, and the')
+      bill_text.gsub!(/\sbe now read a (\w+) time and the /, ', and the ')
+
+      bills = bill_text.split(/,( and)? the/)
+      bills = bills.select { |b| b.match(/[a-z ]*(.*)/)[1].length > 0 }
+      bills.collect { |b| b.match(/[a-z ]*(.*)/)[1].chomp(', ').strip }
+    end
+
+    def parliament_id parliament_url
+      parliament_url.split('/').last.split('.').first
+    end
+
     def passed_third_reading_no_vote
       readings = BillEvent.find(:all, :conditions => 'name like "%Third%"'); nil
       readings = Parliament.find(48).in_parliament(readings); nil
@@ -51,11 +68,7 @@ class Bill < ActiveRecord::Base
     end
 
     def bills_from_text_and_date text, date
-      bill_text = text.gsub(/(\d)\), Te/, '\1), the Te')
-      bill_text = bill_text.gsub(/Bill( \([^\)]+\))? and the/,'Bill\1, and the')
-      bills = bill_text.split(/,( and)? the/).collect do |name|
-        name = name.match(/[a-z ]*(.*)/)[1]
-        name = name.chomp(', ').strip unless name.empty?
+      bills = bill_names(text).collect do |name|
         name.empty? ? nil : Bill.from_name_and_date(name, date)
       end.compact
     end
@@ -382,6 +395,10 @@ class Bill < ActiveRecord::Base
 
   def full_name
     bill_name
+  end
+
+  def is_appropriation_bill?
+    bill_name[/^Appropriation/]
   end
 
   def negatived?
@@ -729,7 +746,7 @@ class Bill < ActiveRecord::Base
     end
 
     def populate_parliament_id
-      self.parliament_id = parliament_url.split('/').last.split('.').first if parliament_id.blank?
+      self.parliament_id = Bill.parliament_id(parliament_url) if parliament_id.blank?
     end
 
   protected

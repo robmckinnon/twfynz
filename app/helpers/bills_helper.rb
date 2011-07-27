@@ -286,6 +286,7 @@ module BillsHelper
       result
     else
       result = bill_event.reading_result_from_contributions self
+
       if result.blank?
         bill_event.result_from_contributions self
       else

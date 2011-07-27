@@ -27,7 +27,8 @@ namespace :kiwimp do
 
   def update_the_bill bill, updated_bill
     if bill.parliament_url != updated_bill.parliament_url
-      updated_bill.parliament_id = updated_bill.parliament_url.split('/').last.split('.').first
+      updated_bill.populate_parliament_id
+      updated_bill.save
     end
     puts '  update bill ' + bill.bill_name
     bill.update_attributes! updated_bill.attributes
@@ -101,7 +102,7 @@ namespace :kiwimp do
 
     elsif old_bills.size == 0
       puts 'trying to save'
-      bill.parliament_id = bill.parliament_url.split('/').last.split('.').first
+      bill.populate_parliament_id
 
       if Bill.find_all_by_url(bill.url).size > 0
         if bill.earliest_date
@@ -120,7 +121,10 @@ namespace :kiwimp do
 
   def update_bill update_existing, url, name, bill_no
     bill_no = nil if bill_no.blank?
-    bill = Bill.find_by_parliament_url(url)
+    parliament_id = Bill.parliament_id(url)
+
+    bill = Bill.find_by_parliament_id(parliament_id)
+    bill = Bill.find_by_parliament_url(url) unless bill
 
     if bill
       try_bill_update url, bill if update_existing
