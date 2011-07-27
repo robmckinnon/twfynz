@@ -13,6 +13,7 @@ namespace :kiwimp do
     imprest_debates.each {|x| x.name = 'Third Reading' ; x.save } ; nil
 
     empty_debates.each {|x| x.destroy} ; nil
+    events.each {|x| x.bill.save}
   end
 
 end
