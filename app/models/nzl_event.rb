@@ -124,10 +124,20 @@ class NzlEvent < ActiveRecord::Base
     end
 public
 
+    CORRECTIONS = [
+      ['Cluster Munitions Prohibition Prohibition Bill','Cluster Munitions Prohibition Bill'],
+      ['Sale of Liquor Youth Alcohol Harm Reduction Television Broadcasting Promotion Amendment Bill','Sale of Liquor Youth Alcohol Harm Reduction Amendment Bill'],
+      ['Taxation Personal Tax Cuts Annual Rates and Remedial Matters Bill 2008','Taxation Personal Tax Cuts Annual Rates and Remedial Matters Bill']
+    ]
     def populate_bill
       if self.about_type == 'Bill' && about_id.nil?
-        bills = Bill.find_all_by_plain_bill_name_and_year(self.title, self.year)
-        bills = Bill.find_all_by_plain_bill_name_and_year(self.title, self.year + 1) if bills.empty?
+        name = self.title
+        CORRECTIONS.each do |old_text, new_text|
+          name = name.sub(old_text, new_text)
+        end
+
+        bills = Bill.find_all_by_plain_bill_name_and_year(name, self.year)
+        bills = Bill.find_all_by_plain_bill_name_and_year(name, self.year + 1) if bills.empty?
 
         if bills.size == 1
           bill = bills.first
