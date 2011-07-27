@@ -14,6 +14,7 @@ class HansardParser
       text.gsub!(/<caption>[^<]*<p>/,'<caption>')
       text.gsub!(/<\/p>[^<]*<\/caption>/,'</caption>')
       text.gsub!(%Q|<p class="a">\n        <strong>Prayers</strong>.</p>|, '')
+      text.gsub!(%Q|<p class="a">\n        <strong>Karakia</strong>.</p>|, '')
       Hpricot text
     end
   end
@@ -192,7 +193,7 @@ class HansardParser
             # should be handled in the handling of 'h4'
           elsif node.name == 'a'
             @page = node['name'].sub('page_','').to_i
-          elsif (node.name == 'p' and (node.to_s.include?('took the Chair') or node.to_s.include?('Prayers')))
+          elsif (node.name == 'p' and (node.to_s.include?('took the Chair') || node.to_s.include?('Prayers') || node.to_s.include?('Karakia') ))
             # ignore
           elsif (not(hit_first_question) and node.name == 'p')
             handle_paragraph node, answers
@@ -656,7 +657,7 @@ class HansardParser
         if type == 'a' || MAKE_CSS_TYPES.include?(type) || is_continue_speech
           text = node.inner_html.to_clean_s
 
-          if debate.contributions.empty? && (text[/took the Chair/] || text[/Prayers/])
+          if debate.contributions.empty? && (text[/took the Chair/] || text[/Prayers/] || text[/Karakia/])
             # ignore this procedural stuff for now
           else
             raise 'no last contribution for text ' + text unless debate.contributions.last
