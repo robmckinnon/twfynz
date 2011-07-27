@@ -121,6 +121,7 @@ class Bill < ActiveRecord::Base
       bills = send(method, name.sub('2009/2010','2009/10')) if bills.empty?
       bills = send(method, name.sub('Employment Relations (Film Production) Amendment Bill','Employment Relations (Film Production Work) Amendment Bill')) if bills.empty?
       bills = send(method, name.sub('Research, Science and Technology Amendment Bill','Research, Science, and Technology Bill')) if bills.empty?
+      bills = send(method, name.sub('Customs and Excise (Prohibition of Goods Made by Slave Labour) Amendment Bill','Customs and Excise (Prohibition of Imports Made by Slave Labour) Amendment Bill') )  if bills.empty?
       bills = bills.select {|b| b.royal_assent.nil? || (b.royal_assent >= date) }
       bills = bills.select do |b|
         if b.introduction.nil? && b.earliest_date.nil?
