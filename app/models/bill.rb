@@ -394,7 +394,11 @@ class Bill < ActiveRecord::Base
   end
 
   def full_name
-    bill_name
+    if url[/_(\d\d\d\d)$/]
+      "#{bill_name} #{$1}"
+    else
+      bill_name
+    end
   end
 
   def is_appropriation_bill?
