@@ -48,25 +48,38 @@ class PartiesController < ApplicationController
     if party
       @name = party.name
       @bills_in_charge_of = party.bills_in_charge_of
-
-      parliament = Parliament.find(48)
-      party_in_parliament = party.in_parliament(48)
-
-      if party_in_parliament
-        @total_party_votes_size = parliament.party_votes_count
-        @party_votes_size = party_in_parliament.party_votes_count
-        @party_vote_percent = @party_votes_size * 100.0 / @total_party_votes_size
-
-        @total_bill_votes_size = parliament.bill_final_reading_party_votes_count
-        @bill_votes_size = party_in_parliament.bill_final_reading_party_votes_count
-        @bill_vote_percent = @bill_votes_size * 100.0 / @total_bill_votes_size
-      else
-        @party_votes_size = 0
-      end
-
+      @total_party_votes_size = {}
+      @party_votes_size = {}
+      @party_vote_percent = {}
+      @total_bill_votes_size = {}
+      @bill_votes_size = {}
+      @bill_vote_percent = {}
       @party = party
+
+      set_data_for_parliament(48)
+      set_data_for_parliament(49)
     else
       render(:template => 'parties/invalid_party', :status => 404)
+    end
+  end
+
+  def set_data_for_parliament parliament_no=48
+    parliament = Parliament.find(parliament_no)
+    party_in_parliament = @party.in_parliament(parliament_no)
+
+    if party_in_parliament
+      @total_party_votes_size[parliament_no] = parliament.party_votes_count
+      @party_votes_size[parliament_no] = party_in_parliament.party_votes_count
+      if @party_votes_size[parliament_no].nil?
+        raise @party.inspect
+      end
+      @party_vote_percent[parliament_no] = (@party_votes_size[parliament_no] * 100.0) / @total_party_votes_size[parliament_no]
+
+      @total_bill_votes_size[parliament_no] = parliament.bill_final_reading_party_votes_count
+      @bill_votes_size[parliament_no] = party_in_parliament.bill_final_reading_party_votes_count
+      @bill_vote_percent[parliament_no] = (@bill_votes_size[parliament_no] * 100.0) / @total_bill_votes_size[parliament_no]
+    else
+      @party_votes_size[parliament_no] = 0
     end
   end
 

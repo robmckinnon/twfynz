@@ -1,0 +1,36 @@
+- if @party_votes_size[parliament_no] > 0
+  %p
+    = @party.display_name
+    = "in the #{parliament_no}th Parliament"
+    voted in
+    - if @bill_votes_size[parliament_no] == @total_bill_votes_size[parliament_no]
+      all of the
+    - else
+      = number_to_percentage(@bill_vote_percent[parliament_no], :precision => 1)
+      = "(#{number_with_delimiter(@bill_votes_size[parliament_no])})"
+      of the
+    = number_with_delimiter(@total_bill_votes_size[parliament_no])
+    final bill reading party votes that occurred.
+    - if false
+      %ul.votes
+        %li
+          voted in
+          - if @party_votes_size[parliament_no] == @total_party_votes_size[parliament_no]
+            all of the
+          - else
+            = number_to_percentage(@party_vote_percent[parliament_no], :precision => 1)
+            = "(#{number_with_delimiter(@party_votes_size[parliament_no])})"
+            of the
+          = number_with_delimiter(@total_party_votes_size[parliament_no])
+          party votes that occurred
+        %li
+          voted in
+          - if @bill_votes_size[parliament_no] == @total_bill_votes_size[parliament_no]
+            all of the
+          - else
+            = number_to_percentage(@bill_vote_percent[parliament_no], :precision => 1)
+            = "(#{number_with_delimiter(@bill_votes_size[parliament_no])})"
+            of the
+          = number_with_delimiter(@total_bill_votes_size[parliament_no])
+          final bill reading party votes that occurred
+

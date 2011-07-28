@@ -27,8 +27,8 @@ class Parliament < ActiveRecord::Base
   end
 
   def populate_party_vote_counts
-    self.bill_final_reading_party_votes_count = Vote.third_reading_and_negatived_votes.size
-    self.party_votes_count = PartyVote.all_unique.size
+    self.bill_final_reading_party_votes_count = Vote.third_reading_and_negatived_votes(id).size
+    self.party_votes_count = PartyVote.all_unique(id).size
   end
 
   def date_within? date

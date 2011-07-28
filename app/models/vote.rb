@@ -164,8 +164,10 @@ class Vote < ActiveRecord::Base
       votes.select{|v| Parliament.date_within?(parliament_number, v.debate.date)}
     end
 
-    def all_unique
-      remove_duplicates(find(:all, :include => {:contribution => :spoken_in}))
+    def all_unique parliament_number
+      votes = find(:all, :include => {:contribution => :spoken_in})
+      votes = votes.select{|v| Parliament.date_within?(parliament_number, v.debate.date)}
+      remove_duplicates(votes)
     end
 
     def remove_duplicates votes

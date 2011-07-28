@@ -1,39 +1,19 @@
 - @javascript = "prototype"
 - @title = %Q[#{@party.name}: Party in Aotearoa New Zealand's Parliament]
 - if @party.mp_count == 0
-  - description = 'registered political party that had no MPs in the 48th Parliament.'
+  - description = 'registered political party that have no MPs in the 49th Parliament.'
 - else
-  - description = "registered political party that had #{pluralize(@party.mp_count,'MP')} in the 48th New Zealand Parliament."
+  - description = "registered political party that have #{pluralize(@party.mp_count,'MP')} in the 49th New Zealand Parliament."
 - @description = %Q[#{@party.name} are a #{description.sub('Reg','reg')}]
 #normalcontent
   %h1= party_logo(@party) + @name.sub(', ',',<br />')
   .divider3
-  %p= @description
-  - if @party_votes_size > 0
-    %p
-      = @party.display_name
-      in the 48th Parliament:
-      %ul.votes
-        %li
-          voted in
-          - if @party_votes_size == @total_party_votes_size
-            all of the
-          - else
-            = number_to_percentage(@party_vote_percent, :precision => 0)
-            = "(#{number_with_delimiter(@party_votes_size)})"
-            of the
-          = number_with_delimiter(@total_party_votes_size)
-          party votes that occurred
-        %li
-          voted in
-          - if @bill_votes_size == @total_bill_votes_size
-            all of the
-          - else
-            = number_to_percentage(@bill_vote_percent, :precision => 0)
-            = "(#{number_with_delimiter(@bill_votes_size)})"
-            of the
-          = number_with_delimiter(@total_bill_votes_size)
-          final bill reading party votes that occurred
+  - if @party.in_parliament(49)
+    = @party.in_parliament(49).parliament_description
+  - else
+    %p= @description
+  = render :partial => 'party_voting_stats', :locals => {:parliament_no => 49}
+  = render :partial => 'party_voting_stats', :locals => {:parliament_no => 48}
   - if false
     .divider3
     - if @bills_in_charge_of.size > 0
