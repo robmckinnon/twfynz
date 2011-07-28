@@ -29,22 +29,24 @@ class Contribution < ActiveRecord::Base
     end
 
     def count_by_term term
-      # sql = 'SELECT COUNT(*) FROM contributions WHERE ' + create_condition(term)
-      # count_by_sql(sql)
-      search = ActsAsXapian::Search.new(submodels, term, :limit => 1)
-      return search.matches_estimated
+      sql = 'SELECT COUNT(*) FROM contributions WHERE ' + create_condition(term)
+      count_by_sql(sql)
+      # search = ActsAsXapian::Search.new(submodels, term, :limit => 1)
+      # return search.matches_estimated
     end
 
     def match_by_term term, limit, offset
-      # condition = create_condition(term)
-      # find(:all, :conditions=> condition, :order=>'date DESC, spoken_in_id DESC',
-          # :limit => match_pages.items_per_page.to_s,
-          # :offset => match_pages.current.offset)
-      search = ActsAsXapian::Search.new(submodels, term,
+      condition = create_condition(term)
+      total_count = count_by_term(term)
+      matches = find(:all, :conditions=> condition, :order=>'date DESC, spoken_in_id DESC',
           :limit => limit,
-          :offset => offset,
-          :sort_by_prefix => 'debate_date')
-      return search.results.collect{|h| h[:model]}, search.matches_estimated
+          :offset => offset)
+      return matches, total_count
+      # search = ActsAsXapian::Search.new(submodels, term,
+          # :limit => limit,
+          # :offset => offset,
+          # :sort_by_prefix => 'debate_date')
+      # return search.results.collect{|h| h[:model]}, search.matches_estimated
     end
 
     def search_by_term term
@@ -315,7 +317,7 @@ class Contribution < ActiveRecord::Base
       if term[/^"([\S]+)"$/]
         term = term[/^"([\S]+)"$/, 1]
       end
-      term = term.gsub('\\', '').gsub(';','').gsub('>','').gsub('<','').gsub("'",'')
+      term = term.gsub('\\', '').gsub(';','').gsub('>','').gsub('<','').gsub("'",'').gsub('*','').gsub('%','')
       terms = term.split
 
       condition = 'MATCH (text) AGAINST '

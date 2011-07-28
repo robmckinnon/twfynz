@@ -59,7 +59,7 @@
       #sign_in
       - if @home
         #search-home
-          - if false
+          - if true
             - form_tag({:controller => 'application', :action => :search}, {:method=>"get"}) do
               - if @term
                 = text_field_tag(:q, '', :maxlength=>"100", :size=>"12", :value => @term)
@@ -69,7 +69,7 @@
         - #headerpic
       - else
         #search
-          - if false
+          - if true
             - form_tag({:controller => 'application', :action => :search}, {:method=>"get"}) do
               - if @term
                 = text_field_tag(:q, '', :maxlength=>"100", :size=>"12", :value => @term)
