@@ -1,18 +1,23 @@
 - debate = debate_nav
-- if RAILS_ENV == 'production'
+- if true || RAILS_ENV == 'production'
   .blank_box
     .contentarea
-      = %Q|<script type="text/javascript"><!--|
-      = %Q|google_ad_client = "ca-pub-8597146813885553";|
-      = %Q|/* TWFY NZ 200x200 */|
-      = %Q|google_ad_slot = "7628374736";|
-      = %Q|google_ad_width = 200;|
-      = %Q|google_ad_height = 200;|
-      = %Q|//-->|
-      = %Q|</script>|
-      = %Q|<script type="text/javascript"|
-      = %Q|src="http://pagead2.googlesyndication.com/pagead/show_ads.js">|
-      = %Q|</script>|
+      %p
+        Please <a href="https://apps.facebook.com/promosapp/183177/entry/185251">vote for this site</a> in the great New Zealand <a href="https://apps.facebook.com/promosapp/183177/entry/185251">Mix and Mash</a> competition:
+      %p
+        <a href="https://apps.facebook.com/promosapp/183177/entry/185251">vote here</a> - thanks!
+      - if false
+        = %Q|<script type="text/javascript"><!--|
+        = %Q|google_ad_client = "ca-pub-8597146813885553";|
+        = %Q|/* TWFY NZ 200x200 */|
+        = %Q|google_ad_slot = "7628374736";|
+        = %Q|google_ad_width = 200;|
+        = %Q|google_ad_height = 200;|
+        = %Q|//-->|
+        = %Q|</script>|
+        = %Q|<script type="text/javascript"|
+        = %Q|src="http://pagead2.googlesyndication.com/pagead/show_ads.js">|
+        = %Q|</script>|
 .box
   .contentarea
     %ul.linklist
