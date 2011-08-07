@@ -301,7 +301,7 @@ class HansardDownloader
     end
 
     def publication_status_from contents
-      if contents.include? '[Advance Copy'
+      if contents.include?('[Advance Copy') || contents.include?('[Advance copy')
         'advance'
       elsif contents.include? '[Uncorrected transcript'
         'uncorrected'
