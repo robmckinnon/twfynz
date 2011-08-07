@@ -50,16 +50,17 @@
           %ul
             - @days_top_pages.each do |item|
               %li= link_to("#{item.page_title}", item.url) + " <span class='page_views'>(#{item.unique_pageviews})</span>"
-      - if @weeks_top_pages
-        .popular_last_week
-          %h2 Popular over last week
-          %ul
-            - @weeks_top_pages.each do |item|
-              %li
-                = link_to(item.page_title, item.url)
-                %span.page_views
-                  ="(#{item.unique_pageviews})"
-    - if false
+    - if true
       #right_column_content
-        #twitter_feed
+        - if @weeks_top_pages
+          .popular_last_week
+            %h2 Popular over last week
+            %ul
+              - @weeks_top_pages.each do |item|
+                %li
+                  = link_to(item.page_title, item.url)
+                  %span.page_views
+                    ="(#{item.unique_pageviews})"
+        - if false
+          #twitter_feed
 - #render :partial => 'calendar.haml'

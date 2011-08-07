@@ -226,6 +226,51 @@ class ApplicationController < ActionController::Base
   private
 
     def top_content days
+      previous_date = Date.today - days
+      require 'garb' unless defined? Garb
+      Struct.new('TempItem', :path, :unique_pageviews, :url) unless defined? Struct::TempItem
+
+      Garb::Session.login(config.username, config.password)
+      profile = Garb::Management::Profile.all.find {|x| x.title == config.account }
+      report = Garb::Report.new(profile, :limit => 20, :start_date => previous_date.to_time)
+      report.metrics :unique_pageviews
+      report.dimensions :page_path
+      report.sort :unique_pageviews.desc
+
+      results = report.results
+      items = []
+      results.each do |result|
+        if items.size < 10
+          path = result.page_path
+          if path.split('/').size > 2 && !path[/^\/(search|parties|parliaments|organisations|mps)/]
+            path.sub!('mori','maori')
+            view_count = result.unique_pageviews.to_i
+            item = Struct::TempItem.new(path, view_count, "http://theyworkforyou.co.nz#{path}")
+            items << UrlItem.new(item)
+          end
+        end
+        nil
+      end
+      items = items.sort_by{|i| i.weighted_score }.reverse
+      items
+    end
+
+    def config
+      @analytics_config ||= config_setup(RAILS_ROOT)
+    end
+
+    def config_setup root
+      config_file = "#{root}/config/rugalytics.yml"
+      config_file = "#{root}/rugalytics.yml" unless File.exist? config_file
+      load_config(config_file) if File.exist? config_file
+    end
+
+    def load_config filename
+      hash = YAML.load_file(filename)
+      OpenStruct.new(hash)
+    end
+
+    def old_top_content days
       profile = Rugalytics.default_profile
       previous_date = Date.today - days
       report = profile.top_content_report :from => previous_date
@@ -236,7 +281,7 @@ class ApplicationController < ActionController::Base
         item.url.sub!('mori','maori')
         UrlItem.new(item)
       end
-      items = items.sort_by{|i| i.weighted_score }.reverse
+      items = items.sort_by{ |i| i.weighted_score }.reverse
       items = items[0..9] if items.size > 10
       items
     end
