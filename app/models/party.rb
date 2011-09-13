@@ -20,6 +20,7 @@ class Party < ActiveRecord::Base
     def nz_first; @nz_first ||= from_vote_name("New Zealand First"); end
     def progressive; @progressive ||= from_vote_name("Progressive"); end
     def united_future; @united_future ||= from_vote_name("United Future"); end
+    def mana; @mana ||= from_vote_name("Mana"); end
 
     def party_list
       [act, green, labour, maori, national, nz_first, progressive, united_future]
