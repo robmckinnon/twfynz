@@ -27,4 +27,4 @@
       - url += "/#{@parliament.id.to_s}" if @parliament
     - class_name = (percentage > 75 ? 'high_vote_correlation' : percentage > 50 ? 'moderate_vote_correlation' : percentage > 25 ? 'low_vote_correlation' : 'minimumal_vote_correlation')
     - desc = "#{party.display_name} and #{other_party.display_name} voted the same way on #{vote_cell[3].size} bills"
-    = link_to text, url, :class => class_name, :title => desc
+    = link_to text, url, :class => class_name, :title => desc, :id => "#{party.url_name}-#{other_party.url_name}"
