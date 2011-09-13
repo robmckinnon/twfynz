@@ -266,7 +266,7 @@ class PersistedFile < ActiveRecord::Base
     def check_final_vs_advanced_count(final_count, date)
       advance_count = find_all_by_debate_date_and_publication_status(date, 'A').size
       if advance_count > 0
-        if advance_count != final_count && date.to_s != '2009-04-08' && date.to_s != '2011-02-09'
+        if advance_count != final_count && date.to_s != '2009-04-08' && date.to_s != '2011-02-09' && date.to_s != '2011-08-03'
           raise "expected #{advance_count} files for #{date}, but got #{final_count} final files, manual fix required."
         else
           puts "count of final and advance files matches #{final_count} for #{date}."
