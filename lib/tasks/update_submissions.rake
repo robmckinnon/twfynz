@@ -11,7 +11,8 @@ namespace :kiwimp do
 
   desc 'update download submitters submissions'
   task :update_submitters => :environment do
-    SubmissionsDownloader.submission_download
+    index = ENV['index'] || 0
+    SubmissionsDownloader.submission_download index
   end
 
   def get_submissions

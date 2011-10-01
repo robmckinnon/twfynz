@@ -5,8 +5,7 @@ require 'uri'
 
 class SubmissionsDownloader
 
-  def self.submission_download
-    index = 0
+  def self.submission_download index = 0
     while (continue = self.download_page(index))
       index = index.next
     end
